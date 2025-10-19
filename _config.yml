@@ -2,7 +2,7 @@ title: AI Development Blog
 author: David Lee
 email: lee.yonghee.dev@gmail.com
 description: > # this means to ignore newlines until "show_exerpts:"
-  AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. 
+  AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다.
   Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
 show_excerpts: true # set to true to show excerpts on the homepage
 excerpt_separator: <!--more--> # Custom excerpt separator
