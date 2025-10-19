@@ -8,7 +8,7 @@ tags: [oxy, rust, cli, async, tokio, clap]
 
 ## 개요
 
-이번 포스트에서는 Oxy 프레임워크의 Rust 애플리케이션 진입점과 CLI(Command Line Interface) 시스템을 심층 분석합니다. 이전 [프로젝트 개요 분석]({% post_url 2024-12-19-oxy-cust-project-overview-analysis %})에 이어, 애플리케이션이 실제로 어떻게 시작되고 초기화되는지 살펴보겠습니다.
+이번 포스트에서는 Oxy 프레임워크의 Rust 애플리케이션 진입점과 CLI(Command Line Interface) 시스템을 심층 분석합니다. 이전 [프로젝트 개요 분석]({% post_url 2024-08-15-oxy-custom-project-overview-analysis %})에 이어, 애플리케이션이 실제로 어떻게 시작되고 초기화되는지 살펴보겠습니다.
 
 ## 1. 애플리케이션 진입점 (main.rs)
 
@@ -390,7 +390,7 @@ Oxy 프레임워크의 진입점과 CLI 시스템은 현대적인 Rust 애플리
 ---
 
 **연관 포스트:**
-- [Oxy Custom 프로젝트 개요 분석]({% post_url 2024-12-19-oxy-cust-project-overview-analysis %})
+- [Oxy Custom 프로젝트 개요 분석]({% post_url 2024-08-15-oxy-custom-project-overview-analysis %})
 
 **참고 자료:**
 - [Tokio 공식 문서](https://tokio.rs/)

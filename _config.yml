@@ -69,3 +69,33 @@ destination: _site
 source: .
 safe: true
 incremental: false
+
+# Include only specific directories and files for Jekyll processing
+include:
+  - _posts/
+  - assets/
+  - _includes/
+  - _layouts/
+  - _sass/
+
+# Exclude problematic directories and files
+exclude:
+  - oxy-cust/
+  - oxy-cust/**/*
+  - "oxy-cust/**"
+  - node_modules/
+  - vendor/
+  - .bundle/
+  - .sass-cache/
+  - .git/
+  - .github/
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE.txt
+  - README.md
+  - DEPLOYMENT_GUIDE.md
+  - "*.gem"
+  - "*.gemspec"
+  - run.bat
+  - push.bat
+  - push.sh

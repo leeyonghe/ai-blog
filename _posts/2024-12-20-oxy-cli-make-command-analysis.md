@@ -431,7 +431,7 @@ Oxy의 Make 명령어는 **단순함 속의 복잡성**을 구현한 뛰어난 �
 ---
 
 **연관 포스트:**
-- [Oxy Custom 프로젝트 개요 분석]({% post_url 2024-12-19-oxy-cust-project-overview-analysis %})
+- [Oxy Custom 프로젝트 개요 분석]({% post_url 2024-08-15-oxy-custom-project-overview-analysis %})
 - [Oxy Custom - Rust 애플리케이션 진입점 및 CLI 시스템 심층 분석]({% post_url 2024-12-20-oxy-rust-application-entry-point-analysis %})
 
 **참고 자료:**

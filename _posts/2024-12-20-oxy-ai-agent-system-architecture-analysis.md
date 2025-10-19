@@ -489,7 +489,7 @@ Oxy의 AI 에이전트 시스템은 **모듈러 아키텍처**와 **ReACT 패턴
 ---
 
 **연관 포스트:**
-- [Oxy Custom 프로젝트 개요 분석]({% post_url 2024-12-19-oxy-cust-project-overview-analysis %})
+- [Oxy Custom 프로젝트 개요 분석]({% post_url 2024-08-15-oxy-custom-project-overview-analysis %})
 - [Oxy Custom - Rust 애플리케이션 진입점 및 CLI 시스템 심층 분석]({% post_url 2024-12-20-oxy-rust-application-entry-point-analysis %})
 - [Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석]({% post_url 2024-12-20-oxy-cli-make-command-analysis %})
 
