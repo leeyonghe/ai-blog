@@ -1,10 +1,9 @@
-title: Your awesome title
-author: GitHub User
-email: your-email@domain.com
+title: AI Development Blog
+author: David Lee
+email: lee.yonghee.dev@gmail.com
 description: > # this means to ignore newlines until "show_exerpts:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+  AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. 
+  Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
 show_excerpts: true # set to true to show excerpts on the homepage
 excerpt_separator: <!--more--> # Custom excerpt separator
 
@@ -56,4 +55,17 @@ plainwhite:
 # Build settings
 markdown: kramdown
 highlighter: rouge
-permalink: /blog/:year/:month/:day/:title:output_ext
+permalink: /:year/:month/:day/:title/
+
+# GitHub Pages and Jekyll settings
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# GitHub Pages configuration
+remote_theme: plainwhite
+destination: _site
+source: .
+safe: true
+incremental: false
