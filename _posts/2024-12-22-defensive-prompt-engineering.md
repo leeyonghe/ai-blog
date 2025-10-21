@@ -399,6 +399,7 @@ class JailbreakDefenseSystem:
                 "I'm desperate",
                 "just this once"
             ],
+        ```
             "technical_exploits": [
                 "<!--",
                 "*/",
