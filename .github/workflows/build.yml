@@ -13,27 +13,51 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
-          bundler-cache: true # This automatically runs 'bundle install' and caches gems
+          bundler-cache: false # Disable auto-cache to control manually
+
+      - name: Cache gems
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: Configure Bundler
+        run: |
+          bundle config set --local path 'vendor/bundle'
+          bundle config set --local without 'development test'
 
       - name: Install dependencies
         run: |
-          bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
 
-      - name: Add platform to Gemfile.lock
-        run: |
-          bundle lock --add-platform x86_64-linux
-
       - name: Build site
-        env:
-          JEKYLL_ENV: production
         run: |
-          bundle exec jekyll build --verbose --trace
+          bundle exec jekyll build --verbose
+
+      - name: Test build artifacts
+        run: |
+          if [ ! -f "_site/index.html" ]; then
+            echo "Error: _site/index.html not found"
+            exit 1
+          fi
+          echo "Build successful - _site directory created with $(find _site -name '*.html' | wc -l) HTML files"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jekyll-site-${{ github.sha }}
+          path: _site/
+          retention-days: 7
 
       - name: Test build artifacts
         run: |
