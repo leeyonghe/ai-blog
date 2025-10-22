@@ -693,8 +693,8 @@ KAG Builder 모듈은 **모듈화된 컴포넌트 아키텍처**와 **지능형 
 ---
 
 **연관 포스트:**
-- [KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석]({% post_url 2024-12-21-kag-project-overview-architecture-analysis %})
-- [KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석]({% post_url 2024-12-21-kag-docker-container-orchestration-analysis %})
+- [KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석]({% post_url 2024-08-15-kag-project-overview-architecture-analysis %})
+- [KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석]({% post_url 2025-02-28-kag-docker-container-orchestration-analysis %})
 
 **참고 자료:**
 - [LangChain 문서 처리](https://python.langchain.com/docs/modules/data_connection/document_loaders/)

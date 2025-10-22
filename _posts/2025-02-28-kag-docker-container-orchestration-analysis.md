@@ -608,7 +608,7 @@ KAG의 Docker 컨테이너 오케스트레이션은 **마이크로서비스 아�
 ---
 
 **연관 포스트:**
-- [KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석]({% post_url 2024-12-21-kag-project-overview-architecture-analysis %})
+- [KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석]({% post_url 2024-08-15-kag-project-overview-architecture-analysis %})
 
 **참고 자료:**
 - [Docker Compose 공식 문서](https://docs.docker.com/compose/)

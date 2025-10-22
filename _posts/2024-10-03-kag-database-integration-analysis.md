@@ -68,6 +68,7 @@ graph TD
 ### 2.1 Neo4j 클라이언트 아키텍처
 
 ```python
+{% raw %}
 class Neo4jClient(GraphStore, metaclass=SingletonMeta):
     """Thread-safe Singleton 패턴을 사용한 Neo4j 클라이언트"""
     
@@ -105,6 +106,7 @@ class Neo4jClient(GraphStore, metaclass=SingletonMeta):
         # 주기적 제약 조건 및 인덱스 업데이트
         self.schedule_constraint(interval_minutes)
         self.refresh_vector_index_meta(force=True)
+{% endraw %}
 ```
 
 **핵심 특징:**
@@ -173,6 +175,8 @@ def upsert_node(self, label, properties, id_key="id", extra_labels=("Entity",)):
             logger.error(f"upsert_node label:{label} properties:{properties} Exception: {e}")
             return None
 
+```python
+{% raw %}
 def _preprocess_node_properties(self, label, properties, extra_labels):
     """노드 속성 전처리 - 벡터 임베딩 자동 생성"""
     
@@ -218,6 +222,8 @@ def _upsert_node(tx, self, label, id_key, properties, extra_labels):
     query += "RETURN n"
     result = tx.run(query, properties=properties)
     return result.single()[0]
+{% endraw %}
+```
 ```
 
 ## 3. 벡터 인덱스 시스템
@@ -225,6 +231,7 @@ def _upsert_node(tx, self, label, id_key, properties, extra_labels):
 ### 3.1 다중 벡터 인덱스 지원
 
 ```python
+{% raw %}
 def create_vector_index(
     self,
     label,
@@ -295,11 +302,13 @@ def _create_vector_index(
         hnsw_m=hnsw_m,
         hnsw_ef_construction=hnsw_ef_construction,
     )
+{% endraw %}
 ```
 
 ### 3.2 벡터 검색 최적화
 
 ```python
+{% raw %}
 def vector_search(
     self,
     label,
@@ -373,6 +382,7 @@ def vector_search(
     
     with self._driver.session(database=self._database) as session:
         return session.execute_read(do_vector_search)
+{% endraw %}
 ```
 
 ## 4. 벡터화 모델 통합
@@ -380,6 +390,7 @@ def vector_search(
 ### 4.1 OpenAI 임베딩 모델
 
 ```python
+{% raw %}
 @VectorizeModelABC.register("openai")
 class OpenAIVectorizeModel(VectorizeModelABC):
     """OpenAI 임베딩 서비스 통합"""
@@ -394,6 +405,8 @@ class OpenAIVectorizeModel(VectorizeModelABC):
         max_rate: float = 1000,
         time_period: float = 1,
         **kwargs,
+{% endraw %}
+```
     ):
         name = kwargs.pop("name", None)
         if not name:
@@ -648,6 +661,7 @@ def text_search(
 ### 5.2 PageRank 기반 그래프 분석
 
 ```python
+{% raw %}
 def get_pagerank_scores(self, start_nodes, target_type):
     """PageRank 알고리즘을 사용한 노드 중요도 계산"""
     
@@ -696,11 +710,14 @@ def _get_pagerank_scores(tx, self, graph_name, start_nodes, return_type):
     
     result = tx.run(pagerank_query)
     return [{"id": record["id"], "score": record["score"]} for record in result]
+{% endraw %}
+```
 ```
 
 ### 5.3 관계형 데이터 처리
 
 ```python
+{% raw %}
 def upsert_relationship(
     self,
     start_node_label,
@@ -780,6 +797,8 @@ def _upsert_relationship(
         properties=properties,
     )
     return result.single()
+{% endraw %}
+```
 ```
 
 ## 6. 성능 최적화 및 확장성
@@ -881,13 +900,17 @@ def _upsert_nodes(tx, self, label, properties_list, id_key, extra_labels):
     
     query = (
         "UNWIND $properties_list AS properties "
-        f"MERGE (n:{self._escape_neo4j(label)} "
-        f"{{{self._escape_neo4j(id_key)}: properties.{self._escape_neo4j(id_key)}}}) "
+        "MERGE (n:__LABEL__ {__ID_KEY__: properties.__ID_KEY__}) "
         "SET n += properties "
     )
     
+    # 라벨과 키 이름 교체
+    query = query.replace("__LABEL__", self._escape_neo4j(label))
+    query = query.replace("__ID_KEY__", self._escape_neo4j(id_key))
+    
     if extra_labels:
-        query += f", n:{':'.join(self._escape_neo4j(extra_label) for extra_label in extra_labels)} "
+        escaped_labels = [self._escape_neo4j(extra_label) for extra_label in extra_labels]
+        query += f", n:{':'.join(escaped_labels)} "
     
     query += "RETURN n"
     result = tx.run(query, properties_list=properties_list)
@@ -1003,10 +1026,10 @@ KAG의 데이터베이스 통합 아키텍처는 **그래프 데이터베이스�
 ---
 
 **연관 포스트:**
-- [KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석]({% post_url 2024-12-21-kag-project-overview-architecture-analysis %})
-- [KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석]({% post_url 2024-12-21-kag-docker-container-orchestration-analysis %})
-- [KAG Builder 모듈 아키텍처 심층 분석 - 지식 추출 및 그래프 구축 엔진]({% post_url 2024-12-21-kag-builder-module-architecture-analysis %})
-- [KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템]({% post_url 2024-12-21-kag-solver-module-analysis %})
+- [KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석]({% post_url 2024-08-15-kag-project-overview-architecture-analysis %})
+- [KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석]({% post_url 2025-02-28-kag-docker-container-orchestration-analysis %})
+- [KAG Builder 모듈 아키텍처 심층 분석 - 지식 추출 및 그래프 구축 엔진]({% post_url 2024-11-15-kag-builder-module-architecture-analysis %})
+- [KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템]({% post_url 2024-05-12-kag-solver-module-analysis %})
 
 **참고 자료:**
 - [Neo4j Python Driver](https://neo4j.com/docs/python-manual/current/)
