@@ -7,7 +7,7 @@ gem "jekyll", "~> 3.9.5"
 
 # GitHub Pages compatible plugins
 gem "jekyll-feed"
-gem "jekyll-seo-tag" 
+gem "jekyll-seo-tag"
 gem "jekyll-sitemap"
 
 # Theme

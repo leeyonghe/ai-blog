@@ -638,9 +638,11 @@ KAG Solver 모듈은 **계층적 추론 아키텍처**와 **적응형 파이프�
 ---
 
 **연관 포스트:**
-- [KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석]({% post_url 2024-12-21-kag-project-overview-architecture-analysis %})
-- [KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석]({% post_url 2024-12-21-kag-docker-container-orchestration-analysis %})
-- [KAG Builder 모듈 아키텍처 심층 분석 - 지식 추출 및 그래프 구축 엔진]({% post_url 2024-12-21-kag-builder-module-architecture-analysis %})
+- ## 관련 글
+
+- [KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석]({% post_url 2024-08-15-kag-project-overview-architecture-analysis %})
+- [KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석]({% post_url 2025-02-28-kag-docker-container-orchestration-analysis %})
+- [KAG Builder 모듈 아키텍처 심층 분석 - 지식 추출 및 그래프 구축 엔진]({% post_url 2024-11-15-kag-builder-module-architecture-analysis %})
 
 **참고 자료:**
 - [LangChain ReAct Agent](https://python.langchain.com/docs/modules/agents/agent_types/react)
