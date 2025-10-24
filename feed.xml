@@ -1,0 +1,48 @@
+---
+layout: null
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>{{ site.title | xml_escape }}</title>
+    <description>{{ site.description | xml_escape }}</description>
+    <link>{{ site.url }}{{ site.baseurl }}/</link>
+    <atom:link href="{{ '/feed.xml' | absolute_url }}" rel="self" type="application/rss+xml"/>
+    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
+    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
+    <generator>Jekyll v{{ jekyll.version }}</generator>
+    <language>{{ site.lang | default: 'ko-KR' }}</language>
+    <managingEditor>{{ site.email }} ({{ site.author }})</managingEditor>
+    <webMaster>{{ site.email }} ({{ site.author }})</webMaster>
+    <copyright>Copyright {{ site.time | date: '%Y' }} {{ site.author }}. All rights reserved.</copyright>
+    <ttl>60</ttl>
+    <image>
+      <url>{{ site.logo | default: '/assets/images/logo.png' | absolute_url }}</url>
+      <title>{{ site.title | xml_escape }}</title>
+      <link>{{ site.url }}{{ site.baseurl }}/</link>
+      <width>144</width>
+      <height>144</height>
+    </image>
+    {% assign posts = site.posts | slice: 0, 20 %}
+    {% for post in posts %}
+      <item>
+        <title>{{ post.title | xml_escape }}</title>
+        <description><![CDATA[{{ post.excerpt | strip_html | truncate: 300 }}]]></description>
+        <content:encoded><![CDATA[{{ post.content }}]]></content:encoded>
+        <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
+        <link>{{ post.url | absolute_url }}</link>
+        <guid isPermaLink="true">{{ post.url | absolute_url }}</guid>
+        <dc:creator><![CDATA[{{ site.author }}]]></dc:creator>
+        {% for tag in post.tags %}
+        <category><![CDATA[{{ tag }}]]></category>
+        {% endfor %}
+        {% for category in post.categories %}
+        <category><![CDATA[{{ category }}]]></category>
+        {% endfor %}
+        {% if post.image %}
+        <enclosure url="{{ post.image | absolute_url }}" type="image/jpeg" />
+        {% endif %}
+      </item>
+    {% endfor %}
+  </channel>
+</rss>

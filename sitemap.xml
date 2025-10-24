@@ -8,18 +8,49 @@ layout: null
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+        
+        <!-- 홈페이지 -->
         <url>
-            <loc>{{ site.url }}</loc>
-	    <lastmod>{{ 'now' | date_to_xmlschema }}</lastmod>
+            <loc>{{ site.url }}{{ site.baseurl }}/</loc>
+            <lastmod>{{ 'now' | date_to_xmlschema }}</lastmod>
+            <changefreq>daily</changefreq>
             <priority>1.00</priority>
         </url>
+        
+        <!-- 모든 포스트 -->
         {%- for post in site.posts -%}
             <url>
-                <loc>{{ site.url }}{{ post.url }}</loc>
+                <loc>{{ site.url }}{{ site.baseurl }}{{ post.url }}</loc>
                 <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
                 <changefreq>weekly</changefreq>
                 <priority>0.80</priority>
             </url>
         {%- endfor -%}
+        
+        <!-- 페이지들 -->
+        {%- for page in site.pages -%}
+            {%- unless page.sitemap.exclude == "yes" or page.name == "feed.xml" or page.name == "sitemap.xml" or page.name == "robots.txt" -%}
+            <url>
+                <loc>{{ site.url }}{{ site.baseurl }}{{ page.url }}</loc>
+                <lastmod>{{ 'now' | date_to_xmlschema }}</lastmod>
+                <changefreq>monthly</changefreq>
+                <priority>0.60</priority>
+            </url>
+            {%- endunless -%}
+        {%- endfor -%}
+        
+        <!-- 카테고리별 페이지 -->
+        {%- assign categories = site.posts | map: 'categories' | join: ',' | split: ',' | uniq -%}
+        {%- for category in categories -%}
+            {%- unless category == blank -%}
+            <url>
+                <loc>{{ site.url }}{{ site.baseurl }}/categories/{{ category | slugify }}/</loc>
+                <lastmod>{{ 'now' | date_to_xmlschema }}</lastmod>
+                <changefreq>weekly</changefreq>
+                <priority>0.70</priority>
+            </url>
+            {%- endunless -%}
+        {%- endfor -%}
+        
     </urlset>    
 {%- endif -%}

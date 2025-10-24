@@ -7,6 +7,33 @@ description: > # this means to ignore newlines until "show_exerpts:"
 show_excerpts: true # set to true to show excerpts on the homepage
 excerpt_separator: <!--more--> # Custom excerpt separator
 
+# SEO 설정
+url: "https://leeyonghe.github.io" # 실제 사이트 URL
+baseurl: "/ai-blog" # 저장소 이름이 ai-blog인 경우
+lang: ko
+locale: ko_KR
+
+# Social media and search optimization
+twitter:
+  username: # 트위터 사용자명이 있다면 추가
+  card: summary_large_image
+
+facebook:
+  app_id: # Facebook 앱 ID가 있다면 추가
+  publisher: # Facebook 페이지 URL이 있다면 추가
+
+# SEO 태그 설정
+seo:
+  name: David Lee
+  links:
+    - https://github.com/leeyonghe
+    - https://www.linkedin.com/in/lee-yong-hee-18912454/
+
+# 검색 엔진 최적화
+google_analytics: # Google Analytics ID가 있다면 추가 (예: G-XXXXXXXXXX)
+google_site_verification: # Google Search Console 인증 코드
+naver_site_verification: # 네이버 웹마스터 도구 인증 코드
+
 # Minima date format
 # refer to http://shopify.github.io/liquid/filters/date/ if you want to customize this
 sass:
