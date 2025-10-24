@@ -8,7 +8,7 @@ layout: null
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-        
+
         <!-- 홈페이지 -->
         <url>
             <loc>{{ site.url }}{{ site.baseurl }}/</loc>
@@ -16,7 +16,7 @@ layout: null
             <changefreq>daily</changefreq>
             <priority>1.00</priority>
         </url>
-        
+
         <!-- 모든 포스트 -->
         {%- for post in site.posts -%}
             <url>
@@ -26,7 +26,7 @@ layout: null
                 <priority>0.80</priority>
             </url>
         {%- endfor -%}
-        
+
         <!-- 페이지들 -->
         {%- for page in site.pages -%}
             {%- unless page.sitemap.exclude == "yes" or page.name == "feed.xml" or page.name == "sitemap.xml" or page.name == "robots.txt" -%}
@@ -38,7 +38,7 @@ layout: null
             </url>
             {%- endunless -%}
         {%- endfor -%}
-        
+
         <!-- 카테고리별 페이지 -->
         {%- assign categories = site.posts | map: 'categories' | join: ',' | split: ',' | uniq -%}
         {%- for category in categories -%}
@@ -51,6 +51,6 @@ layout: null
             </url>
             {%- endunless -%}
         {%- endfor -%}
-        
-    </urlset>    
+
+    </urlset>
 {%- endif -%}

@@ -22,3 +22,9 @@ gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # GitHub Pages gem for compatibility (optional)
 # gem "github-pages", group: :jekyll_plugins
+
+# HTML validation tooling for local and CI checks
+group :development do
+	# https://github.com/gjtorikian/html-proofer
+	gem "html-proofer"
+end
