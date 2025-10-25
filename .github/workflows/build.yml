@@ -51,23 +51,29 @@ jobs:
           fi
           echo "Build successful - _site directory created with $(find _site -name '*.html' | wc -l) HTML files"
 
+      - name: Test site structure
+        run: |
+          # Test basic site structure
+          test -f ./_site/index.html || (echo "Error: index.html not found" && exit 1)
+          echo "✅ Found $(find ./_site -name '*.html' | wc -l) HTML files"
+          echo "✅ Site structure is valid"
+
+      - name: Test site with HTMLProofer
+        continue-on-error: true
+        run: |
+          # Run HTMLProofer with basic checks only
+          bundle exec htmlproofer ./_site \
+            --disable-external \
+            --checks Images \
+            --allow-hash-href \
+            --enforce-https=false \
+            --ignore-empty-alt \
+            --ignore-missing-alt
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: jekyll-site-${{ github.sha }}
-          path: _site/
-          retention-days: 7
-
-      - name: Test build artifacts
-        run: |
-          test -f _site/index.html
-          echo "Build successful - _site directory created with $(find _site -name '*.html' | wc -l) HTML files"
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: jekyll-site
           path: _site/
           retention-days: 7
