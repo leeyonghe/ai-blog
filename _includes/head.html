@@ -370,38 +370,156 @@
 
 <!-- Mermaid Diagram Support -->
 <script type="text/javascript" src="{{ "/assets/js/mermaid-init.js" | relative_url }}"></script>
+<link rel="stylesheet" href="{{ "/assets/css/network-diagrams.css" | relative_url }}"></script>
 <style>
-/* Mermaid diagram styling */
+/* Mermaid diagram styling - Network optimized */
 .mermaid {
   text-align: center;
-  margin: 1.5em 0;
-  padding: 1em;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
 }
 
 .mermaid svg {
   max-width: 100%;
   height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
 .mermaid-error {
-  color: #e74c3c;
-  background: #fdf2f2;
-  border: 1px solid #fecaca;
-  border-radius: 6px;
-  padding: 1em;
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
   text-align: center;
   font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* Responsive Mermaid diagrams */
 @media (max-width: 768px) {
   .mermaid {
-    font-size: 0.8em;
-    padding: 0.5em;
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+  
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+  
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+  
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+  
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+  
+  .mermaid::before {
+    display: none !important;
   }
 }
 </style>
