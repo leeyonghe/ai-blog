@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>AudioCraft Custom 프로젝트 완전 분석: AI 오디오 생성의 최첨단 기술 | AI Development Blog</title>
+<meta name="description" content="개요AudioCraft Custom은 Facebook Research의 AudioCraft 프레임워크를 기반으로 개발된 고급 AI 오디오 생성 플랫폼입니다. 이 프로젝트는 텍스트-투-뮤직, 텍스트-투-오디오 생성부터 고급 오디오 분석까지 포괄하는 완전한 솔루션을 제공합니다. 본 포...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="audiocraft, musicgen, audiogen, encodec, pytorch, fastapi, docker, adversarial, discriminator">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/11/15/audiocraft-custom-comprehensive-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="AudioCraft Custom 프로젝트 완전 분석: AI 오디오 생성의 최첨단 기술">
+<meta property="og:description" content="개요AudioCraft Custom은 Facebook Research의 AudioCraft 프레임워크를 기반으로 개발된 고급 AI 오디오 생성 플랫폼입니다. 이 프로젝트는 텍스트-투-뮤직, 텍스트-투-오디오 생성부터 고급 오디오 분석까지 포괄하는 완전한 솔루션을 제공합니다. 본 포...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/11/15/audiocraft-custom-comprehensive-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AudioCraft Custom 프로젝트 완전 분석: AI 오디오 생성의 최첨단 기술">
+<meta name="twitter:description" content="개요AudioCraft Custom은 Facebook Research의 AudioCraft 프레임워크를 기반으로 개발된 고급 AI 오디오 생성 플랫폼입니다. 이 프로젝트는 텍스트-투-뮤직, 텍스트-투-오디오 생성부터 고급 오디오 분석까지 포괄하는 완전한 솔루션을 제공합니다. 본 포...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AudioCraft Custom 프로젝트 완전 분석: AI 오디오 생성의 최첨단 기술",
+  "description": "개요
+
+AudioCraft Custom은 Facebook Research의 AudioCraft 프레임워크를 기반으로 개발된 고급 AI 오디오 생성 플랫폼입니다. 이 프로젝트는 텍스트-투-뮤직, 텍스트-투-오디오 생성부터 고급 오디오 분석까지 포괄하는 완전한 솔루션을 제공합니다. 본...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-11-15T05:00:00+00:00",
+  "dateModified": "2024-11-15T05:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/11/15/audiocraft-custom-comprehensive-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/11/15/audiocraft-custom-comprehensive-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["audiocraft","musicgen","audiogen","encodec","pytorch","fastapi","docker","adversarial","discriminator"],
+  "articleSection": ["AI","Audio Generation","Deep Learning","API Development"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>AudioCraft Custom 프로젝트 완전 분석: AI 오디오 생성의 최첨단 기술</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">AudioCraft Custom 프로젝트 완전 분석: AI 오디오 생성의 최첨단 기술</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-11-15T05:00:00+00:00">Nov 15, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Audio Generation</li><li>Deep Learning</li><li>API Development</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>AudioCraft Custom은 Facebook Research의 AudioCraft 프레임워크를 기반으로 개발된 고급 AI 오디오 생성 플랫폼입니다. 이 프로젝트는 텍스트-투-뮤직, 텍스트-투-오디오 생성부터 고급 오디오 분석까지 포괄하는 완전한 솔루션을 제공합니다. 본 포스트에서는 이 프로젝트의 아키텍처, 핵심 구성 요소, 그리고 실제 구현을 상세히 분석하겠습니다.</p>
+
+<h2 id="1-프로젝트-아키텍처-개요">1. 프로젝트 아키텍처 개요</h2>
+
+<h3 id="11-전체-구조">1.1 전체 구조</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>audiocraft-custom/
+├── audiocraft/              # 핵심 AudioCraft 라이브러리
+│   ├── models/              # AI 모델 구현
+│   │   ├── musicgen.py      # 음악 생성 모델
+│   │   ├── audiogen.py      # 일반 오디오 생성
+│   │   ├── encodec.py       # 오디오 코덱
+│   │   └── multibanddiffusion.py  # 다중 밴드 확산
+│   ├── adversarial/         # 적대적 네트워크
+│   │   └── discriminators/  # 판별자 모델들
+│   ├── data/               # 데이터 처리
+│   ├── modules/            # 공통 모듈
+│   └── solvers/            # 훈련 솔버
+├── api/                    # REST API 서버
+├── demos/                  # Jupyter 노트북 데모
+├── config/                 # 설정 파일들
+└── docker/                 # 컨테이너화
+</code></pre></div></div>
+
+<h3 id="12-핵심-기능-영역">1.2 핵심 기능 영역</h3>
+
+<ol>
+  <li><strong>음악 생성 (MusicGen)</strong>: 텍스트 프롬프트로 음악 생성</li>
+  <li><strong>오디오 생성 (AudioGen)</strong>: 일반 사운드 이펙트 생성</li>
+  <li><strong>오디오 코덱 (EnCodec)</strong>: 고품질 오디오 압축/복원</li>
+  <li><strong>적대적 분석</strong>: 실제/생성 오디오 판별</li>
+  <li><strong>REST API</strong>: 웹 서비스 인터페이스</li>
+  <li><strong>Docker 배포</strong>: 컨테이너 기반 배포</li>
+</ol>
+
+<h2 id="2-핵심-모델-구현-분석">2. 핵심 모델 구현 분석</h2>
+
+<h3 id="21-musicgen---음악-생성-모델">2.1 MusicGen - 음악 생성 모델</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># audiocraft/models/musicgen.py
+</span><span class="k">class</span> <span class="nc">MusicGen</span><span class="p">(</span><span class="n">BaseGenModel</span><span class="p">):</span>
+    <span class="s">"""MusicGen main model with convenient generation API.
+
+    Args:
+        name (str): name of the model.
+        compression_model (CompressionModel): Compression model
+            used to map audio to invertible discrete representations.
+        lm (LMModel): Language model over discrete representations.
+        max_duration (float, optional): maximum duration the model can produce,
+            otherwise, inferred from the training params.
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">compression_model</span><span class="p">:</span> <span class="n">CompressionModel</span><span class="p">,</span> <span class="n">lm</span><span class="p">:</span> <span class="n">LMModel</span><span class="p">,</span>
+                 <span class="n">max_duration</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">compression_model</span><span class="p">,</span> <span class="n">lm</span><span class="p">,</span> <span class="n">max_duration</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_pretrained</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'facebook/musicgen-medium'</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s">"""Return pretrained model, we provide four models:
+        - facebook/musicgen-small (300M), text to music,
+          # see: https://huggingface.co/facebook/musicgen-small
+        - facebook/musicgen-medium (1.5B), text to music,
+          # see: https://huggingface.co/facebook/musicgen-medium  
+        - facebook/musicgen-melody (1.5B) text to music and text+melody to music,
+          # see: https://huggingface.co/facebook/musicgen-melody
+        - facebook/musicgen-large (3.3B), text to music,
+          # see: https://huggingface.co/facebook/musicgen-large
+        """</span>
+</code></pre></div></div>
+
+<p><strong>MusicGen의 핵심 특징:</strong></p>
+<ul>
+  <li><strong>Transformer 기반</strong>: 1.5B~3.3B 파라미터 규모</li>
+  <li><strong>조건부 생성</strong>: 텍스트 및 멜로디 조건 지원</li>
+  <li><strong>고품질 출력</strong>: 32kHz 샘플링 레이트</li>
+  <li><strong>제어 가능</strong>: 온도, top-k, CFG 등 다양한 생성 파라미터</li>
+</ul>
+
+<h3 id="22-audiogen---일반-오디오-생성">2.2 AudioGen - 일반 오디오 생성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># audiocraft/models/audiogen.py
+</span><span class="k">class</span> <span class="nc">AudioGen</span><span class="p">(</span><span class="n">MusicGen</span><span class="p">):</span>
+    <span class="s">"""AudioGen model for text-to-sound generation.
+    This is a thin wrapper around MusicGen as both models have the same architecture.
+    """</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">compression_model</span><span class="p">:</span> <span class="n">CompressionModel</span><span class="p">,</span> <span class="n">lm</span><span class="p">:</span> <span class="n">LMModel</span><span class="p">,</span>
+                 <span class="n">max_duration</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">compression_model</span><span class="p">,</span> <span class="n">lm</span><span class="p">,</span> <span class="n">max_duration</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="o">@</span><span class="nb">staticmethod</span>  
+    <span class="k">def</span> <span class="nf">get_pretrained</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'facebook/audiogen-medium'</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s">"""Return pretrained AudioGen model."""</span>
+</code></pre></div></div>
+
+<p><strong>AudioGen vs MusicGen 차이점:</strong></p>
+<ul>
+  <li><strong>훈련 데이터</strong>: 음악 대신 일반 사운드 이펙트</li>
+  <li><strong>용도</strong>: 환경음, 효과음, 자연음 등</li>
+  <li><strong>모델 크기</strong>: Medium (1.5B) 모델 제공</li>
+  <li><strong>아키텍처</strong>: MusicGen과 동일한 구조</li>
+</ul>
+
+<h3 id="23-encodec---오디오-압축-코덱">2.3 EnCodec - 오디오 압축 코덱</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># audiocraft/models/encodec.py
+</span><span class="k">class</span> <span class="nc">CompressionModel</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""Base class for all compression model (e.g, EnCodec, AudioMAE, DAC etc.).
+    
+    Args:
+        sample_rate (int): Sample rate of the audio.
+        channels (int): Number of audio channels.
+        normalize (bool): Whether to normalize the audio.
+        segment (float, optional): Segment length for processing.
+        overlap (float, optional): Overlap between segments.
+    """</span>
+    
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="n">EncodedFrame</span><span class="p">]:</span>
+        <span class="s">"""Encode audio into discrete tokens."""</span>
+        
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded_frames</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="n">EncodedFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="s">"""Decode tokens back to audio."""</span>
+</code></pre></div></div>
+
+<p><strong>EnCodec의 핵심 기능:</strong></p>
+<ul>
+  <li><strong>벡터 양자화</strong>: 연속 오디오를 이산 토큰으로 변환</li>
+  <li><strong>고품질 복원</strong>: 높은 품질의 오디오 재구성</li>
+  <li><strong>다중 해상도</strong>: 다양한 비트레이트 지원</li>
+  <li><strong>실시간 처리</strong>: 스트리밍 가능한 처리 속도</li>
+</ul>
+
+<h2 id="3-적대적-네트워크-시스템">3. 적대적 네트워크 시스템</h2>
+
+<h3 id="31-multi-period-discriminator-mpd">3.1 Multi-Period Discriminator (MPD)</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># audiocraft/adversarial/discriminators/mpd.py
+</span><span class="k">class</span> <span class="nc">PeriodDiscriminator</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""Period sub-discriminator.
+
+    Args:
+        period (int): Period between samples of audio.
+        in_channels (int): Number of input channels.
+        out_channels (int): Number of output channels.
+        n_layers (int): Number of convolutional layers.
+        kernel_sizes (list of int): Kernel sizes for convolutions.
+        stride (int): Stride for convolutions.
+        filters (int): Initial number of filters in convolutions.
+        filters_scale (int): Multiplier of number of filters as we increase depth.
+        max_filters (int): Maximum number of filters.
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">n_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">kernel_sizes</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">stride</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+                 <span class="n">filters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">filters_scale</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">max_filters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
+                 <span class="n">norm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'weight_norm'</span><span class="p">,</span> <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'LeakyReLU'</span><span class="p">,</span>
+                 <span class="n">activation_params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">'negative_slope'</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">}):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">period</span> <span class="o">=</span> <span class="n">period</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">n_layers</span> <span class="o">=</span> <span class="n">n_layers</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">activation</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">,</span> <span class="n">activation</span><span class="p">)(</span><span class="o">**</span><span class="n">activation_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">convs</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="s">"""Forward pass through period discriminator."""</span>
+        <span class="c1"># Reshape input according to period
+</span>        <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">%</span> <span class="bp">self</span><span class="p">.</span><span class="n">period</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">n_pad</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">period</span> <span class="o">-</span> <span class="p">(</span><span class="n">t</span> <span class="o">%</span> <span class="bp">self</span><span class="p">.</span><span class="n">period</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">pad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_pad</span><span class="p">),</span> <span class="s">"reflect"</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">n_pad</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">view</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">t</span> <span class="o">//</span> <span class="bp">self</span><span class="p">.</span><span class="n">period</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">period</span><span class="p">)</span>
+        
+        <span class="n">fmap</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">conv</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">convs</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">activation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">fmap</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">fmap</span>
+
+<span class="k">class</span> <span class="nc">MultiPeriodDiscriminator</span><span class="p">(</span><span class="n">MultiDiscriminator</span><span class="p">):</span>
+    <span class="s">"""Multi-Period Discriminator (MPD) from HiFi-GAN."""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">discriminators</span> <span class="o">=</span> <span class="p">[</span><span class="n">PeriodDiscriminator</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">periods</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="n">discriminators</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="32-multi-scale-discriminator-msd">3.2 Multi-Scale Discriminator (MSD)</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># audiocraft/adversarial/discriminators/msd.py
+</span><span class="k">class</span> <span class="nc">ScaleDiscriminator</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""Scale sub-discriminator."""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'spectral_norm'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">convs</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">NormConv1d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">7</span><span class="p">),</span>
+            <span class="n">NormConv1d</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+            <span class="n">NormConv1d</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+            <span class="n">NormConv1d</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+            <span class="n">NormConv1d</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+            <span class="n">NormConv1d</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+            <span class="n">NormConv1d</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="p">])</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">conv_post</span> <span class="o">=</span> <span class="n">NormConv1d</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">MultiScaleDiscriminator</span><span class="p">(</span><span class="n">MultiDiscriminator</span><span class="p">):</span>
+    <span class="s">"""Multi-Scale Discriminator (MSD) from HiFi-GAN."""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scales</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">discriminators</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scales</span><span class="p">:</span>
+            <span class="n">discriminators</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">ScaleDiscriminator</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="n">discriminators</span><span class="p">,</span> <span class="n">pools</span><span class="o">=</span><span class="p">[</span><span class="n">nn</span><span class="p">.</span><span class="n">AvgPool1d</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span> 
+                                              <span class="k">if</span> <span class="n">scale</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">nn</span><span class="p">.</span><span class="n">Identity</span><span class="p">()</span> <span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">scales</span><span class="p">])</span>
+</code></pre></div></div>
+
+<h3 id="33-multi-scale-stft-discriminator-ms-stft-d">3.3 Multi-Scale STFT Discriminator (MS-STFT-D)</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># audiocraft/adversarial/discriminators/msstftd.py
+</span><span class="k">class</span> <span class="nc">STFTDiscriminator</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""STFT sub-discriminator."""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">hop_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span> <span class="n">win_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">n_fft</span> <span class="o">=</span> <span class="n">n_fft</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">hop_length</span> <span class="o">=</span> <span class="n">hop_length</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">win_length</span> <span class="o">=</span> <span class="n">win_length</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s">'window'</span><span class="p">,</span> <span class="n">torch</span><span class="p">.</span><span class="n">hann_window</span><span class="p">(</span><span class="n">win_length</span><span class="p">))</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="s">"""Apply STFT and discriminate in frequency domain."""</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">stft</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">n_fft</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">n_fft</span><span class="p">,</span> <span class="n">hop_length</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">hop_length</span><span class="p">,</span>
+                      <span class="n">win_length</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">win_length</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">window</span><span class="p">,</span> <span class="n">return_complex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">view_as_real</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">rearrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">'b f t c -&gt; b c f t'</span><span class="p">)</span>
+        
+        <span class="c1"># Apply 2D convolutions in time-frequency domain
+</span>        <span class="n">fmap</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">conv</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">convs</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">activation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">fmap</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">fmap</span>
+
+<span class="k">class</span> <span class="nc">MultiScaleSTFTDiscriminator</span><span class="p">(</span><span class="n">MultiDiscriminator</span><span class="p">):</span>
+    <span class="s">"""Multi-Scale STFT Discriminator for frequency domain analysis."""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_ffts</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">4096</span><span class="p">],</span> 
+                 <span class="n">hop_lengths</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">480</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">discriminators</span> <span class="o">=</span> <span class="p">[</span><span class="n">STFTDiscriminator</span><span class="p">(</span><span class="n">n_fft</span><span class="p">,</span> <span class="n">hop_length</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> 
+                         <span class="k">for</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">hop_length</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">n_ffts</span><span class="p">,</span> <span class="n">hop_lengths</span><span class="p">)]</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="n">discriminators</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>적대적 시스템의 특징:</strong></p>
+<ul>
+  <li><strong>다중 관점 분석</strong>: 시간, 주파수, 주기 도메인</li>
+  <li><strong>계층적 특징</strong>: 다양한 스케일의 특징 추출</li>
+  <li><strong>안정적 훈련</strong>: 다중 판별자로 모드 붕괴 방지</li>
+  <li><strong>품질 보장</strong>: 실제 오디오와 유사한 품질 달성</li>
+</ul>
+
+<h2 id="4-rest-api-서버-구현">4. REST API 서버 구현</h2>
+
+<h3 id="41-fastapi-기반-서버">4.1 FastAPI 기반 서버</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># api/main.py
+</span><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">UploadFile</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Form</span>
+<span class="kn">from</span> <span class="nn">fastapi.middleware.cors</span> <span class="kn">import</span> <span class="n">CORSMiddleware</span>
+<span class="kn">from</span> <span class="nn">fastapi.responses</span> <span class="kn">import</span> <span class="n">FileResponse</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s">"AudioCraft API"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s">"AudioCraft의 모든 모델을 REST API로 제공하는 서비스"</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s">"1.0.0"</span>
+<span class="p">)</span>
+
+<span class="c1"># 모델 초기화
+</span><span class="n">models</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"musicgen"</span><span class="p">:</span> <span class="n">MusicGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/musicgen-small"</span><span class="p">),</span>
+    <span class="s">"audiogen"</span><span class="p">:</span> <span class="n">AudioGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/audiogen-medium"</span><span class="p">),</span>
+    <span class="s">"encodec"</span><span class="p">:</span> <span class="n">EncodecModel</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/encodec_24khz"</span><span class="p">),</span>
+    <span class="s">"multiband"</span><span class="p">:</span> <span class="n">MultiBandDiffusion</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/multiband-diffusion"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># 판별자 초기화
+</span><span class="n">discriminators</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"mpd"</span><span class="p">:</span> <span class="n">MultiPeriodDiscriminator</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="n">channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="s">"msd"</span><span class="p">:</span> <span class="n">MultiScaleDiscriminator</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="s">"msstftd"</span><span class="p">:</span> <span class="n">MultiScaleSTFTDiscriminator</span><span class="p">(</span><span class="n">n_ffts</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">4096</span><span class="p">],</span> <span class="n">hop_lengths</span><span class="o">=</span><span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">480</span><span class="p">],</span> <span class="n">channels</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="42-음악-생성-api">4.2 음악 생성 API</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">TextToAudioRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="s">"""텍스트-오디오 생성 요청 모델"""</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">250</span>
+    <span class="n">top_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">cfg_coef</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span>
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">"/generate/music"</span><span class="p">,</span> <span class="n">response_class</span><span class="o">=</span><span class="n">FileResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">generate_music</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">TextToAudioRequest</span><span class="p">):</span>
+    <span class="s">"""
+    텍스트 프롬프트를 사용하여 음악을 생성합니다.
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="s">"musicgen"</span><span class="p">]</span>
+        <span class="n">model</span><span class="p">.</span><span class="n">set_generation_params</span><span class="p">(</span>
+            <span class="n">duration</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">duration</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">temperature</span><span class="p">,</span>
+            <span class="n">top_k</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">top_k</span><span class="p">,</span>
+            <span class="n">top_p</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">top_p</span><span class="p">,</span>
+            <span class="n">cfg_coef</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">cfg_coef</span>
+        <span class="p">)</span>
+        
+        <span class="n">wav</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">request</span><span class="p">.</span><span class="n">text</span><span class="p">])</span>
+        
+        <span class="c1"># 임시 파일로 저장
+</span>        <span class="k">with</span> <span class="n">tempfile</span><span class="p">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s">".wav"</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+            <span class="n">torchaudio</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">wav</span><span class="p">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="mi">32000</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">tmp</span><span class="p">.</span><span class="n">name</span>
+            
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s">"음악 생성 중 오류 발생: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="43-오디오-분석-api">4.3 오디오 분석 API</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AudioAnalysisResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="s">"""오디오 분석 결과를 위한 응답 모델"""</span>
+    <span class="n">mpd_score</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">msd_score</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">msstftd_score</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">feature_maps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
+    <span class="n">is_real</span><span class="p">:</span> <span class="nb">bool</span>
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">"/analyze"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">AudioAnalysisResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">analyze_audio</span><span class="p">(</span>
+    <span class="n">audio_file</span><span class="p">:</span> <span class="n">UploadFile</span> <span class="o">=</span> <span class="n">File</span><span class="p">(...),</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="p">):</span>
+    <span class="s">"""
+    오디오 파일을 분석하여 각 판별자의 결과를 반환합니다.
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">audio_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">audio_file</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">waveform</span> <span class="o">=</span> <span class="n">process_audio</span><span class="p">(</span><span class="n">audio_data</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="c1"># MPD 분석
+</span>            <span class="n">mpd_logits</span><span class="p">,</span> <span class="n">mpd_features</span> <span class="o">=</span> <span class="n">discriminators</span><span class="p">[</span><span class="s">"mpd"</span><span class="p">](</span><span class="n">waveform</span><span class="p">)</span>
+            <span class="n">mpd_score</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">mpd_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">])).</span><span class="n">item</span><span class="p">()</span>
+            
+            <span class="c1"># MSD 분석
+</span>            <span class="n">msd_logits</span><span class="p">,</span> <span class="n">msd_features</span> <span class="o">=</span> <span class="n">discriminators</span><span class="p">[</span><span class="s">"msd"</span><span class="p">](</span><span class="n">waveform</span><span class="p">)</span>
+            <span class="n">msd_score</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">msd_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">])).</span><span class="n">item</span><span class="p">()</span>
+            
+            <span class="c1"># MS-STFT-D 분석
+</span>            <span class="n">msstftd_logits</span><span class="p">,</span> <span class="n">msstftd_features</span> <span class="o">=</span> <span class="n">discriminators</span><span class="p">[</span><span class="s">"msstftd"</span><span class="p">](</span><span class="n">waveform</span><span class="p">)</span>
+            <span class="n">msstftd_score</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">msstftd_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">])).</span><span class="n">item</span><span class="p">()</span>
+            
+            <span class="c1"># 특징 맵 추출
+</span>            <span class="n">feature_maps</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">features</span> <span class="ow">in</span> <span class="p">[</span><span class="n">mpd_features</span><span class="p">,</span> <span class="n">msd_features</span><span class="p">,</span> <span class="n">msstftd_features</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+                    <span class="n">feature_maps</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">feat</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">).</span><span class="n">cpu</span><span class="p">().</span><span class="n">numpy</span><span class="p">().</span><span class="n">tolist</span><span class="p">())</span>
+        
+        <span class="n">is_real</span> <span class="o">=</span> <span class="p">(</span><span class="n">mpd_score</span> <span class="o">+</span> <span class="n">msd_score</span> <span class="o">+</span> <span class="n">msstftd_score</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+        
+        <span class="k">return</span> <span class="n">AudioAnalysisResponse</span><span class="p">(</span>
+            <span class="n">mpd_score</span><span class="o">=</span><span class="n">mpd_score</span><span class="p">,</span>
+            <span class="n">msd_score</span><span class="o">=</span><span class="n">msd_score</span><span class="p">,</span>
+            <span class="n">msstftd_score</span><span class="o">=</span><span class="n">msstftd_score</span><span class="p">,</span>
+            <span class="n">feature_maps</span><span class="o">=</span><span class="n">feature_maps</span><span class="p">,</span>
+            <span class="n">is_real</span><span class="o">=</span><span class="n">is_real</span>
+        <span class="p">)</span>
+        
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s">"분석 중 오류 발생: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="5-docker-컨테이너화">5. Docker 컨테이너화</h2>
+
+<h3 id="51-dockerfile-분석">5.1 Dockerfile 분석</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime</span>
+
+<span class="c"># 작업 디렉토리 설정</span>
+<span class="k">WORKDIR</span><span class="s"> /workspace</span>
+
+<span class="c"># 시스템 의존성 설치</span>
+<span class="k">ENV</span><span class="s"> DEBIAN_FRONTEND=noninteractive</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="se">\
+</span>    ffmpeg <span class="se">\
+</span>    libsndfile1 <span class="se">\
+</span>    build-essential <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="c"># Python 가상환경 생성 및 활성화</span>
+<span class="k">RUN </span>python <span class="nt">-m</span> venv /opt/venv
+<span class="k">ENV</span><span class="s"> PATH="/opt/venv/bin:$PATH"</span>
+
+<span class="c"># 애플리케이션 파일 복사</span>
+<span class="k">COPY</span><span class="s"> . .</span>
+
+<span class="c"># Python 의존성 설치</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">--no-cache-dir</span> <span class="nt">-r</span> requirements.txt
+
+<span class="c"># audiocraft 패키지 설치</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">-e</span> .
+
+<span class="c"># 환경 변수 설정</span>
+<span class="k">ENV</span><span class="s"> PYTHONPATH=/workspace</span>
+<span class="k">ENV</span><span class="s"> HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}</span>
+
+<span class="c"># FastAPI 서버 포트 노출</span>
+<span class="k">EXPOSE</span><span class="s"> 8000</span>
+
+<span class="c"># FastAPI 서버 실행</span>
+<span class="k">CMD</span><span class="s"> ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"] </span>
+</code></pre></div></div>
+
+<p><strong>Docker 설정의 특징:</strong></p>
+<ul>
+  <li><strong>PyTorch 기반</strong>: CUDA 12.1 지원</li>
+  <li><strong>시스템 의존성</strong>: FFmpeg, libsndfile 포함</li>
+  <li><strong>가상환경</strong>: 격리된 Python 환경</li>
+  <li><strong>환경 변수</strong>: Hugging Face 토큰 지원</li>
+  <li><strong>자동 시작</strong>: uvicorn 서버 자동 실행</li>
+</ul>
+
+<h2 id="6-데모-및-활용-예제">6. 데모 및 활용 예제</h2>
+
+<h3 id="61-jupyter-노트북-데모">6.1 Jupyter 노트북 데모</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># demos/musicgen_demo.ipynb
+</span><span class="kn">from</span> <span class="nn">audiocraft.models</span> <span class="kn">import</span> <span class="n">MusicGen</span>
+<span class="kn">from</span> <span class="nn">audiocraft.models</span> <span class="kn">import</span> <span class="n">MultiBandDiffusion</span>
+
+<span class="n">USE_DIFFUSION_DECODER</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="c1"># Using small model, better results would be obtained with `medium` or `large`.
+</span><span class="n">model</span> <span class="o">=</span> <span class="n">MusicGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">'facebook/musicgen-small'</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">USE_DIFFUSION_DECODER</span><span class="p">:</span>
+    <span class="n">mbd</span> <span class="o">=</span> <span class="n">MultiBandDiffusion</span><span class="p">.</span><span class="n">get_mbd_musicgen</span><span class="p">()</span>
+
+<span class="c1"># 생성 파라미터 설정
+</span><span class="n">model</span><span class="p">.</span><span class="n">set_generation_params</span><span class="p">(</span>
+    <span class="n">use_sampling</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">top_k</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span>
+    <span class="n">duration</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+
+<span class="c1"># 텍스트 조건부 생성
+</span><span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span>
+    <span class="n">descriptions</span><span class="o">=</span><span class="p">[</span>
+        <span class="s">'80s pop track with bassy drums and synth'</span><span class="p">,</span>
+        <span class="s">'90s rock song with loud guitars and heavy drums'</span><span class="p">,</span>
+        <span class="s">'Progressive rock drum and bass solo'</span><span class="p">,</span>
+        <span class="s">'Punk Rock song with loud drum and power guitar'</span><span class="p">,</span>
+        <span class="s">'Bluesy guitar instrumental with soulful licks and a driving rhythm section'</span><span class="p">,</span>
+        <span class="s">'Jazz Funk song with slap bass and powerful saxophone'</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">progress</span><span class="o">=</span><span class="bp">True</span>
+<span class="p">)</span>
+<span class="n">display_audio</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">sample_rate</span><span class="o">=</span><span class="mi">32000</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="62-음악-연속-생성">6.2 음악 연속 생성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 기존 오디오를 기반으로 연속 생성
+</span><span class="kn">import</span> <span class="nn">torchaudio</span>
+<span class="n">prompt_waveform</span><span class="p">,</span> <span class="n">prompt_sr</span> <span class="o">=</span> <span class="n">torchaudio</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="s">"../assets/bach.mp3"</span><span class="p">)</span>
+<span class="n">prompt_duration</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">prompt_waveform</span> <span class="o">=</span> <span class="n">prompt_waveform</span><span class="p">[...,</span> <span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">prompt_duration</span> <span class="o">*</span> <span class="n">prompt_sr</span><span class="p">)]</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">generate_continuation</span><span class="p">(</span>
+    <span class="n">prompt_waveform</span><span class="p">,</span> 
+    <span class="n">prompt_sample_rate</span><span class="o">=</span><span class="n">prompt_sr</span><span class="p">,</span> 
+    <span class="n">progress</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> 
+    <span class="n">return_tokens</span><span class="o">=</span><span class="bp">True</span>
+<span class="p">)</span>
+<span class="n">display_audio</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sample_rate</span><span class="o">=</span><span class="mi">32000</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">USE_DIFFUSION_DECODER</span><span class="p">:</span>
+    <span class="n">out_diffusion</span> <span class="o">=</span> <span class="n">mbd</span><span class="p">.</span><span class="n">tokens_to_wav</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">display_audio</span><span class="p">(</span><span class="n">out_diffusion</span><span class="p">,</span> <span class="n">sample_rate</span><span class="o">=</span><span class="mi">32000</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="7-설정-시스템">7. 설정 시스템</h2>
+
+<h3 id="71-기본-설정">7.1 기본 설정</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/config.yaml</span>
+<span class="na">defaults</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">_self_</span>
+  <span class="pi">-</span> <span class="na">dset</span><span class="pi">:</span> <span class="s">default</span>
+  <span class="pi">-</span> <span class="na">solver</span><span class="pi">:</span> <span class="s">default</span>
+
+<span class="na">device</span><span class="pi">:</span> <span class="s">cuda</span>
+<span class="na">dtype</span><span class="pi">:</span> <span class="s">float32</span>
+<span class="na">autocast</span><span class="pi">:</span> <span class="no">false</span>
+<span class="na">autocast_dtype</span><span class="pi">:</span> <span class="s">bfloat16</span>
+<span class="na">seed</span><span class="pi">:</span> <span class="m">2036</span>
+<span class="na">show</span><span class="pi">:</span> <span class="no">false</span>
+<span class="na">continue_from</span><span class="pi">:</span>
+<span class="na">execute_only</span><span class="pi">:</span>
+<span class="na">execute_inplace</span><span class="pi">:</span> <span class="no">false</span>
+<span class="na">benchmark_no_load</span><span class="pi">:</span> <span class="no">false</span>
+
+<span class="na">efficient_attention_backend</span><span class="pi">:</span> <span class="s">torch</span>
+<span class="na">num_threads</span><span class="pi">:</span> <span class="m">1</span>
+<span class="na">mp_start_method</span><span class="pi">:</span> <span class="s">forkserver</span>
+
+<span class="na">label</span><span class="pi">:</span>
+
+<span class="c1"># logging parameters</span>
+<span class="na">logging</span><span class="pi">:</span>
+  <span class="na">level</span><span class="pi">:</span> <span class="s">info</span>
+  <span class="na">log_file</span><span class="pi">:</span> <span class="no">null</span>
+  <span class="na">log_tensorboard</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">log_wandb</span><span class="pi">:</span> <span class="no">false</span>
+</code></pre></div></div>
+
+<h3 id="72-모델별-설정">7.2 모델별 설정</h3>
+
+<p><strong>MusicGen 설정:</strong></p>
+<ul>
+  <li><strong>모델 크기</strong>: Small (300M), Medium (1.5B), Large (3.3B)</li>
+  <li><strong>조건부 입력</strong>: 텍스트, 멜로디</li>
+  <li><strong>생성 길이</strong>: 최대 30초</li>
+  <li><strong>샘플링</strong>: Top-k, Top-p, Temperature 제어</li>
+</ul>
+
+<p><strong>AudioGen 설정:</strong></p>
+<ul>
+  <li><strong>특화 분야</strong>: 환경음, 효과음</li>
+  <li><strong>품질</strong>: 32kHz 고품질 오디오</li>
+  <li><strong>지속 시간</strong>: 다양한 길이 지원</li>
+</ul>
+
+<h2 id="8-성능-최적화-및-확장성">8. 성능 최적화 및 확장성</h2>
+
+<h3 id="81-메모리-최적화">8.1 메모리 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 모델 로딩 최적화
+</span><span class="o">@</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">load_model_cached</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="s">"""캐시된 모델 로딩으로 메모리 효율성 향상"""</span>
+    <span class="k">if</span> <span class="n">model_name</span> <span class="o">==</span> <span class="s">"musicgen"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">MusicGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/musicgen-small"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">model_name</span> <span class="o">==</span> <span class="s">"audiogen"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">AudioGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/audiogen-medium"</span><span class="p">)</span>
+    <span class="c1"># ...
+</span>
+<span class="c1"># GPU 메모리 관리
+</span><span class="k">def</span> <span class="nf">manage_gpu_memory</span><span class="p">():</span>
+    <span class="s">"""GPU 메모리 정리"""</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">empty_cache</span><span class="p">()</span>
+        <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">synchronize</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="82-배치-처리">8.2 배치 처리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">batch_generate_music</span><span class="p">(</span><span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+    <span class="s">"""배치 단위 음악 생성으로 처리량 향상"""</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompts</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">prompts</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">batch_size</span><span class="p">]</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">results</span>
+</code></pre></div></div>
+
+<h3 id="83-비동기-처리">8.3 비동기 처리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">async_generate_audio</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">TextToAudioRequest</span><span class="p">):</span>
+    <span class="s">"""비동기 오디오 생성"""</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="p">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">()</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">loop</span><span class="p">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+            <span class="n">executor</span><span class="p">,</span> 
+            <span class="k">lambda</span><span class="p">:</span> <span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">request</span><span class="p">.</span><span class="n">text</span><span class="p">])</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></div>
+
+<h2 id="9-실무-활용-시나리오">9. 실무 활용 시나리오</h2>
+
+<h3 id="91-음악-제작-스튜디오">9.1 음악 제작 스튜디오</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 음악 제작을 위한 고급 워크플로우
+</span><span class="k">class</span> <span class="nc">MusicProductionPipeline</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">musicgen</span> <span class="o">=</span> <span class="n">MusicGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">'facebook/musicgen-large'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">audiogen</span> <span class="o">=</span> <span class="n">AudioGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">'facebook/audiogen-medium'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">encodec</span> <span class="o">=</span> <span class="n">EncodecModel</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">'facebook/encodec_24khz'</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">create_song_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sections</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+        <span class="s">"""섹션별 음악 생성"""</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">section</span><span class="p">,</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">musicgen</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">prompt</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">results</span>
+        
+    <span class="k">def</span> <span class="nf">add_sound_effects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_audio</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">effects</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="s">"""사운드 이펙트 추가"""</span>
+        <span class="n">fx_audio</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="n">effects</span><span class="p">:</span>
+            <span class="n">fx</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">audiogen</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">effect</span><span class="p">])</span>
+            <span class="n">fx_audio</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">fx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">mix_audio</span><span class="p">(</span><span class="n">base_audio</span><span class="p">,</span> <span class="n">fx_audio</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">compress_for_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audio</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="s">"""배포용 압축"""</span>
+        <span class="n">codes</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">encodec</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+        <span class="n">compressed</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">encodec</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">compressed</span>
+</code></pre></div></div>
+
+<h3 id="92-게임-오디오-시스템">9.2 게임 오디오 시스템</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">GameAudioSystem</span><span class="p">:</span>
+    <span class="s">"""게임용 동적 오디오 생성 시스템"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">audiogen</span> <span class="o">=</span> <span class="n">AudioGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">'facebook/audiogen-medium'</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">sound_cache</span> <span class="o">=</span> <span class="p">{}</span>
+        
+    <span class="k">def</span> <span class="nf">generate_ambient_sound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="s">"""환경별 배경음 생성"""</span>
+        <span class="n">prompts</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"forest"</span><span class="p">:</span> <span class="s">"gentle forest ambiance with birds chirping and leaves rustling"</span><span class="p">,</span>
+            <span class="s">"ocean"</span><span class="p">:</span> <span class="s">"calm ocean waves with seagull sounds"</span><span class="p">,</span>
+            <span class="s">"city"</span><span class="p">:</span> <span class="s">"urban city ambiance with distant traffic and footsteps"</span><span class="p">,</span>
+            <span class="s">"dungeon"</span><span class="p">:</span> <span class="s">"dark dungeon atmosphere with water drops and wind"</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span> <span class="n">environment</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">sound_cache</span><span class="p">:</span>
+            <span class="n">audio</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">audiogen</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">prompts</span><span class="p">[</span><span class="n">environment</span><span class="p">]])</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">sound_cache</span><span class="p">[</span><span class="n">environment</span><span class="p">]</span> <span class="o">=</span> <span class="n">audio</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">sound_cache</span><span class="p">[</span><span class="n">environment</span><span class="p">]</span>
+        
+    <span class="k">def</span> <span class="nf">generate_dynamic_music</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_state</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="s">"""게임 상태에 따른 동적 음악"""</span>
+        <span class="n">tension</span> <span class="o">=</span> <span class="n">game_state</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'tension'</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">game_state</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'location'</span><span class="p">,</span> <span class="s">'neutral'</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">tension</span> <span class="o">&gt;</span> <span class="mf">0.8</span><span class="p">:</span>
+            <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"intense battle music for </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s"> with dramatic orchestration"</span>
+        <span class="k">elif</span> <span class="n">tension</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"suspenseful </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s"> music with building tension"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"peaceful </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s"> ambient music"</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">musicgen</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">prompt</span><span class="p">])</span>
+</code></pre></div></div>
+
+<h3 id="93-팟캐스트-자동화">9.3 팟캐스트 자동화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">PodcastAudioProcessor</span><span class="p">:</span>
+    <span class="s">"""팟캐스트 제작 자동화"""</span>
+    
+    <span class="k">def</span> <span class="nf">create_intro_music</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">podcast_theme</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="s">"""팟캐스트 인트로 음악 생성"""</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"upbeat podcast intro music for </span><span class="si">{</span><span class="n">podcast_theme</span><span class="si">}</span><span class="s"> show, 15 seconds"</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">musicgen</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">prompt</span><span class="p">])</span>
+        
+    <span class="k">def</span> <span class="nf">generate_transition_sounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="s">"""전환 사운드 생성"""</span>
+        <span class="n">transitions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">prompts</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s">"smooth podcast transition sound"</span><span class="p">,</span>
+            <span class="s">"gentle chime for section break"</span><span class="p">,</span>
+            <span class="s">"soft whoosh transition effect"</span><span class="p">,</span>
+            <span class="s">"minimalist transition tone"</span><span class="p">,</span>
+            <span class="s">"clean section divider sound"</span>
+        <span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="n">prompts</span><span class="p">[:</span><span class="n">count</span><span class="p">]:</span>
+            <span class="n">sound</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">audiogen</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">prompt</span><span class="p">])</span>
+            <span class="n">transitions</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">sound</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">transitions</span>
+</code></pre></div></div>
+
+<h2 id="10-한계점-및-개선-방향">10. 한계점 및 개선 방향</h2>
+
+<h3 id="101-현재-한계점">10.1 현재 한계점</h3>
+
+<ol>
+  <li><strong>계산 복잡도</strong>: 고품질 생성을 위한 높은 GPU 요구사항</li>
+  <li><strong>생성 시간</strong>: 실시간 생성의 어려움</li>
+  <li><strong>제어 정밀도</strong>: 세밀한 음악적 요소 제어의 한계</li>
+  <li><strong>일관성</strong>: 긴 오디오에서의 일관성 유지 문제</li>
+</ol>
+
+<h3 id="102-개선-방향">10.2 개선 방향</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 미래 개선 방향 (예시)
+</span><span class="k">class</span> <span class="nc">NextGenAudioCraft</span><span class="p">:</span>
+    <span class="s">"""차세대 AudioCraft 시스템"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">streaming_generator</span> <span class="o">=</span> <span class="n">StreamingMusicGen</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">fine_control</span> <span class="o">=</span> <span class="n">FinegrainedController</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">quality_enhancer</span> <span class="o">=</span> <span class="n">AudioQualityEnhancer</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">real_time_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="s">"""실시간 스트리밍 생성"""</span>
+        <span class="c1"># 청크 단위 실시간 생성
+</span>        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">streaming_generator</span><span class="p">.</span><span class="n">generate_stream</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">chunk</span>
+            
+    <span class="k">def</span> <span class="nf">style_transfer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_audio</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">style_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="s">"""오디오 스타일 전송"""</span>
+        <span class="c1"># 기존 오디오의 스타일 변경
+</span>        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">fine_control</span><span class="p">.</span><span class="n">transfer_style</span><span class="p">(</span><span class="n">content_audio</span><span class="p">,</span> <span class="n">style_prompt</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">adaptive_quality</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audio</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target_quality</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="s">"""적응적 품질 향상"""</span>
+        <span class="c1"># 사용 목적에 따른 품질 최적화
+</span>        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">quality_enhancer</span><span class="p">.</span><span class="n">enhance</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">target_quality</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>AudioCraft Custom 프로젝트는 최첨단 AI 오디오 생성 기술을 실용적인 플랫폼으로 구현한 훌륭한 사례입니다.</p>
+
+<p><strong>핵심 성과:</strong></p>
+<ul>
+  <li><strong>완전한 파이프라인</strong>: 생성부터 분석까지 통합 솔루션</li>
+  <li><strong>확장 가능한 아키텍처</strong>: 모듈화된 설계로 쉬운 확장</li>
+  <li><strong>실용적인 API</strong>: RESTful 인터페이스로 쉬운 통합</li>
+  <li><strong>Docker 지원</strong>: 간편한 배포와 확장성</li>
+</ul>
+
+<p>이 프로젝트는 음악 제작, 게임 개발, 미디어 제작 등 다양한 분야에서 AI 오디오 생성 기술의 실제 활용 가능성을 보여줍니다. 앞으로 실시간 생성, 더 정밀한 제어, 향상된 품질 등의 개선을 통해 더욱 강력한 오디오 생성 플랫폼으로 발전할 것으로 기대됩니다.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/11/15/kag-builder-module-architecture-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">KAG Builder 모듈 아키텍처 심층 분석 - 지식 추출 및 그래프 구축 엔진</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/11/23/opensora-utils-module-analysis/" rel="next">
+          <span class="nav-title">Open-Sora 유틸리티 모듈 상세 분석 - 추론, 학습, 체크포인트 및 메모리 관리</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

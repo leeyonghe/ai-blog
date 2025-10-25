@@ -1,0 +1,298 @@
+/* Network Diagram Specific Styles */
+
+/* Network component color classes */
+.network-router {
+  background-color: #1e3a8a !important;
+  color: white !important;
+  border: 2px solid #1e40af !important;
+}
+
+.network-switch {
+  background-color: #059669 !important;
+  color: white !important;
+  border: 2px solid #047857 !important;
+}
+
+.network-firewall {
+  background-color: #dc2626 !important;
+  color: white !important;
+  border: 2px solid #b91c1c !important;
+}
+
+.network-server {
+  background-color: #7c3aed !important;
+  color: white !important;
+  border: 2px solid #6d28d9 !important;
+}
+
+.network-database {
+  background-color: #f59e0b !important;
+  color: white !important;
+  border: 2px solid #d97706 !important;
+}
+
+.network-client {
+  background-color: #6b7280 !important;
+  color: white !important;
+  border: 2px solid #4b5563 !important;
+}
+
+.network-cloud {
+  background-color: #0ea5e9 !important;
+  color: white !important;
+  border: 2px solid #0284c7 !important;
+}
+
+.network-gateway {
+  background-color: #059669 !important;
+  color: white !important;
+  border: 2px solid #047857 !important;
+}
+
+/* Network zone styling */
+.network-zone-dmz {
+  fill: rgba(239, 68, 68, 0.1) !important;
+  stroke: #dc2626 !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 8,4 !important;
+}
+
+.network-zone-internal {
+  fill: rgba(34, 197, 94, 0.1) !important;
+  stroke: #16a34a !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 8,4 !important;
+}
+
+.network-zone-external {
+  fill: rgba(59, 130, 246, 0.1) !important;
+  stroke: #2563eb !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 8,4 !important;
+}
+
+.network-zone-secure {
+  fill: rgba(168, 85, 247, 0.1) !important;
+  stroke: #9333ea !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 8,4 !important;
+}
+
+/* Connection type styling */
+.connection-secure {
+  stroke: #16a34a !important;
+  stroke-width: 3px !important;
+}
+
+.connection-unsecure {
+  stroke: #dc2626 !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 6,3 !important;
+}
+
+.connection-vpn {
+  stroke: #7c3aed !important;
+  stroke-width: 3px !important;
+  stroke-dasharray: 10,5 !important;
+}
+
+.connection-wireless {
+  stroke: #f59e0b !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 4,4 !important;
+}
+
+/* Protocol labels */
+.protocol-label {
+  font-size: 11px !important;
+  font-weight: bold !important;
+  fill: #374151 !important;
+  text-anchor: middle !important;
+}
+
+.protocol-https {
+  fill: #16a34a !important;
+}
+
+.protocol-http {
+  fill: #f59e0b !important;
+}
+
+.protocol-ssh {
+  fill: #7c3aed !important;
+}
+
+.protocol-ftp {
+  fill: #dc2626 !important;
+}
+
+/* IP address and port styling */
+.ip-address {
+  font-family: 'Courier New', monospace !important;
+  font-size: 10px !important;
+  fill: #6b7280 !important;
+}
+
+.port-number {
+  font-family: 'Courier New', monospace !important;
+  font-size: 9px !important;
+  fill: #9ca3af !important;
+}
+
+/* Status indicators */
+.status-online {
+  fill: #16a34a !important;
+}
+
+.status-offline {
+  fill: #dc2626 !important;
+}
+
+.status-warning {
+  fill: #f59e0b !important;
+}
+
+.status-unknown {
+  fill: #6b7280 !important;
+}
+
+/* Bandwidth indicators */
+.bandwidth-high {
+  stroke: #16a34a !important;
+  stroke-width: 4px !important;
+}
+
+.bandwidth-medium {
+  stroke: #f59e0b !important;
+  stroke-width: 3px !important;
+}
+
+.bandwidth-low {
+  stroke: #dc2626 !important;
+  stroke-width: 2px !important;
+}
+
+/* Security level indicators */
+.security-high {
+  border: 3px solid #16a34a !important;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.3) !important;
+}
+
+.security-medium {
+  border: 2px solid #f59e0b !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3) !important;
+}
+
+.security-low {
+  border: 2px solid #dc2626 !important;
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.3) !important;
+}
+
+/* Network topology specific adjustments */
+.mermaid .node.network-device {
+  border-radius: 8px !important;
+}
+
+.mermaid .node.network-server {
+  border-radius: 4px !important;
+}
+
+.mermaid .node.network-cloud {
+  border-radius: 50% !important;
+}
+
+/* Hover effects for interactive diagrams */
+.mermaid .node:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.mermaid .edgePath:hover path {
+  stroke-width: 3px !important;
+  transition: stroke-width 0.2s ease-in-out;
+}
+
+/* Legend styling for network diagrams */
+.network-legend {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.network-legend h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: #374151;
+}
+
+.network-legend .legend-item {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.network-legend .legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  margin-right: 8px;
+  border: 1px solid #d1d5db;
+}
+
+/* Performance monitoring indicators */
+.perf-excellent {
+  background: linear-gradient(45deg, #16a34a, #22c55e) !important;
+}
+
+.perf-good {
+  background: linear-gradient(45deg, #65a30d, #84cc16) !important;
+}
+
+.perf-fair {
+  background: linear-gradient(45deg, #f59e0b, #fbbf24) !important;
+}
+
+.perf-poor {
+  background: linear-gradient(45deg, #dc2626, #ef4444) !important;
+}
+
+/* Responsive adjustments for network diagrams */
+@media (max-width: 768px) {
+  .network-legend {
+    position: relative;
+    margin: 10px 0;
+    width: 100%;
+  }
+
+  .mermaid .node text {
+    font-size: 11px !important;
+  }
+
+  .mermaid .edgeLabel text {
+    font-size: 10px !important;
+  }
+}
+
+/* Print optimizations for network diagrams */
+@media print {
+  .network-legend {
+    background: white !important;
+    box-shadow: none !important;
+  }
+
+  .mermaid .node:hover {
+    transform: none !important;
+  }
+
+  .mermaid .edgePath:hover path {
+    stroke-width: 2px !important;
+  }
+}

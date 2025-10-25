@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략 심층 분석 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 파운데이션 모델의 샘플링과 생성 전략을 심층 분석합니다. 모델이 학습한 지식을 바탕으로 어떻게 텍스트를 생성하는지, 다양한 샘플링 기법들과 구조화된 출력 생성 방법, 그리고 AI의 확률적 특성을 상세히 살펴보겠습니다.1. 샘플링의 기초 (Sampling Fun...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="foundation-models, sampling, generation, decoding, inference, structured-output">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/09/18/foundation-models-sampling-generation-strategies/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략 심층 분석">
+<meta property="og:description" content="개요이번 포스트에서는 파운데이션 모델의 샘플링과 생성 전략을 심층 분석합니다. 모델이 학습한 지식을 바탕으로 어떻게 텍스트를 생성하는지, 다양한 샘플링 기법들과 구조화된 출력 생성 방법, 그리고 AI의 확률적 특성을 상세히 살펴보겠습니다.1. 샘플링의 기초 (Sampling Fun...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/09/18/foundation-models-sampling-generation-strategies/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략 심층 분석">
+<meta name="twitter:description" content="개요이번 포스트에서는 파운데이션 모델의 샘플링과 생성 전략을 심층 분석합니다. 모델이 학습한 지식을 바탕으로 어떻게 텍스트를 생성하는지, 다양한 샘플링 기법들과 구조화된 출력 생성 방법, 그리고 AI의 확률적 특성을 상세히 살펴보겠습니다.1. 샘플링의 기초 (Sampling Fun...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략 심층 분석",
+  "description": "개요
+
+이번 포스트에서는 파운데이션 모델의 샘플링과 생성 전략을 심층 분석합니다. 모델이 학습한 지식을 바탕으로 어떻게 텍스트를 생성하는지, 다양한 샘플링 기법들과 구조화된 출력 생성 방법, 그리고 AI의 확률적 특성을 상세히 살펴보겠습니다.
+
+1. 샘플링의 기초 (Sampling...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-09-18T02:45:00+00:00",
+  "dateModified": "2024-09-18T02:45:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/09/18/foundation-models-sampling-generation-strategies/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/09/18/foundation-models-sampling-generation-strategies/",
+  "inLanguage": "ko",
+  "keywords": ["foundation-models","sampling","generation","decoding","inference","structured-output"],
+  "articleSection": ["AI","Foundation Models","Text Generation"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략 심층 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략 심층 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-09-18T02:45:00+00:00">Sep 18, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Foundation Models</li><li>Text Generation</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 <strong>파운데이션 모델의 샘플링과 생성 전략</strong>을 심층 분석합니다. 모델이 학습한 지식을 바탕으로 어떻게 텍스트를 생성하는지, 다양한 샘플링 기법들과 구조화된 출력 생성 방법, 그리고 AI의 확률적 특성을 상세히 살펴보겠습니다.</p>
+
+<h2 id="1-샘플링의-기초-sampling-fundamentals">1. 샘플링의 기초 (Sampling Fundamentals)</h2>
+
+<h3 id="11-언어-모델의-생성-과정">1.1 언어 모델의 생성 과정</h3>
+
+<pre><code class="language-mermaid">graph TD
+    A[입력 토큰 시퀀스] --&gt; B[모델 인코딩]
+    B --&gt; C[다음 토큰 확률 분포]
+    C --&gt; D[샘플링 전략 적용]
+    D --&gt; E[토큰 선택]
+    E --&gt; F[시퀀스에 추가]
+    F --&gt; G{종료 조건?}
+    G --&gt;|No| B
+    G --&gt;|Yes| H[최종 생성 텍스트]
+    
+    subgraph "확률 분포"
+        I[토큰 1: 0.3]
+        J[토큰 2: 0.25]
+        K[토큰 3: 0.2]
+        L[기타: 0.25]
+    end
+    
+    C --&gt; I
+    C --&gt; J
+    C --&gt; K
+    C --&gt; L
+</code></pre>
+
+<h3 id="12-기본-샘플링-개념">1.2 기본 샘플링 개념</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="k">class</span> <span class="nc">TextGenerator</span><span class="p">:</span>
+    <span class="s">"""텍스트 생성을 위한 기본 클래스"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">get_next_token_logits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">):</span>
+        <span class="s">"""다음 토큰에 대한 로짓 계산"""</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">.</span><span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># 마지막 위치의 로짓
+</span>        <span class="k">return</span> <span class="n">logits</span>
+    
+    <span class="k">def</span> <span class="nf">apply_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="s">"""온도 스케일링 적용"""</span>
+        <span class="k">if</span> <span class="n">temperature</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># 온도가 0이면 argmax (greedy)
+</span>            <span class="k">return</span> <span class="n">torch</span><span class="p">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">logits</span><span class="p">).</span><span class="n">scatter_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">logits</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">F</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span> <span class="o">/</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">generate_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">sampling_strategy</span><span class="o">=</span><span class="s">"greedy"</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s">"""단일 생성 스텝"""</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_next_token_logits</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)</span>
+        
+        <span class="c1"># 샘플링 전략에 따른 다음 토큰 선택
+</span>        <span class="k">if</span> <span class="n">sampling_strategy</span> <span class="o">==</span> <span class="s">"greedy"</span><span class="p">:</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">greedy_search</span><span class="p">(</span><span class="n">logits</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sampling_strategy</span> <span class="o">==</span> <span class="s">"multinomial"</span><span class="p">:</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">multinomial_sampling</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sampling_strategy</span> <span class="o">==</span> <span class="s">"top_k"</span><span class="p">:</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">top_k_sampling</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sampling_strategy</span> <span class="o">==</span> <span class="s">"top_p"</span><span class="p">:</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">top_p_sampling</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sampling_strategy</span> <span class="o">==</span> <span class="s">"typical"</span><span class="p">:</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">typical_sampling</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s">"Unknown sampling strategy: </span><span class="si">{</span><span class="n">sampling_strategy</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">next_token</span>
+
+<span class="c1"># 확률 분포 분석 예시
+</span><span class="n">PROBABILITY_DISTRIBUTIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"peaked_distribution"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"characteristics"</span><span class="p">:</span> <span class="s">"소수 토큰에 높은 확률 집중"</span><span class="p">,</span>
+        <span class="s">"example"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">],</span>
+        <span class="s">"behavior"</span><span class="p">:</span> <span class="s">"예측 가능한 생성"</span><span class="p">,</span>
+        <span class="s">"use_case"</span><span class="p">:</span> <span class="s">"정확성이 중요한 태스크"</span>
+    <span class="p">},</span>
+    <span class="s">"flat_distribution"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"characteristics"</span><span class="p">:</span> <span class="s">"여러 토큰에 고른 확률 분포"</span><span class="p">,</span>
+        <span class="s">"example"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>
+        <span class="s">"behavior"</span><span class="p">:</span> <span class="s">"다양하고 창의적인 생성"</span><span class="p">,</span>
+        <span class="s">"use_case"</span><span class="p">:</span> <span class="s">"창작, 브레인스토밍"</span>
+    <span class="p">},</span>
+    <span class="s">"heavy_tail"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"characteristics"</span><span class="p">:</span> <span class="s">"긴 꼬리를 가진 분포"</span><span class="p">,</span>
+        <span class="s">"example"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">],</span>
+        <span class="s">"behavior"</span><span class="p">:</span> <span class="s">"주요 선택지 + 다양성"</span><span class="p">,</span>
+        <span class="s">"use_case"</span><span class="p">:</span> <span class="s">"균형 잡힌 생성"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="2-샘플링-전략-sampling-strategies">2. 샘플링 전략 (Sampling Strategies)</h2>
+
+<h3 id="21-greedy-decoding">2.1 Greedy Decoding</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">greedy_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">):</span>
+    <span class="s">"""탐욕적 검색 - 항상 가장 확률이 높은 토큰 선택"""</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">beam_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">num_beams</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+    <span class="s">"""빔 서치 - 여러 후보를 동시에 탐색"""</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">input_ids</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="c1"># 초기 빔 설정
+</span>    <span class="n">beams</span> <span class="o">=</span> <span class="p">[(</span><span class="n">input_ids</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)]</span>  <span class="c1"># (sequence, score)
+</span>    
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_length</span><span class="p">):</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seq</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">eos_token_id</span><span class="p">:</span>
+                <span class="n">candidates</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">seq</span><span class="p">,</span> <span class="n">score</span><span class="p">))</span>
+                <span class="k">continue</span>
+            
+            <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_next_token_logits</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+            <span class="n">log_probs</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="c1"># 상위 num_beams개 토큰 고려
+</span>            <span class="n">top_log_probs</span><span class="p">,</span> <span class="n">top_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">topk</span><span class="p">(</span><span class="n">log_probs</span><span class="p">,</span> <span class="n">num_beams</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_beams</span><span class="p">):</span>
+                <span class="n">new_seq</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cat</span><span class="p">([</span><span class="n">seq</span><span class="p">,</span> <span class="n">top_indices</span><span class="p">[:,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">new_score</span> <span class="o">=</span> <span class="n">score</span> <span class="o">+</span> <span class="n">top_log_probs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">].</span><span class="n">item</span><span class="p">()</span>
+                <span class="n">candidates</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">new_seq</span><span class="p">,</span> <span class="n">new_score</span><span class="p">))</span>
+        
+        <span class="c1"># 상위 num_beams개 후보 선택
+</span>        <span class="n">candidates</span><span class="p">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">beams</span> <span class="o">=</span> <span class="n">candidates</span><span class="p">[:</span><span class="n">num_beams</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">beams</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 최고 점수 시퀀스 반환
+</span>
+<span class="c1"># Greedy vs Beam Search 비교
+</span><span class="n">SEARCH_STRATEGIES_COMPARISON</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"greedy_search"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"advantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"빠른 속도"</span><span class="p">,</span> <span class="s">"메모리 효율성"</span><span class="p">,</span> <span class="s">"결정론적"</span><span class="p">],</span>
+        <span class="s">"disadvantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"지역 최적해"</span><span class="p">,</span> <span class="s">"반복적 생성"</span><span class="p">,</span> <span class="s">"다양성 부족"</span><span class="p">],</span>
+        <span class="s">"complexity"</span><span class="p">:</span> <span class="s">"O(V) per step"</span><span class="p">,</span>
+        <span class="s">"use_cases"</span><span class="p">:</span> <span class="p">[</span><span class="s">"실시간 응답"</span><span class="p">,</span> <span class="s">"정확성 중시"</span><span class="p">,</span> <span class="s">"리소스 제약"</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"beam_search"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"advantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"더 나은 전역 해"</span><span class="p">,</span> <span class="s">"품질 향상"</span><span class="p">,</span> <span class="s">"안정적"</span><span class="p">],</span>
+        <span class="s">"disadvantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"계산 비용"</span><span class="p">,</span> <span class="s">"메모리 사용량"</span><span class="p">,</span> <span class="s">"여전히 반복적"</span><span class="p">],</span>
+        <span class="s">"complexity"</span><span class="p">:</span> <span class="s">"O(B*V) per step"</span><span class="p">,</span>
+        <span class="s">"use_cases"</span><span class="p">:</span> <span class="p">[</span><span class="s">"번역"</span><span class="p">,</span> <span class="s">"요약"</span><span class="p">,</span> <span class="s">"품질 중시 생성"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="22-확률적-샘플링">2.2 확률적 샘플링</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">multinomial_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="s">"""다항 분포 샘플링"""</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">apply_temperature</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+    <span class="n">next_token</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">next_token</span>
+
+<span class="k">def</span> <span class="nf">top_k_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="s">"""Top-K 샘플링"""</span>
+    <span class="c1"># 상위 k개 토큰만 고려
+</span>    <span class="n">top_k_logits</span><span class="p">,</span> <span class="n">top_k_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">topk</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    
+    <span class="c1"># 나머지는 -inf로 마스킹
+</span>    <span class="n">filtered_logits</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s">'-inf'</span><span class="p">))</span>
+    <span class="n">filtered_logits</span><span class="p">.</span><span class="n">scatter_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">top_k_indices</span><span class="p">,</span> <span class="n">top_k_logits</span><span class="p">)</span>
+    
+    <span class="c1"># 온도 적용 후 샘플링
+</span>    <span class="n">probs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">apply_temperature</span><span class="p">(</span><span class="n">filtered_logits</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+    <span class="n">next_token</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">next_token</span>
+
+<span class="k">def</span> <span class="nf">top_p_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="s">"""Top-P (Nucleus) 샘플링"""</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">apply_temperature</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+    
+    <span class="c1"># 확률 순으로 정렬
+</span>    <span class="n">sorted_probs</span><span class="p">,</span> <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">sort</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    
+    <span class="c1"># 누적 확률 계산
+</span>    <span class="n">cumulative_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">sorted_probs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># 누적 확률이 p를 초과하는 지점 찾기
+</span>    <span class="n">sorted_indices_to_remove</span> <span class="o">=</span> <span class="n">cumulative_probs</span> <span class="o">&gt;</span> <span class="n">p</span>
+    <span class="n">sorted_indices_to_remove</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">sorted_indices_to_remove</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">sorted_indices_to_remove</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="c1"># 제거할 인덱스들을 원래 순서로 복원
+</span>    <span class="n">indices_to_remove</span> <span class="o">=</span> <span class="n">sorted_indices_to_remove</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sorted_indices</span><span class="p">,</span> <span class="n">sorted_indices_to_remove</span><span class="p">)</span>
+    
+    <span class="c1"># 확률을 0으로 설정
+</span>    <span class="n">filtered_probs</span> <span class="o">=</span> <span class="n">probs</span><span class="p">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">filtered_probs</span><span class="p">[</span><span class="n">indices_to_remove</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    
+    <span class="c1"># 재정규화 후 샘플링
+</span>    <span class="n">filtered_probs</span> <span class="o">=</span> <span class="n">filtered_probs</span> <span class="o">/</span> <span class="n">filtered_probs</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">next_token</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">filtered_probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">next_token</span>
+
+<span class="k">def</span> <span class="nf">typical_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="s">"""Typical Sampling - 정보량 기반 샘플링"""</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">apply_temperature</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+    
+    <span class="c1"># 각 토큰의 정보량 계산 (-log probability)
+</span>    <span class="n">information</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">probs</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+    
+    <span class="c1"># 예상 정보량 (entropy)
+</span>    <span class="n">entropy</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">probs</span> <span class="o">*</span> <span class="n">information</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    
+    <span class="c1"># 각 토큰이 평균적인 정보량에서 얼마나 벗어나는지 계산
+</span>    <span class="n">deviation</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">abs</span><span class="p">(</span><span class="n">information</span> <span class="o">-</span> <span class="n">entropy</span><span class="p">)</span>
+    
+    <span class="c1"># 편차 순으로 정렬
+</span>    <span class="n">sorted_deviation</span><span class="p">,</span> <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">sort</span><span class="p">(</span><span class="n">deviation</span><span class="p">)</span>
+    <span class="n">sorted_probs</span> <span class="o">=</span> <span class="n">probs</span><span class="p">.</span><span class="n">gather</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">sorted_indices</span><span class="p">)</span>
+    
+    <span class="c1"># 누적 확률이 mass에 도달할 때까지 선택
+</span>    <span class="n">cumulative_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">sorted_probs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">last_ind</span> <span class="o">=</span> <span class="p">(</span><span class="n">cumulative_probs</span> <span class="o">&lt;</span> <span class="n">mass</span><span class="p">).</span><span class="nb">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    
+    <span class="c1"># 마스킹
+</span>    <span class="n">sorted_indices_to_remove</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="n">sorted_probs</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]).</span><span class="n">expand_as</span><span class="p">(</span><span class="n">sorted_probs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">last_ind</span>
+    
+    <span class="c1"># 필터링된 확률 분포 생성
+</span>    <span class="n">filtered_probs</span> <span class="o">=</span> <span class="n">probs</span><span class="p">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">indices_to_remove</span> <span class="o">=</span> <span class="n">sorted_indices_to_remove</span><span class="p">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">sorted_indices</span><span class="p">,</span> <span class="n">sorted_indices_to_remove</span><span class="p">)</span>
+    <span class="n">filtered_probs</span><span class="p">[</span><span class="n">indices_to_remove</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    
+    <span class="c1"># 재정규화 후 샘플링
+</span>    <span class="n">filtered_probs</span> <span class="o">=</span> <span class="n">filtered_probs</span> <span class="o">/</span> <span class="n">filtered_probs</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">next_token</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">filtered_probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">next_token</span>
+
+<span class="c1"># 샘플링 전략 특성 비교
+</span><span class="n">SAMPLING_STRATEGIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"top_k"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"mechanism"</span><span class="p">:</span> <span class="s">"상위 k개 토큰만 고려"</span><span class="p">,</span>
+        <span class="s">"control_parameter"</span><span class="p">:</span> <span class="s">"k (고정 크기)"</span><span class="p">,</span>
+        <span class="s">"advantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"일정한 다양성"</span><span class="p">,</span> <span class="s">"나쁜 토큰 제거"</span><span class="p">],</span>
+        <span class="s">"disadvantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"고정된 컷오프"</span><span class="p">,</span> <span class="s">"문맥 무관성"</span><span class="p">],</span>
+        <span class="s">"best_for"</span><span class="p">:</span> <span class="s">"일반적인 생성 태스크"</span>
+    <span class="p">},</span>
+    <span class="s">"top_p"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"mechanism"</span><span class="p">:</span> <span class="s">"누적 확률 p까지의 토큰들"</span><span class="p">,</span>
+        <span class="s">"control_parameter"</span><span class="p">:</span> <span class="s">"p (확률 임계값)"</span><span class="p">,</span>
+        <span class="s">"advantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"적응적 크기"</span><span class="p">,</span> <span class="s">"문맥 의존적"</span><span class="p">],</span>
+        <span class="s">"disadvantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"때로는 너무 많은 토큰"</span><span class="p">,</span> <span class="s">"예측 어려움"</span><span class="p">],</span>
+        <span class="s">"best_for"</span><span class="p">:</span> <span class="s">"창의적 생성, 다양성 중시"</span>
+    <span class="p">},</span>
+    <span class="s">"typical"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"mechanism"</span><span class="p">:</span> <span class="s">"정보량 편차 기반 선택"</span><span class="p">,</span>
+        <span class="s">"control_parameter"</span><span class="p">:</span> <span class="s">"mass (정보량 비율)"</span><span class="p">,</span>
+        <span class="s">"advantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"정보 이론적"</span><span class="p">,</span> <span class="s">"균형 잡힌 선택"</span><span class="p">],</span>
+        <span class="s">"disadvantages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"복잡한 계산"</span><span class="p">,</span> <span class="s">"직관적이지 않음"</span><span class="p">],</span>
+        <span class="s">"best_for"</span><span class="p">:</span> <span class="s">"자연스러운 텍스트 생성"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="23-고급-샘플링-기법">2.3 고급 샘플링 기법</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AdvancedSamplingTechniques</span><span class="p">:</span>
+    <span class="s">"""고급 샘플링 기법들"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
+    
+    <span class="k">def</span> <span class="nf">contrastive_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+        <span class="s">"""대조 검색 - 반복 억제와 일관성 균형"""</span>
+        <span class="n">generated</span> <span class="o">=</span> <span class="n">input_ids</span>
+        
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_length</span><span class="p">):</span>
+            <span class="c1"># 다음 토큰 후보들 구하기
+</span>            <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_next_token_logits</span><span class="p">(</span><span class="n">generated</span><span class="p">)</span>
+            <span class="n">top_k_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">topk</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            
+            <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">candidate_id</span> <span class="ow">in</span> <span class="n">top_k_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="c1"># 모델 신뢰도 (확률)
+</span>                <span class="n">model_confidence</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="n">candidate_id</span><span class="p">]</span>
+                
+                <span class="c1"># 이전 토큰들과의 유사도 (반복 패널티)
+</span>                <span class="n">candidate_token</span> <span class="o">=</span> <span class="n">candidate_id</span><span class="p">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">extended_sequence</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cat</span><span class="p">([</span><span class="n">generated</span><span class="p">,</span> <span class="n">candidate_token</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                
+                <span class="c1"># 컨텍스트 유사도 계산
+</span>                <span class="n">context_similarity</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">calculate_degeneration_penalty</span><span class="p">(</span>
+                    <span class="n">extended_sequence</span><span class="p">,</span> <span class="n">candidate_id</span>
+                <span class="p">)</span>
+                
+                <span class="c1"># 최종 점수 = 모델 신뢰도 - 반복 패널티
+</span>                <span class="n">score</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">model_confidence</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">context_similarity</span>
+                <span class="n">scores</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+            
+            <span class="c1"># 최고 점수 토큰 선택
+</span>            <span class="n">best_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">scores</span><span class="p">).</span><span class="n">argmax</span><span class="p">()</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="n">top_k_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">best_idx</span><span class="p">].</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">generated</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cat</span><span class="p">([</span><span class="n">generated</span><span class="p">,</span> <span class="n">next_token</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">next_token</span><span class="p">.</span><span class="n">item</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">eos_token_id</span><span class="p">:</span>
+                <span class="k">break</span>
+        
+        <span class="k">return</span> <span class="n">generated</span>
+    
+    <span class="k">def</span> <span class="nf">mirostat_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">target_entropy</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="s">"""Mirostat 샘플링 - 엔트로피 제어"""</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="mf">5.0</span>  <span class="c1"># 초기 온도
+</span>        <span class="n">generated</span> <span class="o">=</span> <span class="n">input_ids</span>
+        
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_next_token_logits</span><span class="p">(</span><span class="n">generated</span><span class="p">)</span>
+            
+            <span class="c1"># 현재 온도로 확률 분포 계산
+</span>            <span class="n">probs</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span> <span class="o">/</span> <span class="n">tau</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="c1"># 현재 엔트로피 계산
+</span>            <span class="n">current_entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">probs</span> <span class="o">*</span> <span class="n">torch</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">probs</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">))</span>
+            
+            <span class="c1"># Mirostat 조건: 놀라움의 정도 제어
+</span>            <span class="c1"># 토큰 샘플링
+</span>            <span class="n">next_token</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">generated</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cat</span><span class="p">([</span><span class="n">generated</span><span class="p">,</span> <span class="n">next_token</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="c1"># 온도 업데이트 (엔트로피 피드백)
+</span>            <span class="n">entropy_error</span> <span class="o">=</span> <span class="n">current_entropy</span> <span class="o">-</span> <span class="n">target_entropy</span>
+            <span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span> <span class="o">-</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">entropy_error</span>
+            <span class="n">tau</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">tau</span><span class="p">)</span>  <span class="c1"># 최소값 제한
+</span>            
+            <span class="k">if</span> <span class="n">next_token</span><span class="p">.</span><span class="n">item</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">eos_token_id</span><span class="p">:</span>
+                <span class="k">break</span>
+        
+        <span class="k">return</span> <span class="n">generated</span>
+    
+    <span class="k">def</span> <span class="nf">calculate_degeneration_penalty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">candidate_id</span><span class="p">):</span>
+        <span class="s">"""반복 억제 점수 계산"""</span>
+        <span class="c1"># 최근 토큰들과의 유사도
+</span>        <span class="n">recent_tokens</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">:]</span>  <span class="c1"># 최근 10개 토큰
+</span>        <span class="n">penalty</span> <span class="o">=</span> <span class="mf">0.0</span>
+        
+        <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">recent_tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">token</span> <span class="o">==</span> <span class="n">candidate_id</span><span class="p">:</span>
+                <span class="n">penalty</span> <span class="o">+=</span> <span class="mf">1.0</span>
+        
+        <span class="k">return</span> <span class="n">penalty</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">recent_tokens</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="3-테스트-시점-연산-test-time-compute">3. 테스트 시점 연산 (Test-Time Compute)</h2>
+
+<h3 id="31-반복적-개선-기법">3.1 반복적 개선 기법</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">TestTimeCompute</span><span class="p">:</span>
+    <span class="s">"""테스트 시점 연산 기법들"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
+    
+    <span class="k">def</span> <span class="nf">self_consistency_decoding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
+        <span class="s">"""자기 일관성 디코딩 - 여러 샘플 중 일관성 높은 답변 선택"""</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># 여러 개의 다양한 응답 생성
+</span>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_response</span><span class="p">(</span>
+                <span class="n">prompt</span><span class="p">,</span> 
+                <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+                <span class="n">sampling</span><span class="o">=</span><span class="s">"top_p"</span>
+            <span class="p">)</span>
+            <span class="n">samples</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        
+        <span class="c1"># 답변 추출 및 일관성 확인
+</span>        <span class="n">answers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">extract_answer</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
+        
+        <span class="c1"># 가장 빈번한 답변 선택
+</span>        <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+        <span class="n">answer_counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">answers</span><span class="p">)</span>
+        <span class="n">most_common_answer</span> <span class="o">=</span> <span class="n">answer_counts</span><span class="p">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="c1"># 해당 답변을 가진 가장 좋은 샘플 반환
+</span>        <span class="n">best_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">select_best_sample</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">most_common_answer</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"final_answer"</span><span class="p">:</span> <span class="n">best_sample</span><span class="p">,</span>
+            <span class="s">"all_samples"</span><span class="p">:</span> <span class="n">samples</span><span class="p">,</span>
+            <span class="s">"answer_distribution"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">answer_counts</span><span class="p">),</span>
+            <span class="s">"confidence"</span><span class="p">:</span> <span class="n">answer_counts</span><span class="p">[</span><span class="n">most_common_answer</span><span class="p">]</span> <span class="o">/</span> <span class="n">num_samples</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">iterative_refinement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="s">"""반복적 개선 - 답변을 점진적으로 개선"""</span>
+        <span class="n">current_response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+            <span class="c1"># 현재 응답 평가
+</span>            <span class="n">critique</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">self_critique</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">current_response</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">is_satisfactory</span><span class="p">(</span><span class="n">critique</span><span class="p">):</span>
+                <span class="k">break</span>
+            
+            <span class="c1"># 개선된 응답 생성
+</span>            <span class="n">refinement_prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"""
+원래 질문: </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s">
+이전 답변: </span><span class="si">{</span><span class="n">current_response</span><span class="si">}</span><span class="s">
+개선점: </span><span class="si">{</span><span class="n">critique</span><span class="si">}</span><span class="s">
+
+위 개선점을 반영하여 더 나은 답변을 생성해주세요:
+"""</span>
+            <span class="n">current_response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_response</span><span class="p">(</span><span class="n">refinement_prompt</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"final_response"</span><span class="p">:</span> <span class="n">current_response</span><span class="p">,</span>
+            <span class="s">"iterations"</span><span class="p">:</span> <span class="n">iteration</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s">"improvement_history"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">track_improvements</span><span class="p">()</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">tree_of_thoughts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">breadth</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="s">"""생각의 나무 - 다단계 추론 트리 탐색"""</span>
+        <span class="k">class</span> <span class="nc">ThoughtNode</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thought</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">thought</span> <span class="o">=</span> <span class="n">thought</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">depth</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span>
+        
+        <span class="c1"># 루트 노드 생성
+</span>        <span class="n">root</span> <span class="o">=</span> <span class="n">ThoughtNode</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="k">def</span> <span class="nf">expand_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">node</span><span class="p">.</span><span class="n">depth</span> <span class="o">&gt;=</span> <span class="n">depth</span><span class="p">:</span>
+                <span class="k">return</span>
+            
+            <span class="c1"># 현재 노드에서 가능한 다음 생각들 생성
+</span>            <span class="n">expansion_prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"문제: </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="se">\n</span><span class="s">현재 생각: </span><span class="si">{</span><span class="n">node</span><span class="p">.</span><span class="n">thought</span><span class="si">}</span><span class="se">\n</span><span class="s">다음 단계로 가능한 </span><span class="si">{</span><span class="n">breadth</span><span class="si">}</span><span class="s">가지 생각:"</span>
+            
+            <span class="n">next_thoughts</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_multiple_thoughts</span><span class="p">(</span><span class="n">expansion_prompt</span><span class="p">,</span> <span class="n">breadth</span><span class="p">)</span>
+            
+            <span class="k">for</span> <span class="n">thought</span> <span class="ow">in</span> <span class="n">next_thoughts</span><span class="p">:</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="n">ThoughtNode</span><span class="p">(</span><span class="n">thought</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">node</span><span class="p">.</span><span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">node</span><span class="p">.</span><span class="n">children</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                
+                <span class="c1"># 재귀적으로 확장
+</span>                <span class="n">expand_node</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        
+        <span class="k">def</span> <span class="nf">evaluate_path</span><span class="p">(</span><span class="n">leaf_node</span><span class="p">):</span>
+            <span class="c1"># 루트에서 리프까지의 경로 평가
+</span>            <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">leaf_node</span>
+            <span class="k">while</span> <span class="n">current</span><span class="p">:</span>
+                <span class="n">path</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">current</span><span class="p">.</span><span class="n">thought</span><span class="p">)</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="p">.</span><span class="n">parent</span>
+            <span class="n">path</span><span class="p">.</span><span class="n">reverse</span><span class="p">()</span>
+            
+            <span class="c1"># 경로의 일관성과 논리성 평가
+</span>            <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">evaluate_reasoning_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        
+        <span class="c1"># 트리 확장
+</span>        <span class="n">expand_node</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        
+        <span class="c1"># 모든 리프 노드 평가
+</span>        <span class="n">leaf_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_leaf_nodes</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">best_path</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">leaf_nodes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">evaluate_path</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">construct_final_answer</span><span class="p">(</span><span class="n">best_path</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">best_of_n_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">reward_model</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s">"""Best-of-N 샘플링 - 여러 샘플 중 최고 품질 선택"""</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># N개의 다양한 샘플 생성
+</span>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_response</span><span class="p">(</span>
+                <span class="n">prompt</span><span class="p">,</span>
+                <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span> <span class="o">+</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">n</span><span class="p">),</span>  <span class="c1"># 점진적 온도 증가
+</span>                <span class="n">top_p</span><span class="o">=</span><span class="mf">0.9</span>
+            <span class="p">)</span>
+            <span class="n">samples</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+        
+        <span class="c1"># 품질 평가
+</span>        <span class="k">if</span> <span class="n">reward_model</span><span class="p">:</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">reward_model</span><span class="p">.</span><span class="n">score</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">sample</span><span class="p">)</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">heuristic_quality_score</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">sample</span><span class="p">)</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
+        
+        <span class="c1"># 최고 점수 샘플 선택
+</span>        <span class="n">best_idx</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"best_sample"</span><span class="p">:</span> <span class="n">samples</span><span class="p">[</span><span class="n">best_idx</span><span class="p">],</span>
+            <span class="s">"best_score"</span><span class="p">:</span> <span class="n">scores</span><span class="p">[</span><span class="n">best_idx</span><span class="p">],</span>
+            <span class="s">"all_samples"</span><span class="p">:</span> <span class="n">samples</span><span class="p">,</span>
+            <span class="s">"all_scores"</span><span class="p">:</span> <span class="n">scores</span><span class="p">,</span>
+            <span class="s">"score_distribution"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">analyze_score_distribution</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="32-검증-및-자기-확인">3.2 검증 및 자기 확인</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SelfVerification</span><span class="p">:</span>
+    <span class="s">"""자기 검증 및 확인 메커니즘"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
+    
+    <span class="k">def</span> <span class="nf">chain_of_verification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">initial_response</span><span class="p">):</span>
+        <span class="s">"""검증 체인 - 단계별 사실 확인"""</span>
+        <span class="c1"># 1. 검증 질문 생성
+</span>        <span class="n">verification_questions</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_verification_questions</span><span class="p">(</span><span class="n">initial_response</span><span class="p">)</span>
+        
+        <span class="c1"># 2. 각 질문에 대한 답변 생성
+</span>        <span class="n">verification_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">question</span> <span class="ow">in</span> <span class="n">verification_questions</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_response</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+            <span class="n">confidence</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">assess_confidence</span><span class="p">(</span><span class="n">question</span><span class="p">,</span> <span class="n">answer</span><span class="p">)</span>
+            <span class="n">verification_results</span><span class="p">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s">"question"</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span>
+                <span class="s">"answer"</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span>
+                <span class="s">"confidence"</span><span class="p">:</span> <span class="n">confidence</span>
+            <span class="p">})</span>
+        
+        <span class="c1"># 3. 원래 응답과 검증 결과 비교
+</span>        <span class="n">consistency_check</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">check_consistency</span><span class="p">(</span><span class="n">initial_response</span><span class="p">,</span> <span class="n">verification_results</span><span class="p">)</span>
+        
+        <span class="c1"># 4. 필요시 응답 수정
+</span>        <span class="k">if</span> <span class="n">consistency_check</span><span class="p">[</span><span class="s">"needs_revision"</span><span class="p">]:</span>
+            <span class="n">revised_response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">revise_response</span><span class="p">(</span>
+                <span class="n">query</span><span class="p">,</span> 
+                <span class="n">initial_response</span><span class="p">,</span> 
+                <span class="n">verification_results</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">revised_response</span>
+        
+        <span class="k">return</span> <span class="n">initial_response</span>
+    
+    <span class="k">def</span> <span class="nf">factual_verification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">claim</span><span class="p">):</span>
+        <span class="s">"""사실 검증"""</span>
+        <span class="n">verification_strategies</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"decomposition"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">decompose_complex_claim</span><span class="p">,</span>
+            <span class="s">"source_checking"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">check_against_knowledge</span><span class="p">,</span>
+            <span class="s">"logical_consistency"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">verify_logical_coherence</span><span class="p">,</span>
+            <span class="s">"numerical_verification"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">verify_calculations</span>
+        <span class="p">}</span>
+        
+        <span class="n">verification_results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">strategy</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">verification_strategies</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">verification_results</span><span class="p">[</span><span class="n">strategy</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">claim</span><span class="p">)</span>
+        
+        <span class="c1"># 종합 신뢰도 계산
+</span>        <span class="n">overall_confidence</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">aggregate_confidence</span><span class="p">(</span><span class="n">verification_results</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"verified_claim"</span><span class="p">:</span> <span class="n">claim</span><span class="p">,</span>
+            <span class="s">"confidence"</span><span class="p">:</span> <span class="n">overall_confidence</span><span class="p">,</span>
+            <span class="s">"verification_details"</span><span class="p">:</span> <span class="n">verification_results</span><span class="p">,</span>
+            <span class="s">"recommendation"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">make_verification_recommendation</span><span class="p">(</span><span class="n">overall_confidence</span><span class="p">)</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="4-구조화된-출력-structured-output">4. 구조화된 출력 (Structured Output)</h2>
+
+<h3 id="41-json-및-구조화된-생성">4.1 JSON 및 구조화된 생성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">StructuredGeneration</span><span class="p">:</span>
+    <span class="s">"""구조화된 출력 생성"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">json_schema_validator</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_schema_validator</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">constrained_json_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+        <span class="s">"""스키마 제약 JSON 생성"""</span>
+        <span class="c1"># 스키마 기반 토큰 마스킹
+</span>        <span class="k">def</span> <span class="nf">create_token_mask</span><span class="p">(</span><span class="n">current_state</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+            <span class="s">"""현재 상태에서 유효한 토큰들만 허용"""</span>
+            <span class="n">valid_tokens</span> <span class="o">=</span> <span class="p">[]</span>
+            
+            <span class="k">if</span> <span class="n">current_state</span><span class="p">[</span><span class="s">"expecting"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"key"</span><span class="p">:</span>
+                <span class="c1"># 스키마에 정의된 키들만 허용
+</span>                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">[</span><span class="s">"properties"</span><span class="p">].</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">key_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="sa">f</span><span class="s">'"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s">"'</span><span class="p">)</span>
+                    <span class="n">valid_tokens</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="n">key_tokens</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">current_state</span><span class="p">[</span><span class="s">"expecting"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"value"</span><span class="p">:</span>
+                <span class="c1"># 타입에 따른 값 토큰 허용
+</span>                <span class="n">field_type</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="s">"properties"</span><span class="p">][</span><span class="n">current_state</span><span class="p">[</span><span class="s">"current_key"</span><span class="p">]][</span><span class="s">"type"</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">"string"</span><span class="p">:</span>
+                    <span class="n">valid_tokens</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">get_string_tokens</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">"number"</span><span class="p">:</span>
+                    <span class="n">valid_tokens</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">get_number_tokens</span><span class="p">())</span>
+                <span class="k">elif</span> <span class="n">field_type</span> <span class="o">==</span> <span class="s">"boolean"</span><span class="p">:</span>
+                    <span class="n">valid_tokens</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="s">"true"</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="s">"false"</span><span class="p">))</span>
+            
+            <span class="k">return</span> <span class="n">valid_tokens</span>
+        
+        <span class="c1"># 제약 조건하에서 생성
+</span>        <span class="n">generated_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">current_state</span> <span class="o">=</span> <span class="p">{</span><span class="s">"expecting"</span><span class="p">:</span> <span class="s">"key"</span><span class="p">,</span> <span class="s">"current_key"</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
+        
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span><span class="p">):</span>  <span class="c1"># 최대 길이 제한
+</span>            <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_next_token_logits</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">generated_ids</span><span class="p">]))</span>
+            
+            <span class="c1"># 유효한 토큰만 허용하도록 마스킹
+</span>            <span class="n">valid_tokens</span> <span class="o">=</span> <span class="n">create_token_mask</span><span class="p">(</span><span class="n">current_state</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s">'-inf'</span><span class="p">))</span>
+            <span class="n">mask</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">valid_tokens</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">masked_logits</span> <span class="o">=</span> <span class="n">logits</span> <span class="o">+</span> <span class="n">mask</span>
+            
+            <span class="c1"># 샘플링
+</span>            <span class="n">probs</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">masked_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">generated_ids</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_token</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+            
+            <span class="c1"># 상태 업데이트
+</span>            <span class="n">current_state</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">update_parsing_state</span><span class="p">(</span><span class="n">current_state</span><span class="p">,</span> <span class="n">next_token</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+            
+            <span class="c1"># 완성 체크
+</span>            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">is_valid_json_complete</span><span class="p">(</span><span class="n">generated_ids</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+                <span class="k">break</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">generated_ids</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">guided_code_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s">"python"</span><span class="p">):</span>
+        <span class="s">"""가이드된 코드 생성"""</span>
+        <span class="n">language_constraints</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"python"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"indent_tokens"</span><span class="p">:</span> <span class="p">[</span><span class="s">"    "</span><span class="p">,</span> <span class="s">"</span><span class="se">\t</span><span class="s">"</span><span class="p">],</span>
+                <span class="s">"keyword_tokens"</span><span class="p">:</span> <span class="p">[</span><span class="s">"def"</span><span class="p">,</span> <span class="s">"class"</span><span class="p">,</span> <span class="s">"if"</span><span class="p">,</span> <span class="s">"for"</span><span class="p">,</span> <span class="s">"while"</span><span class="p">,</span> <span class="s">"try"</span><span class="p">,</span> <span class="s">"import"</span><span class="p">],</span>
+                <span class="s">"operator_tokens"</span><span class="p">:</span> <span class="p">[</span><span class="s">"="</span><span class="p">,</span> <span class="s">"=="</span><span class="p">,</span> <span class="s">"!="</span><span class="p">,</span> <span class="s">"+"</span><span class="p">,</span> <span class="s">"-"</span><span class="p">,</span> <span class="s">"*"</span><span class="p">,</span> <span class="s">"/"</span><span class="p">],</span>
+                <span class="s">"syntax_rules"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">python_syntax_rules</span>
+            <span class="p">},</span>
+            <span class="s">"javascript"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"keyword_tokens"</span><span class="p">:</span> <span class="p">[</span><span class="s">"function"</span><span class="p">,</span> <span class="s">"var"</span><span class="p">,</span> <span class="s">"let"</span><span class="p">,</span> <span class="s">"const"</span><span class="p">,</span> <span class="s">"if"</span><span class="p">,</span> <span class="s">"for"</span><span class="p">,</span> <span class="s">"while"</span><span class="p">],</span>
+                <span class="s">"syntax_rules"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">javascript_syntax_rules</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        
+        <span class="n">constraints</span> <span class="o">=</span> <span class="n">language_constraints</span><span class="p">[</span><span class="n">language</span><span class="p">]</span>
+        
+        <span class="c1"># 구문 인식 상태 추적
+</span>        <span class="n">syntax_state</span> <span class="o">=</span> <span class="n">SyntaxTracker</span><span class="p">(</span><span class="n">language</span><span class="p">)</span>
+        
+        <span class="n">generated_code</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_next_token_logits</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">generated_code</span><span class="p">]))</span>
+            
+            <span class="c1"># 현재 구문 상태에 따른 토큰 필터링
+</span>            <span class="n">valid_tokens</span> <span class="o">=</span> <span class="n">syntax_state</span><span class="p">.</span><span class="n">get_valid_next_tokens</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">valid_tokens</span><span class="p">:</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">logits</span><span class="p">)</span>
+                <span class="n">mask</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">valid_tokens</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">filtered_logits</span> <span class="o">=</span> <span class="n">logits</span> <span class="o">*</span> <span class="n">mask</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mask</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="s">'-inf'</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">filtered_logits</span> <span class="o">=</span> <span class="n">logits</span>
+            
+            <span class="c1"># 토큰 생성
+</span>            <span class="n">probs</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">filtered_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">generated_code</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_token</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+            
+            <span class="c1"># 구문 상태 업데이트
+</span>            <span class="n">syntax_state</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">next_token</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+            
+            <span class="c1"># 완성 조건 체크
+</span>            <span class="k">if</span> <span class="n">syntax_state</span><span class="p">.</span><span class="n">is_complete</span><span class="p">():</span>
+                <span class="k">break</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">generated_code</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">SyntaxTracker</span><span class="p">:</span>
+    <span class="s">"""프로그래밍 언어 구문 추적기"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">language</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">language</span> <span class="o">=</span> <span class="n">language</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">bracket_stack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">indent_level</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">in_string</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">expecting_colon</span> <span class="o">=</span> <span class="bp">False</span>
+    
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_id</span><span class="p">):</span>
+        <span class="s">"""토큰에 따른 구문 상태 업데이트"""</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">decode</span><span class="p">([</span><span class="n">token_id</span><span class="p">])</span>
+        
+        <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"("</span><span class="p">,</span> <span class="s">"["</span><span class="p">,</span> <span class="s">"{"</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">bracket_stack</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">token</span> <span class="ow">in</span> <span class="p">[</span><span class="s">")"</span><span class="p">,</span> <span class="s">"]"</span><span class="p">,</span> <span class="s">"}"</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">bracket_stack</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">bracket_stack</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">token</span> <span class="o">==</span> <span class="s">":"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">expecting_colon</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">elif</span> <span class="n">token</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"if"</span><span class="p">,</span> <span class="s">"for"</span><span class="p">,</span> <span class="s">"while"</span><span class="p">,</span> <span class="s">"def"</span><span class="p">,</span> <span class="s">"class"</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">expecting_colon</span> <span class="o">=</span> <span class="bp">True</span>
+    
+    <span class="k">def</span> <span class="nf">get_valid_next_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
+        <span class="s">"""현재 상태에서 유효한 다음 토큰들"""</span>
+        <span class="n">valid_tokens</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># 괄호 균형 체크
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">bracket_stack</span><span class="p">:</span>
+            <span class="c1"># 닫는 괄호 우선적으로 허용
+</span>            <span class="n">closing_bracket</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_closing_bracket</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">bracket_stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">valid_tokens</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">closing_bracket</span><span class="p">))</span>
+        
+        <span class="c1"># 콜론 예상 상황
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">expecting_colon</span><span class="p">:</span>
+            <span class="n">valid_tokens</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="s">":"</span><span class="p">))</span>
+        
+        <span class="c1"># 기본 토큰들 (키워드, 연산자 등)
+</span>        <span class="k">for</span> <span class="n">token_list</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">token_list</span><span class="p">:</span>
+                    <span class="n">valid_tokens</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">token</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">valid_tokens</span>
+</code></pre></div></div>
+
+<h3 id="42-템플릿-기반-생성">4.2 템플릿 기반 생성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">TemplateBasedGeneration</span><span class="p">:</span>
+    <span class="s">"""템플릿 기반 구조화 생성"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">templates</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">load_templates</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">load_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""다양한 형식의 템플릿 로드"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"email"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"structure"</span><span class="p">:</span> <span class="p">[</span><span class="s">"subject"</span><span class="p">,</span> <span class="s">"greeting"</span><span class="p">,</span> <span class="s">"body"</span><span class="p">,</span> <span class="s">"closing"</span><span class="p">,</span> <span class="s">"signature"</span><span class="p">],</span>
+                <span class="s">"constraints"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s">"subject"</span><span class="p">:</span> <span class="p">{</span><span class="s">"max_length"</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">"required_prefix"</span><span class="p">:</span> <span class="s">"Re:"</span><span class="p">},</span>
+                    <span class="s">"greeting"</span><span class="p">:</span> <span class="p">{</span><span class="s">"options"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Dear"</span><span class="p">,</span> <span class="s">"Hi"</span><span class="p">,</span> <span class="s">"Hello"</span><span class="p">]},</span>
+                    <span class="s">"body"</span><span class="p">:</span> <span class="p">{</span><span class="s">"min_paragraphs"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"max_paragraphs"</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+                    <span class="s">"closing"</span><span class="p">:</span> <span class="p">{</span><span class="s">"options"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Best regards"</span><span class="p">,</span> <span class="s">"Sincerely"</span><span class="p">,</span> <span class="s">"Thank you"</span><span class="p">]}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s">"report"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"structure"</span><span class="p">:</span> <span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"executive_summary"</span><span class="p">,</span> <span class="s">"introduction"</span><span class="p">,</span> <span class="s">"methodology"</span><span class="p">,</span> <span class="s">"results"</span><span class="p">,</span> <span class="s">"conclusion"</span><span class="p">],</span>
+                <span class="s">"constraints"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s">"title"</span><span class="p">:</span> <span class="p">{</span><span class="s">"max_length"</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
+                    <span class="s">"executive_summary"</span><span class="p">:</span> <span class="p">{</span><span class="s">"max_words"</span><span class="p">:</span> <span class="mi">150</span><span class="p">},</span>
+                    <span class="s">"methodology"</span><span class="p">:</span> <span class="p">{</span><span class="s">"required_subsections"</span><span class="p">:</span> <span class="p">[</span><span class="s">"data_collection"</span><span class="p">,</span> <span class="s">"analysis_method"</span><span class="p">]},</span>
+                    <span class="s">"results"</span><span class="p">:</span> <span class="p">{</span><span class="s">"include_metrics"</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s">"recipe"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"structure"</span><span class="p">:</span> <span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"ingredients"</span><span class="p">,</span> <span class="s">"instructions"</span><span class="p">,</span> <span class="s">"cooking_time"</span><span class="p">,</span> <span class="s">"servings"</span><span class="p">],</span>
+                <span class="s">"constraints"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s">"ingredients"</span><span class="p">:</span> <span class="p">{</span><span class="s">"format"</span><span class="p">:</span> <span class="s">"list"</span><span class="p">,</span> <span class="s">"include_quantities"</span><span class="p">:</span> <span class="bp">True</span><span class="p">},</span>
+                    <span class="s">"instructions"</span><span class="p">:</span> <span class="p">{</span><span class="s">"format"</span><span class="p">:</span> <span class="s">"numbered_steps"</span><span class="p">},</span>
+                    <span class="s">"cooking_time"</span><span class="p">:</span> <span class="p">{</span><span class="s">"format"</span><span class="p">:</span> <span class="s">"minutes"</span><span class="p">},</span>
+                    <span class="s">"servings"</span><span class="p">:</span> <span class="p">{</span><span class="s">"format"</span><span class="p">:</span> <span class="s">"number"</span><span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">generate_with_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">template_name</span><span class="p">):</span>
+        <span class="s">"""템플릿을 사용한 구조화 생성"""</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">templates</span><span class="p">[</span><span class="n">template_name</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">template</span><span class="p">[</span><span class="s">"structure"</span><span class="p">]:</span>
+            <span class="n">section_constraints</span> <span class="o">=</span> <span class="n">template</span><span class="p">[</span><span class="s">"constraints"</span><span class="p">].</span><span class="n">get</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="p">{})</span>
+            
+            <span class="c1"># 섹션별 프롬프트 생성
+</span>            <span class="n">section_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">create_section_prompt</span><span class="p">(</span>
+                <span class="n">prompt</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">section_constraints</span><span class="p">,</span> <span class="n">result</span>
+            <span class="p">)</span>
+            
+            <span class="c1"># 제약 조건하에서 생성
+</span>            <span class="n">section_content</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_constrained_section</span><span class="p">(</span>
+                <span class="n">section_prompt</span><span class="p">,</span> <span class="n">section_constraints</span>
+            <span class="p">)</span>
+            
+            <span class="n">result</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_content</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">format_final_output</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">template_name</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">generate_constrained_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
+        <span class="s">"""제약 조건을 만족하는 섹션 생성"""</span>
+        <span class="n">max_attempts</span> <span class="o">=</span> <span class="mi">3</span>
+        
+        <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_attempts</span><span class="p">):</span>
+            <span class="n">generated</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">validate_constraints</span><span class="p">(</span><span class="n">generated</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">generated</span>
+            
+            <span class="c1"># 제약 조건 위반 시 프롬프트 수정
+</span>            <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">adjust_prompt_for_constraints</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">constraints</span><span class="p">,</span> <span class="n">generated</span><span class="p">)</span>
+        
+        <span class="c1"># 최종 시도 후에도 실패하면 후처리로 수정
+</span>        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">post_process_for_constraints</span><span class="p">(</span><span class="n">generated</span><span class="p">,</span> <span class="n">constraints</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="5-ai의-확률적-특성-probabilistic-nature-of-ai">5. AI의 확률적 특성 (Probabilistic Nature of AI)</h2>
+
+<h3 id="51-불확실성과-신뢰도">5.1 불확실성과 신뢰도</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UncertaintyQuantification</span><span class="p">:</span>
+    <span class="s">"""불확실성 정량화 및 신뢰도 측정"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
+    
+    <span class="k">def</span> <span class="nf">semantic_uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="s">"""의미적 불확실성 측정"""</span>
+        <span class="c1"># 여러 샘플 생성
+</span>        <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+            <span class="n">samples</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        
+        <span class="c1"># 의미적 유사성 클러스터링
+</span>        <span class="n">semantic_clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">cluster_by_semantics</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        
+        <span class="c1"># 엔트로피 계산 (클러스터 분포 기반)
+</span>        <span class="n">cluster_probs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_samples</span> <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">semantic_clusters</span><span class="p">]</span>
+        <span class="n">semantic_entropy</span> <span class="o">=</span> <span class="o">-</span><span class="nb">sum</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">cluster_probs</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"entropy"</span><span class="p">:</span> <span class="n">semantic_entropy</span><span class="p">,</span>
+            <span class="s">"num_clusters"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">semantic_clusters</span><span class="p">),</span>
+            <span class="s">"clusters"</span><span class="p">:</span> <span class="n">semantic_clusters</span><span class="p">,</span>
+            <span class="s">"confidence"</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">semantic_entropy</span> <span class="o">/</span> <span class="n">np</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">semantic_clusters</span><span class="p">)))</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">token_level_uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">):</span>
+        <span class="s">"""토큰 레벨 불확실성 분석"""</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_next_token_logits</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1"># 엔트로피 (전체 분포의 불확실성)
+</span>        <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">probs</span> <span class="o">*</span> <span class="n">torch</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">probs</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1"># Top-k 확률의 합 (집중도)
+</span>        <span class="n">top_k_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">topk</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">concentration</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">top_k_probs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1"># 최대 확률 (신뢰도 대리 지표)
+</span>        <span class="n">max_prob</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">max</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"entropy"</span><span class="p">:</span> <span class="n">entropy</span><span class="p">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="s">"concentration"</span><span class="p">:</span> <span class="n">concentration</span><span class="p">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="s">"max_probability"</span><span class="p">:</span> <span class="n">max_prob</span><span class="p">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="s">"uncertainty_level"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">categorize_uncertainty</span><span class="p">(</span><span class="n">entropy</span><span class="p">.</span><span class="n">item</span><span class="p">())</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">epistemic_vs_aleatoric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">num_models</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+        <span class="s">"""인식론적 vs 우연적 불확실성 분해"""</span>
+        <span class="k">if</span> <span class="n">num_models</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># 단일 모델의 경우 드롭아웃 기반 근사
+</span>            <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">train</span><span class="p">()</span>  <span class="c1"># 드롭아웃 활성화
+</span>            
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+                    <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_next_token_logits</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+                    <span class="n">probs</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">predictions</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nb">eval</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 여러 모델 앙상블
+</span>            <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">model_ensemble</span><span class="p">:</span>
+                <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">get_next_token_logits</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+                <span class="n">probs</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">predictions</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+        
+        <span class="c1"># 평균 예측과 예측의 분산 계산
+</span>        <span class="n">mean_prediction</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">stack</span><span class="p">(</span><span class="n">predictions</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">prediction_variance</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">var</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">stack</span><span class="p">(</span><span class="n">predictions</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># 평균 예측의 엔트로피 (우연적 불확실성)
+</span>        <span class="n">aleatoric</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">mean_prediction</span> <span class="o">*</span> <span class="n">torch</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">mean_prediction</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">))</span>
+        
+        <span class="c1"># 예측 분산의 합 (인식론적 불확실성)
+</span>        <span class="n">epistemic</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">prediction_variance</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"aleatoric_uncertainty"</span><span class="p">:</span> <span class="n">aleatoric</span><span class="p">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="s">"epistemic_uncertainty"</span><span class="p">:</span> <span class="n">epistemic</span><span class="p">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="s">"total_uncertainty"</span><span class="p">:</span> <span class="n">aleatoric</span><span class="p">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="n">epistemic</span><span class="p">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="s">"uncertainty_breakdown"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"data_uncertainty"</span><span class="p">:</span> <span class="n">aleatoric</span><span class="p">.</span><span class="n">item</span><span class="p">(),</span>
+                <span class="s">"model_uncertainty"</span><span class="p">:</span> <span class="n">epistemic</span><span class="p">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">ConfidenceCalibration</span><span class="p">:</span>
+    <span class="s">"""신뢰도 보정"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">calibration_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">temperature_scaling</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">collect_calibration_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">validation_set</span><span class="p">):</span>
+        <span class="s">"""보정용 데이터 수집"""</span>
+        <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">validation_set</span><span class="p">:</span>
+            <span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s">'input'</span><span class="p">])</span>
+            <span class="n">confidence</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">get_confidence</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s">'input'</span><span class="p">])</span>
+            <span class="n">correctness</span> <span class="o">=</span> <span class="p">(</span><span class="n">prediction</span> <span class="o">==</span> <span class="n">sample</span><span class="p">[</span><span class="s">'target'</span><span class="p">])</span>
+            
+            <span class="bp">self</span><span class="p">.</span><span class="n">calibration_data</span><span class="p">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s">'confidence'</span><span class="p">:</span> <span class="n">confidence</span><span class="p">,</span>
+                <span class="s">'correctness'</span><span class="p">:</span> <span class="n">correctness</span><span class="p">,</span>
+                <span class="s">'prediction'</span><span class="p">:</span> <span class="n">prediction</span>
+            <span class="p">})</span>
+    
+    <span class="k">def</span> <span class="nf">temperature_scaling_calibration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="s">"""온도 스케일링을 통한 보정"""</span>
+        <span class="c1"># 검증 세트에서 최적 온도 찾기
+</span>        <span class="k">def</span> <span class="nf">nll_loss</span><span class="p">(</span><span class="n">temperature</span><span class="p">):</span>
+            <span class="n">scaled_logits</span> <span class="o">=</span> <span class="n">logits</span> <span class="o">/</span> <span class="n">temperature</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">scaled_logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">loss</span>
+        
+        <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize_scalar</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">minimize_scalar</span><span class="p">(</span><span class="n">nll_loss</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">result</span><span class="p">.</span><span class="n">x</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">temperature</span>
+    
+    <span class="k">def</span> <span class="nf">plot_reliability_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""신뢰도 다이어그램 생성"""</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+        
+        <span class="c1"># 신뢰도 구간별 정확도 계산
+</span>        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+        <span class="n">bin_centers</span> <span class="o">=</span> <span class="p">(</span><span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">bin_accuracies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bin_confidences</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">in_bin</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">calibration_data</span> 
+                <span class="k">if</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="p">[</span><span class="s">'confidence'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">]</span>
+            
+            <span class="k">if</span> <span class="n">in_bin</span><span class="p">:</span>
+                <span class="n">accuracy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s">'correctness'</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">in_bin</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">in_bin</span><span class="p">)</span>
+                <span class="n">confidence</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s">'confidence'</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">in_bin</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">in_bin</span><span class="p">)</span>
+                <span class="n">bin_accuracies</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
+                <span class="n">bin_confidences</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">confidence</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bin_accuracies</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">bin_confidences</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">bin_centers</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        
+        <span class="c1"># 플롯 생성
+</span>        <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+        <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s">'k--'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Perfect Calibration'</span><span class="p">)</span>
+        <span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bin_confidences</span><span class="p">,</span> <span class="n">bin_accuracies</span><span class="p">,</span> <span class="s">'ro-'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Model'</span><span class="p">)</span>
+        <span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Confidence'</span><span class="p">)</span>
+        <span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Accuracy'</span><span class="p">)</span>
+        <span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Reliability Diagram'</span><span class="p">)</span>
+        <span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="p">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">plt</span><span class="p">.</span><span class="n">gcf</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="52-확률적-행동의-활용">5.2 확률적 행동의 활용</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ProbabilisticBehaviorUtilization</span><span class="p">:</span>
+    <span class="s">"""확률적 행동의 전략적 활용"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
+    
+    <span class="k">def</span> <span class="nf">adaptive_sampling_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">context_analysis</span><span class="p">):</span>
+        <span class="s">"""상황 적응적 샘플링 전략"""</span>
+        <span class="c1"># 컨텍스트 분석에 따른 샘플링 파라미터 조정
+</span>        <span class="k">if</span> <span class="n">context_analysis</span><span class="p">[</span><span class="s">"task_type"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"factual_qa"</span><span class="p">:</span>
+            <span class="c1"># 사실 질문 → 낮은 온도, 높은 정확성
+</span>            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+                <span class="s">"top_p"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                <span class="s">"strategy"</span><span class="p">:</span> <span class="s">"greedy"</span><span class="p">,</span>
+                <span class="s">"reasoning"</span><span class="p">:</span> <span class="s">"정확성 우선"</span>
+            <span class="p">}</span>
+        <span class="k">elif</span> <span class="n">context_analysis</span><span class="p">[</span><span class="s">"task_type"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"creative_writing"</span><span class="p">:</span>
+            <span class="c1"># 창작 → 높은 온도, 높은 다양성
+</span>            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+                <span class="s">"top_p"</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+                <span class="s">"strategy"</span><span class="p">:</span> <span class="s">"top_p"</span><span class="p">,</span>
+                <span class="s">"reasoning"</span><span class="p">:</span> <span class="s">"창의성 및 다양성 우선"</span>
+            <span class="p">}</span>
+        <span class="k">elif</span> <span class="n">context_analysis</span><span class="p">[</span><span class="s">"task_type"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"code_generation"</span><span class="p">:</span>
+            <span class="c1"># 코드 생성 → 중간 온도, 구문 제약
+</span>            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+                <span class="s">"top_p"</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+                <span class="s">"strategy"</span><span class="p">:</span> <span class="s">"constrained"</span><span class="p">,</span>
+                <span class="s">"reasoning"</span><span class="p">:</span> <span class="s">"구문 정확성과 다양성 균형"</span>
+            <span class="p">}</span>
+        <span class="k">elif</span> <span class="n">context_analysis</span><span class="p">[</span><span class="s">"uncertainty_high"</span><span class="p">]:</span>
+            <span class="c1"># 높은 불확실성 → 보수적 접근
+</span>            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                <span class="s">"top_p"</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+                <span class="s">"strategy"</span><span class="p">:</span> <span class="s">"conservative"</span><span class="p">,</span>
+                <span class="s">"reasoning"</span><span class="p">:</span> <span class="s">"불확실성 때문에 보수적 생성"</span>
+            <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">uncertainty_aware_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">uncertainty_threshold</span><span class="o">=</span><span class="mf">0.7</span><span class="p">):</span>
+        <span class="s">"""불확실성 인식 생성"""</span>
+        <span class="c1"># 첫 번째 시도
+</span>        <span class="n">initial_response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">uncertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">measure_uncertainty</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">initial_response</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">uncertainty</span><span class="p">[</span><span class="s">"confidence"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">uncertainty_threshold</span><span class="p">:</span>
+            <span class="c1"># 높은 신뢰도 → 그대로 반환
+</span>            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">"response"</span><span class="p">:</span> <span class="n">initial_response</span><span class="p">,</span>
+                <span class="s">"confidence"</span><span class="p">:</span> <span class="n">uncertainty</span><span class="p">[</span><span class="s">"confidence"</span><span class="p">],</span>
+                <span class="s">"generation_strategy"</span><span class="p">:</span> <span class="s">"direct"</span><span class="p">,</span>
+                <span class="s">"additional_info"</span><span class="p">:</span> <span class="s">"High confidence response"</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 낮은 신뢰도 → 추가 전략 사용
+</span>            <span class="n">alternative_strategies</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="s">"self_consistency"</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">self_consistency_generation</span><span class="p">),</span>
+                <span class="p">(</span><span class="s">"multiple_perspectives"</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">multi_perspective_generation</span><span class="p">),</span>
+                <span class="p">(</span><span class="s">"uncertainty_expression"</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">uncertainty_expressing_generation</span><span class="p">)</span>
+            <span class="p">]</span>
+            
+            <span class="n">best_response</span> <span class="o">=</span> <span class="n">initial_response</span>
+            <span class="n">best_confidence</span> <span class="o">=</span> <span class="n">uncertainty</span><span class="p">[</span><span class="s">"confidence"</span><span class="p">]</span>
+            <span class="n">used_strategy</span> <span class="o">=</span> <span class="s">"direct"</span>
+            
+            <span class="k">for</span> <span class="n">strategy_name</span><span class="p">,</span> <span class="n">strategy_func</span> <span class="ow">in</span> <span class="n">alternative_strategies</span><span class="p">:</span>
+                <span class="n">candidate</span> <span class="o">=</span> <span class="n">strategy_func</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+                <span class="n">candidate_uncertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">measure_uncertainty</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">candidate</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">candidate_uncertainty</span><span class="p">[</span><span class="s">"confidence"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">best_confidence</span><span class="p">:</span>
+                    <span class="n">best_response</span> <span class="o">=</span> <span class="n">candidate</span>
+                    <span class="n">best_confidence</span> <span class="o">=</span> <span class="n">candidate_uncertainty</span><span class="p">[</span><span class="s">"confidence"</span><span class="p">]</span>
+                    <span class="n">used_strategy</span> <span class="o">=</span> <span class="n">strategy_name</span>
+            
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">"response"</span><span class="p">:</span> <span class="n">best_response</span><span class="p">,</span>
+                <span class="s">"confidence"</span><span class="p">:</span> <span class="n">best_confidence</span><span class="p">,</span>
+                <span class="s">"generation_strategy"</span><span class="p">:</span> <span class="n">used_strategy</span><span class="p">,</span>
+                <span class="s">"additional_info"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"Used </span><span class="si">{</span><span class="n">used_strategy</span><span class="si">}</span><span class="s"> due to initial uncertainty"</span>
+            <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">probabilistic_ensemble_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">ensemble_strategies</span><span class="p">):</span>
+        <span class="s">"""확률적 앙상블 생성"""</span>
+        <span class="n">ensemble_results</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">ensemble_strategies</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="o">**</span><span class="n">strategy</span><span class="p">[</span><span class="s">"params"</span><span class="p">])</span>
+            <span class="n">confidence</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">measure_confidence</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+            
+            <span class="n">ensemble_results</span><span class="p">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s">"response"</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+                <span class="s">"confidence"</span><span class="p">:</span> <span class="n">confidence</span><span class="p">,</span>
+                <span class="s">"strategy"</span><span class="p">:</span> <span class="n">strategy</span><span class="p">[</span><span class="s">"name"</span><span class="p">],</span>
+                <span class="s">"weight"</span><span class="p">:</span> <span class="n">strategy</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"weight"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="p">})</span>
+        
+        <span class="c1"># 가중 투표 또는 신뢰도 기반 선택
+</span>        <span class="n">final_response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">ensemble_selection</span><span class="p">(</span><span class="n">ensemble_results</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"final_response"</span><span class="p">:</span> <span class="n">final_response</span><span class="p">,</span>
+            <span class="s">"ensemble_details"</span><span class="p">:</span> <span class="n">ensemble_results</span><span class="p">,</span>
+            <span class="s">"selection_method"</span><span class="p">:</span> <span class="s">"confidence_weighted"</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>파운데이션 모델의 샘플링과 생성 전략은 <strong>모델의 잠재력을 실제 성능으로 변환하는 핵심 기술</strong>입니다.</p>
+
+<p><strong>핵심 인사이트:</strong></p>
+<ul>
+  <li><strong>샘플링 전략의 중요성</strong>: 동일한 모델도 샘플링에 따라 완전히 다른 품질의 출력 생성</li>
+  <li><strong>상황 적응적 접근</strong>: 태스크와 맥락에 따른 최적 전략 선택</li>
+  <li><strong>불확실성의 활용</strong>: AI의 확률적 특성을 이해하고 전략적으로 활용</li>
+  <li><strong>구조화된 출력</strong>: 실용적 애플리케이션을 위한 제약 조건 하 생성</li>
+</ul>
+
+<p>다음 포스트에서는 파운데이션 모델의 평가 방법론과 벤치마크를 상세히 다루겠습니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li><a href="/2024/07/15/foundation-models-data-and-architecture/">파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석</a></li>
+  <li><a href="/2024/08/22/foundation-models-post-training-strategies/">파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석</a></li>
+  <li>[다음: 파운데이션 모델 이해하기 (4부) - 평가 방법론과 벤치마크] (예정)</li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/1904.09751">The Curious Case of Neural Text Degeneration</a></li>
+  <li><a href="https://arxiv.org/abs/2202.00666">Typical Sampling for Text Generation</a></li>
+  <li><a href="https://arxiv.org/abs/2210.14140">Contrastive Search Is What You Need For Neural Text Generation</a></li>
+  <li><a href="https://arxiv.org/abs/2305.10601">Tree of Thoughts: Deliberate Problem Solving with Large Language Models</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/09/07/opensora-training-inference-scripts-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Open-Sora 훈련/추론 스크립트 상세 분석 - 실제 워크플로우와 파이프라인</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/10/03/kag-database-integration-analysis/" rel="next">
+          <span class="nav-title">KAG 데이터베이스 통합 아키텍처 심층 분석 - Neo4j와 벡터 검색 시스템</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

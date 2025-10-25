@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Docker 컨테이너화 시스템 심화 분석 - AudioCraft Custom 프로젝트 | AI Development Blog</title>
+<meta name="description" content="Docker 컨테이너화 시스템 심화 분석graph TB    subgraph &quot;AudioCraft Docker Architecture&quot;        A[Host System] --&amp;gt; B[Docker Engine]        B --&amp;gt; C[AudioCraft Contai...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="AudioCraft, Docker, CUDA, PyTorch, Container Orchestration, MLOps">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/12/20/docker-containerization-deep-dive/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 컨테이너화 시스템 심화 분석 - AudioCraft Custom 프로젝트">
+<meta property="og:description" content="Docker 컨테이너화 시스템 심화 분석graph TB    subgraph &quot;AudioCraft Docker Architecture&quot;        A[Host System] --&amp;gt; B[Docker Engine]        B --&amp;gt; C[AudioCraft Contai...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/12/20/docker-containerization-deep-dive/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Docker 컨테이너화 시스템 심화 분석 - AudioCraft Custom 프로젝트">
+<meta name="twitter:description" content="Docker 컨테이너화 시스템 심화 분석graph TB    subgraph &quot;AudioCraft Docker Architecture&quot;        A[Host System] --&amp;gt; B[Docker Engine]        B --&amp;gt; C[AudioCraft Contai...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Docker 컨테이너화 시스템 심화 분석 - AudioCraft Custom 프로젝트",
+  "description": "Docker 컨테이너화 시스템 심화 분석
+
+
+graph TB
+    subgraph &quot;AudioCraft Docker Architecture&quot;
+        A[Host System] --&amp;gt; B[Docker Engine]
+        B --&amp;gt; C[AudioCraft ...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-12-20T00:00:00+00:00",
+  "dateModified": "2024-12-20T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/12/20/docker-containerization-deep-dive/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/12/20/docker-containerization-deep-dive/",
+  "inLanguage": "ko",
+  "keywords": ["AudioCraft","Docker","CUDA","PyTorch","Container Orchestration","MLOps"],
+  "articleSection": ["DevOps","Docker","Containerization"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Docker 컨테이너화 시스템 심화 분석 - AudioCraft Custom 프로젝트</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Docker 컨테이너화 시스템 심화 분석 - AudioCraft Custom 프로젝트</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-12-20T00:00:00+00:00">Dec 20, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>DevOps</li><li>Docker</li><li>Containerization</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="docker-컨테이너화-시스템-심화-분석">Docker 컨테이너화 시스템 심화 분석</h1>
+
+<div class="mermaid">
+graph TB
+    subgraph "AudioCraft Docker Architecture"
+        A[Host System] --&gt; B[Docker Engine]
+        B --&gt; C[AudioCraft Container]
+        
+        subgraph "Container Layers"
+            C --&gt; D[PyTorch Base Image]
+            D --&gt; E[System Dependencies]
+            E --&gt; F[Python Dependencies]
+            F --&gt; G[AudioCraft Application]
+            G --&gt; H[Model Files]
+        end
+        
+        subgraph "Volume Mounts"
+            I[Host Models] --&gt; J[/workspace/models]
+            K[Host Code] --&gt; L[/workspace/audiocraft]
+            M[Host Output] --&gt; N[/workspace/outputs]
+        end
+        
+        subgraph "Network &amp; Ports"
+            O[Host:8000] --&gt; P[Container:8000]
+            Q[Host:7860] --&gt; R[Container:7860]
+        end
+        
+        subgraph "GPU Access"
+            S[NVIDIA Runtime] --&gt; T[CUDA 12.1]
+            T --&gt; U[cuDNN 8]
+            U --&gt; V[PyTorch GPU]
+        end
+        
+        C --&gt; J
+        C --&gt; L
+        C --&gt; N
+        C --&gt; P
+        C --&gt; R
+        C --&gt; V
+    end
+    
+    style A fill:#e1f5fe
+    style C fill:#ffcdd2
+    style G fill:#c8e6c9
+    style V fill:#fff3e0
+</div>
+
+<p>AudioCraft Custom 프로젝트의 마지막 분석으로, 전체 시스템을 컨테이너화하는 Docker 구성을 심층적으로 살펴보겠습니다. PyTorch와 CUDA를 포함한 복잡한 AI 스택을 안정적으로 배포하는 전략과 실제 구현 방법을 분석해보겠습니다.</p>
+
+<h2 id="-목차">📋 목차</h2>
+<ol>
+  <li><a href="#dockerfile-아키텍처-분석">Dockerfile 아키텍처 분석</a></li>
+  <li><a href="#의존성-관리-전략">의존성 관리 전략</a></li>
+  <li><a href="#docker-compose-오케스트레이션">Docker Compose 오케스트레이션</a></li>
+  <li><a href="#gpu-지원-및-cuda-설정">GPU 지원 및 CUDA 설정</a></li>
+  <li><a href="#패키지-설치-및-최적화">패키지 설치 및 최적화</a></li>
+  <li><a href="#배포-환경-구성">배포 환경 구성</a></li>
+</ol>
+
+<h2 id="dockerfile-아키텍처-분석">Dockerfile 아키텍처 분석</h2>
+
+<h3 id="베이스-이미지-선택">베이스 이미지 선택</h3>
+
+<div class="mermaid">
+graph LR
+    subgraph "Docker Image Hierarchy"
+        A[ubuntu:20.04] --&gt; B[nvidia/cuda:12.1-runtime]
+        B --&gt; C[pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime]
+        C --&gt; D[AudioCraft Custom Image]
+        
+        subgraph "Layer Components"
+            E[Base OS]
+            F[CUDA Runtime]
+            G[PyTorch Framework]
+            H[AudioCraft App]
+        end
+        
+        A -.-&gt; E
+        B -.-&gt; F
+        C -.-&gt; G
+        D -.-&gt; H
+        
+        subgraph "Size Optimization"
+            I[Runtime Only]
+            J[No Dev Tools]
+            K[Minimal Packages]
+        end
+        
+        C -.-&gt; I
+        C -.-&gt; J
+        D -.-&gt; K
+    end
+    
+    style C fill:#ffcdd2
+    style D fill:#c8e6c9
+</div>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime</span>
+</code></pre></div></div>
+
+<h4 id="️-베이스-이미지-전략-분석">🏗️ 베이스 이미지 전략 분석</h4>
+<ul>
+  <li><strong>PyTorch 공식 이미지</strong>: 검증된 안정성과 최적화</li>
+  <li><strong>CUDA 12.1</strong>: 최신 CUDA 지원으로 GPU 성능 극대화</li>
+  <li><strong>cuDNN 8</strong>: 딥러닝 연산 가속화 라이브러리</li>
+  <li><strong>Runtime 버전</strong>: 개발 도구 제외로 이미지 크기 최적화</li>
+</ul>
+
+<h4 id="-버전-호환성-매트릭스">💡 버전 호환성 매트릭스</h4>
+<p>| 구성 요소 | 버전 | 호환성 |
+|———-|——|——–|
+| PyTorch | 2.1.0 | ✅ 최신 안정 버전 |
+| CUDA | 12.1 | ✅ RTX 40xx 시리즈 지원 |
+| cuDNN | 8 | ✅ 최적의 성능 |
+| Python | 3.10+ | ✅ 현대적 언어 기능 |</p>
+
+<h3 id="시스템-레벨-구성">시스템 레벨 구성</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 작업 디렉토리 설정</span>
+<span class="k">WORKDIR</span><span class="s"> /workspace</span>
+
+<span class="c"># 시스템 의존성 설치</span>
+<span class="k">ENV</span><span class="s"> DEBIAN_FRONTEND=noninteractive</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="se">\
+</span>    ffmpeg <span class="se">\
+</span>    libsndfile1 <span class="se">\
+</span>    build-essential <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+</code></pre></div></div>
+
+<h4 id="-시스템-의존성-분석">🔧 시스템 의존성 분석</h4>
+<ul>
+  <li><strong>ffmpeg</strong>: 다양한 오디오/비디오 포맷 처리</li>
+  <li><strong>libsndfile1</strong>: 고품질 오디오 파일 I/O</li>
+  <li><strong>build-essential</strong>: C/C++ 컴파일러 툴체인</li>
+  <li><strong>비대화형 모드</strong>: 무인 설치를 위한 환경 변수</li>
+</ul>
+
+<h4 id="️-이미지-크기-최적화">🗑️ 이미지 크기 최적화</h4>
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&amp;&amp; rm -rf /var/lib/apt/lists/*
+</code></pre></div></div>
+<ul>
+  <li><strong>캐시 정리</strong>: 패키지 목록 삭제로 이미지 크기 감소</li>
+  <li><strong>레이어 최적화</strong>: 단일 RUN 명령으로 레이어 수 최소화</li>
+</ul>
+
+<h3 id="python-가상환경-설정">Python 가상환경 설정</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Python 가상환경 생성 및 활성화</span>
+<span class="k">RUN </span>python <span class="nt">-m</span> venv /opt/venv
+<span class="k">ENV</span><span class="s"> PATH="/opt/venv/bin:$PATH"</span>
+</code></pre></div></div>
+
+<h4 id="-가상환경-전략">🐍 가상환경 전략</h4>
+<ul>
+  <li><strong>격리된 환경</strong>: 시스템 Python과 분리</li>
+  <li><strong>경로 우선순위</strong>: PATH 환경변수로 가상환경 우선 실행</li>
+  <li><strong>의존성 충돌 방지</strong>: 패키지 버전 충돌 최소화</li>
+</ul>
+
+<h2 id="의존성-관리-전략">의존성 관리 전략</h2>
+
+<h3 id="requirementstxt-분석">Requirements.txt 분석</h3>
+
+<pre><code class="language-pip-requirements"># 핵심 PyTorch 스택
+torch==2.1.0
+torchaudio&gt;=2.0.0,&lt;2.1.2
+torchvision==0.16.0
+torchtext==0.16.0
+
+# 오디오 처리 라이브러리
+av==11.0.0
+librosa
+soundfile
+encodec
+pesq
+pystoi
+
+# 웹 프레임워크
+fastapi==0.104.1
+uvicorn==0.24.0
+python-multipart==0.0.6
+
+# ML/AI 도구
+transformers&gt;=4.31.0
+huggingface_hub
+einops
+xformers&lt;0.0.23
+
+# 유틸리티
+numpy&lt;2.0.0
+tqdm
+protobuf
+gradio
+</code></pre>
+
+<h4 id="-의존성-카테고리-분석">📦 의존성 카테고리 분석</h4>
+
+<h5 id="-핵심-ai-스택">🔥 핵심 AI 스택</h5>
+<ul>
+  <li><strong>PyTorch 생태계</strong>: torch, torchaudio, torchvision 통합</li>
+  <li><strong>정확한 버전</strong>: 호환성 보장을 위한 엄격한 버전 고정</li>
+  <li><strong>xformers</strong>: Transformer 모델 메모리 최적화</li>
+</ul>
+
+<h5 id="-오디오-처리-스택">🎵 오디오 처리 스택</h5>
+<ul>
+  <li><strong>다중 백엔드</strong>: av, librosa, soundfile로 다양한 포맷 지원</li>
+  <li><strong>품질 평가</strong>: pesq, pystoi로 오디오 품질 메트릭</li>
+  <li><strong>압축 기술</strong>: encodec로 신경망 오디오 압축</li>
+</ul>
+
+<h5 id="-웹-서비스-스택">🌐 웹 서비스 스택</h5>
+<ul>
+  <li><strong>비동기 처리</strong>: FastAPI + uvicorn으로 고성능 API</li>
+  <li><strong>파일 업로드</strong>: python-multipart로 멀티파트 폼 지원</li>
+  <li><strong>사용자 인터페이스</strong>: gradio로 간편한 웹 UI</li>
+</ul>
+
+<h3 id="패키지-설치-전략">패키지 설치 전략</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 애플리케이션 파일 복사</span>
+<span class="k">COPY</span><span class="s"> . .</span>
+
+<span class="c"># Python 의존성 설치</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">--no-cache-dir</span> <span class="nt">-r</span> requirements.txt
+
+<span class="c"># audiocraft 패키지 설치</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">-e</span> .
+</code></pre></div></div>
+
+<h4 id="-설치-최적화-기법">🚀 설치 최적화 기법</h4>
+<ul>
+  <li><strong>캐시 비활성화</strong>: <code class="language-plaintext highlighter-rouge">--no-cache-dir</code>로 이미지 크기 감소</li>
+  <li><strong>개발 모드</strong>: <code class="language-plaintext highlighter-rouge">-e</code> 플래그로 편집 가능한 설치</li>
+  <li><strong>순서 최적화</strong>: 요구사항 먼저, 로컬 패키지 나중에</li>
+</ul>
+
+<h2 id="docker-compose-오케스트레이션">Docker Compose 오케스트레이션</h2>
+
+<h3 id="서비스-정의">서비스 정의</h3>
+
+<pre><code class="language-dockercompose">services:
+  audiocraft:
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace  # 현재 디렉토리를 컨테이너의 /workspace에 마운트
+      - ./dataset:/workspace/dataset  # 데이터셋 디렉토리 마운트
+      - ./api:/workspace/api  # API 디렉토리 마운트
+    ports:
+      - "8000:8000"  # FastAPI 기본 포트
+</code></pre>
+
+<h4 id="-볼륨-마운트-전략">💾 볼륨 마운트 전략</h4>
+<ul>
+  <li><strong>전체 프로젝트</strong>: 개발 시 실시간 코드 반영</li>
+  <li><strong>데이터셋 분리</strong>: 대용량 데이터의 독립적 관리</li>
+  <li><strong>API 디렉토리</strong>: 서비스 코드의 핫 리로드 지원</li>
+</ul>
+
+<h4 id="-포트-매핑">🔌 포트 매핑</h4>
+<ul>
+  <li><strong>8000:8000</strong>: FastAPI 서버 표준 포트</li>
+  <li><strong>호스트 접근</strong>: 로컬 개발 환경에서 직접 접근 가능</li>
+</ul>
+
+<h3 id="gpu-리소스-관리">GPU 리소스 관리</h3>
+
+<pre><code class="language-dockercompose">deploy:
+  resources:
+    reservations:
+      devices:
+        - driver: nvidia  # NVIDIA GPU 사용 설정
+          count: 1
+          capabilities: [gpu]
+environment:
+  - NVIDIA_VISIBLE_DEVICES=all  # 모든 GPU 사용 가능하도록 설정
+</code></pre>
+
+<h4 id="-gpu-할당-전략">🎯 GPU 할당 전략</h4>
+<ul>
+  <li><strong>단일 GPU</strong>: 컨테이너당 1개 GPU 예약</li>
+  <li><strong>NVIDIA 드라이버</strong>: 공식 NVIDIA 컨테이너 런타임 사용</li>
+  <li><strong>전체 GPU 가시성</strong>: 모든 GPU를 컨테이너에서 사용 가능</li>
+</ul>
+
+<h2 id="gpu-지원-및-cuda-설정">GPU 지원 및 CUDA 설정</h2>
+
+<h3 id="cuda-환경-구성">CUDA 환경 구성</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENV</span><span class="s"> PYTHONPATH=/workspace</span>
+<span class="k">ENV</span><span class="s"> HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}</span>
+</code></pre></div></div>
+
+<h4 id="️-환경-변수-설정">⚙️ 환경 변수 설정</h4>
+<ul>
+  <li><strong>PYTHONPATH</strong>: 모듈 탐색 경로 설정</li>
+  <li><strong>HF_TOKEN</strong>: Hugging Face 모델 다운로드 인증</li>
+  <li><strong>런타임 주입</strong>: 빌드 시 토큰 노출 방지</li>
+</ul>
+
+<h3 id="gpu-메모리-최적화">GPU 메모리 최적화</h3>
+
+<p>Docker Compose 설정을 통한 GPU 메모리 관리:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">environment</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">CUDA_VISIBLE_DEVICES=0</span>  <span class="c1"># 특정 GPU 사용 지정</span>
+  <span class="pi">-</span> <span class="s">PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512</span>  <span class="c1"># 메모리 할당 최적화</span>
+</code></pre></div></div>
+
+<h4 id="-메모리-최적화-전략">💾 메모리 최적화 전략</h4>
+<ul>
+  <li><strong>메모리 분할</strong>: 큰 모델을 위한 메모리 세그먼트 최적화</li>
+  <li><strong>GPU 선택</strong>: 멀티 GPU 환경에서 특정 GPU 지정</li>
+  <li><strong>OOM 방지</strong>: Out of Memory 에러 예방</li>
+</ul>
+
+<h2 id="패키지-설치-및-최적화">패키지 설치 및 최적화</h2>
+
+<h3 id="setuppy-분석">Setup.py 분석</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">NAME</span> <span class="o">=</span> <span class="s">'audiocraft'</span>
+<span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="s">'Audio generation research library for PyTorch'</span>
+<span class="n">VERSION</span> <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="s">'__version__'</span><span class="p">]</span>  <span class="c1"># 동적 버전 추출
+</span>
+<span class="n">REQUIRED</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">HERE</span> <span class="o">/</span> <span class="s">'requirements.txt'</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="p">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">'#'</span><span class="p">)]</span>
+
+<span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">NAME</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="n">VERSION</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="n">DESCRIPTION</span><span class="p">,</span>
+    <span class="n">python_requires</span><span class="o">=</span><span class="s">'&gt;=3.8.0'</span><span class="p">,</span>
+    <span class="n">install_requires</span><span class="o">=</span><span class="n">REQUIRED</span><span class="p">,</span>
+    <span class="n">extras_require</span><span class="o">=</span><span class="p">{</span>
+        <span class="s">'dev'</span><span class="p">:</span> <span class="p">[</span><span class="s">'coverage'</span><span class="p">,</span> <span class="s">'flake8'</span><span class="p">,</span> <span class="s">'mypy'</span><span class="p">,</span> <span class="s">'pdoc3'</span><span class="p">,</span> <span class="s">'pytest'</span><span class="p">],</span>
+        <span class="s">'wm'</span><span class="p">:</span> <span class="p">[</span><span class="s">'audioseal'</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="n">packages</span><span class="o">=</span><span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">find_packages</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="p">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">'audiocraft'</span><span class="p">)],</span>
+    <span class="n">package_data</span><span class="o">=</span><span class="p">{</span><span class="s">'audiocraft'</span><span class="p">:</span> <span class="p">[</span><span class="s">'py.typed'</span><span class="p">]},</span>
+    <span class="n">include_package_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-패키지-메타데이터">📋 패키지 메타데이터</h4>
+<ul>
+  <li><strong>동적 버전</strong>: <code class="language-plaintext highlighter-rouge">__init__.py</code>에서 버전 자동 추출</li>
+  <li><strong>요구사항 파싱</strong>: requirements.txt에서 의존성 자동 로드</li>
+  <li><strong>선택적 의존성</strong>: dev, wm 등 용도별 추가 패키지</li>
+</ul>
+
+<h4 id="-타입-힌트-지원">🎯 타입 힌트 지원</h4>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">package_data</span><span class="o">=</span><span class="p">{</span><span class="s">'audiocraft'</span><span class="p">:</span> <span class="p">[</span><span class="s">'py.typed'</span><span class="p">]}</span>
+</code></pre></div></div>
+<ul>
+  <li><strong>타입 정보</strong>: MyPy 등 정적 타입 검사 도구 지원</li>
+  <li><strong>IDE 지원</strong>: 향상된 코드 완성과 오류 검출</li>
+</ul>
+
+<h3 id="이미지-빌드-최적화">이미지 빌드 최적화</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 다단계 빌드 예시 (프로덕션 최적화)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">pytorch/pytorch:2.1.0-cuda12.1-cudnn8-devel</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
+<span class="c"># 빌드 도구와 컴파일러 설치</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> build-essential
+
+<span class="k">FROM</span><span class="w"> </span><span class="s">pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">runtime</span>
+<span class="c"># 최종 런타임 이미지</span>
+<span class="k">COPY</span><span class="s"> --from=builder /compiled/packages /opt/packages</span>
+</code></pre></div></div>
+
+<h4 id="️-빌드-최적화-전략">🏗️ 빌드 최적화 전략</h4>
+<ul>
+  <li><strong>다단계 빌드</strong>: 빌드 도구와 런타임 분리</li>
+  <li><strong>레이어 캐싱</strong>: 변경이 적은 부분을 먼저 복사</li>
+  <li><strong>최소 런타임</strong>: 불필요한 개발 도구 제거</li>
+</ul>
+
+<h2 id="배포-환경-구성">배포 환경 구성</h2>
+
+<h3 id="컨테이너-실행-명령">컨테이너 실행 명령</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># FastAPI 서버 포트 노출</span>
+<span class="k">EXPOSE</span><span class="s"> 8000</span>
+
+<span class="c"># FastAPI 서버 실행</span>
+<span class="k">CMD</span><span class="s"> ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]</span>
+</code></pre></div></div>
+
+<h4 id="-서버-실행-전략">🚀 서버 실행 전략</h4>
+<ul>
+  <li><strong>포트 노출</strong>: 컨테이너 포트 8000 외부 접근 허용</li>
+  <li><strong>호스트 바인딩</strong>: 0.0.0.0으로 모든 인터페이스에서 수신</li>
+  <li><strong>프로덕션 설정</strong>: uvicorn ASGI 서버로 고성능 처리</li>
+</ul>
+
+<h3 id="환경별-설정-관리">환경별 설정 관리</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># docker-compose.prod.yml (프로덕션 예시)</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">audiocraft:latest</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">ENVIRONMENT=production</span>
+      <span class="pi">-</span> <span class="s">LOG_LEVEL=warning</span>
+      <span class="pi">-</span> <span class="s">WORKERS=4</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+      <span class="na">resources</span><span class="pi">:</span>
+        <span class="na">limits</span><span class="pi">:</span>
+          <span class="na">memory</span><span class="pi">:</span> <span class="s">8G</span>
+          <span class="na">gpus</span><span class="pi">:</span> <span class="m">1</span>
+</code></pre></div></div>
+
+<h4 id="-프로덕션-최적화">🏭 프로덕션 최적화</h4>
+<ul>
+  <li><strong>복제본</strong>: 로드 밸런싱을 위한 다중 인스턴스</li>
+  <li><strong>리소스 제한</strong>: 메모리와 GPU 사용량 제한</li>
+  <li><strong>로깅</strong>: 프로덕션 레벨 로그 설정</li>
+</ul>
+
+<h3 id="헬스-체크-구성">헬스 체크 구성</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 헬스 체크 추가</span>
+<span class="k">HEALTHCHECK</span><span class="s"> --interval=30s --timeout=30s --start-period=5s --retries=3 \</span>
+  CMD curl -f http://localhost:8000/health || exit 1
+</code></pre></div></div>
+
+<h4 id="-상태-모니터링">🏥 상태 모니터링</h4>
+<ul>
+  <li><strong>정기 점검</strong>: 30초마다 헬스 체크 실행</li>
+  <li><strong>시작 유예</strong>: 5초 초기 대기 시간</li>
+  <li><strong>재시도 정책</strong>: 3회 실패 시 컨테이너 재시작</li>
+</ul>
+
+<h2 id="-핵심-인사이트">🔍 핵심 인사이트</h2>
+
+<h3 id="1-계층화된-아키텍처">1. 계층화된 아키텍처</h3>
+<ul>
+  <li><strong>베이스 최적화</strong>: PyTorch 공식 이미지로 안정성 확보</li>
+  <li><strong>레이어 캐싱</strong>: 변경 빈도에 따른 최적 레이어 순서</li>
+  <li><strong>크기 최적화</strong>: 불필요한 파일과 캐시 제거</li>
+</ul>
+
+<h3 id="2-개발-프로덕션-균형">2. 개발-프로덕션 균형</h3>
+<ul>
+  <li><strong>개발 편의성</strong>: 볼륨 마운트로 실시간 코드 반영</li>
+  <li><strong>프로덕션 준비</strong>: 헬스 체크와 리소스 제한</li>
+  <li><strong>환경 분리</strong>: Docker Compose로 환경별 설정 관리</li>
+</ul>
+
+<h3 id="3-gpu-자원-효율성">3. GPU 자원 효율성</h3>
+<ul>
+  <li><strong>정확한 할당</strong>: 필요한 GPU 수만 예약</li>
+  <li><strong>메모리 최적화</strong>: CUDA 메모리 설정으로 OOM 방지</li>
+  <li><strong>드라이버 호환성</strong>: NVIDIA 컨테이너 런타임 활용</li>
+</ul>
+
+<h3 id="4-의존성-관리-전략">4. 의존성 관리 전략</h3>
+<ul>
+  <li><strong>버전 고정</strong>: 재현 가능한 빌드 환경</li>
+  <li><strong>가상환경</strong>: 시스템 패키지와 격리</li>
+  <li><strong>선택적 설치</strong>: 용도별 추가 의존성 관리</li>
+</ul>
+
+<h3 id="5-운영-편의성">5. 운영 편의성</h3>
+<ul>
+  <li><strong>포트 표준화</strong>: 일관된 포트 사용 (8000)</li>
+  <li><strong>로그 관리</strong>: 적절한 로그 레벨 설정</li>
+  <li><strong>모니터링</strong>: 헬스 체크와 메트릭 수집</li>
+</ul>
+
+<h2 id="-결론">🎯 결론</h2>
+
+<p>AudioCraft Custom 프로젝트의 Docker 컨테이너화는 복잡한 AI 워크로드를 안정적으로 배포하는 모범 사례를 보여줍니다. PyTorch와 CUDA의 복잡성을 Docker로 추상화하여 개발자가 핵심 로직에 집중할 수 있게 하면서, 프로덕션 환경에서의 확장성과 안정성도 확보했습니다.</p>
+
+<p>특히 GPU 리소스 관리와 의존성 최적화를 통해 AI 모델 서빙에 특화된 컨테이너 환경을 구축했으며, Docker Compose를 통한 오케스트레이션으로 개발부터 배포까지의 전체 라이프사이클을 효율적으로 관리할 수 있습니다.</p>
+
+<hr />
+
+<h2 id="-audiocraft-custom-프로젝트-분석-완료">🎉 AudioCraft Custom 프로젝트 분석 완료</h2>
+
+<p>이번 시리즈를 통해 AudioCraft Custom 프로젝트의 전체 아키텍처를 심층적으로 분석했습니다:</p>
+
+<ol>
+  <li><strong><a href="2024-12-20-musicgen-implementation-deep-dive.md">MusicGen 모델 구현 심화 분석</a></strong> - 텍스트-음악 생성의 핵심 메커니즘</li>
+  <li><strong><a href="2024-12-20-audiogen-encodec-deep-dive.md">AudioGen &amp; EnCodec 모델 심화 분석</a></strong> - 효과음 생성과 신경망 압축</li>
+  <li><strong><a href="2024-12-20-adversarial-networks-deep-dive.md">Adversarial Networks 심화 분석</a></strong> - 품질 향상을 위한 판별자 시스템</li>
+  <li><strong><a href="2024-12-20-fastapi-server-deep-dive.md">FastAPI 서버 구현 심화 분석</a></strong> - AI 모델의 웹 서비스 통합</li>
+  <li><strong><a href="2024-12-20-docker-containerization-deep-dive.md">Docker 컨테이너화 시스템 심화 분석</a></strong> - 전체 시스템의 배포 환경</li>
+</ol>
+
+<p>AudioCraft는 단순한 오디오 생성 도구를 넘어서, 현대적인 AI 시스템 구축의 모든 측면을 다루는 종합적인 프로젝트임을 확인할 수 있었습니다.</p>
+
+<hr />
+
+<p><em>이 분석은 AudioCraft Custom 프로젝트의 실제 소스 코드를 기반으로 작성되었습니다. 더 자세한 구현 내용은 <a href="https://github.com/facebookresearch/audiocraft">AudioCraft 공식 저장소</a>에서 확인할 수 있습니다.</em></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/12/20/audiogen-encodec-deep-dive/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">AudioGen & EnCodec 모델 심화 분석 - AudioCraft Custom...</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/12/20/fastapi-server-deep-dive/" rel="next">
+          <span class="nav-title">FastAPI 서버 구현 심화 분석 - AudioCraft Custom 프로젝트</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

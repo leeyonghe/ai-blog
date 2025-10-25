@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 파운데이션 모델의 사후 학습(Post-training) 과정을 심층 분석합니다. 사전훈련된 모델을 특정 태스크나 인간의 선호도에 맞춰 조정하는 지도 파인튜닝(SFT)과 선호도 파인튜닝 기법들을 상세히 살펴보겠습니다.1. 사후 학습 개요1.1 사후 학습의 필요성...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="foundation-models, fine-tuning, sft, rlhf, instruction-tuning, preference-optimization">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/08/22/foundation-models-post-training-strategies/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석">
+<meta property="og:description" content="개요이번 포스트에서는 파운데이션 모델의 사후 학습(Post-training) 과정을 심층 분석합니다. 사전훈련된 모델을 특정 태스크나 인간의 선호도에 맞춰 조정하는 지도 파인튜닝(SFT)과 선호도 파인튜닝 기법들을 상세히 살펴보겠습니다.1. 사후 학습 개요1.1 사후 학습의 필요성...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/08/22/foundation-models-post-training-strategies/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석">
+<meta name="twitter:description" content="개요이번 포스트에서는 파운데이션 모델의 사후 학습(Post-training) 과정을 심층 분석합니다. 사전훈련된 모델을 특정 태스크나 인간의 선호도에 맞춰 조정하는 지도 파인튜닝(SFT)과 선호도 파인튜닝 기법들을 상세히 살펴보겠습니다.1. 사후 학습 개요1.1 사후 학습의 필요성...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석",
+  "description": "개요
+
+이번 포스트에서는 파운데이션 모델의 사후 학습(Post-training) 과정을 심층 분석합니다. 사전훈련된 모델을 특정 태스크나 인간의 선호도에 맞춰 조정하는 지도 파인튜닝(SFT)과 선호도 파인튜닝 기법들을 상세히 살펴보겠습니다.
+
+1. 사후 학습 개요
+
+1.1 사후 학...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-08-22T05:15:00+00:00",
+  "dateModified": "2024-08-22T05:15:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/08/22/foundation-models-post-training-strategies/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/08/22/foundation-models-post-training-strategies/",
+  "inLanguage": "ko",
+  "keywords": ["foundation-models","fine-tuning","sft","rlhf","instruction-tuning","preference-optimization"],
+  "articleSection": ["AI","Foundation Models","Fine-tuning"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-08-22T05:15:00+00:00">Aug 22, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Foundation Models</li><li>Fine-tuning</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 <strong>파운데이션 모델의 사후 학습(Post-training)</strong> 과정을 심층 분석합니다. 사전훈련된 모델을 특정 태스크나 인간의 선호도에 맞춰 조정하는 지도 파인튜닝(SFT)과 선호도 파인튜닝 기법들을 상세히 살펴보겠습니다.</p>
+
+<h2 id="1-사후-학습-개요">1. 사후 학습 개요</h2>
+
+<h3 id="11-사후-학습의-필요성">1.1 사후 학습의 필요성</h3>
+
+<pre><code class="language-mermaid">graph TD
+    A[사전훈련된 모델] --&gt; B{사후 학습}
+    B --&gt; C[지도 파인튜닝 SFT]
+    B --&gt; D[선호도 파인튜닝]
+    
+    C --&gt; E[태스크 특화 성능]
+    D --&gt; F[인간 선호도 정렬]
+    
+    E --&gt; G[실용적 AI 시스템]
+    F --&gt; G
+    
+    subgraph "SFT 방법들"
+        H[Instruction Tuning]
+        I[Task-specific Tuning]
+        J[Multi-task Tuning]
+    end
+    
+    subgraph "선호도 최적화"
+        K[RLHF]
+        L[DPO]
+        M[Constitutional AI]
+    end
+    
+    C --&gt; H
+    C --&gt; I
+    C --&gt; J
+    
+    D --&gt; K
+    D --&gt; L
+    D --&gt; M
+</code></pre>
+
+<h3 id="12-사후-학습-파이프라인">1.2 사후 학습 파이프라인</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 사후 학습 파이프라인
+</span><span class="n">POST_TRAINING_PIPELINE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"stage_1_sft"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"기본 태스크 수행 능력 획득"</span><span class="p">,</span>
+        <span class="s">"data"</span><span class="p">:</span> <span class="s">"고품질 instruction-response 쌍"</span><span class="p">,</span>
+        <span class="s">"duration"</span><span class="p">:</span> <span class="s">"수천 스텝"</span><span class="p">,</span>
+        <span class="s">"learning_rate"</span><span class="p">:</span> <span class="s">"1e-5 ~ 5e-5"</span><span class="p">,</span>
+        <span class="s">"techniques"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Instruction tuning"</span><span class="p">,</span> <span class="s">"Multi-task learning"</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"stage_2_preference"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"인간 선호도 정렬"</span><span class="p">,</span>
+        <span class="s">"data"</span><span class="p">:</span> <span class="s">"선호도 순위 데이터"</span><span class="p">,</span>
+        <span class="s">"duration"</span><span class="p">:</span> <span class="s">"수백~수천 스텝"</span><span class="p">,</span> 
+        <span class="s">"learning_rate"</span><span class="p">:</span> <span class="s">"1e-6 ~ 1e-5"</span><span class="p">,</span>
+        <span class="s">"techniques"</span><span class="p">:</span> <span class="p">[</span><span class="s">"RLHF"</span><span class="p">,</span> <span class="s">"DPO"</span><span class="p">,</span> <span class="s">"Constitutional AI"</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"stage_3_safety"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"안전성 및 유해성 완화"</span><span class="p">,</span>
+        <span class="s">"data"</span><span class="p">:</span> <span class="s">"안전성 평가 데이터"</span><span class="p">,</span>
+        <span class="s">"techniques"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Red teaming"</span><span class="p">,</span> <span class="s">"Safety filtering"</span><span class="p">,</span> <span class="s">"Jailbreak defense"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="2-지도-파인튜닝-supervised-fine-tuning-sft">2. 지도 파인튜닝 (Supervised Fine-Tuning, SFT)</h2>
+
+<h3 id="21-인스트럭션-튜닝">2.1 인스트럭션 튜닝</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">InstructionTuningDataset</span><span class="p">:</span>
+    <span class="s">"""인스트럭션 튜닝 데이터셋"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instruction_data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">instruction_data</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">templates</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">load_prompt_templates</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">load_prompt_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""다양한 프롬프트 템플릿"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"basic"</span><span class="p">:</span> <span class="s">"### Instruction:</span><span class="se">\n</span><span class="s">{instruction}</span><span class="se">\n\n</span><span class="s">### Response:</span><span class="se">\n</span><span class="s">{response}"</span><span class="p">,</span>
+            <span class="s">"with_input"</span><span class="p">:</span> <span class="s">"### Instruction:</span><span class="se">\n</span><span class="s">{instruction}</span><span class="se">\n\n</span><span class="s">### Input:</span><span class="se">\n</span><span class="s">{input}</span><span class="se">\n\n</span><span class="s">### Response:</span><span class="se">\n</span><span class="s">{response}"</span><span class="p">,</span>
+            <span class="s">"conversational"</span><span class="p">:</span> <span class="s">"Human: {instruction}</span><span class="se">\n\n</span><span class="s">Assistant: {response}"</span><span class="p">,</span>
+            <span class="s">"alpaca"</span><span class="p">:</span> <span class="s">"Below is an instruction that describes a task. Write a response that appropriately completes the request.</span><span class="se">\n\n</span><span class="s">### Instruction:</span><span class="se">\n</span><span class="s">{instruction}</span><span class="se">\n\n</span><span class="s">### Response:</span><span class="se">\n</span><span class="s">{response}"</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">format_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s">"basic"</span><span class="p">):</span>
+        <span class="s">"""샘플을 지정된 템플릿으로 포맷팅"""</span>
+        <span class="n">template_str</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">templates</span><span class="p">[</span><span class="n">template</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">template_str</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="o">**</span><span class="n">sample</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">create_training_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instruction</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">input_text</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s">"""훈련 샘플 생성"""</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"instruction"</span><span class="p">:</span> <span class="n">instruction</span><span class="p">,</span>
+            <span class="s">"response"</span><span class="p">:</span> <span class="n">response</span>
+        <span class="p">}</span>
+        
+        <span class="k">if</span> <span class="n">input_text</span><span class="p">:</span>
+            <span class="n">sample</span><span class="p">[</span><span class="s">"input"</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_text</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="s">"with_input"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="s">"basic"</span>
+        
+        <span class="n">formatted_text</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">format_sample</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">template</span><span class="p">)</span>
+        
+        <span class="c1"># 토크나이제이션 및 라벨 마스킹
+</span>        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">prepare_for_training</span><span class="p">(</span><span class="n">formatted_text</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">prepare_for_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formatted_text</span><span class="p">):</span>
+        <span class="s">"""훈련을 위한 데이터 준비"""</span>
+        <span class="c1"># 인스트럭션 부분은 손실 계산에서 제외
+</span>        <span class="c1"># 응답 부분만 손실 계산에 포함
+</span>        <span class="k">pass</span>
+
+<span class="c1"># 인스트럭션 튜닝 예시 데이터
+</span><span class="n">INSTRUCTION_EXAMPLES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s">"instruction"</span><span class="p">:</span> <span class="s">"다음 텍스트를 요약해주세요."</span><span class="p">,</span>
+        <span class="s">"input"</span><span class="p">:</span> <span class="s">"인공지능은 인간의 지능을 모방하여 만든 기계의 지능을 의미합니다. 기계가 인간의 인지능력을 모방할 수 있도록 하는 기술로, 학습, 추론, 인식, 이해 등의 기능을 컴퓨터가 수행할 수 있게 합니다."</span><span class="p">,</span>
+        <span class="s">"response"</span><span class="p">:</span> <span class="s">"인공지능은 기계가 인간의 학습, 추론, 인식, 이해 등의 인지능력을 모방할 수 있도록 하는 기술입니다."</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s">"instruction"</span><span class="p">:</span> <span class="s">"Python으로 피보나치 수열을 생성하는 함수를 작성해주세요."</span><span class="p">,</span>
+        <span class="s">"response"</span><span class="p">:</span> <span class="s">"""```python
+def fibonacci(n):
+    if n &lt;= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+def fibonacci_iterative(n):
+    if n &lt;= 1:
+        return n
+    a, b = 0, 1
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+```"""</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s">"instruction"</span><span class="p">:</span> <span class="s">"긍정적인 감정과 부정적인 감정을 구분해주세요."</span><span class="p">,</span>
+        <span class="s">"input"</span><span class="p">:</span> <span class="s">"오늘 날씨가 너무 좋아서 기분이 좋습니다."</span><span class="p">,</span>
+        <span class="s">"response"</span><span class="p">:</span> <span class="s">"이 문장은 '좋아서', '기분이 좋습니다'라는 표현을 통해 긍정적인 감정을 나타냅니다."</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<h3 id="22-멀티태스크-파인튜닝">2.2 멀티태스크 파인튜닝</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MultiTaskFineTuning</span><span class="p">:</span>
+    <span class="s">"""멀티태스크 파인튜닝 프레임워크"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">base_model</span> <span class="o">=</span> <span class="n">base_model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">task_weights</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">task_samplers</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">def</span> <span class="nf">setup_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_configs</span><span class="p">):</span>
+        <span class="s">"""다양한 태스크 설정"""</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tasks</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"question_answering"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"datasets"</span><span class="p">:</span> <span class="p">[</span><span class="s">"SQuAD"</span><span class="p">,</span> <span class="s">"Natural Questions"</span><span class="p">,</span> <span class="s">"MS MARCO"</span><span class="p">],</span>
+                <span class="s">"format"</span><span class="p">:</span> <span class="s">"context + question -&gt; answer"</span><span class="p">,</span>
+                <span class="s">"weight"</span><span class="p">:</span> <span class="mf">0.3</span>
+            <span class="p">},</span>
+            <span class="s">"text_classification"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"datasets"</span><span class="p">:</span> <span class="p">[</span><span class="s">"IMDB"</span><span class="p">,</span> <span class="s">"SST-2"</span><span class="p">,</span> <span class="s">"AG News"</span><span class="p">],</span>
+                <span class="s">"format"</span><span class="p">:</span> <span class="s">"text -&gt; label"</span><span class="p">,</span>
+                <span class="s">"weight"</span><span class="p">:</span> <span class="mf">0.2</span>
+            <span class="p">},</span>
+            <span class="s">"text_generation"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"datasets"</span><span class="p">:</span> <span class="p">[</span><span class="s">"CNN/DM"</span><span class="p">,</span> <span class="s">"XSum"</span><span class="p">,</span> <span class="s">"Reddit"</span><span class="p">],</span>
+                <span class="s">"format"</span><span class="p">:</span> <span class="s">"prompt -&gt; completion"</span><span class="p">,</span>
+                <span class="s">"weight"</span><span class="p">:</span> <span class="mf">0.25</span>
+            <span class="p">},</span>
+            <span class="s">"instruction_following"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"datasets"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Alpaca"</span><span class="p">,</span> <span class="s">"Dolly"</span><span class="p">,</span> <span class="s">"OpenAssistant"</span><span class="p">],</span>
+                <span class="s">"format"</span><span class="p">:</span> <span class="s">"instruction + input -&gt; response"</span><span class="p">,</span>
+                <span class="s">"weight"</span><span class="p">:</span> <span class="mf">0.25</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">balanced_sampling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_datasets</span><span class="p">):</span>
+        <span class="s">"""균형 잡힌 태스크 샘플링"""</span>
+        <span class="c1"># 태스크별 가중치에 따른 샘플링
+</span>        <span class="c1"># 온도 기반 샘플링으로 다양성 확보
+</span>        <span class="k">pass</span>
+    
+    <span class="k">def</span> <span class="nf">task_adaptive_learning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""태스크 적응적 학습"""</span>
+        <span class="n">strategies</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"curriculum_learning"</span><span class="p">:</span> <span class="s">"쉬운 태스크부터 어려운 태스크로"</span><span class="p">,</span>
+            <span class="s">"alternating_training"</span><span class="p">:</span> <span class="s">"태스크를 번갈아가며 훈련"</span><span class="p">,</span>
+            <span class="s">"gradient_surgery"</span><span class="p">:</span> <span class="s">"태스크 간 그래디언트 충돌 해결"</span><span class="p">,</span>
+            <span class="s">"meta_learning"</span><span class="p">:</span> <span class="s">"태스크 간 공통 패턴 학습"</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">strategies</span>
+</code></pre></div></div>
+
+<h3 id="23-parameter-efficient-fine-tuning">2.3 Parameter-Efficient Fine-tuning</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+
+<span class="k">class</span> <span class="nc">LoRALayer</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""Low-Rank Adaptation (LoRA) 레이어"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">rank</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">scaling</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">/</span> <span class="n">rank</span>
+        
+        <span class="c1"># LoRA 행렬들
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">lora_A</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">in_features</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">lora_B</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">out_features</span><span class="p">,</span> <span class="n">rank</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># x @ A^T @ B^T = x @ (BA)^T
+</span>        <span class="n">lora_output</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="p">.</span><span class="n">lora_A</span><span class="p">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="p">.</span><span class="n">lora_B</span><span class="p">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">lora_output</span> <span class="o">*</span> <span class="bp">self</span><span class="p">.</span><span class="n">scaling</span>
+
+<span class="k">class</span> <span class="nc">AdapterLayer</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""어댑터 레이어"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">adapter_size</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">down_project</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">adapter_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">up_project</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">adapter_size</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">down_project</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">activation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">up_project</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">residual</span>
+
+<span class="k">class</span> <span class="nc">PrefixTuning</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""프리픽스 튜닝"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">prefix_length</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">prefix_length</span> <span class="o">=</span> <span class="n">prefix_length</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span>
+        
+        <span class="c1"># 가상 토큰들을 위한 임베딩
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">prefix_embeddings</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Parameter</span><span class="p">(</span>
+            <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="n">prefix_length</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># 레이어별 key, value 프리픽스
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">prefix_mlp</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">),</span>
+                <span class="n">nn</span><span class="p">.</span><span class="n">Tanh</span><span class="p">(),</span>
+                <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num_heads</span> <span class="o">*</span> <span class="n">d_model</span> <span class="o">//</span> <span class="n">num_heads</span><span class="p">)</span>
+            <span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">)</span>
+        <span class="p">])</span>
+</code></pre></div></div>
+
+<h2 id="3-선호도-파인튜닝-preference-fine-tuning">3. 선호도 파인튜닝 (Preference Fine-tuning)</h2>
+
+<h3 id="31-인간-피드백-강화학습-rlhf">3.1 인간 피드백 강화학습 (RLHF)</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">RLHFTrainer</span><span class="p">:</span>
+    <span class="s">"""RLHF 훈련 프레임워크"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy_model</span><span class="p">,</span> <span class="n">value_model</span><span class="p">,</span> <span class="n">reference_model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">policy_model</span> <span class="o">=</span> <span class="n">policy_model</span>  <span class="c1"># 정책 모델 (파인튜닝 대상)
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">value_model</span> <span class="o">=</span> <span class="n">value_model</span>    <span class="c1"># 가치 함수
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">reference_model</span> <span class="o">=</span> <span class="n">reference_model</span>  <span class="c1"># 참조 모델 (KL 정규화용)
+</span>        
+    <span class="k">def</span> <span class="nf">train_reward_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preference_data</span><span class="p">):</span>
+        <span class="s">"""선호도 데이터로 보상 모델 훈련"""</span>
+        <span class="c1"># 1. 선호도 쌍 데이터 준비
+</span>        <span class="c1"># [(prompt, chosen_response, rejected_response), ...]
+</span>        
+        <span class="c1"># 2. Bradley-Terry 모델로 보상 함수 학습
+</span>        <span class="k">def</span> <span class="nf">preference_loss</span><span class="p">(</span><span class="n">chosen_reward</span><span class="p">,</span> <span class="n">rejected_reward</span><span class="p">):</span>
+            <span class="c1"># P(y_w &gt; y_l) = sigmoid(r(x,y_w) - r(x,y_l))
+</span>            <span class="k">return</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">chosen_reward</span> <span class="o">-</span> <span class="n">rejected_reward</span><span class="p">))</span>
+        
+        <span class="c1"># 3. 보상 모델 훈련
+</span>        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">preference_data</span><span class="p">:</span>
+            <span class="n">chosen_rewards</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">value_model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s">'chosen'</span><span class="p">])</span>
+            <span class="n">rejected_rewards</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">value_model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s">'rejected'</span><span class="p">])</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">preference_loss</span><span class="p">(</span><span class="n">chosen_rewards</span><span class="p">,</span> <span class="n">rejected_rewards</span><span class="p">)</span>
+            <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">ppo_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompts</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">clip_ratio</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="s">"""PPO를 사용한 정책 최적화"""</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+            <span class="c1"># 1. 현재 정책으로 응답 생성
+</span>            <span class="n">responses</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">policy_model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompts</span><span class="p">)</span>
+            
+            <span class="c1"># 2. 보상 계산
+</span>            <span class="n">rewards</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">value_model</span><span class="p">(</span><span class="n">prompts</span><span class="p">,</span> <span class="n">responses</span><span class="p">)</span>
+            
+            <span class="c1"># 3. KL 정규화 항 계산
+</span>            <span class="n">ref_logprobs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">reference_model</span><span class="p">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">prompts</span><span class="p">,</span> <span class="n">responses</span><span class="p">)</span>
+            <span class="n">policy_logprobs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">policy_model</span><span class="p">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">prompts</span><span class="p">,</span> <span class="n">responses</span><span class="p">)</span>
+            <span class="n">kl_penalty</span> <span class="o">=</span> <span class="n">policy_logprobs</span> <span class="o">-</span> <span class="n">ref_logprobs</span>
+            
+            <span class="c1"># 4. PPO 손실 계산
+</span>            <span class="n">advantages</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">compute_advantages</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span><span class="n">policy_logprobs</span> <span class="o">-</span> <span class="n">ref_logprobs</span><span class="p">.</span><span class="n">detach</span><span class="p">())</span>
+            
+            <span class="n">surr1</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">advantages</span>
+            <span class="n">surr2</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">clip_ratio</span><span class="p">,</span> <span class="mi">1</span><span class="o">+</span><span class="n">clip_ratio</span><span class="p">)</span> <span class="o">*</span> <span class="n">advantages</span>
+            <span class="n">policy_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="nb">min</span><span class="p">(</span><span class="n">surr1</span><span class="p">,</span> <span class="n">surr2</span><span class="p">).</span><span class="n">mean</span><span class="p">()</span>
+            
+            <span class="c1"># 5. 전체 손실
+</span>            <span class="n">total_loss</span> <span class="o">=</span> <span class="n">policy_loss</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">kl_penalty</span><span class="p">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">total_loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">compute_advantages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rewards</span><span class="p">):</span>
+        <span class="s">"""어드밴티지 함수 계산 (GAE)"""</span>
+        <span class="c1"># Generalized Advantage Estimation
+</span>        <span class="k">pass</span>
+</code></pre></div></div>
+
+<h3 id="32-direct-preference-optimization-dpo">3.2 Direct Preference Optimization (DPO)</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">DPOTrainer</span><span class="p">:</span>
+    <span class="s">"""Direct Preference Optimization 훈련기"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">reference_model</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">reference_model</span> <span class="o">=</span> <span class="n">reference_model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>  <span class="c1"># KL 정규화 계수
+</span>    
+    <span class="k">def</span> <span class="nf">dpo_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompts</span><span class="p">,</span> <span class="n">chosen_responses</span><span class="p">,</span> <span class="n">rejected_responses</span><span class="p">):</span>
+        <span class="s">"""DPO 손실 함수"""</span>
+        <span class="c1"># 1. 로그 확률 계산
+</span>        <span class="n">chosen_logprobs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">prompts</span><span class="p">,</span> <span class="n">chosen_responses</span><span class="p">)</span>
+        <span class="n">rejected_logprobs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">prompts</span><span class="p">,</span> <span class="n">rejected_responses</span><span class="p">)</span>
+        
+        <span class="c1"># 2. 참조 모델 로그 확률
+</span>        <span class="n">ref_chosen_logprobs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">reference_model</span><span class="p">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">prompts</span><span class="p">,</span> <span class="n">chosen_responses</span><span class="p">)</span>
+        <span class="n">ref_rejected_logprobs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">reference_model</span><span class="p">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">prompts</span><span class="p">,</span> <span class="n">rejected_responses</span><span class="p">)</span>
+        
+        <span class="c1"># 3. DPO 손실
+</span>        <span class="n">chosen_rewards</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">chosen_logprobs</span> <span class="o">-</span> <span class="n">ref_chosen_logprobs</span><span class="p">)</span>
+        <span class="n">rejected_rewards</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">rejected_logprobs</span> <span class="o">-</span> <span class="n">ref_rejected_logprobs</span><span class="p">)</span>
+        
+        <span class="c1"># 4. Bradley-Terry 손실
+</span>        <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">chosen_rewards</span> <span class="o">-</span> <span class="n">rejected_rewards</span><span class="p">)).</span><span class="n">mean</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="n">loss</span>
+    
+    <span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="s">"""DPO 훈련 스텝"""</span>
+        <span class="n">prompts</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s">'prompts'</span><span class="p">]</span>
+        <span class="n">chosen</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s">'chosen'</span><span class="p">]</span>
+        <span class="n">rejected</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s">'rejected'</span><span class="p">]</span>
+        
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dpo_loss</span><span class="p">(</span><span class="n">prompts</span><span class="p">,</span> <span class="n">chosen</span><span class="p">,</span> <span class="n">rejected</span><span class="p">)</span>
+        
+        <span class="c1"># 추가 메트릭
+</span>        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"loss"</span><span class="p">:</span> <span class="n">loss</span><span class="p">.</span><span class="n">item</span><span class="p">(),</span>
+            <span class="s">"chosen_rewards"</span><span class="p">:</span> <span class="n">chosen_rewards</span><span class="p">.</span><span class="n">mean</span><span class="p">().</span><span class="n">item</span><span class="p">(),</span>
+            <span class="s">"rejected_rewards"</span><span class="p">:</span> <span class="n">rejected_rewards</span><span class="p">.</span><span class="n">mean</span><span class="p">().</span><span class="n">item</span><span class="p">(),</span>
+            <span class="s">"reward_margin"</span><span class="p">:</span> <span class="p">(</span><span class="n">chosen_rewards</span> <span class="o">-</span> <span class="n">rejected_rewards</span><span class="p">).</span><span class="n">mean</span><span class="p">().</span><span class="n">item</span><span class="p">()</span>
+        <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">metrics</span>
+</code></pre></div></div>
+
+<h3 id="33-constitutional-ai">3.3 Constitutional AI</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ConstitutionalAI</span><span class="p">:</span>
+    <span class="s">"""Constitutional AI 프레임워크"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">constitution</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">constitution</span> <span class="o">=</span> <span class="n">constitution</span>  <span class="c1"># AI 헌법 (원칙들)
+</span>        
+    <span class="k">def</span> <span class="nf">setup_constitution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""AI 헌법 설정"""</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">principles</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"helpfulness"</span><span class="p">:</span> <span class="s">"사용자에게 도움이 되는 정보를 제공한다"</span><span class="p">,</span>
+            <span class="s">"harmlessness"</span><span class="p">:</span> <span class="s">"해로운 내용이나 편견을 포함하지 않는다"</span><span class="p">,</span> 
+            <span class="s">"honesty"</span><span class="p">:</span> <span class="s">"모르는 것은 모른다고 솔직히 말한다"</span><span class="p">,</span>
+            <span class="s">"respect"</span><span class="p">:</span> <span class="s">"모든 사람을 존중하며 차별하지 않는다"</span><span class="p">,</span>
+            <span class="s">"privacy"</span><span class="p">:</span> <span class="s">"개인정보를 요구하거나 공유하지 않는다"</span>
+        <span class="p">}</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">critique_prompts</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"harmlessness"</span><span class="p">:</span> <span class="s">"이 응답이 누군가에게 해를 끼칠 수 있나요?"</span><span class="p">,</span>
+            <span class="s">"helpfulness"</span><span class="p">:</span> <span class="s">"이 응답이 사용자의 질문에 도움이 되나요?"</span><span class="p">,</span>
+            <span class="s">"accuracy"</span><span class="p">:</span> <span class="s">"이 응답에 잘못된 정보가 있나요?"</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">self_critique_and_revise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">initial_response</span><span class="p">):</span>
+        <span class="s">"""자기 비판 및 수정"""</span>
+        <span class="n">revised_responses</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">principle</span><span class="p">,</span> <span class="n">critique_prompt</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">critique_prompts</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># 1. 자기 비판
+</span>            <span class="n">critique_input</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"""
+원본 질문: </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s">
+AI 응답: </span><span class="si">{</span><span class="n">initial_response</span><span class="si">}</span><span class="s">
+
+</span><span class="si">{</span><span class="n">critique_prompt</span><span class="si">}</span><span class="s"> 구체적인 문제점이 있다면 설명해주세요.
+"""</span>
+            <span class="n">critique</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">critique_input</span><span class="p">)</span>
+            
+            <span class="c1"># 2. 수정된 응답 생성
+</span>            <span class="k">if</span> <span class="s">"문제"</span> <span class="ow">in</span> <span class="n">critique</span> <span class="ow">or</span> <span class="s">"해로"</span> <span class="ow">in</span> <span class="n">critique</span><span class="p">:</span>
+                <span class="n">revision_prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"""
+원본 질문: </span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s">
+이전 응답: </span><span class="si">{</span><span class="n">initial_response</span><span class="si">}</span><span class="s">
+문제점: </span><span class="si">{</span><span class="n">critique</span><span class="si">}</span><span class="s">
+
+위 문제점을 해결한 더 나은 응답을 생성해주세요.
+"""</span>
+                <span class="n">revised_response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">revision_prompt</span><span class="p">)</span>
+                <span class="n">revised_responses</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">revised_response</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">revised_responses</span>
+    
+    <span class="k">def</span> <span class="nf">constitutional_training</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span><span class="p">):</span>
+        <span class="s">"""헌법적 원칙을 따르는 훈련"""</span>
+        <span class="n">constitutional_data</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">training_data</span><span class="p">:</span>
+            <span class="n">prompt</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="s">'prompt'</span><span class="p">]</span>
+            
+            <span class="c1"># 1. 초기 응답 생성
+</span>            <span class="n">initial_response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+            
+            <span class="c1"># 2. 헌법적 원칙에 따른 자기 비판 및 수정
+</span>            <span class="n">revised_responses</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">self_critique_and_revise</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">initial_response</span><span class="p">)</span>
+            
+            <span class="c1"># 3. 최종 응답 선택 (인간 평가 또는 자동 평가)
+</span>            <span class="n">final_response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">select_best_response</span><span class="p">(</span><span class="n">revised_responses</span><span class="p">)</span>
+            
+            <span class="n">constitutional_data</span><span class="p">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s">'prompt'</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span>
+                <span class="s">'response'</span><span class="p">:</span> <span class="n">final_response</span><span class="p">,</span>
+                <span class="s">'principle_adherence'</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">evaluate_principles</span><span class="p">(</span><span class="n">final_response</span><span class="p">)</span>
+            <span class="p">})</span>
+        
+        <span class="k">return</span> <span class="n">constitutional_data</span>
+</code></pre></div></div>
+
+<h2 id="4-선호도-데이터-수집-및-구성">4. 선호도 데이터 수집 및 구성</h2>
+
+<h3 id="41-선호도-데이터-생성">4.1 선호도 데이터 생성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">PreferenceDataCollection</span><span class="p">:</span>
+    <span class="s">"""선호도 데이터 수집 프레임워크"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">annotation_guidelines</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_guidelines</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">quality_filters</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_quality_filters</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">setup_guidelines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""어노테이션 가이드라인"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"helpfulness"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"criteria"</span><span class="p">:</span> <span class="p">[</span><span class="s">"정확성"</span><span class="p">,</span> <span class="s">"완성도"</span><span class="p">,</span> <span class="s">"관련성"</span><span class="p">,</span> <span class="s">"명확성"</span><span class="p">],</span>
+                <span class="s">"scale"</span><span class="p">:</span> <span class="s">"1-5점 척도"</span><span class="p">,</span>
+                <span class="s">"examples"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">load_helpfulness_examples</span><span class="p">()</span>
+            <span class="p">},</span>
+            <span class="s">"harmlessness"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"criteria"</span><span class="p">:</span> <span class="p">[</span><span class="s">"독성"</span><span class="p">,</span> <span class="s">"편견"</span><span class="p">,</span> <span class="s">"불법성"</span><span class="p">,</span> <span class="s">"프라이버시"</span><span class="p">],</span>
+                <span class="s">"binary"</span><span class="p">:</span> <span class="s">"안전/위험"</span><span class="p">,</span>
+                <span class="s">"red_flags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"폭력"</span><span class="p">,</span> <span class="s">"차별"</span><span class="p">,</span> <span class="s">"개인정보"</span><span class="p">,</span> <span class="s">"불법행위"</span><span class="p">]</span>
+            <span class="p">},</span>
+            <span class="s">"honesty"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"criteria"</span><span class="p">:</span> <span class="p">[</span><span class="s">"사실 정확성"</span><span class="p">,</span> <span class="s">"불확실성 표현"</span><span class="p">,</span> <span class="s">"출처 명시"</span><span class="p">],</span>
+                <span class="s">"evaluation"</span><span class="p">:</span> <span class="s">"Fact-checking, Citation verification"</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">generate_comparison_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompts</span><span class="p">,</span> <span class="n">models</span><span class="p">):</span>
+        <span class="s">"""모델 응답 비교 쌍 생성"""</span>
+        <span class="n">comparison_data</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="n">prompts</span><span class="p">:</span>
+            <span class="n">responses</span> <span class="o">=</span> <span class="p">{}</span>
+            
+            <span class="c1"># 여러 모델로부터 응답 생성
+</span>            <span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">responses</span><span class="p">[</span><span class="n">model_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+            
+            <span class="c1"># 모든 가능한 쌍 조합 생성
+</span>            <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">model_a</span><span class="p">,</span> <span class="n">resp_a</span><span class="p">),</span> <span class="p">(</span><span class="n">model_b</span><span class="p">,</span> <span class="n">resp_b</span><span class="p">)</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">responses</span><span class="p">.</span><span class="n">items</span><span class="p">(),</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="n">comparison_data</span><span class="p">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s">'prompt'</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span>
+                    <span class="s">'response_a'</span><span class="p">:</span> <span class="n">resp_a</span><span class="p">,</span>
+                    <span class="s">'response_b'</span><span class="p">:</span> <span class="n">resp_b</span><span class="p">,</span>
+                    <span class="s">'model_a'</span><span class="p">:</span> <span class="n">model_a</span><span class="p">,</span>
+                    <span class="s">'model_b'</span><span class="p">:</span> <span class="n">model_b</span>
+                <span class="p">})</span>
+        
+        <span class="k">return</span> <span class="n">comparison_data</span>
+    
+    <span class="k">def</span> <span class="nf">human_annotation_interface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comparison_pairs</span><span class="p">):</span>
+        <span class="s">"""인간 어노테이션 인터페이스"""</span>
+        <span class="n">annotation_schema</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"overall_preference"</span><span class="p">:</span> <span class="s">"A/B/Tie"</span><span class="p">,</span>
+            <span class="s">"criteria_scores"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"helpfulness"</span><span class="p">:</span> <span class="s">"A/B/Tie"</span><span class="p">,</span>
+                <span class="s">"harmlessness"</span><span class="p">:</span> <span class="s">"A/B/Tie"</span><span class="p">,</span> 
+                <span class="s">"honesty"</span><span class="p">:</span> <span class="s">"A/B/Tie"</span>
+            <span class="p">},</span>
+            <span class="s">"reasoning"</span><span class="p">:</span> <span class="s">"자유 텍스트 설명"</span><span class="p">,</span>
+            <span class="s">"confidence"</span><span class="p">:</span> <span class="s">"1-5점 척도"</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">annotation_schema</span>
+    
+    <span class="k">def</span> <span class="nf">automatic_preference_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">responses</span><span class="p">):</span>
+        <span class="s">"""자동 선호도 생성"""</span>
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"constitutional_ai"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">ca_preference</span><span class="p">,</span>
+            <span class="s">"reward_model"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">rm_preference</span><span class="p">,</span>
+            <span class="s">"llm_as_judge"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">llm_judge_preference</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">methods</span>
+</code></pre></div></div>
+
+<h3 id="42-데이터-품질-관리">4.2 데이터 품질 관리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">PreferenceDataQuality</span><span class="p">:</span>
+    <span class="s">"""선호도 데이터 품질 관리"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">quality_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_quality_metrics</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">inter_annotator_agreement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
+        <span class="s">"""어노테이터 간 일치도 측정"""</span>
+        <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">cohen_kappa_score</span>
+        
+        <span class="n">agreements</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">criterion</span> <span class="ow">in</span> <span class="p">[</span><span class="s">'helpfulness'</span><span class="p">,</span> <span class="s">'harmlessness'</span><span class="p">,</span> <span class="s">'honesty'</span><span class="p">]:</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">ann</span><span class="p">[</span><span class="n">criterion</span><span class="p">]</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">]</span>
+            <span class="n">agreements</span><span class="p">[</span><span class="n">criterion</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">"kappa"</span><span class="p">:</span> <span class="n">cohen_kappa_score</span><span class="p">(</span><span class="n">scores</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">scores</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]),</span>
+                <span class="s">"percent_agreement"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">calculate_agreement</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+            <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="n">agreements</span>
+    
+    <span class="k">def</span> <span class="nf">detect_annotation_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
+        <span class="s">"""어노테이션 편향 감지"""</span>
+        <span class="n">bias_patterns</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"position_bias"</span><span class="p">:</span> <span class="s">"첫 번째 응답 선호 경향"</span><span class="p">,</span>
+            <span class="s">"length_bias"</span><span class="p">:</span> <span class="s">"긴 응답 선호 경향"</span><span class="p">,</span> 
+            <span class="s">"model_bias"</span><span class="p">:</span> <span class="s">"특정 모델 선호 경향"</span><span class="p">,</span>
+            <span class="s">"demographic_bias"</span><span class="p">:</span> <span class="s">"인구통계학적 편향"</span>
+        <span class="p">}</span>
+        
+        <span class="n">detected_biases</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">bias_type</span><span class="p">,</span> <span class="n">description</span> <span class="ow">in</span> <span class="n">bias_patterns</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">detected_biases</span><span class="p">[</span><span class="n">bias_type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">test_bias</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">bias_type</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">detected_biases</span>
+    
+    <span class="k">def</span> <span class="nf">data_validation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preference_dataset</span><span class="p">):</span>
+        <span class="s">"""데이터 검증"""</span>
+        <span class="n">validation_checks</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"completeness"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">check_completeness</span><span class="p">,</span>
+            <span class="s">"consistency"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">check_consistency</span><span class="p">,</span>
+            <span class="s">"diversity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">check_diversity</span><span class="p">,</span>
+            <span class="s">"balance"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">check_balance</span>
+        <span class="p">}</span>
+        
+        <span class="n">validation_results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">check_name</span><span class="p">,</span> <span class="n">check_func</span> <span class="ow">in</span> <span class="n">validation_checks</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">validation_results</span><span class="p">[</span><span class="n">check_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_func</span><span class="p">(</span><span class="n">preference_dataset</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">validation_results</span>
+</code></pre></div></div>
+
+<h2 id="5-평가-및-벤치마크">5. 평가 및 벤치마크</h2>
+
+<h3 id="51-파인튜닝-성능-평가">5.1 파인튜닝 성능 평가</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">FineTuningEvaluation</span><span class="p">:</span>
+    <span class="s">"""파인튜닝 성능 평가"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">benchmarks</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_benchmarks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">human_eval_setup</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_human_evaluation</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">setup_benchmarks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""표준 벤치마크 설정"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"instruction_following"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"alpaca_eval"</span><span class="p">:</span> <span class="s">"인스트럭션 따르기 능력"</span><span class="p">,</span>
+                <span class="s">"super_natural_instructions"</span><span class="p">:</span> <span class="s">"다양한 태스크 수행"</span><span class="p">,</span>
+                <span class="s">"user_oriented_instructions"</span><span class="p">:</span> <span class="s">"사용자 중심 평가"</span>
+            <span class="p">},</span>
+            <span class="s">"safety_evaluation"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"red_teaming"</span><span class="p">:</span> <span class="s">"적대적 프롬프트 대응"</span><span class="p">,</span>
+                <span class="s">"toxic_generation"</span><span class="p">:</span> <span class="s">"독성 생성 방지"</span><span class="p">,</span>
+                <span class="s">"bias_evaluation"</span><span class="p">:</span> <span class="s">"편향 측정"</span>
+            <span class="p">},</span>
+            <span class="s">"domain_expertise"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"mmlu"</span><span class="p">:</span> <span class="s">"다영역 전문 지식"</span><span class="p">,</span>
+                <span class="s">"big_bench"</span><span class="p">:</span> <span class="s">"종합적 추론 능력"</span><span class="p">,</span>
+                <span class="s">"helm"</span><span class="p">:</span> <span class="s">"포괄적 평가"</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">evaluate_instruction_following</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">test_data</span><span class="p">):</span>
+        <span class="s">"""인스트럭션 따르기 평가"""</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">test_data</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s">'instruction'</span><span class="p">])</span>
+            
+            <span class="c1"># 자동 평가 메트릭
+</span>            <span class="n">results</span><span class="p">[</span><span class="s">'bleu'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">calculate_bleu</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">sample</span><span class="p">[</span><span class="s">'reference'</span><span class="p">])</span>
+            <span class="n">results</span><span class="p">[</span><span class="s">'rouge'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">calculate_rouge</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">sample</span><span class="p">[</span><span class="s">'reference'</span><span class="p">])</span>
+            <span class="n">results</span><span class="p">[</span><span class="s">'bertscore'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">calculate_bertscore</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">sample</span><span class="p">[</span><span class="s">'reference'</span><span class="p">])</span>
+            
+            <span class="c1"># GPT-4를 판사로 사용한 평가
+</span>            <span class="n">results</span><span class="p">[</span><span class="s">'gpt4_judge'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">gpt4_evaluation</span><span class="p">(</span>
+                <span class="n">sample</span><span class="p">[</span><span class="s">'instruction'</span><span class="p">],</span> 
+                <span class="n">response</span><span class="p">,</span> 
+                <span class="n">sample</span><span class="p">[</span><span class="s">'reference'</span><span class="p">]</span>
+            <span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">results</span>
+    
+    <span class="k">def</span> <span class="nf">safety_evaluation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="s">"""안전성 평가"""</span>
+        <span class="n">safety_tests</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"jailbreak_attempts"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">test_jailbreak_resistance</span><span class="p">,</span>
+            <span class="s">"bias_probes"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">test_bias_amplification</span><span class="p">,</span>
+            <span class="s">"toxic_prompts"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">test_toxic_generation</span><span class="p">,</span>
+            <span class="s">"privacy_leakage"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">test_privacy_protection</span>
+        <span class="p">}</span>
+        
+        <span class="n">safety_scores</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">test_name</span><span class="p">,</span> <span class="n">test_func</span> <span class="ow">in</span> <span class="n">safety_tests</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">safety_scores</span><span class="p">[</span><span class="n">test_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_func</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">safety_scores</span>
+</code></pre></div></div>
+
+<h3 id="52-ab-테스트-및-실제-배포-평가">5.2 A/B 테스트 및 실제 배포 평가</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">DeploymentEvaluation</span><span class="p">:</span>
+    <span class="s">"""배포 후 실제 성능 평가"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">user_feedback_system</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_feedback_system</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">ab_testing_framework</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">setup_ab_testing</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">setup_feedback_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""사용자 피드백 시스템"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"thumbs_up_down"</span><span class="p">:</span> <span class="s">"간단한 만족도 평가"</span><span class="p">,</span>
+            <span class="s">"detailed_rating"</span><span class="p">:</span> <span class="s">"세부 항목별 평가"</span><span class="p">,</span>
+            <span class="s">"comparative_evaluation"</span><span class="p">:</span> <span class="s">"다른 응답과 비교 평가"</span><span class="p">,</span>
+            <span class="s">"free_text_feedback"</span><span class="p">:</span> <span class="s">"자유 의견"</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">conduct_ab_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_a</span><span class="p">,</span> <span class="n">model_b</span><span class="p">,</span> <span class="n">test_duration</span><span class="o">=</span><span class="s">"7 days"</span><span class="p">):</span>
+        <span class="s">"""A/B 테스트 실행"""</span>
+        <span class="n">test_results</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"user_preference"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">measure_user_preference</span><span class="p">(</span><span class="n">model_a</span><span class="p">,</span> <span class="n">model_b</span><span class="p">),</span>
+            <span class="s">"engagement_metrics"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">measure_engagement</span><span class="p">(</span><span class="n">model_a</span><span class="p">,</span> <span class="n">model_b</span><span class="p">),</span>
+            <span class="s">"task_completion"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">measure_task_success</span><span class="p">(</span><span class="n">model_a</span><span class="p">,</span> <span class="n">model_b</span><span class="p">),</span>
+            <span class="s">"safety_incidents"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">monitor_safety_issues</span><span class="p">(</span><span class="n">model_a</span><span class="p">,</span> <span class="n">model_b</span><span class="p">)</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># 통계적 유의성 검정
+</span>        <span class="n">statistical_significance</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">statistical_analysis</span><span class="p">(</span><span class="n">test_results</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"results"</span><span class="p">:</span> <span class="n">test_results</span><span class="p">,</span>
+            <span class="s">"significance"</span><span class="p">:</span> <span class="n">statistical_significance</span><span class="p">,</span>
+            <span class="s">"recommendation"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">make_deployment_recommendation</span><span class="p">(</span><span class="n">test_results</span><span class="p">)</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>파운데이션 모델의 사후 학습은 <strong>범용 모델을 실용적 AI 시스템으로 변환하는 핵심 과정</strong>입니다.</p>
+
+<p><strong>핵심 인사이트:</strong></p>
+<ul>
+  <li><strong>SFT의 중요성</strong>: 기본적인 태스크 수행 능력과 인스트럭션 따르기 능력 확보</li>
+  <li><strong>선호도 정렬의 필요성</strong>: 인간의 가치와 선호도에 맞는 모델 행동 유도</li>
+  <li><strong>안전성과 유용성의 균형</strong>: 도움이 되면서도 해롭지 않은 AI 시스템 구축</li>
+  <li><strong>지속적인 개선</strong>: 사용자 피드백을 통한 지속적인 모델 개선</li>
+</ul>
+
+<p>다음 포스트에서는 샘플링 기법과 생성 전략을 상세히 다루겠습니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li><a href="/2024/07/15/foundation-models-data-and-architecture/">파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석</a></li>
+  <li>[다음: 파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략] (예정)</li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2203.02155">Training language models to follow instructions with human feedback</a></li>
+  <li><a href="https://arxiv.org/abs/2305.18290">Direct Preference Optimization</a></li>
+  <li><a href="https://arxiv.org/abs/2212.08073">Constitutional AI: Harmlessness from AI Feedback</a></li>
+  <li><a href="https://arxiv.org/abs/2106.09685">LoRA: Low-Rank Adaptation of Large Language Models</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/08/15/kag-project-overview-architecture-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">KAG (Knowledge Augmented Generation) 프로젝트 개요 및 ...</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/09/07/opensora-training-inference-scripts-analysis/" rel="next">
+          <span class="nav-title">Open-Sora 훈련/추론 스크립트 상세 분석 - 실제 워크플로우와 파이프라인</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

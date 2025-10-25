@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>KAG 의존성 및 Python 패키지 생태계 심층 분석 - 58개 핵심 라이브러리 종합 분석 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 KAG 프레임워크의 의존성 구조와 Python 패키지 생태계 활용을 종합적으로 분석합니다. KAG는 58개의 핵심 라이브러리를 통해 지식 그래프, 자연어 처리, 머신러닝, 웹 개발까지 아우르는 통합 AI 플랫폼을 구축합니다.1. 의존성 아키텍처 개요1.1 카테...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="kag, dependencies, python-packages, ai-libraries, ecosystem-analysis">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2025/04/17/kag-dependencies-ecosystem-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="KAG 의존성 및 Python 패키지 생태계 심층 분석 - 58개 핵심 라이브러리 종합 분석">
+<meta property="og:description" content="개요이번 포스트에서는 KAG 프레임워크의 의존성 구조와 Python 패키지 생태계 활용을 종합적으로 분석합니다. KAG는 58개의 핵심 라이브러리를 통해 지식 그래프, 자연어 처리, 머신러닝, 웹 개발까지 아우르는 통합 AI 플랫폼을 구축합니다.1. 의존성 아키텍처 개요1.1 카테...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2025/04/17/kag-dependencies-ecosystem-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KAG 의존성 및 Python 패키지 생태계 심층 분석 - 58개 핵심 라이브러리 종합 분석">
+<meta name="twitter:description" content="개요이번 포스트에서는 KAG 프레임워크의 의존성 구조와 Python 패키지 생태계 활용을 종합적으로 분석합니다. KAG는 58개의 핵심 라이브러리를 통해 지식 그래프, 자연어 처리, 머신러닝, 웹 개발까지 아우르는 통합 AI 플랫폼을 구축합니다.1. 의존성 아키텍처 개요1.1 카테...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "KAG 의존성 및 Python 패키지 생태계 심층 분석 - 58개 핵심 라이브러리 종합 분석",
+  "description": "개요
+
+이번 포스트에서는 KAG 프레임워크의 의존성 구조와 Python 패키지 생태계 활용을 종합적으로 분석합니다. KAG는 58개의 핵심 라이브러리를 통해 지식 그래프, 자연어 처리, 머신러닝, 웹 개발까지 아우르는 통합 AI 플랫폼을 구축합니다.
+
+1. 의존성 아키텍처 개요
+
+...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2025-04-17T04:45:00+00:00",
+  "dateModified": "2025-04-17T04:45:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2025/04/17/kag-dependencies-ecosystem-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2025/04/17/kag-dependencies-ecosystem-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["kag","dependencies","python-packages","ai-libraries","ecosystem-analysis"],
+  "articleSection": ["AI","Python","Package Management","Dependencies"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>KAG 의존성 및 Python 패키지 생태계 심층 분석 - 58개 핵심 라이브러리 종합 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">KAG 의존성 및 Python 패키지 생태계 심층 분석 - 58개 핵심 라이브러리 종합 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2025-04-17T04:45:00+00:00">Apr 17, 2025</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Python</li><li>Package Management</li><li>Dependencies</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 <strong>KAG 프레임워크의 의존성 구조</strong>와 <strong>Python 패키지 생태계 활용</strong>을 종합적으로 분석합니다. KAG는 58개의 핵심 라이브러리를 통해 지식 그래프, 자연어 처리, 머신러닝, 웹 개발까지 아우르는 통합 AI 플랫폼을 구축합니다.</p>
+
+<h2 id="1-의존성-아키텍처-개요">1. 의존성 아키텍처 개요</h2>
+
+<h3 id="11-카테고리별-패키지-분류">1.1 카테고리별 패키지 분류</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># KAG 의존성 58개 패키지 분류
+</span><span class="n">DEPENDENCY_CATEGORIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"AI/ML 코어"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">"openai"</span><span class="p">,</span> <span class="s">"dashscope"</span><span class="p">,</span> <span class="s">"ollama"</span><span class="p">,</span> <span class="s">"langchain-text-splitters"</span><span class="p">,</span> 
+        <span class="s">"langchain-community"</span><span class="p">,</span> <span class="s">"scikit-learn"</span><span class="p">,</span> <span class="s">"numpy&gt;=1.23.1"</span>
+    <span class="p">],</span>
+    <span class="s">"자연어 처리"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">"jieba==0.42.1"</span><span class="p">,</span> <span class="s">"nltk==3.8.1"</span><span class="p">,</span> <span class="s">"charset_normalizer==3.3.2"</span><span class="p">,</span>
+        <span class="s">"docstring_parser"</span><span class="p">,</span> <span class="s">"json_repair"</span>
+    <span class="p">],</span>
+    <span class="s">"데이터베이스"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">"elasticsearch==8.10.0"</span><span class="p">,</span> <span class="s">"neo4j"</span><span class="p">,</span> <span class="s">"zodb"</span><span class="p">,</span> <span class="s">"pyodps==0.12.2"</span>
+    <span class="p">],</span>
+    <span class="s">"문서 처리"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">"pypdf"</span><span class="p">,</span> <span class="s">"PyPDF2"</span><span class="p">,</span> <span class="s">"pdfminer.six==20231228"</span><span class="p">,</span> <span class="s">"python-docx"</span><span class="p">,</span>
+        <span class="s">"markdown"</span><span class="p">,</span> <span class="s">"bs4"</span>
+    <span class="p">],</span>
+    <span class="s">"데이터 분석"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">"pandas"</span><span class="p">,</span> <span class="s">"networkx==3.1"</span><span class="p">,</span> <span class="s">"matplotlib"</span><span class="p">,</span> <span class="s">"pyvis"</span>
+    <span class="p">],</span>
+    <span class="s">"웹 및 HTTP"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">"requests==2.31.0"</span><span class="p">,</span> <span class="s">"urllib3==1.26.16"</span><span class="p">,</span> <span class="s">"httpx"</span><span class="p">,</span> <span class="s">"aiofiles"</span>
+    <span class="p">],</span>
+    <span class="s">"개발 도구"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">"pytest==7.4.2"</span><span class="p">,</span> <span class="s">"setuptools==60.2.0"</span><span class="p">,</span> <span class="s">"gitpython"</span><span class="p">,</span> <span class="s">"tqdm==4.66.1"</span>
+    <span class="p">],</span>
+    <span class="s">"시스템 및 유틸리티"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s">"psutil"</span><span class="p">,</span> <span class="s">"cachetools==5.3.2"</span><span class="p">,</span> <span class="s">"click==8.1.7"</span><span class="p">,</span> <span class="s">"schedule"</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="12-의존성-레벨별-구조">1.2 의존성 레벨별 구조</h3>
+
+<pre><code class="language-mermaid">graph TD
+    A[KAG Framework] --&gt; B[AI/ML Layer]
+    A --&gt; C[Data Processing Layer]
+    A --&gt; D[Storage Layer]
+    A --&gt; E[Infrastructure Layer]
+    
+    B --&gt; B1[openai]
+    B --&gt; B2[dashscope] 
+    B --&gt; B3[ollama]
+    B --&gt; B4[langchain-*]
+    B --&gt; B5[scikit-learn]
+    
+    C --&gt; C1[pandas]
+    C --&gt; C2[numpy]
+    C --&gt; C3[nltk]
+    C --&gt; C4[jieba]
+    
+    D --&gt; D1[neo4j]
+    D --&gt; D2[elasticsearch]
+    D --&gt; D3[zodb]
+    
+    E --&gt; E1[requests]
+    E --&gt; E2[tenacity]
+    E --&gt; E3[schedule]
+    E --&gt; E4[aiolimiter]
+    
+    subgraph "Version Constraints"
+        F[Critical Versions]
+        F --&gt; F1["elasticsearch==8.10.0"]
+        F --&gt; F2["numpy&gt;=1.23.1"]
+        F --&gt; F3["protobuf==3.20.1"]
+    end
+</code></pre>
+
+<h2 id="2-aiml-핵심-라이브러리-생태계">2. AI/ML 핵심 라이브러리 생태계</h2>
+
+<h3 id="21-대규모-언어-모델-통합">2.1 대규모 언어 모델 통합</h3>
+
+<div class="mermaid">
+flowchart TB
+    subgraph "LLM Integration Layer"
+        A[KAG Core] --&gt; B[LLM Router]
+        B --&gt; C[OpenAI API]
+        B --&gt; D[DashScope API]
+        B --&gt; E[Ollama Local]
+        
+        C --&gt; C1[GPT-4 Turbo]
+        C --&gt; C2[GPT-3.5 Turbo]
+        C --&gt; C3[Text Embeddings]
+        
+        D --&gt; D1[Qwen Models]
+        D --&gt; D2[Multi-modal AI]
+        D --&gt; D3[Chinese NLP]
+        
+        E --&gt; E1[Llama Models]
+        E --&gt; E2[Mistral Models]
+        E --&gt; E3[Local Privacy]
+    end
+    
+    subgraph "Integration Points"
+        F[Solver Module] -.-&gt; B
+        G[Builder Module] -.-&gt; B
+        H[Vectorizer] -.-&gt; C3
+    end
+    
+    style A fill:#ff9999
+    style B fill:#66b3ff
+    style F fill:#99ff99
+    style G fill:#ffcc99
+    style H fill:#ff99cc
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># LLM 제공자별 라이브러리 분석
+</span><span class="n">LLM_PROVIDERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"openai"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"OpenAI GPT 모델 API 통합"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Chat Completion"</span><span class="p">,</span> <span class="s">"Embeddings"</span><span class="p">,</span> <span class="s">"Fine-tuning"</span><span class="p">],</span>
+        <span class="s">"integration"</span><span class="p">:</span> <span class="s">"KAG Solver, Vectorizer 모듈"</span><span class="p">,</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"Latest (1.x)"</span><span class="p">,</span>
+        <span class="s">"key_usage"</span><span class="p">:</span> <span class="s">"Primary LLM provider for reasoning and generation"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"dashscope"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Alibaba Cloud 통합 AI 서비스"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Qwen 모델"</span><span class="p">,</span> <span class="s">"Multi-modal AI"</span><span class="p">,</span> <span class="s">"Chinese NLP"</span><span class="p">],</span>
+        <span class="s">"integration"</span><span class="p">:</span> <span class="s">"Alternative LLM provider"</span><span class="p">,</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"Latest"</span><span class="p">,</span>
+        <span class="s">"key_usage"</span><span class="p">:</span> <span class="s">"Chinese language processing and Alibaba ecosystem"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"ollama"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"로컬 LLM 서빙 플랫폼"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Local deployment"</span><span class="p">,</span> <span class="s">"Privacy-focused"</span><span class="p">,</span> <span class="s">"Open source models"</span><span class="p">],</span>
+        <span class="s">"integration"</span><span class="p">:</span> <span class="s">"On-premise LLM deployment"</span><span class="p">,</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"Latest"</span><span class="p">,</span>
+        <span class="s">"key_usage"</span><span class="p">:</span> <span class="s">"Privacy-sensitive environments and offline processing"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># LangChain 생태계 통합
+</span><span class="n">LANGCHAIN_ECOSYSTEM</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"langchain-text-splitters"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"텍스트 분할 및 청킹"</span><span class="p">,</span>
+        <span class="s">"components"</span><span class="p">:</span> <span class="p">[</span><span class="s">"RecursiveCharacterTextSplitter"</span><span class="p">,</span> <span class="s">"TokenTextSplitter"</span><span class="p">],</span>
+        <span class="s">"usage_in_kag"</span><span class="p">:</span> <span class="s">"Document processing in Builder module"</span><span class="p">,</span>
+        <span class="s">"key_features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Semantic chunking"</span><span class="p">,</span> <span class="s">"Token-aware splitting"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"langchain-community"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"커뮤니티 제공 통합 모듈"</span><span class="p">,</span>
+        <span class="s">"components"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Vector stores"</span><span class="p">,</span> <span class="s">"Document loaders"</span><span class="p">,</span> <span class="s">"Retrievers"</span><span class="p">],</span>
+        <span class="s">"usage_in_kag"</span><span class="p">:</span> <span class="s">"Extended integrations and connectors"</span><span class="p">,</span>
+        <span class="s">"key_features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Third-party integrations"</span><span class="p">,</span> <span class="s">"Community contributions"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="mermaid">
+flowchart LR
+    subgraph "LangChain Ecosystem in KAG"
+        A[Document Input] --&gt; B[langchain-text-splitters]
+        B --&gt; C[Semantic Chunks]
+        B --&gt; D[Token-aware Splits]
+        
+        E[External Sources] --&gt; F[langchain-community]
+        F --&gt; G[Vector Stores]
+        F --&gt; H[Document Loaders]
+        F --&gt; I[Retrievers]
+        
+        C --&gt; J[KAG Builder]
+        D --&gt; J
+        G --&gt; K[KAG Storage Layer]
+        H --&gt; J
+        I --&gt; L[KAG Solver]
+    end
+    
+    style A fill:#e1f5fe
+    style J fill:#ff9999
+    style K fill:#66b3ff
+    style L fill:#99ff99
+</div>
+
+<h3 id="22-머신러닝-및-데이터-과학">2.2 머신러닝 및 데이터 과학</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 과학 컴퓨팅 스택
+</span><span class="n">SCIENTIFIC_STACK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"numpy"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"&gt;=1.23.1"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"수치 연산 기반 라이브러리"</span><span class="p">,</span>
+        <span class="s">"critical_features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Multi-dimensional arrays"</span><span class="p">,</span>
+            <span class="s">"Mathematical functions"</span><span class="p">,</span> 
+            <span class="s">"Linear algebra operations"</span><span class="p">,</span>
+            <span class="s">"Random number generation"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Vector operations, embeddings manipulation"</span><span class="p">,</span>
+        <span class="s">"performance_notes"</span><span class="p">:</span> <span class="s">"Version 1.23.1+ required for optimal performance"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"scikit-learn"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"Latest"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"머신러닝 알고리즘 라이브러리"</span><span class="p">,</span>
+        <span class="s">"critical_features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Classification algorithms"</span><span class="p">,</span>
+            <span class="s">"Clustering methods"</span><span class="p">,</span>
+            <span class="s">"Feature extraction"</span><span class="p">,</span> 
+            <span class="s">"Model evaluation metrics"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Knowledge clustering, entity classification, similarity metrics"</span><span class="p">,</span>
+        <span class="s">"integration_points"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Builder post-processing"</span><span class="p">,</span> <span class="s">"Solver ranking"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"pandas"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"Latest"</span><span class="p">,</span> 
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"데이터 분석 및 조작"</span><span class="p">,</span>
+        <span class="s">"critical_features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"DataFrame operations"</span><span class="p">,</span>
+            <span class="s">"CSV/JSON processing"</span><span class="p">,</span>
+            <span class="s">"Data cleaning"</span><span class="p">,</span>
+            <span class="s">"Statistical analysis"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"CSV data ingestion, tabular data processing"</span><span class="p">,</span>
+        <span class="s">"integration_points"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Builder CSV reader"</span><span class="p">,</span> <span class="s">"Data preprocessing"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="3-자연어-처리-nlp-라이브러리-스택">3. 자연어 처리 (NLP) 라이브러리 스택</h2>
+
+<h3 id="31-다국어-텍스트-처리">3.1 다국어 텍스트 처리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 언어별 처리 라이브러리
+</span><span class="n">NLP_LIBRARIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"nltk"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"3.8.1"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"영어 자연어 처리 툴킷"</span><span class="p">,</span>
+        <span class="s">"components"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Tokenizers"</span><span class="p">,</span> <span class="s">"POS taggers"</span><span class="p">,</span> <span class="s">"Named entity recognition"</span><span class="p">,</span>
+            <span class="s">"Sentiment analysis"</span><span class="p">,</span> <span class="s">"WordNet interface"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"module"</span><span class="p">:</span> <span class="s">"Builder text processing"</span><span class="p">,</span>
+            <span class="s">"use_cases"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Entity extraction"</span><span class="p">,</span> <span class="s">"Text preprocessing"</span><span class="p">,</span> <span class="s">"Language detection"</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s">"data_requirements"</span><span class="p">:</span> <span class="s">"NLTK data downloads (punkt, stopwords, etc.)"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"jieba"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"0.42.1"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"중국어 분할 및 처리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Chinese word segmentation"</span><span class="p">,</span>
+            <span class="s">"POS tagging"</span><span class="p">,</span>
+            <span class="s">"Keyword extraction"</span><span class="p">,</span> 
+            <span class="s">"Custom dictionary support"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"module"</span><span class="p">:</span> <span class="s">"Multi-language text processing"</span><span class="p">,</span>
+            <span class="s">"use_cases"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Chinese document processing"</span><span class="p">,</span> <span class="s">"Cross-lingual knowledge extraction"</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="s">"performance"</span><span class="p">:</span> <span class="s">"Optimized for Chinese text, crucial for Asia-Pacific deployments"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"charset_normalizer"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"3.3.2"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"문자 인코딩 감지 및 정규화"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Automatic encoding detection"</span><span class="p">,</span>
+            <span class="s">"Character set conversion"</span><span class="p">,</span>
+            <span class="s">"Encoding confidence scoring"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Document reader preprocessing"</span><span class="p">,</span>
+        <span class="s">"importance"</span><span class="p">:</span> <span class="s">"Critical for handling diverse document encodings"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="32-고급-텍스트-처리-도구">3.2 고급 텍스트 처리 도구</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 특수 목적 텍스트 처리
+</span><span class="n">SPECIALIZED_TEXT_TOOLS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"docstring_parser"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Python 독스트링 파싱"</span><span class="p">,</span>
+        <span class="s">"use_case"</span><span class="p">:</span> <span class="s">"Code documentation extraction"</span><span class="p">,</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Source code knowledge extraction"</span><span class="p">,</span>
+        <span class="s">"output_format"</span><span class="p">:</span> <span class="s">"Structured documentation objects"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"json_repair"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"손상된 JSON 복구"</span><span class="p">,</span>
+        <span class="s">"use_case"</span><span class="p">:</span> <span class="s">"Malformed JSON data recovery"</span><span class="p">,</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Robust data ingestion pipeline"</span><span class="p">,</span>
+        <span class="s">"error_handling"</span><span class="p">:</span> <span class="s">"Graceful JSON parsing with repair attempts"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"markdown"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Markdown 문서 처리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"HTML conversion"</span><span class="p">,</span> <span class="s">"Extension support"</span><span class="p">,</span> <span class="s">"Custom renderers"</span><span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Markdown document reader"</span><span class="p">,</span>
+        <span class="s">"extensions"</span><span class="p">:</span> <span class="s">"Tables, code blocks, footnotes support"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="4-데이터베이스-및-저장-시스템">4. 데이터베이스 및 저장 시스템</h2>
+
+<h3 id="41-그래프-및-검색-데이터베이스">4.1 그래프 및 검색 데이터베이스</h3>
+
+<div class="mermaid">
+graph TB
+    subgraph "KAG Storage Architecture"
+        A[Application Layer] --&gt; B[Storage Router]
+        
+        B --&gt; C[Neo4j Graph DB]
+        B --&gt; D[Elasticsearch Search]
+        B --&gt; E[ZODB Object Store]
+        
+        C --&gt; C1[Knowledge Graph]
+        C --&gt; C2[Entity Relationships] 
+        C --&gt; C3[Graph Algorithms]
+        
+        D --&gt; D1[Full-text Search]
+        D --&gt; D2[Vector Search]
+        D --&gt; D3[Hybrid Search]
+        
+        E --&gt; E1[Pipeline States]
+        E --&gt; E2[Checkpoints]
+        E --&gt; E3[Object Persistence]
+        
+        subgraph "Data Flow"
+            F[Structured Data] --&gt; C
+            G[Text Documents] --&gt; D
+            H[System State] --&gt; E
+        end
+        
+        subgraph "Query Processing"
+            I[Graph Queries] --&gt; C
+            J[Search Queries] --&gt; D
+            K[State Queries] --&gt; E
+        end
+    end
+    
+    style A fill:#ff9999
+    style B fill:#66b3ff
+    style C fill:#99ff99
+    style D fill:#ffcc99
+    style E fill:#ff99cc
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 데이터베이스 스택 분석
+</span><span class="n">DATABASE_STACK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"neo4j"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"그래프 데이터베이스 드라이버"</span><span class="p">,</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"Latest (5.x compatible)"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Cypher query language"</span><span class="p">,</span>
+            <span class="s">"ACID transactions"</span><span class="p">,</span> 
+            <span class="s">"Vector search capabilities"</span><span class="p">,</span>
+            <span class="s">"Graph algorithms (GDS)"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_role"</span><span class="p">:</span> <span class="s">"Primary knowledge graph storage"</span><span class="p">,</span>
+        <span class="s">"performance_tuning"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"connection_pooling"</span><span class="p">:</span> <span class="s">"Singleton pattern implementation"</span><span class="p">,</span>
+            <span class="s">"batch_operations"</span><span class="p">:</span> <span class="s">"Bulk node/relationship creation"</span><span class="p">,</span> 
+            <span class="s">"index_optimization"</span><span class="p">:</span> <span class="s">"Automatic constraint and index management"</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    
+    <span class="s">"elasticsearch"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"8.10.0"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"분산 검색 및 분석 엔진"</span><span class="p">,</span>
+        <span class="s">"critical_version"</span><span class="p">:</span> <span class="s">"8.10.0 required for vector search compatibility"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Full-text search"</span><span class="p">,</span>
+            <span class="s">"Vector similarity search"</span><span class="p">,</span> 
+            <span class="s">"Aggregations and analytics"</span><span class="p">,</span>
+            <span class="s">"Real-time indexing"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"primary_use"</span><span class="p">:</span> <span class="s">"Text and vector search backend"</span><span class="p">,</span>
+            <span class="s">"index_types"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Full-text indices"</span><span class="p">,</span> <span class="s">"Dense vector indices"</span><span class="p">],</span>
+            <span class="s">"search_modes"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Keyword search"</span><span class="p">,</span> <span class="s">"Semantic search"</span><span class="p">,</span> <span class="s">"Hybrid search"</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    
+    <span class="s">"zodb"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"객체 지향 데이터베이스"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Python object persistence"</span><span class="p">,</span>
+            <span class="s">"ACID transactions"</span><span class="p">,</span>
+            <span class="s">"Automatic serialization"</span><span class="p">,</span>
+            <span class="s">"Undo/redo capabilities"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Checkpointing system for pipeline states"</span><span class="p">,</span>
+        <span class="s">"advantages"</span><span class="p">:</span> <span class="s">"Native Python integration, zero-schema design"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="42-클라우드-데이터-서비스">4.2 클라우드 데이터 서비스</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 클라우드 데이터 통합
+</span><span class="n">CLOUD_DATA_SERVICES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"pyodps"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"0.12.2"</span><span class="p">,</span> 
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Alibaba Cloud MaxCompute (ODPS) 클라이언트"</span><span class="p">,</span>
+        <span class="s">"capabilities"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Big data processing"</span><span class="p">,</span>
+            <span class="s">"SQL-like queries"</span><span class="p">,</span> 
+            <span class="s">"Distributed computing"</span><span class="p">,</span>
+            <span class="s">"Data warehouse operations"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Large-scale data ingestion from Alibaba Cloud"</span><span class="p">,</span>
+        <span class="s">"use_cases"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Enterprise data pipeline"</span><span class="p">,</span> <span class="s">"Batch knowledge extraction"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"aliyun-log-python-sdk"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"0.8.8"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Alibaba Cloud 로그 서비스 SDK"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Log collection and analysis"</span><span class="p">,</span>
+            <span class="s">"Real-time log streaming"</span><span class="p">,</span>
+            <span class="s">"Log search and analytics"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"System monitoring and debugging"</span><span class="p">,</span>
+        <span class="s">"deployment"</span><span class="p">:</span> <span class="s">"Production logging and observability"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="5-문서-처리-및-파일-포맷-지원">5. 문서 처리 및 파일 포맷 지원</h2>
+
+<h3 id="51-pdf-처리-생태계">5.1 PDF 처리 생태계</h3>
+
+<div class="mermaid">
+flowchart TD
+    subgraph "Document Processing Pipeline"
+        A[Input Documents] --&gt; B{Document Type}
+        
+        B --&gt;|PDF| C[PDF Processing Stack]
+        B --&gt;|DOCX| D[python-docx]
+        B --&gt;|HTML| E[Beautiful Soup 4]
+        B --&gt;|Markdown| F[markdown]
+        
+        C --&gt; C1[pypdf - Primary]
+        C --&gt; C2[PyPDF2 - Fallback]
+        C --&gt; C3[pdfminer.six - Advanced]
+        
+        C1 --&gt; G[Text Extraction]
+        C2 --&gt; G
+        C3 --&gt; H[Layout Analysis]
+        
+        D --&gt; I[Structure Extraction]
+        E --&gt; J[Content Parsing]
+        F --&gt; K[Technical Docs]
+        
+        G --&gt; L[KAG Builder]
+        H --&gt; L
+        I --&gt; L
+        J --&gt; L
+        K --&gt; L
+        
+        L --&gt; M[Knowledge Graph]
+    end
+    
+    subgraph "Processing Capabilities"
+        N[Basic Text] --&gt; C1
+        O[Legacy PDFs] --&gt; C2
+        P[Complex Layout] --&gt; C3
+        Q[Tables &amp; Forms] --&gt; C3
+    end
+    
+    style A fill:#e1f5fe
+    style L fill:#ff9999
+    style M fill:#66b3ff
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># PDF 처리 라이브러리 비교
+</span><span class="n">PDF_PROCESSING_STACK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"pypdf"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"현대적인 PDF 처리 라이브러리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"PDF reading and writing"</span><span class="p">,</span>
+            <span class="s">"Text extraction"</span><span class="p">,</span> 
+            <span class="s">"Metadata extraction"</span><span class="p">,</span>
+            <span class="s">"Form processing"</span>
+        <span class="p">],</span>
+        <span class="s">"advantages"</span><span class="p">:</span> <span class="s">"Pure Python, actively maintained"</span><span class="p">,</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Primary PDF reader in Builder module"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"PyPDF2"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"레거시 PDF 처리 (호환성)"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Basic PDF operations"</span><span class="p">,</span> <span class="s">"Text extraction"</span><span class="p">],</span>
+        <span class="s">"role"</span><span class="p">:</span> <span class="s">"Fallback PDF processor"</span><span class="p">,</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Compatibility layer for older PDF formats"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"pdfminer.six"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"20231228"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"고급 PDF 텍스트 추출"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Detailed layout analysis"</span><span class="p">,</span>
+            <span class="s">"Character-level positioning"</span><span class="p">,</span>
+            <span class="s">"Font and style information"</span><span class="p">,</span>
+            <span class="s">"Table structure recognition"</span>
+        <span class="p">],</span>
+        <span class="s">"advantages"</span><span class="p">:</span> <span class="s">"Superior text extraction quality"</span><span class="p">,</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Detailed document structure analysis"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="52-오피스-문서-및-웹-콘텐츠">5.2 오피스 문서 및 웹 콘텐츠</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 다양한 문서 형식 지원
+</span><span class="n">DOCUMENT_FORMATS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"python-docx"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Microsoft Word 문서 처리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"DOCX file reading/writing"</span><span class="p">,</span>
+            <span class="s">"Paragraph and table extraction"</span><span class="p">,</span>
+            <span class="s">"Style and formatting preservation"</span><span class="p">,</span>
+            <span class="s">"Image and shape handling"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Office document reader component"</span><span class="p">,</span>
+        <span class="s">"use_cases"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Corporate document processing"</span><span class="p">,</span> <span class="s">"Knowledge base migration"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"bs4"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"HTML/XML 파싱 (Beautiful Soup)"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"HTML parsing and navigation"</span><span class="p">,</span>
+            <span class="s">"CSS selector support"</span><span class="p">,</span>
+            <span class="s">"Robust error handling"</span><span class="p">,</span>
+            <span class="s">"Encoding detection"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Web content extraction, HTML document processing"</span><span class="p">,</span>
+        <span class="s">"parser_engines"</span><span class="p">:</span> <span class="p">[</span><span class="s">"html.parser"</span><span class="p">,</span> <span class="s">"lxml"</span><span class="p">,</span> <span class="s">"html5lib"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"markdown"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Markdown 문서 처리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Markdown to HTML conversion"</span><span class="p">,</span>
+            <span class="s">"Extension system"</span><span class="p">,</span>
+            <span class="s">"Custom renderer support"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Technical documentation processing"</span><span class="p">,</span>
+        <span class="s">"extensions"</span><span class="p">:</span> <span class="p">[</span><span class="s">"tables"</span><span class="p">,</span> <span class="s">"code_hilite"</span><span class="p">,</span> <span class="s">"toc"</span><span class="p">,</span> <span class="s">"footnotes"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="6-네트워킹-및-http-클라이언트">6. 네트워킹 및 HTTP 클라이언트</h2>
+
+<h3 id="61-http-및-웹-통신">6.1 HTTP 및 웹 통신</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 네트워킹 라이브러리 스택
+</span><span class="n">NETWORKING_STACK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"requests"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"2.31.0"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"HTTP 라이브러리의 표준"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Simple HTTP API"</span><span class="p">,</span>
+            <span class="s">"Session management"</span><span class="p">,</span> 
+            <span class="s">"SSL/TLS verification"</span><span class="p">,</span>
+            <span class="s">"Cookie persistence"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"External API integration, webhook handling"</span><span class="p">,</span>
+        <span class="s">"security_features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Certificate verification"</span><span class="p">,</span> <span class="s">"Timeout handling"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"httpx"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"차세대 HTTP 클라이언트"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Async/await support"</span><span class="p">,</span>
+            <span class="s">"HTTP/2 support"</span><span class="p">,</span>
+            <span class="s">"Request/response hooks"</span><span class="p">,</span>
+            <span class="s">"Automatic retries"</span>
+        <span class="p">],</span>
+        <span class="s">"advantages"</span><span class="p">:</span> <span class="s">"Modern async architecture"</span><span class="p">,</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Async API calls in Solver module"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"urllib3"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"1.26.16"</span><span class="p">,</span> 
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Low-level HTTP 라이브러리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Connection pooling"</span><span class="p">,</span>
+            <span class="s">"SSL/TLS support"</span><span class="p">,</span> 
+            <span class="s">"Retry mechanisms"</span><span class="p">,</span>
+            <span class="s">"Proxy support"</span>
+        <span class="p">],</span>
+        <span class="s">"role"</span><span class="p">:</span> <span class="s">"Foundation for requests library"</span><span class="p">,</span>
+        <span class="s">"version_constraint"</span><span class="p">:</span> <span class="s">"Security and compatibility requirements"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="62-파일-및-데이터-전송">6.2 파일 및 데이터 전송</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 파일 처리 및 전송
+</span><span class="n">FILE_HANDLING</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"wget"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"3.2"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"파일 다운로드 유틸리티"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"HTTP/HTTPS downloads"</span><span class="p">,</span>
+            <span class="s">"Resume capability"</span><span class="p">,</span> 
+            <span class="s">"Authentication support"</span><span class="p">,</span>
+            <span class="s">"Progress tracking"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"External resource fetching, model downloads"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"aiofiles"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"비동기 파일 I/O"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Async file operations"</span><span class="p">,</span>
+            <span class="s">"Non-blocking I/O"</span><span class="p">,</span>
+            <span class="s">"Context manager support"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Async document processing pipeline"</span><span class="p">,</span>
+        <span class="s">"performance"</span><span class="p">:</span> <span class="s">"Critical for high-throughput document processing"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="7-개발-도구-및-유틸리티">7. 개발 도구 및 유틸리티</h2>
+
+<h3 id="71-테스트-및-품질-보증">7.1 테스트 및 품질 보증</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 개발 도구 생태계
+</span><span class="n">DEVELOPMENT_TOOLS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"pytest"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"7.4.2"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Python 테스트 프레임워크"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Simple test syntax"</span><span class="p">,</span>
+            <span class="s">"Fixture system"</span><span class="p">,</span>
+            <span class="s">"Plugin architecture"</span><span class="p">,</span> 
+            <span class="s">"Parametrized testing"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_testing"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"unit_tests"</span><span class="p">:</span> <span class="s">"Individual component testing"</span><span class="p">,</span>
+            <span class="s">"integration_tests"</span><span class="p">:</span> <span class="s">"End-to-end pipeline testing"</span><span class="p">,</span>
+            <span class="s">"fixtures"</span><span class="p">:</span> <span class="s">"Mock data and services"</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    
+    <span class="s">"gitpython"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Git 저장소 조작"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Repository management"</span><span class="p">,</span>
+            <span class="s">"Commit operations"</span><span class="p">,</span>
+            <span class="s">"Branch manipulation"</span><span class="p">,</span> 
+            <span class="s">"Diff analysis"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Version control integration, code analysis pipeline"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"tqdm"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"4.66.1"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"진행률 표시 라이브러리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Progress bars"</span><span class="p">,</span>
+            <span class="s">"ETA calculation"</span><span class="p">,</span>
+            <span class="s">"Customizable display"</span><span class="p">,</span>
+            <span class="s">"Nested progress tracking"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Long-running pipeline progress monitoring"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="72-시스템-모니터링-및-성능">7.2 시스템 모니터링 및 성능</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 시스템 관리 도구
+</span><span class="n">SYSTEM_UTILITIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"psutil"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"시스템 및 프로세스 모니터링"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"CPU/memory usage"</span><span class="p">,</span>
+            <span class="s">"Disk I/O statistics"</span><span class="p">,</span>
+            <span class="s">"Network connections"</span><span class="p">,</span> 
+            <span class="s">"Process management"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Resource monitoring, performance optimization"</span><span class="p">,</span>
+        <span class="s">"monitoring_metrics"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Memory usage"</span><span class="p">,</span> <span class="s">"CPU utilization"</span><span class="p">,</span> <span class="s">"I/O bottlenecks"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"cachetools"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"5.3.2"</span><span class="p">,</span> 
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"캐싱 유틸리티"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"LRU caching"</span><span class="p">,</span>
+            <span class="s">"TTL caching"</span><span class="p">,</span>
+            <span class="s">"Custom cache policies"</span><span class="p">,</span>
+            <span class="s">"Thread-safe operations"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="s">"Vector embedding caching, query result caching"</span><span class="p">,</span>
+        <span class="s">"performance_impact"</span><span class="p">:</span> <span class="s">"Significant speed improvement for repeated operations"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"schedule"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"작업 스케줄링"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Cron-like scheduling"</span><span class="p">,</span> 
+            <span class="s">"Human-friendly syntax"</span><span class="p">,</span>
+            <span class="s">"Job management"</span><span class="p">,</span>
+            <span class="s">"Error handling"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Periodic index updates, maintenance tasks"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="8-안정성-및-신뢰성-도구">8. 안정성 및 신뢰성 도구</h2>
+
+<h3 id="81-오류-처리-및-재시도">8.1 오류 처리 및 재시도</h3>
+
+<div class="mermaid">
+sequenceDiagram
+    participant App as Application
+    participant T as Tenacity
+    participant LLM as LLM API
+    participant DB as Database
+    participant EXT as External Service
+    
+    Note over App,EXT: KAG Reliability Mechanisms
+    
+    App-&gt;&gt;T: Request with retry policy
+    T-&gt;&gt;LLM: API Call
+    LLM--&gt;&gt;T: Rate Limit Error
+    Note over T: Exponential backoff
+    T-&gt;&gt;LLM: Retry after delay
+    LLM--&gt;&gt;T: Success
+    T-&gt;&gt;App: Response
+    
+    App-&gt;&gt;T: Database operation
+    T-&gt;&gt;DB: Connection attempt
+    DB--&gt;&gt;T: Connection timeout
+    Note over T: Retry with jitter
+    T-&gt;&gt;DB: Retry connection
+    DB--&gt;&gt;T: Success
+    T-&gt;&gt;App: Connected
+    
+    App-&gt;&gt;EXT: External API call
+    EXT--&gt;&gt;App: Service unavailable
+    Note over App: aiolimiter throttling
+    App-&gt;&gt;EXT: Rate-limited retry
+    EXT--&gt;&gt;App: Success
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 신뢰성 보장 라이브러리
+</span><span class="n">RELIABILITY_STACK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"tenacity"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"재시도 및 회복력 라이브러리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Configurable retry policies"</span><span class="p">,</span>
+            <span class="s">"Exponential backoff"</span><span class="p">,</span>
+            <span class="s">"Custom stop conditions"</span><span class="p">,</span>
+            <span class="s">"Error classification"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"llm_calls"</span><span class="p">:</span> <span class="s">"LLM API 호출 재시도"</span><span class="p">,</span>
+            <span class="s">"database_operations"</span><span class="p">:</span> <span class="s">"DB 연결 실패 복구"</span><span class="p">,</span>
+            <span class="s">"network_requests"</span><span class="p">:</span> <span class="s">"외부 서비스 호출 안정성"</span>
+        <span class="p">},</span>
+        <span class="s">"retry_strategies"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Fixed delay"</span><span class="p">,</span> <span class="s">"Exponential backoff"</span><span class="p">,</span> <span class="s">"Random jitter"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"retrying"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"1.3.4"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"간단한 재시도 데코레이터"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Decorator-based retries"</span><span class="p">,</span> <span class="s">"Timeout support"</span><span class="p">],</span>
+        <span class="s">"role"</span><span class="p">:</span> <span class="s">"Legacy retry mechanism"</span><span class="p">,</span>
+        <span class="s">"migration_path"</span><span class="p">:</span> <span class="s">"Gradually replaced by tenacity"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"aiolimiter"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"비동기 속도 제한"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Rate limiting for async operations"</span><span class="p">,</span>
+            <span class="s">"Token bucket algorithm"</span><span class="p">,</span> 
+            <span class="s">"Configurable limits"</span><span class="p">,</span>
+            <span class="s">"Async context manager"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"API rate limiting, resource throttling"</span><span class="p">,</span>
+        <span class="s">"importance"</span><span class="p">:</span> <span class="s">"Prevents API quota exhaustion"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="82-보안-및-암호화">8.2 보안 및 암호화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 보안 관련 라이브러리
+</span><span class="n">SECURITY_LIBRARIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"pycryptodome"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"암호화 라이브러리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"AES encryption"</span><span class="p">,</span>
+            <span class="s">"RSA key operations"</span><span class="p">,</span>
+            <span class="s">"Digital signatures"</span><span class="p">,</span>
+            <span class="s">"Hash functions"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Sensitive data encryption, API key protection"</span><span class="p">,</span>
+        <span class="s">"algorithms"</span><span class="p">:</span> <span class="p">[</span><span class="s">"AES-256"</span><span class="p">,</span> <span class="s">"RSA-2048"</span><span class="p">,</span> <span class="s">"SHA-256"</span><span class="p">,</span> <span class="s">"PBKDF2"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"certifi"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"2023.11.17"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"CA 인증서 번들"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Trusted CA certificates"</span><span class="p">,</span> <span class="s">"SSL/TLS validation"</span><span class="p">],</span>
+        <span class="s">"importance"</span><span class="p">:</span> <span class="s">"HTTPS 연결 보안"</span><span class="p">,</span>
+        <span class="s">"update_frequency"</span><span class="p">:</span> <span class="s">"Regular updates for new CA certificates"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"deprecated"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"지원 중단 경고"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Deprecation decorators"</span><span class="p">,</span>
+            <span class="s">"Warning messages"</span><span class="p">,</span>
+            <span class="s">"Version tracking"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"API lifecycle management, backward compatibility"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="9-데이터-포맷-및-직렬화">9. 데이터 포맷 및 직렬화</h2>
+
+<h3 id="91-구조화된-데이터-처리">9.1 구조화된 데이터 처리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 데이터 포맷 라이브러리
+</span><span class="n">DATA_FORMAT_STACK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"pydantic"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"데이터 검증 및 설정 관리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Type hints validation"</span><span class="p">,</span>
+            <span class="s">"JSON schema generation"</span><span class="p">,</span>
+            <span class="s">"Data serialization"</span><span class="p">,</span> 
+            <span class="s">"Configuration management"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"config_validation"</span><span class="p">:</span> <span class="s">"Settings and configuration validation"</span><span class="p">,</span>
+            <span class="s">"api_models"</span><span class="p">:</span> <span class="s">"Request/response model validation"</span><span class="p">,</span>
+            <span class="s">"data_schemas"</span><span class="p">:</span> <span class="s">"Knowledge graph schema definition"</span>
+        <span class="p">},</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"Latest (2.x compatible)"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"protobuf"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"3.20.1"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Protocol Buffers 직렬화"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Binary serialization"</span><span class="p">,</span>
+            <span class="s">"Cross-language compatibility"</span><span class="p">,</span>
+            <span class="s">"Schema evolution"</span><span class="p">,</span>
+            <span class="s">"Compact encoding"</span>
+        <span class="p">],</span>
+        <span class="s">"version_constraint"</span><span class="p">:</span> <span class="s">"3.20.1 required for compatibility"</span><span class="p">,</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"High-performance data serialization"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"ruamel.yaml"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"YAML 처리 (고급)"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Round-trip preservation"</span><span class="p">,</span>
+            <span class="s">"Comment preservation"</span><span class="p">,</span>
+            <span class="s">"Advanced YAML features"</span><span class="p">,</span>
+            <span class="s">"Schema validation"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Configuration file processing, pipeline definitions"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="92-시간-및-날짜-처리">9.2 시간 및 날짜 처리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 시간 처리 라이브러리
+</span><span class="n">TIME_HANDLING</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"python-dateutil"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"2.8.2"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"고급 날짜/시간 처리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Flexible date parsing"</span><span class="p">,</span>
+            <span class="s">"Timezone handling"</span><span class="p">,</span>
+            <span class="s">"Relative date calculations"</span><span class="p">,</span>
+            <span class="s">"Recurrence rules"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Temporal knowledge extraction, time-based queries"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"dateutils"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"0.6.12"</span><span class="p">,</span> 
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"날짜 유틸리티"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Date range operations"</span><span class="p">,</span> <span class="s">"Business date calculations"</span><span class="p">],</span>
+        <span class="s">"integration"</span><span class="p">:</span> <span class="s">"Complementary to python-dateutil"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="10-시각화-및-분석-도구">10. 시각화 및 분석 도구</h2>
+
+<h3 id="101-그래프-및-네트워크-분석">10.1 그래프 및 네트워크 분석</h3>
+
+<div class="mermaid">
+graph LR
+    subgraph "Knowledge Graph Analytics"
+        A[Knowledge Graph] --&gt; B[NetworkX Analysis]
+        B --&gt; C[Graph Algorithms]
+        B --&gt; D[Network Metrics]
+        B --&gt; E[Community Detection]
+        
+        C --&gt; C1[PageRank]
+        C --&gt; C2[Shortest Path]
+        C --&gt; C3[Clustering]
+        
+        D --&gt; D1[Centrality Measures]
+        D --&gt; D2[Degree Analysis]
+        D --&gt; D3[Betweenness]
+        
+        E --&gt; E1[Connected Components]
+        E --&gt; E2[Knowledge Communities]
+        
+        A --&gt; F[Pyvis Visualization]
+        F --&gt; G[Interactive Web View]
+        F --&gt; H[Node Exploration]
+        F --&gt; I[Relationship Discovery]
+        
+        B --&gt; J[Matplotlib Reports]
+        J --&gt; K[Statistical Plots]
+        J --&gt; L[Performance Metrics]
+        
+        style A fill:#ff9999
+        style G fill:#66b3ff
+        style K fill:#99ff99
+    end
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 분석 및 시각화
+</span><span class="n">ANALYTICS_VISUALIZATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"networkx"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"3.1"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"네트워크 분석 라이브러리"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Graph algorithms"</span><span class="p">,</span>
+            <span class="s">"Network metrics"</span><span class="p">,</span>
+            <span class="s">"Centrality measures"</span><span class="p">,</span>
+            <span class="s">"Community detection"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_integration"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"graph_analysis"</span><span class="p">:</span> <span class="s">"Knowledge graph analysis"</span><span class="p">,</span>
+            <span class="s">"algorithms"</span><span class="p">:</span> <span class="p">[</span><span class="s">"PageRank"</span><span class="p">,</span> <span class="s">"Shortest path"</span><span class="p">,</span> <span class="s">"Clustering"</span><span class="p">],</span>
+            <span class="s">"metrics"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Degree centrality"</span><span class="p">,</span> <span class="s">"Betweenness"</span><span class="p">,</span> <span class="s">"Eigenvector centrality"</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    
+    <span class="s">"pyvis"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"인터랙티브 네트워크 시각화"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Interactive graph visualization"</span><span class="p">,</span>
+            <span class="s">"Web-based rendering"</span><span class="p">,</span>
+            <span class="s">"Node/edge customization"</span><span class="p">,</span>
+            <span class="s">"Physics simulation"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Knowledge graph visualization, relationship exploration"</span><span class="p">,</span>
+        <span class="s">"output_format"</span><span class="p">:</span> <span class="s">"HTML with JavaScript interaction"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"matplotlib"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"정적 플롯 및 차트"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Statistical plotting"</span><span class="p">,</span>
+            <span class="s">"Publication-quality figures"</span><span class="p">,</span> 
+            <span class="s">"Multiple output formats"</span><span class="p">,</span>
+            <span class="s">"Extensive customization"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_usage"</span><span class="p">:</span> <span class="s">"Analytics dashboard, performance metrics visualization"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="11-모델-통합-프로토콜">11. 모델 통합 프로토콜</h2>
+
+<h3 id="111-mcp-model-context-protocol">11.1 MCP (Model Context Protocol)</h3>
+
+<div class="mermaid">
+graph TB
+    subgraph "MCP Integration Architecture"
+        A[KAG Application] --&gt; B[MCP Client]
+        B --&gt; C[MCP Protocol Layer]
+        
+        C --&gt; D[Model Provider 1]
+        C --&gt; E[Model Provider 2] 
+        C --&gt; F[Model Provider N]
+        
+        D --&gt; D1[OpenAI Models]
+        E --&gt; E1[Anthropic Models]
+        F --&gt; F1[Local Models]
+        
+        B --&gt; G[Tool Interface]
+        G --&gt; H[Knowledge Graph Tools]
+        G --&gt; I[Search Tools]
+        G --&gt; J[Analysis Tools]
+        
+        H --&gt; K[Neo4j Operations]
+        I --&gt; L[Elasticsearch Queries]
+        J --&gt; M[NetworkX Analytics]
+        
+        subgraph "Standardized Communication"
+            N[Context Management]
+            O[Resource Sharing]
+            P[Tool Calling]
+            Q[Error Handling]
+        end
+        
+        C -.-&gt; N
+        C -.-&gt; O
+        G -.-&gt; P
+        C -.-&gt; Q
+    end
+    
+    style A fill:#ff9999
+    style C fill:#66b3ff
+    style G fill:#99ff99
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 차세대 모델 통합 프로토콜
+</span><span class="n">MCP_INTEGRATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"mcp"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"1.6.0"</span><span class="p">,</span>
+        <span class="s">"purpose"</span><span class="p">:</span> <span class="s">"Model Context Protocol 구현"</span><span class="p">,</span>
+        <span class="s">"features"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"Standardized model communication"</span><span class="p">,</span>
+            <span class="s">"Tool calling interface"</span><span class="p">,</span> 
+            <span class="s">"Context management"</span><span class="p">,</span>
+            <span class="s">"Resource sharing"</span>
+        <span class="p">],</span>
+        <span class="s">"kag_significance"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"future_proofing"</span><span class="p">:</span> <span class="s">"Industry standard protocol adoption"</span><span class="p">,</span>
+            <span class="s">"interoperability"</span><span class="p">:</span> <span class="s">"Cross-model compatibility"</span><span class="p">,</span>
+            <span class="s">"tool_integration"</span><span class="p">:</span> <span class="s">"Unified tool calling interface"</span>
+        <span class="p">},</span>
+        <span class="s">"anthropic_backing"</span><span class="p">:</span> <span class="s">"Developed and supported by Anthropic"</span><span class="p">,</span>
+        <span class="s">"ecosystem_impact"</span><span class="p">:</span> <span class="s">"Bridge between different AI model providers"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="12-의존성-관리-전략">12. 의존성 관리 전략</h2>
+
+<h3 id="121-버전-제약-분석">12.1 버전 제약 분석</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 중요한 버전 제약 조건
+</span><span class="n">CRITICAL_VERSION_CONSTRAINTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"elasticsearch==8.10.0"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"reason"</span><span class="p">:</span> <span class="s">"Vector search API compatibility"</span><span class="p">,</span>
+        <span class="s">"impact"</span><span class="p">:</span> <span class="s">"Breaking changes in newer versions"</span><span class="p">,</span>
+        <span class="s">"migration_path"</span><span class="p">:</span> <span class="s">"Careful testing required for upgrades"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"numpy&gt;=1.23.1"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"reason"</span><span class="p">:</span> <span class="s">"Performance improvements and bug fixes"</span><span class="p">,</span>
+        <span class="s">"impact"</span><span class="p">:</span> <span class="s">"Significant performance gains"</span><span class="p">,</span>
+        <span class="s">"compatibility"</span><span class="p">:</span> <span class="s">"Backward compatible"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"protobuf==3.20.1"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"reason"</span><span class="p">:</span> <span class="s">"Cross-library compatibility issues"</span><span class="p">,</span>
+        <span class="s">"impact"</span><span class="p">:</span> <span class="s">"Serialization format consistency"</span><span class="p">,</span> 
+        <span class="s">"note"</span><span class="p">:</span> <span class="s">"Newer versions may break TensorFlow integration"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"urllib3==1.26.16"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"reason"</span><span class="p">:</span> <span class="s">"Security updates and requests compatibility"</span><span class="p">,</span>
+        <span class="s">"impact"</span><span class="p">:</span> <span class="s">"CVE fixes and API stability"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="122-의존성-충돌-해결">12.2 의존성 충돌 해결</h3>
+
+<div class="mermaid">
+graph TD
+    subgraph "Dependency Conflict Resolution"
+        A[Dependency Conflicts] --&gt; B{Conflict Type}
+        
+        B --&gt;|Version Mismatch| C[Version Pinning]
+        B --&gt;|ABI Incompatibility| D[Compatibility Layer]
+        B --&gt;|Feature Conflict| E[Feature Selection]
+        
+        C --&gt; C1[protobuf==3.20.1]
+        C --&gt; C2[urllib3==1.26.16]
+        C --&gt; C3[numpy&gt;=1.23.1]
+        
+        D --&gt; D1[TensorFlow Bridge]
+        D --&gt; D2[NumPy ABI Wrapper]
+        
+        E --&gt; E1[Optional Dependencies]
+        E --&gt; E2[Feature Flags]
+        
+        C1 --&gt; F[Resolution Strategy]
+        C2 --&gt; F
+        C3 --&gt; F
+        D1 --&gt; F
+        D2 --&gt; F
+        E1 --&gt; F
+        E2 --&gt; F
+        
+        F --&gt; G[Testing Matrix]
+        G --&gt; H[Integration Tests]
+        G --&gt; I[Compatibility Tests]
+        G --&gt; J[Performance Tests]
+        
+        H --&gt; K[Deployment Ready]
+        I --&gt; K
+        J --&gt; K
+    end
+    
+    style A fill:#ffcccc
+    style F fill:#ccffcc
+    style K fill:#ccccff
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 잠재적 충돌 및 해결책
+</span><span class="n">DEPENDENCY_CONFLICTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"protobuf_tensorflow"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"issue"</span><span class="p">:</span> <span class="s">"TensorFlow vs newer protobuf versions"</span><span class="p">,</span>
+        <span class="s">"solution"</span><span class="p">:</span> <span class="s">"Pin protobuf==3.20.1"</span><span class="p">,</span>
+        <span class="s">"monitoring"</span><span class="p">:</span> <span class="s">"Check TensorFlow compatibility on updates"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"numpy_scipy"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"issue"</span><span class="p">:</span> <span class="s">"NumPy ABI compatibility"</span><span class="p">,</span>
+        <span class="s">"solution"</span><span class="p">:</span> <span class="s">"Use numpy&gt;=1.23.1 as minimum"</span><span class="p">,</span>
+        <span class="s">"impact"</span><span class="p">:</span> <span class="s">"Affects all scientific computing libraries"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"requests_urllib3"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"issue"</span><span class="p">:</span> <span class="s">"Version misalignment"</span><span class="p">,</span>
+        <span class="s">"solution"</span><span class="p">:</span> <span class="s">"Coordinate updates between packages"</span><span class="p">,</span>
+        <span class="s">"testing"</span><span class="p">:</span> <span class="s">"Full integration test required"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="13-패키지-생태계-최적화">13. 패키지 생태계 최적화</h2>
+
+<h3 id="131-설치-및-배포-전략">13.1 설치 및 배포 전략</h3>
+
+<div class="mermaid">
+graph TB
+    subgraph "KAG Deployment Architecture"
+        A[Source Code] --&gt; B[Docker Build Process]
+        
+        B --&gt; C[Base Layer]
+        C --&gt; C1[Python Runtime]
+        C --&gt; C2[System Dependencies]
+        
+        B --&gt; D[Scientific Layer]
+        D --&gt; D1[numpy, pandas]
+        D --&gt; D2[scikit-learn]
+        D --&gt; D3[matplotlib]
+        
+        B --&gt; E[ML/AI Layer]
+        E --&gt; E1[nltk, jieba]
+        E --&gt; E2[langchain-*]
+        E --&gt; E3[openai, ollama]
+        
+        B --&gt; F[Database Layer]
+        F --&gt; F1[neo4j driver]
+        F --&gt; F2[elasticsearch]
+        F --&gt; F3[zodb]
+        
+        B --&gt; G[Application Layer]
+        G --&gt; G1[KAG Core]
+        G --&gt; G2[Configuration]
+        G --&gt; G3[Entry Points]
+        
+        subgraph "Optimization Strategies"
+            H[Layer Caching]
+            I[Multi-stage Build]
+            J[Dependency Ordering]
+        end
+        
+        C -.-&gt; H
+        D -.-&gt; H
+        E -.-&gt; H
+        F -.-&gt; H
+        
+        B -.-&gt; I
+        B -.-&gt; J
+        
+        G --&gt; K[Production Image]
+        K --&gt; L[Container Registry]
+        L --&gt; M[Deployment Target]
+    end
+    
+    style A fill:#e1f5fe
+    style K fill:#ff9999
+    style M fill:#66b3ff
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 배포 최적화 전략
+</span><span class="n">DEPLOYMENT_OPTIMIZATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"docker_layers"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"base_layer"</span><span class="p">:</span> <span class="p">[</span><span class="s">"numpy"</span><span class="p">,</span> <span class="s">"pandas"</span><span class="p">,</span> <span class="s">"requests"</span><span class="p">],</span>
+        <span class="s">"ml_layer"</span><span class="p">:</span> <span class="p">[</span><span class="s">"scikit-learn"</span><span class="p">,</span> <span class="s">"nltk"</span><span class="p">,</span> <span class="s">"jieba"</span><span class="p">],</span>
+        <span class="s">"database_layer"</span><span class="p">:</span> <span class="p">[</span><span class="s">"neo4j"</span><span class="p">,</span> <span class="s">"elasticsearch"</span><span class="p">],</span>
+        <span class="s">"application_layer"</span><span class="p">:</span> <span class="p">[</span><span class="s">"openai"</span><span class="p">,</span> <span class="s">"langchain-*"</span><span class="p">]</span>
+    <span class="p">},</span>
+    
+    <span class="s">"pip_constraints"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"use_constraints_file"</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+        <span class="s">"reproducible_builds"</span><span class="p">:</span> <span class="s">"requirements.txt + constraints.txt"</span><span class="p">,</span>
+        <span class="s">"security_scanning"</span><span class="p">:</span> <span class="s">"Regular vulnerability checks"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"optional_dependencies"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"development"</span><span class="p">:</span> <span class="p">[</span><span class="s">"pytest"</span><span class="p">,</span> <span class="s">"gitpython"</span><span class="p">],</span>
+        <span class="s">"visualization"</span><span class="p">:</span> <span class="p">[</span><span class="s">"matplotlib"</span><span class="p">,</span> <span class="s">"pyvis"</span><span class="p">],</span> 
+        <span class="s">"cloud"</span><span class="p">:</span> <span class="p">[</span><span class="s">"pyodps"</span><span class="p">,</span> <span class="s">"aliyun-log-python-sdk"</span><span class="p">],</span>
+        <span class="s">"security"</span><span class="p">:</span> <span class="p">[</span><span class="s">"pycryptodome"</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="132-성능-및-메모리-최적화">13.2 성능 및 메모리 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 성능 최적화 고려사항
+</span><span class="n">PERFORMANCE_CONSIDERATIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"memory_intensive"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"packages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"numpy"</span><span class="p">,</span> <span class="s">"pandas"</span><span class="p">,</span> <span class="s">"neo4j"</span><span class="p">,</span> <span class="s">"elasticsearch"</span><span class="p">],</span>
+        <span class="s">"optimization"</span><span class="p">:</span> <span class="s">"Lazy loading, chunked processing"</span><span class="p">,</span>
+        <span class="s">"monitoring"</span><span class="p">:</span> <span class="s">"psutil for resource tracking"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"cpu_intensive"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"packages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"nltk"</span><span class="p">,</span> <span class="s">"jieba"</span><span class="p">,</span> <span class="s">"scikit-learn"</span><span class="p">],</span>
+        <span class="s">"optimization"</span><span class="p">:</span> <span class="s">"Multiprocessing, async operations"</span><span class="p">,</span> 
+        <span class="s">"scaling"</span><span class="p">:</span> <span class="s">"Horizontal scaling for NLP tasks"</span>
+    <span class="p">},</span>
+    
+    <span class="s">"io_intensive"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"packages"</span><span class="p">:</span> <span class="p">[</span><span class="s">"requests"</span><span class="p">,</span> <span class="s">"aiofiles"</span><span class="p">,</span> <span class="s">"pypdf"</span><span class="p">],</span>
+        <span class="s">"optimization"</span><span class="p">:</span> <span class="s">"Connection pooling, async I/O"</span><span class="p">,</span>
+        <span class="s">"caching"</span><span class="p">:</span> <span class="s">"cachetools for repeated operations"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>KAG 프레임워크의 <strong>58개 의존성 패키지 분석</strong>을 통해 현대적인 AI 시스템의 복잡성과 통합성을 확인할 수 있습니다. 각 패키지는 특정 역할을 수행하며, 전체적으로 완전한 지식 증강 생성 플랫폼을 구성합니다.</p>
+
+<p><strong>핵심 혁신 포인트:</strong></p>
+<ul>
+  <li><strong>멀티모달 AI</strong>: OpenAI, Dashscope, Ollama를 통한 다양한 LLM 지원</li>
+  <li><strong>하이브리드 데이터</strong>: Neo4j + Elasticsearch 통합 저장소</li>
+  <li><strong>다국어 NLP</strong>: NLTK + Jieba를 통한 글로벌 언어 지원</li>
+  <li><strong>엔터프라이즈 통합</strong>: MCP 프로토콜과 클라우드 서비스 연동</li>
+</ul>
+
+<p><strong>확장성 고려사항:</strong></p>
+<ul>
+  <li><strong>모듈형 아키텍처</strong>: 선택적 의존성으로 경량화 가능</li>
+  <li><strong>클라우드 네이티브</strong>: 컨테이너화와 마이크로서비스 지원</li>
+  <li><strong>미래 호환성</strong>: MCP 프로토콜을 통한 차세대 AI 모델 지원</li>
+</ul>
+
+<p>KAG는 단순한 프레임워크를 넘어서 <strong>AI 생태계의 허브 역할</strong>을 수행하며, 지식 관리의 새로운 패러다임을 제시합니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li><a href="/2024/08/15/kag-project-overview-architecture-analysis/">KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석</a></li>
+  <li><a href="/2025/02/28/kag-docker-container-orchestration-analysis/">KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석</a></li>
+  <li><a href="/2024/11/15/kag-builder-module-architecture-analysis/">KAG Builder 모듈 아키텍처 심층 분석 - 지식 추출 및 그래프 구축 엔진</a></li>
+  <li><a href="/2024/05/12/kag-solver-module-analysis/">KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템</a></li>
+  <li><a href="/2024/10/03/kag-database-integration-analysis/">KAG 데이터베이스 통합 아키텍처 심층 분석 - Neo4j와 벡터 검색 시스템</a></li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://pypi.org/">Python Package Index (PyPI)</a></li>
+  <li><a href="https://modelcontextprotocol.io/">Model Context Protocol Specification</a></li>
+  <li><a href="https://python.langchain.com/">LangChain Documentation</a></li>
+  <li><a href="https://neo4j.com/docs/python-manual/current/">Neo4j Python Driver</a></li>
+  <li><a href="https://elasticsearch-py.readthedocs.io/">Elasticsearch Python Client</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2025/02/28/kag-docker-container-orchestration-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석</span>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

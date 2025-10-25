@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 파운데이션 모델의 핵심 구성 요소인 학습 데이터와 모델 아키텍처를 심층 분석합니다. 현대 AI의 기반이 되는 파운데이션 모델이 어떻게 구축되고, 어떤 데이터로 학습되며, 어떤 아키텍처를 사용하는지 상세히 살펴보겠습니다.1. 파운데이션 모델이란?1.1 정의와 특...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="foundation-models, llm, model-architecture, training-data, multilingual, domain-specific">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/07/15/foundation-models-data-and-architecture/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석">
+<meta property="og:description" content="개요이번 포스트에서는 파운데이션 모델의 핵심 구성 요소인 학습 데이터와 모델 아키텍처를 심층 분석합니다. 현대 AI의 기반이 되는 파운데이션 모델이 어떻게 구축되고, 어떤 데이터로 학습되며, 어떤 아키텍처를 사용하는지 상세히 살펴보겠습니다.1. 파운데이션 모델이란?1.1 정의와 특...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/07/15/foundation-models-data-and-architecture/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석">
+<meta name="twitter:description" content="개요이번 포스트에서는 파운데이션 모델의 핵심 구성 요소인 학습 데이터와 모델 아키텍처를 심층 분석합니다. 현대 AI의 기반이 되는 파운데이션 모델이 어떻게 구축되고, 어떤 데이터로 학습되며, 어떤 아키텍처를 사용하는지 상세히 살펴보겠습니다.1. 파운데이션 모델이란?1.1 정의와 특...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석",
+  "description": "개요
+
+이번 포스트에서는 파운데이션 모델의 핵심 구성 요소인 학습 데이터와 모델 아키텍처를 심층 분석합니다. 현대 AI의 기반이 되는 파운데이션 모델이 어떻게 구축되고, 어떤 데이터로 학습되며, 어떤 아키텍처를 사용하는지 상세히 살펴보겠습니다.
+
+1. 파운데이션 모델이란?
+
+1.1...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-07-15T01:30:00+00:00",
+  "dateModified": "2024-07-15T01:30:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/07/15/foundation-models-data-and-architecture/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/07/15/foundation-models-data-and-architecture/",
+  "inLanguage": "ko",
+  "keywords": ["foundation-models","llm","model-architecture","training-data","multilingual","domain-specific"],
+  "articleSection": ["AI","Foundation Models","Deep Learning"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-07-15T01:30:00+00:00">Jul 15, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Foundation Models</li><li>Deep Learning</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 <strong>파운데이션 모델의 핵심 구성 요소</strong>인 학습 데이터와 모델 아키텍처를 심층 분석합니다. 현대 AI의 기반이 되는 파운데이션 모델이 어떻게 구축되고, 어떤 데이터로 학습되며, 어떤 아키텍처를 사용하는지 상세히 살펴보겠습니다.</p>
+
+<h2 id="1-파운데이션-모델이란">1. 파운데이션 모델이란?</h2>
+
+<h3 id="11-정의와-특징">1.1 정의와 특징</h3>
+
+<div class="mermaid">
+graph TB
+    subgraph "Foundation Model Ecosystem"
+        A[Foundation Models] --&gt; B[Core Characteristics]
+        A --&gt; C[Training Pipeline]
+        A --&gt; D[Capabilities]
+        
+        B --&gt; B1[Large Scale]
+        B --&gt; B2[General Purpose]
+        B --&gt; B3[Adaptable]
+        B --&gt; B4[Emergent Abilities]
+        
+        C --&gt; C1[Massive Data]
+        C --&gt; C2[Self-Supervised Learning]
+        C --&gt; C3[Transformer Architecture]
+        C --&gt; C4[Distributed Training]
+        
+        D --&gt; D1[Zero-shot Learning]
+        D --&gt; D2[Few-shot Learning]
+        D --&gt; D3[In-context Learning]
+        D --&gt; D4[Multi-task Performance]
+        
+        subgraph "Model Types"
+            E[Language Models]
+            F[Vision Models]
+            G[Multimodal Models]
+            H[Code Models]
+        end
+        
+        A --&gt; E
+        A --&gt; F
+        A --&gt; G
+        A --&gt; H
+        
+        subgraph "Applications"
+            I[Text Generation]
+            J[Image Synthesis]
+            K[Code Generation]
+            L[Reasoning Tasks]
+        end
+        
+        D --&gt; I
+        D --&gt; J
+        D --&gt; K
+        D --&gt; L
+    end
+    
+    style A fill:#ff9999
+    style C fill:#66b3ff
+    style D fill:#99ff99
+</div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 파운데이션 모델의 핵심 특성
+</span><span class="n">FOUNDATION_MODEL_CHARACTERISTICS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"scale"</span><span class="p">:</span> <span class="s">"대규모 매개변수 (수십억~수조 개)"</span><span class="p">,</span>
+    <span class="s">"training_data"</span><span class="p">:</span> <span class="s">"방대한 다양성 데이터"</span><span class="p">,</span>
+    <span class="s">"adaptability"</span><span class="p">:</span> <span class="s">"다양한 태스크 적응 가능"</span><span class="p">,</span>
+    <span class="s">"emergence"</span><span class="p">:</span> <span class="s">"창발적 능력 발현"</span><span class="p">,</span>
+    <span class="s">"generalization"</span><span class="p">:</span> <span class="s">"강력한 일반화 능력"</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>파운데이션 모델의 혁신적 특징:</strong></p>
+<ul>
+  <li><strong>규모의 경제</strong>: 매개변수 수와 성능의 상관관계</li>
+  <li><strong>제로샷/퓨샷 학습</strong>: 새로운 태스크에 즉시 적응</li>
+  <li><strong>창발적 능력</strong>: 훈련 시 명시적으로 학습하지 않은 능력 발현</li>
+  <li><strong>범용성</strong>: 하나의 모델로 다양한 응용 가능</li>
+</ul>
+
+<h2 id="2-학습-데이터-training-data">2. 학습 데이터 (Training Data)</h2>
+
+<h3 id="21-데이터의-중요성">2.1 데이터의 중요성</h3>
+
+<div class="mermaid">
+graph TB
+    subgraph "Training Data Pipeline"
+        A[Raw Data Sources] --&gt; B[Data Collection]
+        B --&gt; C[Data Preprocessing]
+        C --&gt; D[Quality Filtering]
+        D --&gt; E[Deduplication]
+        E --&gt; F[Content Filtering]
+        F --&gt; G[Tokenization]
+        G --&gt; H[Training Ready Data]
+        
+        subgraph "Data Sources"
+            I[Web Crawling]
+            J[Books &amp; Papers]
+            K[Code Repositories]
+            L[Conversation Data]
+            M[Structured Data]
+        end
+        
+        I --&gt; B
+        J --&gt; B
+        K --&gt; B
+        L --&gt; B
+        M --&gt; B
+        
+        subgraph "Quality Metrics"
+            N[Language Detection]
+            O[Content Quality]
+            P[Factual Accuracy]
+            Q[Diversity Score]
+        end
+        
+        D --&gt; N
+        D --&gt; O
+        D --&gt; P
+        D --&gt; Q
+        
+        subgraph "Filtering Criteria"
+            R[NSFW Content]
+            S[Personal Information]
+            T[Copyright Material]
+            U[Low Quality Text]
+        end
+        
+        F --&gt; R
+        F --&gt; S
+        F --&gt; T
+        F --&gt; U
+    end
+    
+    style A fill:#e1f5fe
+    style H fill:#c8e6c9
+    style D fill:#ffcdd2
+</div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    L[구조화된 지식]
+end
+
+H --&gt; A
+I --&gt; A
+J --&gt; A
+K --&gt; A
+L --&gt; A ```
+</code></pre></div></div>
+
+<h3 id="22-데이터-구성-요소">2.2 데이터 구성 요소</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 대표적인 파운데이션 모델 학습 데이터 구성
+</span><span class="n">TRAINING_DATA_COMPOSITION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"common_crawl"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"source"</span><span class="p">:</span> <span class="s">"웹 크롤링 데이터"</span><span class="p">,</span>
+        <span class="s">"size"</span><span class="p">:</span> <span class="s">"수 테라바이트"</span><span class="p">,</span>
+        <span class="s">"content"</span><span class="p">:</span> <span class="s">"웹페이지, 블로그, 뉴스, 포럼"</span><span class="p">,</span>
+        <span class="s">"languages"</span><span class="p">:</span> <span class="s">"다국어 (100+ 언어)"</span><span class="p">,</span>
+        <span class="s">"challenges"</span><span class="p">:</span> <span class="p">[</span><span class="s">"노이즈"</span><span class="p">,</span> <span class="s">"편향"</span><span class="p">,</span> <span class="s">"저품질 콘텐츠"</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"books"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"source"</span><span class="p">:</span> <span class="s">"도서 및 문학 작품"</span><span class="p">,</span>
+        <span class="s">"size"</span><span class="p">:</span> <span class="s">"수십 기가바이트"</span><span class="p">,</span>
+        <span class="s">"content"</span><span class="p">:</span> <span class="s">"소설, 논픽션, 교과서, 참고서"</span><span class="p">,</span>
+        <span class="s">"quality"</span><span class="p">:</span> <span class="s">"높은 언어 품질"</span><span class="p">,</span>
+        <span class="s">"benefits"</span><span class="p">:</span> <span class="p">[</span><span class="s">"문맥 이해"</span><span class="p">,</span> <span class="s">"언어 구조"</span><span class="p">,</span> <span class="s">"지식 체계"</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"academic_papers"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"source"</span><span class="p">:</span> <span class="s">"학술 논문 및 연구 자료"</span><span class="p">,</span>
+        <span class="s">"size"</span><span class="p">:</span> <span class="s">"수백 기가바이트"</span><span class="p">,</span>
+        <span class="s">"content"</span><span class="p">:</span> <span class="s">"ArXiv, PubMed, 학회 논문"</span><span class="p">,</span>
+        <span class="s">"expertise"</span><span class="p">:</span> <span class="s">"전문 지식 및 추론"</span><span class="p">,</span>
+        <span class="s">"formats"</span><span class="p">:</span> <span class="p">[</span><span class="s">"LaTeX"</span><span class="p">,</span> <span class="s">"PDF 추출"</span><span class="p">,</span> <span class="s">"XML"</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"code_repositories"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"source"</span><span class="p">:</span> <span class="s">"오픈소스 코드"</span><span class="p">,</span>
+        <span class="s">"size"</span><span class="p">:</span> <span class="s">"수백 기가바이트"</span><span class="p">,</span>
+        <span class="s">"content"</span><span class="p">:</span> <span class="s">"GitHub, GitLab, 기타 저장소"</span><span class="p">,</span>
+        <span class="s">"languages"</span><span class="p">:</span> <span class="s">"Python, JavaScript, Java, C++, 기타"</span><span class="p">,</span>
+        <span class="s">"benefits"</span><span class="p">:</span> <span class="p">[</span><span class="s">"논리적 추론"</span><span class="p">,</span> <span class="s">"구조적 사고"</span><span class="p">,</span> <span class="s">"문제 해결"</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"reference_data"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"source"</span><span class="p">:</span> <span class="s">"구조화된 지식"</span><span class="p">,</span>
+        <span class="s">"content"</span><span class="p">:</span> <span class="s">"Wikipedia, 백과사전, 사전"</span><span class="p">,</span>
+        <span class="s">"structure"</span><span class="p">:</span> <span class="s">"체계적 정보 조직"</span><span class="p">,</span>
+        <span class="s">"reliability"</span><span class="p">:</span> <span class="s">"검증된 정보"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="23-데이터-전처리-파이프라인">2.3 데이터 전처리 파이프라인</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">DataPreprocessingPipeline</span><span class="p">:</span>
+    <span class="s">"""파운데이션 모델을 위한 데이터 전처리 파이프라인"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">filters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">deduplicators</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">quality_checkers</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">def</span> <span class="nf">language_detection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="s">"""언어 감지 및 분류"""</span>
+        <span class="c1"># 다국어 모델을 위한 언어별 분류
+</span>        <span class="k">pass</span>
+    
+    <span class="k">def</span> <span class="nf">content_filtering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="s">"""콘텐츠 필터링"""</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"adult_content"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">detect_adult_content</span><span class="p">,</span>
+            <span class="s">"spam_detection"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">detect_spam</span><span class="p">,</span>
+            <span class="s">"low_quality"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">detect_low_quality</span><span class="p">,</span>
+            <span class="s">"duplicate_content"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">detect_duplicates</span><span class="p">,</span>
+            <span class="s">"privacy_sensitive"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">detect_pii</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="ow">not</span> <span class="n">filter_func</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">filter_func</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">.</span><span class="n">values</span><span class="p">())</span>
+    
+    <span class="k">def</span> <span class="nf">quality_assessment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="s">"""텍스트 품질 평가"""</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"readability"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">calculate_readability_score</span><span class="p">,</span>
+            <span class="s">"coherence"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">measure_coherence</span><span class="p">,</span>
+            <span class="s">"information_density"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">measure_info_density</span><span class="p">,</span>
+            <span class="s">"language_complexity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">assess_complexity</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">metric</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">.</span><span class="n">items</span><span class="p">()}</span>
+    
+    <span class="k">def</span> <span class="nf">tokenization_prep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="s">"""토크나이제이션 전처리"""</span>
+        <span class="c1"># BPE, SentencePiece 등을 위한 전처리
+</span>        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">normalize_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="3-다국어-모델-multilingual-models">3. 다국어 모델 (Multilingual Models)</h2>
+
+<h3 id="31-다국어-모델의-도전과제">3.1 다국어 모델의 도전과제</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 다국어 모델 구축의 주요 도전과제
+</span><span class="n">MULTILINGUAL_CHALLENGES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"data_imbalance"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"problem"</span><span class="p">:</span> <span class="s">"언어별 데이터 불균형"</span><span class="p">,</span>
+        <span class="s">"high_resource"</span><span class="p">:</span> <span class="p">[</span><span class="s">"영어"</span><span class="p">,</span> <span class="s">"중국어"</span><span class="p">,</span> <span class="s">"스페인어"</span><span class="p">],</span>
+        <span class="s">"low_resource"</span><span class="p">:</span> <span class="p">[</span><span class="s">"아프리카 언어"</span><span class="p">,</span> <span class="s">"소수 언어"</span><span class="p">],</span>
+        <span class="s">"solution"</span><span class="p">:</span> <span class="s">"데이터 증강, 전이 학습, 언어별 가중치 조정"</span>
+    <span class="p">},</span>
+    <span class="s">"script_diversity"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"problem"</span><span class="p">:</span> <span class="s">"문자 체계 다양성"</span><span class="p">,</span>
+        <span class="s">"scripts"</span><span class="p">:</span> <span class="p">[</span><span class="s">"라틴"</span><span class="p">,</span> <span class="s">"한글"</span><span class="p">,</span> <span class="s">"아랍"</span><span class="p">,</span> <span class="s">"데바나가리"</span><span class="p">,</span> <span class="s">"키릴"</span><span class="p">],</span>
+        <span class="s">"solution"</span><span class="p">:</span> <span class="s">"유니코드 정규화, 스크립트별 토크나이저"</span>
+    <span class="p">},</span>
+    <span class="s">"linguistic_phenomena"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"problem"</span><span class="p">:</span> <span class="s">"언어학적 현상 차이"</span><span class="p">,</span>
+        <span class="s">"morphology"</span><span class="p">:</span> <span class="s">"형태론적 복잡성 (독일어, 핀란드어)"</span><span class="p">,</span>
+        <span class="s">"syntax"</span><span class="p">:</span> <span class="s">"어순 차이 (SOV, SVO, VSO)"</span><span class="p">,</span>
+        <span class="s">"pragmatics"</span><span class="p">:</span> <span class="s">"문화적 맥락 차이"</span>
+    <span class="p">},</span>
+    <span class="s">"cross_lingual_transfer"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"goal"</span><span class="p">:</span> <span class="s">"언어 간 지식 전이"</span><span class="p">,</span>
+        <span class="s">"methods"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Zero-shot transfer"</span><span class="p">,</span> <span class="s">"Few-shot learning"</span><span class="p">],</span>
+        <span class="s">"evaluation"</span><span class="p">:</span> <span class="s">"XNLI, XQuAD, MLQA"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="32-다국어-토크나이제이션">3.2 다국어 토크나이제이션</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MultilingualTokenizer</span><span class="p">:</span>
+    <span class="s">"""다국어 지원 토크나이저"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="o">=</span><span class="mi">50000</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="n">vocab_size</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">special_tokens</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"&lt;PAD&gt;"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s">"&lt;UNK&gt;"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s">"&lt;BOS&gt;"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s">"&lt;EOS&gt;"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s">"&lt;MASK&gt;"</span><span class="p">:</span> <span class="mi">4</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">build_vocabulary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multilingual_corpus</span><span class="p">):</span>
+        <span class="s">"""다국어 어휘 구축"""</span>
+        <span class="c1"># SentencePiece를 사용한 언어 중립적 토크나이제이션
+</span>        <span class="kn">import</span> <span class="nn">sentencepiece</span> <span class="k">as</span> <span class="n">spm</span>
+        
+        <span class="c1"># 언어별 샘플링 비율 조정
+</span>        <span class="n">language_weights</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"en"</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>  <span class="c1"># 영어
+</span>            <span class="s">"zh"</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span> <span class="c1"># 중국어
+</span>            <span class="s">"es"</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># 스페인어
+</span>            <span class="s">"ar"</span><span class="p">:</span> <span class="mf">0.08</span><span class="p">,</span> <span class="c1"># 아랍어
+</span>            <span class="s">"hi"</span><span class="p">:</span> <span class="mf">0.07</span><span class="p">,</span> <span class="c1"># 힌디어
+</span>            <span class="s">"ko"</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="c1"># 한국어
+</span>            <span class="s">"other"</span><span class="p">:</span> <span class="mf">0.25</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># 균형 잡힌 다국어 샘플링
+</span>        <span class="n">balanced_corpus</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">balance_languages</span><span class="p">(</span>
+            <span class="n">multilingual_corpus</span><span class="p">,</span> 
+            <span class="n">language_weights</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># SentencePiece 모델 훈련
+</span>        <span class="n">spm</span><span class="p">.</span><span class="n">SentencePieceTrainer</span><span class="p">.</span><span class="n">train</span><span class="p">(</span>
+            <span class="nb">input</span><span class="o">=</span><span class="n">balanced_corpus</span><span class="p">,</span>
+            <span class="n">model_prefix</span><span class="o">=</span><span class="s">'multilingual_tokenizer'</span><span class="p">,</span>
+            <span class="n">vocab_size</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">vocab_size</span><span class="p">,</span>
+            <span class="n">character_coverage</span><span class="o">=</span><span class="mf">0.9995</span><span class="p">,</span>
+            <span class="n">model_type</span><span class="o">=</span><span class="s">'bpe'</span><span class="p">,</span>
+            <span class="n">normalization_rule_name</span><span class="o">=</span><span class="s">'nmt_nfkc_cf'</span>
+        <span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">handle_code_switching</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="s">"""코드 스위칭 처리"""</span>
+        <span class="c1"># 문장 내 언어 변경 감지 및 처리
+</span>        <span class="k">pass</span>
+</code></pre></div></div>
+
+<h3 id="33-언어별-적응-전략">3.3 언어별 적응 전략</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 언어별 모델 적응 전략
+</span><span class="n">LANGUAGE_ADAPTATION_STRATEGIES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"continual_pretraining"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"method"</span><span class="p">:</span> <span class="s">"특정 언어 데이터로 추가 사전훈련"</span><span class="p">,</span>
+        <span class="s">"benefits"</span><span class="p">:</span> <span class="s">"언어별 성능 향상"</span><span class="p">,</span>
+        <span class="s">"risks"</span><span class="p">:</span> <span class="s">"다른 언어 성능 저하 (Catastrophic Forgetting)"</span>
+    <span class="p">},</span>
+    <span class="s">"adapter_modules"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"method"</span><span class="p">:</span> <span class="s">"언어별 어댑터 모듈 추가"</span><span class="p">,</span>
+        <span class="s">"benefits"</span><span class="p">:</span> <span class="s">"매개변수 효율적, 모듈화"</span><span class="p">,</span>
+        <span class="s">"implementation"</span><span class="p">:</span> <span class="s">"Bottleneck layers, LoRA"</span>
+    <span class="p">},</span>
+    <span class="s">"language_specific_heads"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"method"</span><span class="p">:</span> <span class="s">"언어별 출력 헤드"</span><span class="p">,</span>
+        <span class="s">"use_case"</span><span class="p">:</span> <span class="s">"언어별 태스크 특화"</span><span class="p">,</span>
+        <span class="s">"examples"</span><span class="p">:</span> <span class="s">"Named Entity Recognition, POS Tagging"</span>
+    <span class="p">},</span>
+    <span class="s">"multilingual_alignment"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"method"</span><span class="p">:</span> <span class="s">"언어 간 표현 정렬"</span><span class="p">,</span>
+        <span class="s">"techniques"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Adversarial training"</span><span class="p">,</span> <span class="s">"Contrastive learning"</span><span class="p">],</span>
+        <span class="s">"goal"</span><span class="p">:</span> <span class="s">"언어 중립적 표현 학습"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="4-도메인-특화-모델-domain-specific-models">4. 도메인 특화 모델 (Domain-Specific Models)</h2>
+
+<h3 id="41-도메인-특화의-필요성">4.1 도메인 특화의 필요성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 주요 도메인별 특화 모델
+</span><span class="n">DOMAIN_SPECIFIC_MODELS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"biomedical"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"models"</span><span class="p">:</span> <span class="p">[</span><span class="s">"BioBERT"</span><span class="p">,</span> <span class="s">"ClinicalBERT"</span><span class="p">,</span> <span class="s">"PubMedBERT"</span><span class="p">],</span>
+        <span class="s">"data_sources"</span><span class="p">:</span> <span class="p">[</span><span class="s">"PubMed"</span><span class="p">,</span> <span class="s">"PMC"</span><span class="p">,</span> <span class="s">"Clinical notes"</span><span class="p">],</span>
+        <span class="s">"challenges"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"의학 용어 복잡성"</span><span class="p">,</span>
+            <span class="s">"약어 및 전문용어"</span><span class="p">,</span>
+            <span class="s">"환자 프라이버시"</span><span class="p">,</span>
+            <span class="s">"규제 준수"</span>
+        <span class="p">],</span>
+        <span class="s">"applications"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"질병 진단 보조"</span><span class="p">,</span>
+            <span class="s">"약물 발견"</span><span class="p">,</span>
+            <span class="s">"의료 문서 분석"</span><span class="p">,</span>
+            <span class="s">"임상 의사결정 지원"</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"legal"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"models"</span><span class="p">:</span> <span class="p">[</span><span class="s">"LegalBERT"</span><span class="p">,</span> <span class="s">"CaseLaw-BERT"</span><span class="p">],</span>
+        <span class="s">"data_sources"</span><span class="p">:</span> <span class="p">[</span><span class="s">"법률 문서"</span><span class="p">,</span> <span class="s">"판례"</span><span class="p">,</span> <span class="s">"법령"</span><span class="p">],</span>
+        <span class="s">"challenges"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"법률 언어 복잡성"</span><span class="p">,</span>
+            <span class="s">"관할권별 차이"</span><span class="p">,</span>
+            <span class="s">"시간에 따른 법률 변화"</span><span class="p">,</span>
+            <span class="s">"해석의 주관성"</span>
+        <span class="p">],</span>
+        <span class="s">"applications"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"계약서 분석"</span><span class="p">,</span>
+            <span class="s">"판례 검색"</span><span class="p">,</span>
+            <span class="s">"법률 자문 보조"</span><span class="p">,</span>
+            <span class="s">"컴플라이언스 검토"</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"financial"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"models"</span><span class="p">:</span> <span class="p">[</span><span class="s">"FinBERT"</span><span class="p">,</span> <span class="s">"BloombergGPT"</span><span class="p">],</span>
+        <span class="s">"data_sources"</span><span class="p">:</span> <span class="p">[</span><span class="s">"금융 뉴스"</span><span class="p">,</span> <span class="s">"재무제표"</span><span class="p">,</span> <span class="s">"시장 데이터"</span><span class="p">],</span>
+        <span class="s">"challenges"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"시장 변동성"</span><span class="p">,</span>
+            <span class="s">"실시간 데이터 처리"</span><span class="p">,</span>
+            <span class="s">"규제 변화"</span><span class="p">,</span>
+            <span class="s">"리스크 관리"</span>
+        <span class="p">],</span>
+        <span class="s">"applications"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"투자 분석"</span><span class="p">,</span>
+            <span class="s">"리스크 평가"</span><span class="p">,</span>
+            <span class="s">"고빈도 거래"</span><span class="p">,</span>
+            <span class="s">"신용 평가"</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"scientific"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"models"</span><span class="p">:</span> <span class="p">[</span><span class="s">"SciBERT"</span><span class="p">,</span> <span class="s">"ScholarBERT"</span><span class="p">],</span>
+        <span class="s">"data_sources"</span><span class="p">:</span> <span class="p">[</span><span class="s">"학술 논문"</span><span class="p">,</span> <span class="s">"연구 데이터"</span><span class="p">,</span> <span class="s">"특허"</span><span class="p">],</span>
+        <span class="s">"challenges"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"전문 용어 다양성"</span><span class="p">,</span>
+            <span class="s">"수식 및 기호"</span><span class="p">,</span>
+            <span class="s">"그래프 및 표"</span><span class="p">,</span>
+            <span class="s">"인용 관계"</span>
+        <span class="p">],</span>
+        <span class="s">"applications"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"논문 검색 및 추천"</span><span class="p">,</span>
+            <span class="s">"연구 동향 분석"</span><span class="p">,</span>
+            <span class="s">"가설 생성"</span><span class="p">,</span>
+            <span class="s">"실험 설계 지원"</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="42-도메인-적응-방법론">4.2 도메인 적응 방법론</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">DomainAdaptationFramework</span><span class="p">:</span>
+    <span class="s">"""도메인 특화 모델 구축 프레임워크"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_model</span><span class="p">,</span> <span class="n">target_domain</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">base_model</span> <span class="o">=</span> <span class="n">base_model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">target_domain</span> <span class="o">=</span> <span class="n">target_domain</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">adaptation_strategy</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">domain_adaptive_pretraining</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain_corpus</span><span class="p">):</span>
+        <span class="s">"""도메인 적응 사전훈련"""</span>
+        <span class="c1"># 1. 도메인 데이터로 MLM 계속 훈련
+</span>        <span class="n">mlm_config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"learning_rate"</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>  <span class="c1"># 낮은 학습률
+</span>            <span class="s">"warmup_steps"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="s">"max_steps"</span><span class="p">:</span> <span class="mi">50000</span><span class="p">,</span>
+            <span class="s">"mlm_probability"</span><span class="p">:</span> <span class="mf">0.15</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># 2. 도메인별 어휘 확장
+</span>        <span class="n">domain_vocab</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">extract_domain_vocabulary</span><span class="p">(</span><span class="n">domain_corpus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">expand_vocabulary</span><span class="p">(</span><span class="n">domain_vocab</span><span class="p">)</span>
+        
+        <span class="c1"># 3. 점진적 학습률 감소
+</span>        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">continue_pretraining</span><span class="p">(</span><span class="n">domain_corpus</span><span class="p">,</span> <span class="n">mlm_config</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">task_adaptive_finetuning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_data</span><span class="p">):</span>
+        <span class="s">"""태스크 적응 파인튜닝"""</span>
+        <span class="n">strategies</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"gradual_unfreezing"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">gradual_unfreezing</span><span class="p">,</span>
+            <span class="s">"discriminative_lr"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">discriminative_learning_rate</span><span class="p">,</span>
+            <span class="s">"knowledge_distillation"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">knowledge_distillation</span><span class="p">,</span>
+            <span class="s">"multi_task_learning"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">multi_task_learning</span>
+        <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="n">strategies</span><span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">adaptation_strategy</span><span class="p">](</span><span class="n">task_data</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">evaluate_domain_adaptation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_data</span><span class="p">):</span>
+        <span class="s">"""도메인 적응 평가"""</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"perplexity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">calculate_perplexity</span><span class="p">,</span>
+            <span class="s">"domain_classification"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">domain_classification_acc</span><span class="p">,</span>
+            <span class="s">"downstream_tasks"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">evaluate_downstream_tasks</span><span class="p">,</span>
+            <span class="s">"human_evaluation"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">conduct_human_evaluation</span>
+        <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="p">{</span><span class="n">metric</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">.</span><span class="n">items</span><span class="p">()}</span>
+</code></pre></div></div>
+
+<h2 id="5-모델링-modeling">5. 모델링 (Modeling)</h2>
+
+<h3 id="51-모델-아키텍처">5.1 모델 아키텍처</h3>
+
+<h4 id="511-트랜스포머-아키텍처의-진화">5.1.1 트랜스포머 아키텍처의 진화</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 트랜스포머 아키텍처 발전 과정
+</span><span class="n">TRANSFORMER_EVOLUTION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"original_transformer"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"year"</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span>
+        <span class="s">"paper"</span><span class="p">:</span> <span class="s">"Attention Is All You Need"</span><span class="p">,</span>
+        <span class="s">"architecture"</span><span class="p">:</span> <span class="s">"Encoder-Decoder"</span><span class="p">,</span>
+        <span class="s">"key_innovations"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Self-attention"</span><span class="p">,</span> <span class="s">"Position encoding"</span><span class="p">],</span>
+        <span class="s">"parameters"</span><span class="p">:</span> <span class="s">"65M (Base), 213M (Large)"</span>
+    <span class="p">},</span>
+    <span class="s">"bert"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"year"</span><span class="p">:</span> <span class="mi">2018</span><span class="p">,</span>
+        <span class="s">"architecture"</span><span class="p">:</span> <span class="s">"Encoder-only"</span><span class="p">,</span>
+        <span class="s">"key_innovations"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Bidirectional"</span><span class="p">,</span> <span class="s">"MLM"</span><span class="p">,</span> <span class="s">"NSP"</span><span class="p">],</span>
+        <span class="s">"parameters"</span><span class="p">:</span> <span class="s">"110M (Base), 340M (Large)"</span>
+    <span class="p">},</span>
+    <span class="s">"gpt_series"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"gpt1"</span><span class="p">:</span> <span class="p">{</span><span class="s">"year"</span><span class="p">:</span> <span class="mi">2018</span><span class="p">,</span> <span class="s">"params"</span><span class="p">:</span> <span class="s">"117M"</span><span class="p">,</span> <span class="s">"context"</span><span class="p">:</span> <span class="s">"512"</span><span class="p">},</span>
+        <span class="s">"gpt2"</span><span class="p">:</span> <span class="p">{</span><span class="s">"year"</span><span class="p">:</span> <span class="mi">2019</span><span class="p">,</span> <span class="s">"params"</span><span class="p">:</span> <span class="s">"1.5B"</span><span class="p">,</span> <span class="s">"context"</span><span class="p">:</span> <span class="s">"1024"</span><span class="p">},</span>
+        <span class="s">"gpt3"</span><span class="p">:</span> <span class="p">{</span><span class="s">"year"</span><span class="p">:</span> <span class="mi">2020</span><span class="p">,</span> <span class="s">"params"</span><span class="p">:</span> <span class="s">"175B"</span><span class="p">,</span> <span class="s">"context"</span><span class="p">:</span> <span class="s">"2048"</span><span class="p">},</span>
+        <span class="s">"gpt4"</span><span class="p">:</span> <span class="p">{</span><span class="s">"year"</span><span class="p">:</span> <span class="mi">2023</span><span class="p">,</span> <span class="s">"params"</span><span class="p">:</span> <span class="s">"~1.7T"</span><span class="p">,</span> <span class="s">"context"</span><span class="p">:</span> <span class="s">"32K+"</span><span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s">"recent_innovations"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"t5"</span><span class="p">:</span> <span class="s">"Text-to-Text Transfer Transformer"</span><span class="p">,</span>
+        <span class="s">"switch_transformer"</span><span class="p">:</span> <span class="s">"Sparse Expert Models"</span><span class="p">,</span>
+        <span class="s">"palm"</span><span class="p">:</span> <span class="s">"Pathways Language Model"</span><span class="p">,</span>
+        <span class="s">"chinchilla"</span><span class="p">:</span> <span class="s">"Compute-Optimal Training"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="512-어텐션-메커니즘">5.1.2 어텐션 메커니즘</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="k">class</span> <span class="nc">MultiHeadAttention</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""멀티헤드 어텐션 구현"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">d_model</span> <span class="o">%</span> <span class="n">num_heads</span> <span class="o">==</span> <span class="mi">0</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">num_heads</span> <span class="o">=</span> <span class="n">num_heads</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">d_k</span> <span class="o">=</span> <span class="n">d_model</span> <span class="o">//</span> <span class="n">num_heads</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">w_q</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">w_k</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">w_v</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">w_o</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">scaled_dot_product_attention</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s">"""스케일된 닷 프로덕트 어텐션"""</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">d_k</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span><span class="p">.</span><span class="n">masked_fill</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1e9</span><span class="p">)</span>
+        
+        <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">)</span>
+        
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">attention_weights</span>
+    
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">query</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="c1"># 1. Linear transformations and reshape
+</span>        <span class="n">Q</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">w_q</span><span class="p">(</span><span class="n">query</span><span class="p">).</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">d_k</span><span class="p">).</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">w_k</span><span class="p">(</span><span class="n">key</span><span class="p">).</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">d_k</span><span class="p">).</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">w_v</span><span class="p">(</span><span class="n">value</span><span class="p">).</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">d_k</span><span class="p">).</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c1"># 2. Apply attention
+</span>        <span class="n">attention_output</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">scaled_dot_product_attention</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        
+        <span class="c1"># 3. Concatenate heads
+</span>        <span class="n">attention_output</span> <span class="o">=</span> <span class="n">attention_output</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">).</span><span class="n">contiguous</span><span class="p">().</span><span class="n">view</span><span class="p">(</span>
+            <span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">d_model</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># 4. Apply output projection
+</span>        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">w_o</span><span class="p">(</span><span class="n">attention_output</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">attention_weights</span>
+</code></pre></div></div>
+
+<h4 id="513-위치-인코딩">5.1.3 위치 인코딩</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">PositionalEncoding</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""위치 인코딩 구현"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">5000</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        
+        <span class="n">pe</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_length</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_length</span><span class="p">).</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nb">float</span><span class="p">()</span>
+        
+        <span class="n">div_term</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">exp</span><span class="p">(</span>
+            <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="mi">2</span><span class="p">).</span><span class="nb">float</span><span class="p">()</span> <span class="o">*</span> 
+            <span class="o">-</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="mf">10000.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="n">pe</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">position</span> <span class="o">*</span> <span class="n">div_term</span><span class="p">)</span>
+        <span class="n">pe</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">position</span> <span class="o">*</span> <span class="n">div_term</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s">'pe'</span><span class="p">,</span> <span class="n">pe</span><span class="p">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="p">.</span><span class="n">pe</span><span class="p">[:,</span> <span class="p">:</span><span class="n">x</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+
+<span class="k">class</span> <span class="nc">RotaryPositionalEmbedding</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""RoPE (Rotary Position Embedding) 구현"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">max_position_embeddings</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">max_position_embeddings</span> <span class="o">=</span> <span class="n">max_position_embeddings</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+        
+        <span class="n">inv_freq</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">base</span> <span class="o">**</span> <span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="mi">2</span><span class="p">).</span><span class="nb">float</span><span class="p">()</span> <span class="o">/</span> <span class="n">dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s">"inv_freq"</span><span class="p">,</span> <span class="n">inv_freq</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">seq_len</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">seq_len</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">seq_len</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        
+        <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="n">seq_len</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="p">.</span><span class="n">device</span><span class="p">).</span><span class="n">type_as</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">inv_freq</span><span class="p">)</span>
+        <span class="n">freqs</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">einsum</span><span class="p">(</span><span class="s">"i,j-&gt;ij"</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">inv_freq</span><span class="p">)</span>
+        <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cat</span><span class="p">((</span><span class="n">freqs</span><span class="p">,</span> <span class="n">freqs</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">emb</span><span class="p">.</span><span class="n">cos</span><span class="p">(),</span> <span class="n">emb</span><span class="p">.</span><span class="n">sin</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="52-모델-크기-model-size">5.2 모델 크기 (Model Size)</h3>
+
+<h4 id="521-스케일링-법칙">5.2.1 스케일링 법칙</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 신경망 스케일링 법칙 (Neural Scaling Laws)
+</span><span class="n">SCALING_LAWS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"chinchilla_scaling"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"compute_budget"</span><span class="p">:</span> <span class="s">"C"</span><span class="p">,</span>
+        <span class="s">"optimal_parameters"</span><span class="p">:</span> <span class="s">"N* = (C / 6FLOPs_per_token) ^ 0.5"</span><span class="p">,</span>
+        <span class="s">"optimal_tokens"</span><span class="p">:</span> <span class="s">"D* = (C * FLOPs_per_token / 6) ^ 0.5"</span><span class="p">,</span>
+        <span class="s">"key_insight"</span><span class="p">:</span> <span class="s">"모델 크기와 데이터 크기를 균형있게 증가"</span>
+    <span class="p">},</span>
+    <span class="s">"parameter_efficiency"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"model_size"</span><span class="p">:</span> <span class="p">[</span><span class="s">"Small (&lt; 1B)"</span><span class="p">,</span> <span class="s">"Medium (1B-10B)"</span><span class="p">,</span> <span class="s">"Large (10B-100B)"</span><span class="p">,</span> <span class="s">"XL (&gt; 100B)"</span><span class="p">],</span>
+        <span class="s">"compute_requirements"</span><span class="p">:</span> <span class="s">"O(N^2) for training, O(N) for inference"</span><span class="p">,</span>
+        <span class="s">"memory_requirements"</span><span class="p">:</span> <span class="s">"16-bit: 2N bytes, 8-bit: N bytes, 4-bit: 0.5N bytes"</span>
+    <span class="p">},</span>
+    <span class="s">"emergent_abilities"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"few_shot_learning"</span><span class="p">:</span> <span class="s">"~10B parameters"</span><span class="p">,</span>
+        <span class="s">"chain_of_thought"</span><span class="p">:</span> <span class="s">"~100B parameters"</span><span class="p">,</span>
+        <span class="s">"code_generation"</span><span class="p">:</span> <span class="s">"~10B parameters"</span><span class="p">,</span>
+        <span class="s">"mathematical_reasoning"</span><span class="p">:</span> <span class="s">"~100B parameters"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="522-모델-압축-기법">5.2.2 모델 압축 기법</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ModelCompressionTechniques</span><span class="p">:</span>
+    <span class="s">"""모델 압축 기법들"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+    
+    <span class="k">def</span> <span class="nf">quantization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bits</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+        <span class="s">"""양자화를 통한 모델 압축"""</span>
+        <span class="n">quantization_methods</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"post_training_quantization"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">ptq</span><span class="p">,</span>
+            <span class="s">"quantization_aware_training"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">qat</span><span class="p">,</span>
+            <span class="s">"dynamic_quantization"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">dynamic_quant</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">quantization_methods</span>
+    
+    <span class="k">def</span> <span class="nf">pruning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparsity_ratio</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="s">"""가지치기를 통한 모델 압축"""</span>
+        <span class="n">pruning_strategies</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"magnitude_pruning"</span><span class="p">:</span> <span class="s">"가중치 크기 기반"</span><span class="p">,</span>
+            <span class="s">"structured_pruning"</span><span class="p">:</span> <span class="s">"채널/레이어 단위"</span><span class="p">,</span>
+            <span class="s">"gradual_pruning"</span><span class="p">:</span> <span class="s">"점진적 가지치기"</span><span class="p">,</span>
+            <span class="s">"lottery_ticket"</span><span class="p">:</span> <span class="s">"복권 가설 기반"</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">pruning_strategies</span>
+    
+    <span class="k">def</span> <span class="nf">knowledge_distillation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">teacher_model</span><span class="p">,</span> <span class="n">student_model</span><span class="p">):</span>
+        <span class="s">"""지식 증류를 통한 모델 압축"""</span>
+        <span class="n">distillation_types</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"response_distillation"</span><span class="p">:</span> <span class="s">"출력 분포 학습"</span><span class="p">,</span>
+            <span class="s">"feature_distillation"</span><span class="p">:</span> <span class="s">"중간 표현 학습"</span><span class="p">,</span>
+            <span class="s">"attention_distillation"</span><span class="p">:</span> <span class="s">"어텐션 패턴 학습"</span><span class="p">,</span>
+            <span class="s">"progressive_distillation"</span><span class="p">:</span> <span class="s">"점진적 증류"</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">distillation_types</span>
+    
+    <span class="k">def</span> <span class="nf">low_rank_approximation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""저랭크 근사를 통한 압축"""</span>
+        <span class="n">methods</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"svd_decomposition"</span><span class="p">:</span> <span class="s">"특이값 분해"</span><span class="p">,</span>
+            <span class="s">"tucker_decomposition"</span><span class="p">:</span> <span class="s">"텐서 분해"</span><span class="p">,</span>
+            <span class="s">"lora"</span><span class="p">:</span> <span class="s">"Low-Rank Adaptation"</span><span class="p">,</span>
+            <span class="s">"adalora"</span><span class="p">:</span> <span class="s">"Adaptive LoRA"</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">methods</span>
+</code></pre></div></div>
+
+<h2 id="6-아키텍처-비교-및-선택-가이드">6. 아키텍처 비교 및 선택 가이드</h2>
+
+<h3 id="61-아키텍처별-특성-비교">6.1 아키텍처별 특성 비교</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 주요 아키텍처 비교
+</span><span class="n">ARCHITECTURE_COMPARISON</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"encoder_only"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"examples"</span><span class="p">:</span> <span class="p">[</span><span class="s">"BERT"</span><span class="p">,</span> <span class="s">"RoBERTa"</span><span class="p">,</span> <span class="s">"DeBERTa"</span><span class="p">],</span>
+        <span class="s">"strengths"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"양방향 컨텍스트"</span><span class="p">,</span>
+            <span class="s">"표현 학습 우수"</span><span class="p">,</span>
+            <span class="s">"분류 태스크 강점"</span>
+        <span class="p">],</span>
+        <span class="s">"weaknesses"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"생성 태스크 부적합"</span><span class="p">,</span>
+            <span class="s">"고정 길이 제한"</span>
+        <span class="p">],</span>
+        <span class="s">"use_cases"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"텍스트 분류"</span><span class="p">,</span>
+            <span class="s">"개체명 인식"</span><span class="p">,</span>
+            <span class="s">"질의응답"</span><span class="p">,</span>
+            <span class="s">"감정 분석"</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"decoder_only"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"examples"</span><span class="p">:</span> <span class="p">[</span><span class="s">"GPT"</span><span class="p">,</span> <span class="s">"LLaMA"</span><span class="p">,</span> <span class="s">"PaLM"</span><span class="p">],</span>
+        <span class="s">"strengths"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"자연스러운 텍스트 생성"</span><span class="p">,</span>
+            <span class="s">"긴 시퀀스 처리"</span><span class="p">,</span>
+            <span class="s">"창발적 능력"</span>
+        <span class="p">],</span>
+        <span class="s">"weaknesses"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"단방향 컨텍스트"</span><span class="p">,</span>
+            <span class="s">"추론 비용 높음"</span>
+        <span class="p">],</span>
+        <span class="s">"use_cases"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"텍스트 생성"</span><span class="p">,</span>
+            <span class="s">"대화 시스템"</span><span class="p">,</span>
+            <span class="s">"코드 생성"</span><span class="p">,</span>
+            <span class="s">"요약"</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s">"encoder_decoder"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"examples"</span><span class="p">:</span> <span class="p">[</span><span class="s">"T5"</span><span class="p">,</span> <span class="s">"BART"</span><span class="p">,</span> <span class="s">"mT5"</span><span class="p">],</span>
+        <span class="s">"strengths"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"입출력 길이 유연성"</span><span class="p">,</span>
+            <span class="s">"seq2seq 태스크 최적"</span><span class="p">,</span>
+            <span class="s">"조건부 생성"</span>
+        <span class="p">],</span>
+        <span class="s">"weaknesses"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"복잡한 아키텍처"</span><span class="p">,</span>
+            <span class="s">"메모리 사용량 많음"</span>
+        <span class="p">],</span>
+        <span class="s">"use_cases"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s">"번역"</span><span class="p">,</span>
+            <span class="s">"요약"</span><span class="p">,</span>
+            <span class="s">"데이터-텍스트 변환"</span><span class="p">,</span>
+            <span class="s">"구조화된 생성"</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="62-아키텍처-선택-기준">6.2 아키텍처 선택 기준</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">select_architecture</span><span class="p">(</span><span class="n">task_type</span><span class="p">,</span> <span class="n">data_characteristics</span><span class="p">,</span> <span class="n">resource_constraints</span><span class="p">):</span>
+    <span class="s">"""태스크와 제약 조건에 따른 아키텍처 선택"""</span>
+    
+    <span class="n">selection_criteria</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">"task_requirements"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"understanding_tasks"</span><span class="p">:</span> <span class="s">"encoder_only"</span><span class="p">,</span>
+            <span class="s">"generation_tasks"</span><span class="p">:</span> <span class="s">"decoder_only"</span><span class="p">,</span> 
+            <span class="s">"seq2seq_tasks"</span><span class="p">:</span> <span class="s">"encoder_decoder"</span>
+        <span class="p">},</span>
+        <span class="s">"data_characteristics"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"short_sequences"</span><span class="p">:</span> <span class="s">"bert_like"</span><span class="p">,</span>
+            <span class="s">"long_sequences"</span><span class="p">:</span> <span class="s">"gpt_like"</span><span class="p">,</span>
+            <span class="s">"variable_length"</span><span class="p">:</span> <span class="s">"t5_like"</span>
+        <span class="p">},</span>
+        <span class="s">"resource_constraints"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"low_compute"</span><span class="p">:</span> <span class="s">"small_models"</span><span class="p">,</span>
+            <span class="s">"high_compute"</span><span class="p">:</span> <span class="s">"large_models"</span><span class="p">,</span>
+            <span class="s">"inference_speed"</span><span class="p">:</span> <span class="s">"efficient_architectures"</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># 종합적 추천 로직
+</span>    <span class="n">recommendations</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">return</span> <span class="n">recommendations</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>파운데이션 모델의 학습 데이터와 모델 아키텍처는 <strong>모델 성능의 핵심 결정 요소</strong>입니다.</p>
+
+<p><strong>핵심 인사이트:</strong></p>
+<ul>
+  <li><strong>데이터 품질이 모델 성능을 좌우</strong>: 큐레이션된 고품질 데이터의 중요성</li>
+  <li><strong>다국어/도메인 특화의 균형</strong>: 범용성과 전문성 사이의 트레이드오프</li>
+  <li><strong>아키텍처 선택의 중요성</strong>: 태스크에 맞는 적절한 아키텍처 선택</li>
+  <li><strong>스케일링의 효과와 한계</strong>: 크기 증가의 이익과 비용 고려</li>
+</ul>
+
+<p>다음 포스트에서는 사후 학습(Post-training) 과정인 지도 파인튜닝과 선호도 파인튜닝을 상세히 다루겠습니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li>[다음: 파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략] (예정)</li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a></li>
+  <li><a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers</a></li>
+  <li><a href="https://arxiv.org/abs/2005.14165">Language Models are Few-Shot Learners</a></li>
+  <li><a href="https://arxiv.org/abs/2203.15556">Training Compute-Optimal Large Language Models</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/06/03/opensora-model-architecture-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Open-Sora 모델 아키텍처 심층 분석: STDiT3, VAE, T5의 완벽 이해</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/07/22/ollama-custom-server-architecture-analysis/" rel="next">
+          <span class="nav-title">Ollama Custom 서버 아키텍처 심층 분석 - Gin 기반 HTTP API 서버</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

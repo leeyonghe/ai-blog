@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Ollama Custom CLI 명령어 시스템 심층 분석 - Cobra 프레임워크 기반 인터페이스 | AI Development Blog</title>
+<meta name="description" content="Ollama Custom CLI 명령어 시스템 심층 분석Ollama Custom의 CLI 시스템은 Cobra 프레임워크를 기반으로 구현된 강력하고 직관적인 명령행 인터페이스입니다. 이 포스트에서는 cmd/cmd.go의 1,455라인에 걸친 복잡한 CLI 구현을 상세히 분석해보겠습니...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="Ollama, Cobra, Command Line Interface, Go, CLI Framework">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/05/08/ollama-custom-cli-command-system-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ollama Custom CLI 명령어 시스템 심층 분석 - Cobra 프레임워크 기반 인터페이스">
+<meta property="og:description" content="Ollama Custom CLI 명령어 시스템 심층 분석Ollama Custom의 CLI 시스템은 Cobra 프레임워크를 기반으로 구현된 강력하고 직관적인 명령행 인터페이스입니다. 이 포스트에서는 cmd/cmd.go의 1,455라인에 걸친 복잡한 CLI 구현을 상세히 분석해보겠습니...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/05/08/ollama-custom-cli-command-system-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ollama Custom CLI 명령어 시스템 심층 분석 - Cobra 프레임워크 기반 인터페이스">
+<meta name="twitter:description" content="Ollama Custom CLI 명령어 시스템 심층 분석Ollama Custom의 CLI 시스템은 Cobra 프레임워크를 기반으로 구현된 강력하고 직관적인 명령행 인터페이스입니다. 이 포스트에서는 cmd/cmd.go의 1,455라인에 걸친 복잡한 CLI 구현을 상세히 분석해보겠습니...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Ollama Custom CLI 명령어 시스템 심층 분석 - Cobra 프레임워크 기반 인터페이스",
+  "description": "Ollama Custom CLI 명령어 시스템 심층 분석
+
+Ollama Custom의 CLI 시스템은 Cobra 프레임워크를 기반으로 구현된 강력하고 직관적인 명령행 인터페이스입니다. 이 포스트에서는 cmd/cmd.go의 1,455라인에 걸친 복잡한 CLI 구현을 상세히 분석해보겠...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-05-08T00:00:00+00:00",
+  "dateModified": "2024-05-08T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/05/08/ollama-custom-cli-command-system-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/05/08/ollama-custom-cli-command-system-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["Ollama","Cobra","Command Line Interface","Go","CLI Framework"],
+  "articleSection": ["AI","Go","CLI"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Ollama Custom CLI 명령어 시스템 심층 분석 - Cobra 프레임워크 기반 인터페이스</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Ollama Custom CLI 명령어 시스템 심층 분석 - Cobra 프레임워크 기반 인터페이스</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-05-08T00:00:00+00:00">May 8, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Go</li><li>CLI</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="ollama-custom-cli-명령어-시스템-심층-분석">Ollama Custom CLI 명령어 시스템 심층 분석</h1>
+
+<p>Ollama Custom의 CLI 시스템은 Cobra 프레임워크를 기반으로 구현된 강력하고 직관적인 명령행 인터페이스입니다. 이 포스트에서는 <code class="language-plaintext highlighter-rouge">cmd/cmd.go</code>의 1,455라인에 걸친 복잡한 CLI 구현을 상세히 분석해보겠습니다.</p>
+
+<h2 id="1-cli-아키텍처-개요">1. CLI 아키텍처 개요</h2>
+
+<h3 id="11-cobra-프레임워크-활용">1.1 Cobra 프레임워크 활용</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">NewCLI</span><span class="p">()</span> <span class="o">*</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span> <span class="p">{</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">SetFlags</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">LstdFlags</span> <span class="o">|</span> <span class="n">log</span><span class="o">.</span><span class="n">Lshortfile</span><span class="p">)</span>
+    <span class="n">cobra</span><span class="o">.</span><span class="n">EnableCommandSorting</span> <span class="o">=</span> <span class="no">false</span>
+    
+    <span class="c">// 루트 명령어 정의</span>
+    <span class="n">rootCmd</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span><span class="p">{</span>
+        <span class="n">Use</span><span class="o">:</span>   <span class="s">"ollama"</span><span class="p">,</span>
+        <span class="n">Short</span><span class="o">:</span> <span class="s">"Large language model runner"</span><span class="p">,</span>
+        <span class="n">CompletionOptions</span><span class="o">:</span> <span class="n">cobra</span><span class="o">.</span><span class="n">CompletionOptions</span><span class="p">{</span>
+            <span class="n">DisableDefaultCmd</span><span class="o">:</span> <span class="no">true</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">Run</span><span class="o">:</span> <span class="n">DefaultHandler</span><span class="p">,</span>
+    <span class="p">}</span>
+    
+    <span class="c">// 서브 명령어 등록</span>
+    <span class="n">rootCmd</span><span class="o">.</span><span class="n">AddCommand</span><span class="p">(</span>
+        <span class="n">serveCmd</span><span class="p">,</span> <span class="n">createCmd</span><span class="p">,</span> <span class="n">showCmd</span><span class="p">,</span> <span class="n">runCmd</span><span class="p">,</span> <span class="n">stopCmd</span><span class="p">,</span>
+        <span class="n">pullCmd</span><span class="p">,</span> <span class="n">pushCmd</span><span class="p">,</span> <span class="n">listCmd</span><span class="p">,</span> <span class="n">psCmd</span><span class="p">,</span> <span class="n">copyCmd</span><span class="p">,</span> <span class="n">deleteCmd</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">rootCmd</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>설계 특징:</strong></p>
+<ul>
+  <li><strong>계층적 구조</strong>: 루트 명령어 아래 기능별 서브 명령어</li>
+  <li><strong>자동 완성 비활성화</strong>: <code class="language-plaintext highlighter-rouge">DisableDefaultCmd: true</code>로 커스텀 제어</li>
+  <li><strong>명령어 정렬 제어</strong>: 사용자 정의 순서로 명령어 표시</li>
+</ul>
+
+<h3 id="12-핵심-명령어-구조">1.2 핵심 명령어 구조</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ollama
+├── serve          # 서버 실행
+├── create         # 모델 생성
+├── show           # 모델 정보 표시
+├── run            # 모델 실행 및 대화
+├── stop           # 모델 중지
+├── pull           # 모델 다운로드
+├── push           # 모델 업로드
+├── list           # 모델 목록
+├── ps             # 실행 중인 모델 목록
+├── copy           # 모델 복사
+└── delete         # 모델 삭제
+</code></pre></div></div>
+
+<h2 id="2-주요-핸들러-함수-분석">2. 주요 핸들러 함수 분석</h2>
+
+<h3 id="21-createhandler---모델-생성">2.1 CreateHandler - 모델 생성</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">CreateHandler</span><span class="p">(</span><span class="n">cmd</span> <span class="o">*</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="n">p</span> <span class="o">:=</span> <span class="n">progress</span><span class="o">.</span><span class="n">NewProgress</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Stderr</span><span class="p">)</span>
+    <span class="k">defer</span> <span class="n">p</span><span class="o">.</span><span class="n">Stop</span><span class="p">()</span>
+    
+    <span class="k">var</span> <span class="n">reader</span> <span class="n">io</span><span class="o">.</span><span class="n">Reader</span>
+    <span class="n">filename</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">getModelfileName</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">IsNotExist</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="s">""</span> <span class="p">{</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">NewReader</span><span class="p">(</span><span class="s">"FROM .</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>  <span class="c">// 기본 Modelfile</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">errModelfileNotFound</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="c">// Modelfile 파싱</span>
+    <span class="n">modelfile</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">parser</span><span class="o">.</span><span class="n">ParseFile</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">err</span>
+    <span class="p">}</span>
+    
+    <span class="c">// 비동기 blob 생성</span>
+    <span class="k">var</span> <span class="n">g</span> <span class="n">errgroup</span><span class="o">.</span><span class="n">Group</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">SetLimit</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">runtime</span><span class="o">.</span><span class="n">GOMAXPROCS</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">))</span>
+    
+    <span class="n">files</span> <span class="o">:=</span> <span class="n">syncmap</span><span class="o">.</span><span class="n">NewSyncMap</span><span class="p">[</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">]()</span>
+    <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">digest</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">req</span><span class="o">.</span><span class="n">Files</span> <span class="p">{</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">Go</span><span class="p">(</span><span class="k">func</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">createBlob</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">digest</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="n">err</span>
+            <span class="p">}</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">Store</span><span class="p">(</span><span class="n">filepath</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">digest</span><span class="p">)</span>
+            <span class="k">return</span> <span class="no">nil</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="n">g</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>핵심 기능:</strong></p>
+<ul>
+  <li><strong>Modelfile 처리</strong>: 사용자 정의 모델 설정 파일 파싱</li>
+  <li><strong>병렬 처리</strong>: <code class="language-plaintext highlighter-rouge">errgroup</code>을 활용한 동시 파일 업로드</li>
+  <li><strong>진행률 표시</strong>: 실시간 업로드 진행률 모니터링</li>
+  <li><strong>에러 복구</strong>: 각 단계별 상세한 에러 처리</li>
+</ul>
+
+<h3 id="22-runhandler---대화형-모델-실행">2.2 RunHandler - 대화형 모델 실행</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">RunHandler</span><span class="p">(</span><span class="n">cmd</span> <span class="o">*</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="n">interactive</span> <span class="o">:=</span> <span class="no">true</span>
+    
+    <span class="n">opts</span> <span class="o">:=</span> <span class="n">runOptions</span><span class="p">{</span>
+        <span class="n">Model</span><span class="o">:</span>    <span class="n">args</span><span class="p">[</span><span class="m">0</span><span class="p">],</span>
+        <span class="n">WordWrap</span><span class="o">:</span> <span class="n">os</span><span class="o">.</span><span class="n">Getenv</span><span class="p">(</span><span class="s">"TERM"</span><span class="p">)</span> <span class="o">==</span> <span class="s">"xterm-256color"</span><span class="p">,</span>
+        <span class="n">Options</span><span class="o">:</span>  <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="n">any</span><span class="p">{},</span>
+    <span class="p">}</span>
+    
+    <span class="c">// 명령행 플래그 처리</span>
+    <span class="n">format</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">Flags</span><span class="p">()</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="s">"format"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">err</span>
+    <span class="p">}</span>
+    <span class="n">opts</span><span class="o">.</span><span class="n">Format</span> <span class="o">=</span> <span class="n">format</span>
+    
+    <span class="c">// 비대화형 모드 처리</span>
+    <span class="k">if</span> <span class="n">msg</span><span class="p">,</span> <span class="n">_</span> <span class="o">:=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">Flags</span><span class="p">()</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="s">"message"</span><span class="p">);</span> <span class="n">msg</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+        <span class="n">interactive</span> <span class="o">=</span> <span class="no">false</span>
+        <span class="n">opts</span><span class="o">.</span><span class="n">Prompt</span> <span class="o">=</span> <span class="n">msg</span>
+    <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="n">interactive</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">generateInteractive</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="n">generate</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>상호작용 모드:</strong></p>
+<ul>
+  <li><strong>대화형 모드</strong>: 실시간 사용자 입력 처리</li>
+  <li><strong>배치 모드</strong>: 단일 프롬프트 실행 후 종료</li>
+  <li><strong>터미널 감지</strong>: 환경에 따른 워드 랩핑 최적화</li>
+  <li><strong>플래그 통합</strong>: 다양한 실행 옵션 지원</li>
+</ul>
+
+<h3 id="23-진행률-추적-시스템">2.3 진행률 추적 시스템</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">createBlob</span><span class="p">(</span><span class="n">cmd</span> <span class="o">*</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">client</span> <span class="o">*</span><span class="n">api</span><span class="o">.</span><span class="n">Client</span><span class="p">,</span> <span class="n">path</span> <span class="kt">string</span><span class="p">,</span> <span class="n">digest</span> <span class="kt">string</span><span class="p">,</span> <span class="n">p</span> <span class="o">*</span><span class="n">progress</span><span class="o">.</span><span class="n">Progress</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c">// 파일 정보 획득</span>
+    <span class="n">fileInfo</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">bin</span><span class="o">.</span><span class="n">Stat</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">""</span><span class="p">,</span> <span class="n">err</span>
+    <span class="p">}</span>
+    <span class="n">fileSize</span> <span class="o">:=</span> <span class="n">fileInfo</span><span class="o">.</span><span class="n">Size</span><span class="p">()</span>
+    
+    <span class="k">var</span> <span class="n">pw</span> <span class="n">progressWriter</span>
+    <span class="n">status</span> <span class="o">:=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"copying file %s 0%%"</span><span class="p">,</span> <span class="n">digest</span><span class="p">)</span>
+    <span class="n">spinner</span> <span class="o">:=</span> <span class="n">progress</span><span class="o">.</span><span class="n">NewSpinner</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">spinner</span><span class="p">)</span>
+    
+    <span class="c">// 비동기 진행률 업데이트</span>
+    <span class="n">done</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="k">struct</span><span class="p">{})</span>
+    <span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">ticker</span> <span class="o">:=</span> <span class="n">time</span><span class="o">.</span><span class="n">NewTicker</span><span class="p">(</span><span class="m">60</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">)</span>
+        <span class="k">defer</span> <span class="n">ticker</span><span class="o">.</span><span class="n">Stop</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">{</span>
+            <span class="k">select</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="o">&lt;-</span><span class="n">ticker</span><span class="o">.</span><span class="n">C</span><span class="o">:</span>
+                <span class="n">percentage</span> <span class="o">:=</span> <span class="kt">int</span><span class="p">(</span><span class="m">100</span> <span class="o">*</span> <span class="n">pw</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">Load</span><span class="p">()</span> <span class="o">/</span> <span class="n">fileSize</span><span class="p">)</span>
+                <span class="n">spinner</span><span class="o">.</span><span class="n">SetMessage</span><span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"copying file %s %d%%"</span><span class="p">,</span> <span class="n">digest</span><span class="p">,</span> <span class="n">percentage</span><span class="p">))</span>
+            <span class="k">case</span> <span class="o">&lt;-</span><span class="n">done</span><span class="o">:</span>
+                <span class="n">spinner</span><span class="o">.</span><span class="n">SetMessage</span><span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"copying file %s 100%%"</span><span class="p">,</span> <span class="n">digest</span><span class="p">))</span>
+                <span class="k">return</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}()</span>
+    
+    <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">CreateBlob</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="n">digest</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TeeReader</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pw</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>진행률 시스템:</strong></p>
+<ul>
+  <li><strong>실시간 업데이트</strong>: 60ms 간격으로 진행률 갱신</li>
+  <li><strong>원자적 카운터</strong>: <code class="language-plaintext highlighter-rouge">atomic.Int64</code>로 동시성 안전성 보장</li>
+  <li><strong>TeeReader 활용</strong>: 데이터 전송과 동시에 진행률 추적</li>
+  <li><strong>채널 동기화</strong>: Goroutine 간 안전한 통신</li>
+</ul>
+
+<h2 id="3-환경-설정-및-구성-관리">3. 환경 설정 및 구성 관리</h2>
+
+<h3 id="31-환경-변수-문서화">3.1 환경 변수 문서화</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">appendEnvDocs</span><span class="p">(</span><span class="n">cmd</span> <span class="o">*</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">envs</span> <span class="p">[]</span><span class="n">envconfig</span><span class="o">.</span><span class="n">EnvVar</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">envs</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    
+    <span class="n">envUsage</span> <span class="o">:=</span> <span class="s">`
+Environment Variables:
+`</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">e</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">envs</span> <span class="p">{</span>
+        <span class="n">envUsage</span> <span class="o">+=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"      %-24s   %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">Description</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="n">cmd</span><span class="o">.</span><span class="n">SetUsageTemplate</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">UsageTemplate</span><span class="p">()</span> <span class="o">+</span> <span class="n">envUsage</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="32-명령어별-환경-변수-매핑">3.2 명령어별 환경 변수 매핑</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 서버 명령어에 특화된 환경 변수들</span>
+<span class="k">case</span> <span class="n">serveCmd</span><span class="o">:</span>
+    <span class="n">appendEnvDocs</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="p">[]</span><span class="n">envconfig</span><span class="o">.</span><span class="n">EnvVar</span><span class="p">{</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_DEBUG"</span><span class="p">],</span>           <span class="c">// 디버그 모드</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_HOST"</span><span class="p">],</span>            <span class="c">// 서버 호스트</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_KEEP_ALIVE"</span><span class="p">],</span>      <span class="c">// 모델 유지 시간</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_MAX_LOADED_MODELS"</span><span class="p">],</span> <span class="c">// 최대 로드 모델 수</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_MAX_QUEUE"</span><span class="p">],</span>       <span class="c">// 최대 큐 크기</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_MODELS"</span><span class="p">],</span>          <span class="c">// 모델 저장 경로</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_NUM_PARALLEL"</span><span class="p">],</span>    <span class="c">// 병렬 처리 수</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_FLASH_ATTENTION"</span><span class="p">],</span> <span class="c">// Flash Attention 사용</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_KV_CACHE_TYPE"</span><span class="p">],</span>   <span class="c">// KV 캐시 타입</span>
+        <span class="n">envVars</span><span class="p">[</span><span class="s">"OLLAMA_GPU_OVERHEAD"</span><span class="p">],</span>    <span class="c">// GPU 오버헤드</span>
+    <span class="p">})</span>
+</code></pre></div></div>
+
+<p><strong>구성 관리 특징:</strong></p>
+<ul>
+  <li><strong>명령어별 특화</strong>: 각 명령어에 필요한 환경 변수만 표시</li>
+  <li><strong>자동 문서화</strong>: 도움말에 환경 변수 설명 자동 추가</li>
+  <li><strong>타입 안전성</strong>: <code class="language-plaintext highlighter-rouge">envconfig.EnvVar</code> 구조체로 타입 보장</li>
+</ul>
+
+<h2 id="4-에러-처리-및-복구-전략">4. 에러 처리 및 복구 전략</h2>
+
+<h3 id="41-계층화된-에러-처리">4.1 계층화된 에러 처리</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">StopHandler</span><span class="p">(</span><span class="n">cmd</span> <span class="o">*</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="n">opts</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">runOptions</span><span class="p">{</span>
+        <span class="n">Model</span><span class="o">:</span>     <span class="n">args</span><span class="p">[</span><span class="m">0</span><span class="p">],</span>
+        <span class="n">KeepAlive</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">api</span><span class="o">.</span><span class="n">Duration</span><span class="p">{</span><span class="n">Duration</span><span class="o">:</span> <span class="m">0</span><span class="p">},</span>
+    <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">loadOrUnloadModel</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">opts</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">strings</span><span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">(),</span> <span class="s">"not found"</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"couldn't find model </span><span class="se">\"</span><span class="s">%s</span><span class="se">\"</span><span class="s"> to stop"</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="m">0</span><span class="p">])</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">err</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>에러 처리 패턴:</strong></p>
+<ul>
+  <li><strong>에러 분류</strong>: 에러 메시지 내용에 따른 적절한 대응</li>
+  <li><strong>사용자 친화적 메시지</strong>: 기술적 에러를 이해하기 쉬운 메시지로 변환</li>
+  <li><strong>문맥 보존</strong>: 원본 에러 정보 유지하면서 추가 정보 제공</li>
+</ul>
+
+<h3 id="42-버전-호환성-체크">4.2 버전 호환성 체크</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">versionHandler</span><span class="p">(</span><span class="n">cmd</span> <span class="o">*</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">_</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">client</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">api</span><span class="o">.</span><span class="n">ClientFromEnvironment</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+    
+    <span class="n">serverVersion</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Version</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">Context</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Warning: could not connect to a running Ollama instance"</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="n">serverVersion</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"ollama version is %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">serverVersion</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="c">// 클라이언트-서버 버전 불일치 경고</span>
+    <span class="k">if</span> <span class="n">serverVersion</span> <span class="o">!=</span> <span class="n">version</span><span class="o">.</span><span class="n">Version</span> <span class="p">{</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Warning: client version is %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">version</span><span class="o">.</span><span class="n">Version</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="5-성능-최적화-기법">5. 성능 최적화 기법</h2>
+
+<h3 id="51-동시성-제어">5.1 동시성 제어</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// CPU 코어 수에 기반한 goroutine 제한</span>
+<span class="k">var</span> <span class="n">g</span> <span class="n">errgroup</span><span class="o">.</span><span class="n">Group</span>
+<span class="n">g</span><span class="o">.</span><span class="n">SetLimit</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">runtime</span><span class="o">.</span><span class="n">GOMAXPROCS</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">))</span>
+
+<span class="c">// 동시성 안전 맵 활용</span>
+<span class="n">files</span> <span class="o">:=</span> <span class="n">syncmap</span><span class="o">.</span><span class="n">NewSyncMap</span><span class="p">[</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">]()</span>
+<span class="n">adapters</span> <span class="o">:=</span> <span class="n">syncmap</span><span class="o">.</span><span class="n">NewSyncMap</span><span class="p">[</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">]()</span>
+
+<span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">digest</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">req</span><span class="o">.</span><span class="n">Files</span> <span class="p">{</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">Go</span><span class="p">(</span><span class="k">func</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">createBlob</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">digest</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">err</span>
+        <span class="p">}</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">Store</span><span class="p">(</span><span class="n">filepath</span><span class="o">.</span><span class="n">Base</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">digest</span><span class="p">)</span>
+        <span class="k">return</span> <span class="no">nil</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>최적화 전략:</strong></p>
+<ul>
+  <li><strong>적응형 동시성</strong>: 시스템 리소스에 따른 동적 제한</li>
+  <li><strong>메모리 안전성</strong>: 타입 안전 동시성 맵 사용</li>
+  <li><strong>리소스 관리</strong>: 고루틴 누수 방지를 위한 제한 설정</li>
+</ul>
+
+<h3 id="52-스트리밍-처리">5.2 스트리밍 처리</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">progressWriter</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">n</span> <span class="n">atomic</span><span class="o">.</span><span class="n">Int64</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span><span class="n">progressWriter</span><span class="p">)</span> <span class="n">Write</span><span class="p">(</span><span class="n">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="kt">int</span><span class="p">,</span> <span class="n">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="kt">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="no">nil</span>
+<span class="p">}</span>
+
+<span class="c">// TeeReader를 활용한 스트리밍 업로드</span>
+<span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">CreateBlob</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="n">digest</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TeeReader</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pw</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p><strong>스트리밍 장점:</strong></p>
+<ul>
+  <li><strong>메모리 효율성</strong>: 대용량 파일을 청크 단위로 처리</li>
+  <li><strong>진행률 추적</strong>: 실시간 업로드 진행률 모니터링</li>
+  <li><strong>원자적 업데이트</strong>: Lock-free 카운터로 성능 향상</li>
+</ul>
+
+<h2 id="6-사용자-경험-최적화">6. 사용자 경험 최적화</h2>
+
+<h3 id="61-대화형-인터페이스">6.1 대화형 인터페이스</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">generateInteractive</span><span class="p">(</span><span class="n">cmd</span> <span class="o">*</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">opts</span> <span class="n">runOptions</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="c">// 터미널 설정</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">WordWrap</span> <span class="p">{</span>
+        <span class="n">scanner</span> <span class="o">:=</span> <span class="n">bufio</span><span class="o">.</span><span class="n">NewScanner</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Stdin</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">{</span>
+            <span class="n">fmt</span><span class="o">.</span><span class="n">Print</span><span class="p">(</span><span class="s">"&gt;&gt;&gt; "</span><span class="p">)</span>
+            <span class="k">if</span> <span class="o">!</span><span class="n">scanner</span><span class="o">.</span><span class="n">Scan</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">break</span>
+            <span class="p">}</span>
+            
+            <span class="n">prompt</span> <span class="o">:=</span> <span class="n">scanner</span><span class="o">.</span><span class="n">Text</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">prompt</span> <span class="o">==</span> <span class="s">"/bye"</span> <span class="p">{</span>
+                <span class="k">break</span>
+            <span class="p">}</span>
+            
+            <span class="c">// 실시간 응답 스트리밍</span>
+            <span class="n">err</span> <span class="o">:=</span> <span class="n">streamResponse</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">opts</span><span class="p">,</span> <span class="n">prompt</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+                <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Error: %v</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>UX 개선사항:</strong></p>
+<ul>
+  <li><strong>직관적 프롬프트</strong>: <code class="language-plaintext highlighter-rouge">&gt;&gt;&gt;</code> 표시로 입력 대기 상태 명확화</li>
+  <li><strong>종료 명령어</strong>: <code class="language-plaintext highlighter-rouge">/bye</code>로 자연스러운 대화 종료</li>
+  <li><strong>실시간 피드백</strong>: 스트리밍 응답으로 즉각적인 반응</li>
+</ul>
+
+<h3 id="62-진행률-시각화">6.2 진행률 시각화</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">resp</span> <span class="n">api</span><span class="o">.</span><span class="n">ProgressResponse</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">Digest</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+        <span class="n">bar</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">bars</span><span class="p">[</span><span class="n">resp</span><span class="o">.</span><span class="n">Digest</span><span class="p">]</span>
+        <span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+            <span class="n">msg</span> <span class="o">:=</span> <span class="n">resp</span><span class="o">.</span><span class="n">Status</span>
+            <span class="k">if</span> <span class="n">msg</span> <span class="o">==</span> <span class="s">""</span> <span class="p">{</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"pulling %s..."</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">Digest</span><span class="p">[</span><span class="m">7</span><span class="o">:</span><span class="m">19</span><span class="p">])</span>
+            <span class="p">}</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="n">progress</span><span class="o">.</span><span class="n">NewBar</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">Total</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">Completed</span><span class="p">)</span>
+            <span class="n">bars</span><span class="p">[</span><span class="n">resp</span><span class="o">.</span><span class="n">Digest</span><span class="p">]</span> <span class="o">=</span> <span class="n">bar</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">Digest</span><span class="p">,</span> <span class="n">bar</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">bar</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">Completed</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="7-확장성-및-유지보수성">7. 확장성 및 유지보수성</h2>
+
+<h3 id="71-명령어-추가-패턴">7.1 명령어 추가 패턴</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 새로운 명령어 등록 패턴</span>
+<span class="n">newCmd</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">cobra</span><span class="o">.</span><span class="n">Command</span><span class="p">{</span>
+    <span class="n">Use</span><span class="o">:</span>   <span class="s">"newcommand"</span><span class="p">,</span>
+    <span class="n">Short</span><span class="o">:</span> <span class="s">"Description of new command"</span><span class="p">,</span>
+    <span class="n">Args</span><span class="o">:</span>  <span class="n">cobra</span><span class="o">.</span><span class="n">ExactArgs</span><span class="p">(</span><span class="m">1</span><span class="p">),</span>
+    <span class="n">RunE</span><span class="o">:</span>  <span class="n">NewCommandHandler</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c">// 플래그 추가</span>
+<span class="n">newCmd</span><span class="o">.</span><span class="n">Flags</span><span class="p">()</span><span class="o">.</span><span class="n">StringP</span><span class="p">(</span><span class="s">"option"</span><span class="p">,</span> <span class="s">"o"</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"Option description"</span><span class="p">)</span>
+
+<span class="c">// 루트에 추가</span>
+<span class="n">rootCmd</span><span class="o">.</span><span class="n">AddCommand</span><span class="p">(</span><span class="n">newCmd</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="72-에러-타입-확장">7.2 에러 타입 확장</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="p">(</span>
+    <span class="n">errModelfileNotFound</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"specified Modelfile wasn't found"</span><span class="p">)</span>
+    <span class="n">errInvalidFormat</span>     <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"invalid format specified"</span><span class="p">)</span>
+    <span class="n">errConnectionFailed</span>  <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="s">"failed to connect to server"</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="8-결론">8. 결론</h2>
+
+<p>Ollama Custom의 CLI 시스템은 현대적인 Go 개발 패턴을 충실히 따르는 설계를 보여줍니다:</p>
+
+<h3 id="81-주요-장점">8.1 주요 장점</h3>
+
+<ul>
+  <li><strong>모듈화</strong>: 각 명령어가 독립적인 핸들러로 분리</li>
+  <li><strong>동시성</strong>: 효율적인 비동기 처리와 진행률 추적</li>
+  <li><strong>확장성</strong>: 새로운 명령어 추가가 용이한 구조</li>
+  <li><strong>사용자 중심</strong>: 직관적인 인터페이스와 상세한 피드백</li>
+</ul>
+
+<h3 id="82-성능-특징">8.2 성능 특징</h3>
+
+<ul>
+  <li><strong>리소스 효율성</strong>: CPU 코어 수에 적응하는 동시성 제어</li>
+  <li><strong>메모리 최적화</strong>: 스트리밍 처리로 대용량 파일 처리</li>
+  <li><strong>응답성</strong>: 실시간 진행률 표시로 사용자 경험 향상</li>
+</ul>
+
+<p>다음 포스트에서는 서버 아키텍처와 HTTP API 라우팅 시스템을 분석해보겠습니다.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/04/15/opensora-docker-environment-setup/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Open-Sora Docker 환경 구성 완벽 가이드: CUDA부터 최적화까지</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/05/12/kag-solver-module-analysis/" rel="next">
+          <span class="nav-title">KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

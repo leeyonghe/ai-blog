@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>AI Development Blog | AI Development Blog</title>
+<meta name="description" content="AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="AI, 인공지능, 개발, 프로그래밍, 기술 블로그">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI Development Blog">
+<meta property="og:description" content="AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Development Blog">
+<meta name="twitter:description" content="AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>AI Development Blog</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header ">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer "><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer ">&copy;
+        2025</p><div class="about-footer ">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <h1 class="page-heading">AI Development Blog</h1><h1 id="환영합니다-">환영합니다! 👋</h1>
+
+<p>AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다.</p>
+
+<h2 id="주요-콘텐츠">주요 콘텐츠</h2>
+
+<ul>
+  <li>🦀 <strong>Rust 프레임워크 분석</strong>: Oxy, Tokio 등 최신 Rust 생태계 심층 분석</li>
+  <li>🤖 <strong>AI/ML 프로젝트</strong>: 실무에서 활용할 수 있는 AI 개발 경험 공유</li>
+  <li>🐍 <strong>Python 바인딩</strong>: PyO3를 활용한 언어 간 상호운용성</li>
+  <li>⚡ <strong>성능 최적화</strong>: 고성능 시스템 설계 및 구현 전략</li>
+</ul>
+
+<h2 id="최신-포스트">최신 포스트</h2>
+
+<p>최근에 발행된 글들을 확인해보세요!</p>
+<ul class="posts">
+    <li class="posts-labelgroup" id="posts-labelgroup">
+      <h1 id="posts-label">posts</h1>
+      
+      <div class="search-container">
+        <div class="search-section">
+          <i class="icon-search"></i>
+          <input type="text" name="search" id="searchbar" autocomplete="off" aria-label="search in posts">
+        </div>
+        <div class="search-results" id="search-results" data-placeholder="No Results" style="display: none;"></div>
+      </div>
+      
+    </li><li class="post-item"><a class="post-link" href="/ai-blog/2025/04/17/kag-dependencies-ecosystem-analysis/">
+          <h2 class="post-title">KAG 의존성 및 Python 패키지 생태계 심층 분석 - 58개 핵심 라이브러리 종합 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 17, 2025
+          </div><ul class="post-categories"><li>AI</li><li>Python</li><li>Package Management</li><li>Dependencies</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 KAG 프레임워크의 의존성 구조와 Python 패키지 생태계 활용을 종합적으로 분석합니다. KAG는 58개의 핵심 라이브러리를 통해 지식 그래프, 자연어 처리, 머신러닝, 웹 개발까지 아우르는 통합 AI 플랫폼을 구축합니다....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2025/02/28/kag-docker-container-orchestration-analysis/">
+          <h2 class="post-title">KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Feb 28, 2025
+          </div><ul class="post-categories"><li>Docker</li><li>Microservices</li><li>Container Orchestration</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 KAG 프로젝트의 Docker 컨테이너 오케스트레이션을 심층 분석합니다. KAG는 마이크로서비스 아키텍처를 기반으로 웹 애플리케이션, Elasticsearch, Neo4j를 독립적인 컨테이너로 구성하여 확장성과 유지보수성을 극대화했습니다. 1. Docker Compose 아키텍처 개요 1.1...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2025/02/18/opensora-practical-usage-guide/">
+          <h2 class="post-title">Open-Sora 실전 활용 가이드: 텍스트-투-비디오부터 고급 기법까지</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Feb 18, 2025
+          </div><ul class="post-categories"><li>AI</li><li>Tutorial</li><li>Video Generation</li></ul></div>
+        <div class="post">개요 이론적 지식만으로는 부족합니다. 이번 포스트에서는 Open-Sora를 실제로 사용하여 비디오를 생성하는 모든 과정을 단계별로 살펴보겠습니다. 기본적인 텍스트-투-비디오 생성부터 고급 기법까지, 실무에서 바로 활용할 수 있는 실용적인 가이드를 제공합니다. 환경 설정...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/22/defensive-prompt-engineering/">
+          <h2 class="post-title">방어적 프롬프트 엔지니어링과 보안 대응 전략 - AI 시스템 보안 완벽 가이드</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 22, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Security</li><li>Prompt Engineering</li><li>Defense</li></ul></div>
+        <div class="post">개요 AI 시스템의 보안은 단순한 기술적 이슈를 넘어서 비즈니스 연속성과 신뢰성에 직결되는 핵심 요소입니다. 이번 포스트에서는 독점 프롬프트 보호, 탈옥과 프롬프트 주입 방어, 정보 추출 방지, 그리고 포괄적인 보안 대응...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/21/musicgen-conditioning-mechanisms-analysis/">
+          <h2 class="post-title">AudioCraft MusicGen 조건화 메커니즘 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 21, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Audio Generation</li><li>Deep Learning</li></ul></div>
+        <div class="post">AudioCraft MusicGen 조건화 메커니즘 심층 분석 AudioCraft의 MusicGen은 텍스트 설명과 멜로디 조건을 통해 음악을 생성하는 강력한 모델입니다. 이 포스트에서는 MusicGen의 핵심인 조건화 시스템의 구현을 상세히 분석해보겠습니다. 1. 조건화 시스템 개요...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/21/musicgen-architecture-deep-dive/">
+          <h2 class="post-title">MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 21, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Deep Learning</li><li>Architecture</li></ul></div>
+        <div class="post">MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조 AudioCraft Custom 프로젝트의 MusicGen이 구축된 BaseGenModel 아키텍처를 심층 분석해보겠습니다. 이 포스트에서는 상속 구조, 컴포넌트 간 상호작용, 자동 혼합 정밀도 최적화 등 MusicGen의...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/21/docker-compose-orchestration-deep-dive/">
+          <h2 class="post-title">Docker Compose 오케스트레이션 심화 분석 - AudioCraft Custom 프로젝트</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 21, 2024
+          </div><ul class="post-categories"><li>DevOps</li><li>Docker</li><li>Container Orchestration</li></ul></div>
+        <div class="post">Docker Compose 오케스트레이션 심화 분석 AudioCraft Custom 프로젝트의 Docker Compose 구성을 통해 컨테이너 오케스트레이션의 고급 기법들을 심층 분석해보겠습니다. GPU 리소스 관리, 볼륨 마운트 전략, 환경 변수 관리 등 실제 프로덕션...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/20/oxy-ai-agent-system-architecture-analysis/">
+          <h2 class="post-title">Oxy Custom - AI 에이전트 시스템 아키텍처 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 20, 2024
+          </div><ul class="post-categories"><li>Rust</li><li>AI</li><li>Agent</li><li>Architecture</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 Oxy 프레임워크의 핵심인 AI 에이전트 시스템을 심층 분석합니다. Oxy의 에이전트 시스템은 ReACT(Reasoning and Acting) 패턴을 구현하여 AI 모델이 도구를 활용해 복잡한 작업을 수행할 수 있도록 설계되었습니다. 1....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/20/oxy-cli-make-command-analysis/">
+          <h2 class="post-title">Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 20, 2024
+          </div><ul class="post-categories"><li>Rust</li><li>Analytics</li><li>Framework</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 Oxy 프레임워크의 CLI Make 명령어를 심층 분석합니다. Make 명령어는 CSV 파일 하나만으로 완전한 분석 프로젝트를 자동 생성하는 혁신적인 기능으로, 데이터 분석 워크플로우의 생산성을 획기적으로 향상시킵니다. 1. Make...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/20/oxy-rust-application-entry-point-analysis/">
+          <h2 class="post-title">Oxy Custom - Rust 애플리케이션 진입점 및 CLI 시스템 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 20, 2024
+          </div><ul class="post-categories"><li>Rust</li><li>Analytics</li><li>Framework</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 Oxy 프레임워크의 Rust 애플리케이션 진입점과 CLI(Command Line Interface) 시스템을 심층 분석합니다. 이전 프로젝트 개요 분석에 이어, 애플리케이션이 실제로 어떻게 시작되고 초기화되는지 살펴보겠습니다. 1. 애플리케이션 진입점 (main.rs) 1.1...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/20/musicgen-implementation-deep-dive/">
+          <h2 class="post-title">MusicGen 모델 구현 심화 분석 - AudioCraft Custom 프로젝트</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 20, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Deep Learning</li><li>Audio Generation</li></ul></div>
+        <div class="post">MusicGen 모델 구현 심화 분석 graph TB subgraph "MusicGen Architecture Overview" A[Text Input] --&gt; B[Text Conditioning] C[Melody Input] --&gt; D[Melody Conditioning] B --&gt; E[Combined Conditioning] D --&gt; E E --&gt;...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/20/fastapi-server-deep-dive/">
+          <h2 class="post-title">FastAPI 서버 구현 심화 분석 - AudioCraft Custom 프로젝트</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 20, 2024
+          </div><ul class="post-categories"><li>Web Development</li><li>API Design</li><li>Machine Learning</li></ul></div>
+        <div class="post">FastAPI 서버 구현 심화 분석 AudioCraft Custom 프로젝트의 모든 AI 모델을 REST API로 제공하는 FastAPI 서버의 구현을 심층 분석해보겠습니다. 복잡한 AI 모델들을 웹 서비스로 통합하는 전략과 실제 구현 방법을 살펴보겠습니다....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/20/docker-containerization-deep-dive/">
+          <h2 class="post-title">Docker 컨테이너화 시스템 심화 분석 - AudioCraft Custom 프로젝트</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 20, 2024
+          </div><ul class="post-categories"><li>DevOps</li><li>Docker</li><li>Containerization</li></ul></div>
+        <div class="post">Docker 컨테이너화 시스템 심화 분석 graph TB subgraph "AudioCraft Docker Architecture" A[Host System] --&gt; B[Docker Engine] B --&gt; C[AudioCraft Container] subgraph "Container Layers" C --&gt; D[PyTorch Base Image] D --&gt;...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/20/audiogen-encodec-deep-dive/">
+          <h2 class="post-title">AudioGen &amp; EnCodec 모델 심화 분석 - AudioCraft Custom 프로젝트</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 20, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Deep Learning</li><li>Audio Compression</li></ul></div>
+        <div class="post">AudioGen &amp; EnCodec 모델 심화 분석 AudioCraft Custom 프로젝트의 두 번째 핵심 구성 요소인 AudioGen과 EnCodec 모델을 심층적으로 분석해보겠습니다. AudioGen은 일반적인 오디오 효과 생성을, EnCodec은 신경망 기반 오디오 압축을 담당하는...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/20/adversarial-networks-deep-dive/">
+          <h2 class="post-title">Adversarial Networks 심화 분석 - AudioCraft Custom 프로젝트</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 20, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Deep Learning</li><li>Adversarial Networks</li></ul></div>
+        <div class="post">Adversarial Networks 심화 분석 AudioCraft Custom 프로젝트의 핵심 품질 향상 메커니즘인 적대적 네트워크 시스템을 심층 분석해보겠습니다. Multi-Period Discriminator (MPD), Multi-Scale Discriminator (MSD), Multi-Scale STFT Discriminator (MS-STFT-D) 등 세 가지 판별자가...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/18/prompt-engineering-best-practices/">
+          <h2 class="post-title">프롬프트 엔지니어링 실전 모범 사례 - 효과적인 프롬프트 설계와 최적화 완벽 가이드</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 18, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Prompt Engineering</li><li>Best Practices</li></ul></div>
+        <div class="post">개요 효과적인 프롬프트 엔지니어링은 단순한 지시문 작성을 넘어서 체계적인 설계 원칙과 반복적 개선 과정을 필요로 합니다. 이번 포스트에서는 실전에서 바로 적용할 수 있는 프롬프트 엔지니어링 모범 사례들을 상세히 살펴보겠습니다. 1....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/15/prompt-engineering-fundamentals/">
+          <h2 class="post-title">프롬프트 엔지니어링 기초와 인컨텍스트 학습 완벽 가이드</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 15, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Prompt Engineering</li><li>In-Context Learning</li></ul></div>
+        <div class="post">개요 프롬프트 엔지니어링은 대규모 언어 모델(LLM)과 효과적으로 소통하는 핵심 기술입니다. 이번 포스트에서는 프롬프트의 기본 개념부터 인컨텍스트 학습, 시스템/사용자 프롬프트 구분, 그리고 컨텍스트 효율성까지 체계적으로 살펴보겠습니다. 1. 프롬프트 소개 1.1 프롬프트의...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/12/14/opensora-configuration-system-analysis/">
+          <h2 class="post-title">Open-Sora 설정 시스템 상세 분석 - 하이퍼파라미터 튜닝 및 구성 관리</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Dec 14, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Video Generation</li><li>Configuration</li><li>Hyperparameter Tuning</li></ul></div>
+        <div class="post">개요 Open-Sora는 복잡한 AI 비디오 생성 모델의 다양한 설정을 체계적으로 관리하기 위해 정교한 설정 시스템을 갖추고 있습니다. 이번 포스트에서는 Open-Sora의 설정 파일 구조, 모듈식 상속 시스템, 하이퍼파라미터 튜닝 전략, 그리고...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/11/23/opensora-utils-module-analysis/">
+          <h2 class="post-title">Open-Sora 유틸리티 모듈 상세 분석 - 추론, 학습, 체크포인트 및 메모리 관리</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Nov 23, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Video Generation</li><li>Utilities</li><li>Memory Management</li></ul></div>
+        <div class="post">개요 Open-Sora의 유틸리티 모듈은 AI 비디오 생성 모델의 핵심 기능을 지원하는 다양한 헬퍼 함수와 클래스들을 포함하고 있습니다. 이번 포스트에서는 추론 엔진, 학습 파이프라인, 체크포인트 관리, 메모리 최적화 등 Open-Sora 시스템의...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/11/15/audiocraft-custom-comprehensive-analysis/">
+          <h2 class="post-title">AudioCraft Custom 프로젝트 완전 분석: AI 오디오 생성의 최첨단 기술</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Nov 15, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Audio Generation</li><li>Deep Learning</li><li>API Development</li></ul></div>
+        <div class="post">개요 AudioCraft Custom은 Facebook Research의 AudioCraft 프레임워크를 기반으로 개발된 고급 AI 오디오 생성 플랫폼입니다. 이 프로젝트는 텍스트-투-뮤직, 텍스트-투-오디오 생성부터 고급 오디오 분석까지 포괄하는 완전한 솔루션을 제공합니다. 본 포스트에서는 이 프로젝트의...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/11/15/kag-builder-module-architecture-analysis/">
+          <h2 class="post-title">KAG Builder 모듈 아키텍처 심층 분석 - 지식 추출 및 그래프 구축 엔진</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Nov 15, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Knowledge Graph</li><li>Data Processing</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 KAG Builder 모듈의 상세한 아키텍처를 분석합니다. Builder는 KAG 프레임워크의 핵심 구성 요소로, 다양한 문서 소스에서 지식을 추출하고 구조화된 지식 그래프를 구축하는 역할을 담당합니다. 1. KAG Builder 개요...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/11/08/foundation-models-evaluation-optimization/">
+          <h2 class="post-title">파운데이션 모델 이해하기 (4부) - 평가 방법론과 성능 최적화 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Nov 8, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Foundation Models</li><li>Evaluation</li><li>Optimization</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 파운데이션 모델의 평가 방법론과 성능 최적화를 심층 분석합니다. 모델의 능력을 정확히 측정하는 평가 기법들, 다양한 벤치마크, 그리고 실제 배포 환경에서의 성능 최적화 전략을 상세히 살펴보겠습니다. 1. 평가...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/10/22/rag-systems-complete-guide/">
+          <h2 class="post-title">RAG 시스템 완벽 가이드 - 검색 증강 생성의 아키텍처부터 고급 최적화까지</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Oct 22, 2024
+          </div><ul class="post-categories"><li>AI</li><li>RAG</li><li>Information Retrieval</li><li>NLP</li></ul></div>
+        <div class="post">개요 RAG(Retrieval-Augmented Generation)는 대규모 언어 모델의 한계를 극복하고 실시간 정보 접근을 가능하게 하는 혁신적인 기술입니다. 이번 포스트에서는 RAG의 핵심 아키텍처부터 고급 검색 최적화, 그리고 멀티모달 RAG까지 포괄적으로 살펴보겠습니다. 1. RAG...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/10/09/opensora-gradio-web-interface/">
+          <h2 class="post-title">Open-Sora Gradio 웹 인터페이스 완벽 구현 가이드: 사용자 친화적 AI 비디오 생성 UI</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Oct 9, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Web Development</li><li>UI/UX</li></ul></div>
+        <div class="post">개요 복잡한 AI 모델을 일반 사용자가 쉽게 사용할 수 있도록 하는 것은 AI 민주화의 핵심입니다. Open-Sora는 Gradio를 활용해 전문적인 비디오 생성 기능을 직관적인 웹 인터페이스로 제공합니다. 이번 포스트에서는 그 구현...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/10/03/kag-database-integration-analysis/">
+          <h2 class="post-title">KAG 데이터베이스 통합 아키텍처 심층 분석 - Neo4j와 벡터 검색 시스템</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Oct 3, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Knowledge Graph</li><li>Database</li><li>Vector Search</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 KAG 데이터베이스 통합 아키텍처를 상세히 분석합니다. KAG는 지식 그래프 저장을 위한 Neo4j, 벡터 검색을 위한 임베딩 시스템, 그리고 다중 모달 데이터 처리를 통합한 복합 데이터베이스 아키텍처를 제공합니다....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/09/18/foundation-models-sampling-generation-strategies/">
+          <h2 class="post-title">파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Sep 18, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Foundation Models</li><li>Text Generation</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 파운데이션 모델의 샘플링과 생성 전략을 심층 분석합니다. 모델이 학습한 지식을 바탕으로 어떻게 텍스트를 생성하는지, 다양한 샘플링 기법들과 구조화된 출력 생성 방법, 그리고 AI의 확률적 특성을 상세히 살펴보겠습니다....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/09/07/opensora-training-inference-scripts-analysis/">
+          <h2 class="post-title">Open-Sora 훈련/추론 스크립트 상세 분석 - 실제 워크플로우와 파이프라인</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Sep 7, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Video Generation</li><li>Training</li><li>Inference</li><li>Pipeline</li></ul></div>
+        <div class="post">개요 Open-Sora의 scripts 디렉토리는 실제 모델 훈련과 추론을 수행하는 핵심 스크립트들을 포함하고 있습니다. 이번 포스트에서는 Diffusion 모델의 훈련 및 추론 스크립트, VAE 훈련 스크립트, 그리고 데이터 전처리 도구들을 상세히 분석하여...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/08/22/foundation-models-post-training-strategies/">
+          <h2 class="post-title">파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Aug 22, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Foundation Models</li><li>Fine-tuning</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 파운데이션 모델의 사후 학습(Post-training) 과정을 심층 분석합니다. 사전훈련된 모델을 특정 태스크나 인간의 선호도에 맞춰 조정하는 지도 파인튜닝(SFT)과 선호도 파인튜닝 기법들을 상세히 살펴보겠습니다. 1. 사후 학습 개요 1.1...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/08/15/kag-project-overview-architecture-analysis/">
+          <h2 class="post-title">KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Aug 15, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Knowledge Graph</li><li>RAG</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 KAG(Knowledge Augmented Generation) 프로젝트를 심층 분석합니다. KAG는 OpenSPG 생태계의 핵심 프로젝트로, 기존 RAG(Retrieval-Augmented Generation)의 한계를 극복하고 지식 그래프 기반의 고도화된 질의응답 시스템을 구현한 혁신적인 프레임워크입니다. 1. KAG...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/08/15/oxy-custom-project-overview-analysis/">
+          <h2 class="post-title">Oxy Custom 프로젝트 개요 분석 - Rust 기반 Agentic Analytics 프레임워크</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Aug 15, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Rust</li><li>Analytics</li></ul></div>
+        <div class="post">Oxy Custom 프로젝트 개요 분석 Oxy는 Rust로 작성된 오픈 소스 agentic analytics 프레임워크입니다. 이 프로젝트는 AI 기반 데이터 분석에 소프트웨어 개발 생명주기 원칙을 적용하여, 에이전트 생성부터 프롬프트 테스팅, 프로덕션 배포까지의...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/08/12/opensora-acceleration-module-analysis/">
+          <h2 class="post-title">Open-Sora 가속화 모듈 상세 분석 - 병렬화 및 성능 최적화 기술</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Aug 12, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Video Generation</li><li>Performance Optimization</li><li>Parallel Computing</li></ul></div>
+        <div class="post">개요 Open-Sora는 11B 파라미터의 대규모 AI 비디오 생성 모델로, 효율적인 학습과 추론을 위해 다양한 가속화 기술을 활용합니다. 이번 포스트에서는 Open-Sora의 가속화 모듈을 상세히 분석하여 Activation Checkpointing, 분산 통신, 병렬 상태...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/07/28/opensora-text-embedding-system-analysis/">
+          <h2 class="post-title">Open-Sora 텍스트 임베딩 시스템 상세 분석 - T5/CLIP 통합 및 Shardformer 최적화</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Jul 28, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Video Generation</li><li>Text Processing</li><li>Performance Optimization</li></ul></div>
+        <div class="post">개요 Open-Sora는 텍스트 프롬프트를 기반으로 고품질 비디오를 생성하는 AI 모델로, 텍스트 이해와 임베딩 생성이 핵심적인 역할을 합니다. 이번 포스트에서는 Open-Sora의 텍스트 임베딩 시스템을 상세히 분석하여 T5와 CLIP 모델의 통합, HFEmbedder...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/07/22/ollama-custom-server-architecture-analysis/">
+          <h2 class="post-title">Ollama Custom 서버 아키텍처 심층 분석 - Gin 기반 HTTP API 서버</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Jul 22, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Go</li><li>Server</li></ul></div>
+        <div class="post">Ollama Custom 서버 아키텍처 심층 분석 Ollama Custom의 서버 아키텍처는 Gin 웹 프레임워크를 기반으로 구축된 고성능 HTTP API 서버입니다. 이 포스트에서는 server/routes.go의 1,700여 라인에 걸친 복잡한 서버 구현과 스케줄링 시스템을...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/07/15/foundation-models-data-and-architecture/">
+          <h2 class="post-title">파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Jul 15, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Foundation Models</li><li>Deep Learning</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 파운데이션 모델의 핵심 구성 요소인 학습 데이터와 모델 아키텍처를 심층 분석합니다. 현대 AI의 기반이 되는 파운데이션 모델이 어떻게 구축되고, 어떤 데이터로 학습되며, 어떤 아키텍처를 사용하는지 상세히 살펴보겠습니다....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/06/03/opensora-model-architecture-analysis/">
+          <h2 class="post-title">Open-Sora 모델 아키텍처 심층 분석: STDiT3, VAE, T5의 완벽 이해</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Jun 3, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Deep Learning</li><li>Computer Vision</li></ul></div>
+        <div class="post">개요 Open-Sora는 세 가지 핵심 컴포넌트로 구성된 복잡한 아키텍처를 가지고 있습니다. 이번 포스트에서는 각 컴포넌트의 구조와 역할, 그리고 서로 어떻게 상호작용하는지 상세히 분석해보겠습니다. 전체 아키텍처 개요 graph TB subgraph "Open-Sora...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/05/17/opensora-vae-implementation-analysis/">
+          <h2 class="post-title">Open-Sora VAE 모델 소스코드 심층 분석: AutoEncoder부터 Discriminator까지</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            May 17, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Deep Learning</li><li>Computer Vision</li><li>Source Code</li></ul></div>
+        <div class="post">개요 Open-Sora의 VAE(Variational AutoEncoder)는 비디오와 이미지를 잠재 공간으로 압축하고 복원하는 핵심 컴포넌트입니다. 이번 포스트에서는 VAE 모델의 소스코드를 완전히 분해하여 각 모듈의 구현 원리와 최적화 기법을 상세히 분석해보겠습니다. VAE 모듈 구조...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/05/12/kag-solver-module-analysis/">
+          <h2 class="post-title">KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            May 12, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Knowledge Graph</li><li>Reasoning</li><li>QA</li></ul></div>
+        <div class="post">개요 이번 포스트에서는 KAG Solver 모듈의 심층 아키텍처를 분석합니다. Solver는 구축된 지식 그래프를 기반으로 지능형 추론을 수행하고, 복잡한 질의를 단계적으로 분해하여 정확한 답변을 생성하는 KAG 프레임워크의 핵심 추론 엔진입니다. 1....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/05/08/ollama-custom-cli-command-system-analysis/">
+          <h2 class="post-title">Ollama Custom CLI 명령어 시스템 심층 분석 - Cobra 프레임워크 기반 인터페이스</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            May 8, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Go</li><li>CLI</li></ul></div>
+        <div class="post">Ollama Custom CLI 명령어 시스템 심층 분석 Ollama Custom의 CLI 시스템은 Cobra 프레임워크를 기반으로 구현된 강력하고 직관적인 명령행 인터페이스입니다. 이 포스트에서는 cmd/cmd.go의 1,455라인에 걸친 복잡한 CLI 구현을 상세히 분석해보겠습니다. 1....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/15/opensora-docker-environment-setup/">
+          <h2 class="post-title">Open-Sora Docker 환경 구성 완벽 가이드: CUDA부터 최적화까지</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 15, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Docker</li><li>DevOps</li></ul></div>
+        <div class="post">개요 AI 비디오 생성 모델인 Open-Sora를 실제 운영 환경에서 사용하기 위해서는 복잡한 환경 설정이 필요합니다. 이번 포스트에서는 Open-Sora를 Docker 컨테이너로 완벽하게 패키징하는 방법을 상세히 분석해보겠습니다. Docker 환경의 필요성 왜 Docker인가?...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/15/ollama-custom-project-overview-analysis/">
+          <h2 class="post-title">Ollama Custom 프로젝트 개요 분석 - 로컬 LLM 실행 플랫폼의 아키텍처</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 15, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Go</li><li>LLM</li></ul></div>
+        <div class="post">Ollama Custom 프로젝트 개요 분석 Ollama Custom은 로컬 환경에서 대규모 언어 모델(LLM)을 실행하기 위한 플랫폼입니다. 이 프로젝트는 원본 Ollama를 개인적으로 커스터마이징한 버전으로, Go 언어로 구현된 고성능 LLM 실행 환경을 제공합니다....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/08/slips-network-discovery-module/">
+          <h2 class="post-title">Slips 네트워크 발견 모듈 상세 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 8, 2024
+          </div><ul class="post-categories"><li>network-analysis</li></ul></div>
+        <div class="post">Slips 네트워크 발견 모듈 상세 분석 graph TB subgraph "Slips Network Discovery Architecture" A[Network Discovery Module] --&gt; B[Host Discovery] A --&gt; C[Service Detection] A --&gt; D[Topology Mapping] A --&gt; E[Change...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/08/slips-leak-detector-module/">
+          <h2 class="post-title">Slips 정보 유출 탐지 모듈 상세 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 8, 2024
+          </div><ul class="post-categories"><li>network-analysis</li></ul></div>
+        <div class="post">Slips 정보 유출 탐지 모듈 상세 분석 정보 유출 탐지 모듈은 Slips의 데이터 유출 탐지와 방지를 담당하는 핵심 컴포넌트입니다. 이 글에서는 정보 유출 탐지 모듈의 구현과 주요 기능에 대해 살펴보겠습니다....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/07/ldm-module-analysis/">
+          <h2 class="post-title">Latent Diffusion Models (LDM) Module Analysis / 잠재 확산 모델(LDM) 모듈 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 7, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">Latent Diffusion Models (LDM) Module Analysis / 잠재 확산 모델(LDM) 모듈 분석 Overview / 개요 The Latent Diffusion Models (LDM) module is a crucial component of the Stable Diffusion architecture,...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/06/hypernetworks-module-analysis/">
+          <h2 class="post-title">Stable Diffusion Hypernetworks Module Analysis | 스테이블 디퓨전 하이퍼네트워크 모듈 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 6, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">Stable Diffusion Hypernetworks Module Analysis 스테이블 디퓨전 하이퍼네트워크 모듈 분석 Overview | 개요 The Hypernetworks module in Stable Diffusion provides a powerful mechanism for fine-tuning and customizing the base model’s...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/05/audiocraft-framework-structure/">
+          <h2 class="post-title">AudioCraft 프레임워크 구조 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 5, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Audio Generation</li></ul></div>
+        <div class="post">AudioCraft 프레임워크 구조 분석 AudioCraft는 Meta Platforms에서 개발한 오디오 생성 모델을 위한 종합적인 프레임워크입니다. 이 글에서는 AudioCraft의 디렉토리 구조와 주요 컴포넌트에 대해 자세히 살펴보겠습니다. 디렉토리 구조 AudioCraft의 주요 디렉토리 구조는...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/05/audiocraft-discriminators-detailed-analysis/">
+          <h2 class="post-title">AudioCraft의 판별자(Discriminators) 상세 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 5, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Audio Generation</li><li>Adversarial Learning</li></ul></div>
+        <div class="post">AudioCraft의 판별자(Discriminators) 상세 분석 AudioCraft 프레임워크의 adversarial/discriminators 모듈은 오디오 생성의 품질을 평가하고 향상시키기 위한 다양한 판별자(Discriminator) 아키텍처를 제공합니다. 이 글에서는 각 판별자의 구조와 특징에 대해 자세히 살펴보겠습니다. 모듈 구조 audiocraft/adversarial/discriminators/...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/05/audiocraft-adversarial-module-analysis/">
+          <h2 class="post-title">AudioCraft의 적대적 학습(Adversarial) 모듈 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 5, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Audio Generation</li><li>Adversarial Learning</li></ul></div>
+        <div class="post">AudioCraft의 적대적 학습(Adversarial) 모듈 분석 AudioCraft 프레임워크의 adversarial 모듈은 오디오 생성 모델의 품질을 향상시키기 위한 적대적 학습(Adversarial Learning) 기능을 제공합니다. 이 글에서는 이 모듈의 구조와 주요 기능에 대해 자세히 살펴보겠습니다....</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/03/audiocraft-docker-build/">
+          <h2 class="post-title">Audiocraft Docker 빌드 설치</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 3, 2024
+          </div><ul class="post-categories"><li>audiocraft</li></ul></div>
+        <div class="post">Audiocraft를 Docker 환경에서 실행하기 위한 빌드 환경 설정 방법을 안내해드리겠습니다. 사전 요구사항 Docker가 설치되어 있어야 합니다. Git이 설치되어 있어야 합니다. 최소 8GB 이상의 RAM이 필요합니다. CUDA 지원 GPU가 권장됩니다. Docker...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/04/01/taming-transformers-implementation-analysis/">
+          <h2 class="post-title">Taming Transformers 구현체 상세 분석 | Detailed Analysis of Taming Transformers Implementation</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Apr 1, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">Taming Transformers 구현체 상세 분석 Detailed Analysis of Taming Transformers Implementation 이 문서에서는 repositories/taming-transformers 디렉토리에 있는 Taming Transformers 모델의 구현체에 대해 상세히 분석합니다. This document provides a detailed analysis of...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/29/opensora-performance-optimization/">
+          <h2 class="post-title">Open-Sora 성능 최적화 완벽 가이드: CUDA 메모리부터 Flash Attention까지</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 29, 2024
+          </div><ul class="post-categories"><li>AI</li><li>Performance</li><li>GPU Computing</li></ul></div>
+        <div class="post">개요 AI 비디오 생성은 막대한 계산 리소스를 요구합니다. Open-Sora는 11B 파라미터 모델로 768px 비디오를 생성할 때 80GB 이상의 GPU 메모리가 필요할 수 있습니다. 이번 포스트에서는 Open-Sora가 사용하는 다양한 성능 최적화...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/29/stable-diffusion-implementation-analysis/">
+          <h2 class="post-title">Stable Diffusion 구현체 상세 분석 | Detailed Analysis of Stable Diffusion Implementation</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 29, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">Stable Diffusion 구현체 상세 분석 Detailed Analysis of Stable Diffusion Implementation 이 문서에서는 repositories/stablediffusion 디렉토리에 있는 Stable Diffusion 모델의 구현체에 대해 상세히 분석합니다. This document provides a detailed analysis of...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/28/k-diffusion-implementation-analysis/">
+          <h2 class="post-title">K-Diffusion 구현체 상세 분석 | Detailed Analysis of K-Diffusion Implementation</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 28, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">K-Diffusion 구현체 상세 분석 Detailed Analysis of K-Diffusion Implementation 이 문서에서는 repositories/k-diffusion 디렉토리에 있는 K-Diffusion 모델의 구현체에 대해 상세히 분석합니다. This document provides a detailed analysis of the K-Diffusion model...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/27/generative-models-implementation-analysis/">
+          <h2 class="post-title">Generative Models 구현체 상세 분석 | Detailed Analysis of Generative Models Implementation</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 27, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">Generative Models 구현체 상세 분석 Detailed Analysis of Generative Models Implementation 이 문서에서는 repositories/generative-models 디렉토리에 있는 다양한 생성 모델들의 구현체에 대해 상세히 분석합니다. This document provides a detailed analysis of...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/27/blip-implementation-analysis/">
+          <h2 class="post-title">BLIP (Bootstrapping Language-Image Pre-training) 구현체 분석 / Implementation Analysis</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 27, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">BLIP (Bootstrapping Language-Image Pre-training) 구현체 분석 / Implementation Analysis 이 문서에서는 repositories/BLIP 디렉토리에 있는 BLIP 모델의 구현체에 대해 상세히 분석합니다. This document provides a detailed analysis of the BLIP model...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/26/langchain-introduction/">
+          <h2 class="post-title">LangChain 소개: LLM 애플리케이션 개발을 위한 프레임워크 | Introduction to LangChain: A Framework for LLM Application Development</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 26, 2024
+          </div><ul class="post-categories"><li>LangChain</li></ul></div>
+        <div class="post">LangChain 소개: LLM 애플리케이션 개발을 위한 프레임워크 Introduction to LangChain: A Framework for LLM Application Development graph TB subgraph "LangChain Framework Architecture" A[LangChain Core] --&gt; B[Models] A --&gt; C[Prompts] A...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/25/stable-diffusion-core-implementation/">
+          <h2 class="post-title">Stable Diffusion 핵심 구현체 상세 분석</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 25, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">Stable Diffusion 핵심 구현체 상세 분석 graph TB subgraph "Stable Diffusion Architecture" A[Text Input] --&gt; B[Text Encoder] C[Random Noise] --&gt; D[U-Net Denoiser] B --&gt; D D --&gt; E[Denoised Latents] E...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/25/project-structure/">
+          <h2 class="post-title">Stable Diffusion WebUI Docker 프로젝트 구조 상세 설명</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 25, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">Stable Diffusion WebUI Docker 프로젝트 구조 상세 설명 이 문서에서는 Stable Diffusion WebUI Docker 프로젝트의 모든 폴더와 파일에 대한 상세한 설명을 제공합니다. 1. 핵심 디렉토리 구조 models/ Stable Diffusion 모델...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/23/sora-docker-project/">
+          <h2 class="post-title">Sora Docker Project: Running Open-Sora in a Container | Sora Docker 프로젝트: 컨테이너에서 Open-Sora 실행하기</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 23, 2024
+          </div><ul class="post-categories"><li>Blog</li></ul></div>
+        <div class="post">Sora Docker Project: Running Open-Sora in a Container | Sora Docker 프로젝트: 컨테이너에서 Open-Sora 실행하기 Open-Sora is an open-source initiative dedicated to efficiently producing high-quality video content. This project provides...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/22/ollama-docker-build-fix/">
+          <h2 class="post-title">Ollama Docker 빌드 오류 해결하기 / Fixing Ollama Docker Build Errors</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 22, 2024
+          </div><ul class="post-categories"><li>Docker</li><li>AI</li><li>Troubleshooting</li></ul></div>
+        <div class="post">Ollama Docker 빌드 오류 해결하기 / Fixing Ollama Docker Build Errors 최근 Ollama 프로젝트의 Docker 빌드 과정에서 발생한 오류를 해결한 경험을 공유하고자 합니다. 이 글에서는 Docker 빌드 과정에서 마주친 문제들과...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/21/sora-hardware-guide/">
+          <h2 class="post-title">Sora 하드웨어 가이드 / Sora Hardware Guide</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 21, 2024
+          </div><ul class="post-categories"><li>Blog</li></ul></div>
+        <div class="post">OpenAI Sora 실행을 위한 하드웨어 가이드 Hardware Guide for Running OpenAI Sora OpenAI의 Sora는 텍스트 프롬프트를 기반으로 고품질 비디오를 생성하는 혁신적인 AI 모델입니다. 이 글에서는 Sora를 실행하기 위한 하드웨어 요구사항과...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/21/stable-diffusion-hardware-guide/">
+          <h2 class="post-title">Stable Diffusion 하드웨어 가이드 / Hardware Guide</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 21, 2024
+          </div><ul class="post-categories"><li>stable-diffusion</li></ul></div>
+        <div class="post">Stable Diffusion 실행을 위한 하드웨어 가이드 Hardware Guide for Running Stable Diffusion Stable Diffusion은 텍스트로부터 이미지를 생성하는 강력한 AI 모델입니다. 이 모델을 효율적으로 실행하기 위해서는 적절한 하드웨어 구성이 필요합니다. 이...</div>
+      </li><li class="post-item"><a class="post-link" href="/ai-blog/2024/03/21/hello-world/">
+          <h2 class="post-title">AI 기술 블로그 시작하기 | Starting an AI Technology Blog</h2>
+        </a>
+        <div class="post-meta">
+          <div class="post-date">
+            <i class="icon-calendar"></i>
+            Mar 21, 2024
+          </div><ul class="post-categories"><li>Blog</li></ul></div>
+        <div class="post">안녕하세요! 이 블로그는 AI와 관련된 최신 기술 트렌드와 정보를 공유하는 공간입니다. Hello! This blog is a space for sharing the latest AI technology trends and information. 블로그의 주요 주제 |...</div>
+      </li></ul>
+
+  <!-- 페이지네이션 컨트롤 -->
+  <div class="pagination" id="pagination">
+    <button id="first-page" class="nav-btn">처음</button>
+    <button id="prev-page" class="nav-btn">이전</button>
+    <span class="page-info" id="page-info">페이지 1 / 1</span>
+    <button id="next-page" class="nav-btn">다음</button>
+    <button id="last-page" class="nav-btn">마지막</button>
+  </div>
+
+  <!-- 페이지네이션 JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const postsPerPage = 10;
+      const posts = document.querySelectorAll('.post-item');
+      const totalPosts = posts.length;
+      const totalPages = Math.ceil(totalPosts / postsPerPage);
+      let currentPage = 1;
+
+      const firstBtn = document.getElementById('first-page');
+      const prevBtn = document.getElementById('prev-page');
+      const nextBtn = document.getElementById('next-page');
+      const lastBtn = document.getElementById('last-page');
+      const pageInfo = document.getElementById('page-info');
+
+      function showPage(page) {
+        posts.forEach((post, index) => {
+          const startIndex = (page - 1) * postsPerPage;
+          const endIndex = startIndex + postsPerPage;
+
+          if (index >= startIndex && index < endIndex) {
+            post.style.display = 'block';
+          } else {
+            post.style.display = 'none';
+          }
+        });
+
+        pageInfo.textContent = `페이지 ${page} / ${totalPages}`;
+
+        // 버튼 상태 업데이트
+        firstBtn.disabled = page === 1;
+        prevBtn.disabled = page === 1;
+        nextBtn.disabled = page === totalPages;
+        lastBtn.disabled = page === totalPages;
+
+        currentPage = page;
+
+        // URL 업데이트 (선택사항)
+        const url = page === 1 ? '/' : `/page${page}`;
+        history.replaceState(null, '', url);
+      }
+
+      // 이벤트 리스너
+      firstBtn.addEventListener('click', () => showPage(1));
+      prevBtn.addEventListener('click', () => showPage(Math.max(1, currentPage - 1)));
+      nextBtn.addEventListener('click', () => showPage(Math.min(totalPages, currentPage + 1)));
+      lastBtn.addEventListener('click', () => showPage(totalPages));
+
+      // 초기 페이지 로드
+      showPage(1);
+
+      // 페이지네이션이 필요 없으면 숨기기
+      if (totalPages <= 1) {
+        document.getElementById('pagination').style.display = 'none';
+      }
+    });
+  </script>
+
+  <!-- <p class="feed-subscribe"><svg class="svg-icon orange">
+		<use xlink:href="/ai-blog/assets/minima-social-icons.svg#rss"></use>
+	</svg><a href="/ai-blog/feed.xml">Subscribe</a></p> -->
+    </section>
+    <footer class="">
+      <ul class="social about-footer "><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer ">&copy;
+        2025</p><div class="about-footer ">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

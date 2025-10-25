@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Slips 정보 유출 탐지 모듈 상세 분석 | AI Development Blog</title>
+<meta name="description" content="Slips 정보 유출 탐지 모듈 상세 분석정보 유출 탐지 모듈은 Slips의 데이터 유출 탐지와 방지를 담당하는 핵심 컴포넌트입니다. 이 글에서는 정보 유출 탐지 모듈의 구현과 주요 기능에 대해 살펴보겠습니다.1. 정보 유출 탐지 모듈 개요정보 유출 탐지 모듈은 네트워크 트래픽에서...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="data-leakage, security, network-analysis">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/04/08/slips-leak-detector-module/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Slips 정보 유출 탐지 모듈 상세 분석">
+<meta property="og:description" content="Slips 정보 유출 탐지 모듈 상세 분석정보 유출 탐지 모듈은 Slips의 데이터 유출 탐지와 방지를 담당하는 핵심 컴포넌트입니다. 이 글에서는 정보 유출 탐지 모듈의 구현과 주요 기능에 대해 살펴보겠습니다.1. 정보 유출 탐지 모듈 개요정보 유출 탐지 모듈은 네트워크 트래픽에서...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/04/08/slips-leak-detector-module/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Slips 정보 유출 탐지 모듈 상세 분석">
+<meta name="twitter:description" content="Slips 정보 유출 탐지 모듈 상세 분석정보 유출 탐지 모듈은 Slips의 데이터 유출 탐지와 방지를 담당하는 핵심 컴포넌트입니다. 이 글에서는 정보 유출 탐지 모듈의 구현과 주요 기능에 대해 살펴보겠습니다.1. 정보 유출 탐지 모듈 개요정보 유출 탐지 모듈은 네트워크 트래픽에서...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Slips 정보 유출 탐지 모듈 상세 분석",
+  "description": "Slips 정보 유출 탐지 모듈 상세 분석
+
+정보 유출 탐지 모듈은 Slips의 데이터 유출 탐지와 방지를 담당하는 핵심 컴포넌트입니다. 이 글에서는 정보 유출 탐지 모듈의 구현과 주요 기능에 대해 살펴보겠습니다.
+
+1. 정보 유출 탐지 모듈 개요
+
+정보 유출 탐지 모듈은 네트워크...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-04-08T03:30:00+00:00",
+  "dateModified": "2024-04-08T03:30:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/04/08/slips-leak-detector-module/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/04/08/slips-leak-detector-module/",
+  "inLanguage": "ko",
+  "keywords": ["data-leakage","security","network-analysis"],
+  "articleSection": ["network-analysis"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Slips 정보 유출 탐지 모듈 상세 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Slips 정보 유출 탐지 모듈 상세 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-04-08T03:30:00+00:00">Apr 8, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>network-analysis</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="slips-정보-유출-탐지-모듈-상세-분석">Slips 정보 유출 탐지 모듈 상세 분석</h1>
+
+<p>정보 유출 탐지 모듈은 Slips의 데이터 유출 탐지와 방지를 담당하는 핵심 컴포넌트입니다. 이 글에서는 정보 유출 탐지 모듈의 구현과 주요 기능에 대해 살펴보겠습니다.</p>
+
+<h2 id="1-정보-유출-탐지-모듈-개요">1. 정보 유출 탐지 모듈 개요</h2>
+
+<p>정보 유출 탐지 모듈은 네트워크 트래픽에서 민감한 정보의 유출을 실시간으로 탐지하는 역할을 합니다. 주요 기능은 다음과 같습니다:</p>
+
+<ul>
+  <li>민감한 정보 패턴 탐지</li>
+  <li>데이터 유출 시도 감지</li>
+  <li>실시간 알림 생성</li>
+  <li>유출 방지 정책 적용</li>
+</ul>
+
+<h2 id="2-주요-기능">2. 주요 기능</h2>
+
+<h3 id="21-민감한-정보-탐지">2.1 민감한 정보 탐지</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">LeakDetector</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">sensitive_patterns</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">detection_rules</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">leak_attempts</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">detect_sensitive_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flow</span><span class="p">):</span>
+        <span class="s">"""
+        네트워크 트래픽에서 민감한 정보를 탐지합니다.
+        
+        Args:
+            flow (dict): 네트워크 플로우 데이터
+        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># 패킷 데이터 추출
+</span>            <span class="n">packet_data</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">extract_packet_data</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
+            
+            <span class="c1"># 민감한 정보 패턴 검색
+</span>            <span class="k">for</span> <span class="n">pattern_name</span><span class="p">,</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">sensitive_patterns</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">search_pattern</span><span class="p">(</span><span class="n">packet_data</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">matches</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">.</span><span class="n">handle_sensitive_data_detection</span><span class="p">(</span><span class="n">flow</span><span class="p">,</span> <span class="n">pattern_name</span><span class="p">,</span> <span class="n">matches</span><span class="p">)</span>
+                    
+            <span class="c1"># 데이터 유출 시도 검증
+</span>            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">is_data_leak_attempt</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">handle_leak_attempt</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"민감한 정보 탐지 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="22-데이터-유출-시도-감지">2.2 데이터 유출 시도 감지</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">is_data_leak_attempt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flow</span><span class="p">):</span>
+    <span class="s">"""
+    데이터 유출 시도를 감지합니다.
+    
+    Args:
+        flow (dict): 네트워크 플로우 데이터
+    
+    Returns:
+        bool: 유출 시도 여부
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 대용량 데이터 전송 확인
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">is_large_data_transfer</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+            
+        <span class="c1"># 비정상적인 프로토콜 사용 확인
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">is_suspicious_protocol</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+            
+        <span class="c1"># 암호화되지 않은 민감한 데이터 전송 확인
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">is_unencrypted_sensitive_data</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+            
+        <span class="c1"># 비정상적인 시간대 통신 확인
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">is_off_hours_communication</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+            
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"유출 시도 감지 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<h3 id="23-유출-방지-정책-적용">2.3 유출 방지 정책 적용</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">apply_prevention_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flow</span><span class="p">):</span>
+    <span class="s">"""
+    데이터 유출 방지 정책을 적용합니다.
+    
+    Args:
+        flow (dict): 네트워크 플로우 데이터
+    
+    Returns:
+        dict: 정책 적용 결과
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">'blocked'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+            <span class="s">'action_taken'</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+            <span class="s">'reason'</span><span class="p">:</span> <span class="bp">None</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># 유출 시도 확인
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">is_data_leak_attempt</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
+            <span class="c1"># 차단할지 여부 조건
+</span>            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">should_block_flow</span><span class="p">(</span><span class="n">flow</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">block_flow</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">'blocked'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">'action_taken'</span><span class="p">]</span> <span class="o">=</span> <span class="s">'block'</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">'reason'</span><span class="p">]</span> <span class="o">=</span> <span class="s">'data_leak_attempt'</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">log_flow</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">'action_taken'</span><span class="p">]</span> <span class="o">=</span> <span class="s">'log'</span>
+                <span class="n">result</span><span class="p">[</span><span class="s">'reason'</span><span class="p">]</span> <span class="o">=</span> <span class="s">'suspicious_activity'</span>
+                
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"방지 정책 적용 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<h2 id="3-패턴-관리">3. 패턴 관리</h2>
+
+<h3 id="31-패턴-업데이트">3.1 패턴 업데이트</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">update_sensitive_patterns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_patterns</span><span class="p">):</span>
+    <span class="s">"""
+    민감한 정보 패턴을 업데이트합니다.
+    
+    Args:
+        new_patterns (dict): 새로운 패턴
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pattern_name</span><span class="p">,</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">new_patterns</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># 패턴 유효성 검증
+</span>            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">validate_pattern</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">sensitive_patterns</span><span class="p">[</span><span class="n">pattern_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pattern</span>
+                
+        <span class="c1"># 패턴 저장
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">store_patterns</span><span class="p">()</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"패턴 업데이트 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="32-패턴-검색">3.2 패턴 검색</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">search_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+    <span class="s">"""
+    데이터에서 패턴을 검색합니다.
+    
+    Args:
+        data (str): 검색할 데이터
+        pattern (str): 검색할 패턴
+    
+    Returns:
+        list: 검색 결과
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># 정규식 패턴 검색
+</span>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="p">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="c1"># 머신러닝 기반 패턴 검색
+</span>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">ml_pattern_search</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="p">[</span><span class="n">match</span><span class="p">.</span><span class="n">group</span><span class="p">()</span> <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">]</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"패턴 검색 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</code></pre></div></div>
+
+<h2 id="4-데이터-관리">4. 데이터 관리</h2>
+
+<h3 id="41-탐지-결과-저장">4.1 탐지 결과 저장</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">store_detection_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+    <span class="s">"""
+    탐지 결과를 저장합니다.
+    
+    Args:
+        results (dict): 저장할 탐지 결과
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="nb">set</span><span class="p">(</span><span class="s">'leak_detection_results'</span><span class="p">,</span> <span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"탐지 결과 저장 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="42-탐지-결과-검색">4.2 탐지 결과 검색</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">search_detection_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+    <span class="s">"""
+    탐지 결과를 검색합니다.
+    
+    Args:
+        query (dict): 검색 쿼리
+    
+    Returns:
+        list: 검색 결과
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">detection_results</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">db</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'leak_detection_results'</span><span class="p">))</span>
+        
+        <span class="k">for</span> <span class="n">flow_id</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">detection_results</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">_matches_query</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+                <span class="n">results</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                
+        <span class="k">return</span> <span class="n">results</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"탐지 결과 검색 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</code></pre></div></div>
+
+<h2 id="5-성능-최적화">5. 성능 최적화</h2>
+
+<h3 id="51-패턴-컴파일">5.1 패턴 컴파일</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">compile_patterns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="s">"""
+    정규식 패턴을 컴파일합니다.
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pattern_name</span><span class="p">,</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">sensitive_patterns</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">sensitive_patterns</span><span class="p">[</span><span class="n">pattern_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"패턴 컴파일 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="52-캐싱">5.2 캐싱</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">cache_detection_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="mi">3600</span><span class="p">):</span>
+    <span class="s">"""
+    탐지 결과를 캐시합니다.
+    
+    Args:
+        results (dict): 캐시할 탐지 결과
+        ttl (int): 캐시 유효 기간(초)
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">redis</span><span class="p">.</span><span class="n">setex</span><span class="p">(</span><span class="s">'leak_detection_cache'</span><span class="p">,</span> <span class="n">ttl</span><span class="p">,</span> <span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"탐지 결과 캐싱 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="6-민감한-정보-유형">6. 민감한 정보 유형</h2>
+
+<h3 id="61-개인정보">6.1 개인정보</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">PERSONAL_DATA_PATTERNS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'ssn'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'\d{3}-\d{2}-\d{4}'</span><span class="p">,</span>  <span class="c1"># 주민등록번호
+</span>    <span class="s">'credit_card'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}'</span><span class="p">,</span>  <span class="c1"># 신용카드번호
+</span>    <span class="s">'email'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'</span><span class="p">,</span>  <span class="c1"># 이메일
+</span>    <span class="s">'phone'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'01[0-9]-\d{4}-\d{4}'</span><span class="p">,</span>  <span class="c1"># 휴대폰번호
+</span>    <span class="s">'passport'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'[A-Z]\d{8}'</span>  <span class="c1"># 여권번호
+</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="62-기업정보">6.2 기업정보</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CORPORATE_DATA_PATTERNS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'api_key'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'[A-Za-z0-9]{32,}'</span><span class="p">,</span>  <span class="c1"># API 키
+</span>    <span class="s">'password'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'password["\s]*[:=]["\s]*\w+'</span><span class="p">,</span>  <span class="c1"># 비밀번호
+</span>    <span class="s">'token'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'token["\s]*[:=]["\s]*[A-Za-z0-9]+'</span><span class="p">,</span>  <span class="c1"># 토큰
+</span>    <span class="s">'database_url'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'mysql://.*|postgresql://.*'</span><span class="p">,</span>  <span class="c1"># 데이터베이스 연결정보
+</span>    <span class="s">'ip_address'</span><span class="p">:</span> <span class="sa">r</span><span class="s">'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b'</span>  <span class="c1"># IP 주소
+</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="7-알림-시스템">7. 알림 시스템</h2>
+
+<h3 id="71-실시간-알림">7.1 실시간 알림</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">send_alert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alert_type</span><span class="p">,</span> <span class="n">flow_data</span><span class="p">,</span> <span class="n">severity</span><span class="o">=</span><span class="s">'medium'</span><span class="p">):</span>
+    <span class="s">"""
+    실시간 알림을 전송합니다.
+    
+    Args:
+        alert_type (str): 알림 유형
+        flow_data (dict): 플로우 데이터
+        severity (str): 심각도
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">alert</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">'timestamp'</span><span class="p">:</span> <span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">().</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="s">'type'</span><span class="p">:</span> <span class="n">alert_type</span><span class="p">,</span>
+            <span class="s">'severity'</span><span class="p">:</span> <span class="n">severity</span><span class="p">,</span>
+            <span class="s">'source_ip'</span><span class="p">:</span> <span class="n">flow_data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'src_ip'</span><span class="p">),</span>
+            <span class="s">'destination_ip'</span><span class="p">:</span> <span class="n">flow_data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'dst_ip'</span><span class="p">),</span>
+            <span class="s">'data_size'</span><span class="p">:</span> <span class="n">flow_data</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'bytes'</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="s">'description'</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_alert_description</span><span class="p">(</span><span class="n">alert_type</span><span class="p">)</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># 알림 전송
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">notification_manager</span><span class="p">.</span><span class="n">send_alert</span><span class="p">(</span><span class="n">alert</span><span class="p">)</span>
+        
+        <span class="c1"># 알림 로그 저장
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">log_alert</span><span class="p">(</span><span class="n">alert</span><span class="p">)</span>
+        
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"알림 전송 실패: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="8-결론">8. 결론</h2>
+
+<p>정보 유출 탐지 모듈은 Slips의 데이터 보안을 강화하는 중요한 컴포넌트입니다. 주요 장점은 다음과 같습니다:</p>
+
+<ul>
+  <li>실시간 민감한 정보 탐지</li>
+  <li>데이터 유출 시도 감지</li>
+  <li>유출 방지 정책 적용</li>
+  <li>효율적인 패턴 관리</li>
+</ul>
+
+<p>이러한 기능들은 Slips가 데이터 유출을 효과적으로 탐지하고 방지할 수 있도록 지원합니다.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/04/07/ldm-module-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Latent Diffusion Models (LDM) Module Analysis /...</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/04/08/slips-network-discovery-module/" rel="next">
+          <span class="nav-title">Slips 네트워크 발견 모듈 상세 분석</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

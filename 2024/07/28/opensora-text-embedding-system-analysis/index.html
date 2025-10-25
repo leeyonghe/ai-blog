@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Open-Sora 텍스트 임베딩 시스템 상세 분석 - T5/CLIP 통합 및 Shardformer 최적화 | AI Development Blog</title>
+<meta name="description" content="개요Open-Sora는 텍스트 프롬프트를 기반으로 고품질 비디오를 생성하는 AI 모델로, 텍스트 이해와 임베딩 생성이 핵심적인 역할을 합니다. 이번 포스트에서는 Open-Sora의 텍스트 임베딩 시스템을 상세히 분석하여 T5와 CLIP 모델의 통합, HFEmbedder 클래스의 구...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="opensora, text-embedding, t5, clip, shardformer, transformer, optimization">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/07/28/opensora-text-embedding-system-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Open-Sora 텍스트 임베딩 시스템 상세 분석 - T5/CLIP 통합 및 Shardformer 최적화">
+<meta property="og:description" content="개요Open-Sora는 텍스트 프롬프트를 기반으로 고품질 비디오를 생성하는 AI 모델로, 텍스트 이해와 임베딩 생성이 핵심적인 역할을 합니다. 이번 포스트에서는 Open-Sora의 텍스트 임베딩 시스템을 상세히 분석하여 T5와 CLIP 모델의 통합, HFEmbedder 클래스의 구...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/07/28/opensora-text-embedding-system-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Open-Sora 텍스트 임베딩 시스템 상세 분석 - T5/CLIP 통합 및 Shardformer 최적화">
+<meta name="twitter:description" content="개요Open-Sora는 텍스트 프롬프트를 기반으로 고품질 비디오를 생성하는 AI 모델로, 텍스트 이해와 임베딩 생성이 핵심적인 역할을 합니다. 이번 포스트에서는 Open-Sora의 텍스트 임베딩 시스템을 상세히 분석하여 T5와 CLIP 모델의 통합, HFEmbedder 클래스의 구...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Open-Sora 텍스트 임베딩 시스템 상세 분석 - T5/CLIP 통합 및 Shardformer 최적화",
+  "description": "개요
+
+Open-Sora는 텍스트 프롬프트를 기반으로 고품질 비디오를 생성하는 AI 모델로, 텍스트 이해와 임베딩 생성이 핵심적인 역할을 합니다. 이번 포스트에서는 Open-Sora의 텍스트 임베딩 시스템을 상세히 분석하여 T5와 CLIP 모델의 통합, HFEmbedder 클래스의...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-07-28T08:00:00+00:00",
+  "dateModified": "2024-07-28T08:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/07/28/opensora-text-embedding-system-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/07/28/opensora-text-embedding-system-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["opensora","text-embedding","t5","clip","shardformer","transformer","optimization"],
+  "articleSection": ["AI","Video Generation","Text Processing","Performance Optimization"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Open-Sora 텍스트 임베딩 시스템 상세 분석 - T5/CLIP 통합 및 Shardformer 최적화</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Open-Sora 텍스트 임베딩 시스템 상세 분석 - T5/CLIP 통합 및 Shardformer 최적화</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-07-28T08:00:00+00:00">Jul 28, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Video Generation</li><li>Text Processing</li><li>Performance Optimization</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>Open-Sora는 텍스트 프롬프트를 기반으로 고품질 비디오를 생성하는 AI 모델로, 텍스트 이해와 임베딩 생성이 핵심적인 역할을 합니다. 이번 포스트에서는 Open-Sora의 텍스트 임베딩 시스템을 상세히 분석하여 T5와 CLIP 모델의 통합, HFEmbedder 클래스의 구현, Shardformer를 통한 성능 최적화 등을 살펴보겠습니다.</p>
+
+<h2 id="1-텍스트-임베딩-시스템-아키텍처">1. 텍스트 임베딩 시스템 아키텍처</h2>
+
+<h3 id="11-전체-구조-개요">1.1 전체 구조 개요</h3>
+
+<p>Open-Sora의 텍스트 임베딩 시스템은 다음과 같은 구조로 이루어져 있습니다:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Text Input (Prompt)
+    ↓
+HFEmbedder (T5/CLIP Support)
+    ↓
+┌─────────────────┬─────────────────┐
+│    T5 Model     │   CLIP Model    │
+│   (Detailed     │   (Global       │
+│   Description)  │   Vector)       │
+└─────────────────┴─────────────────┘
+    ↓                      ↓
+T5 Text Embeddings    CLIP Vector
+    ↓                      ↓
+DiT (Diffusion Transformer) Model
+</code></pre></div></div>
+
+<h3 id="12-핵심-컴포넌트">1.2 핵심 컴포넌트</h3>
+
+<ol>
+  <li><strong>HFEmbedder</strong>: T5와 CLIP 모델을 통합한 임베딩 클래스</li>
+  <li><strong>T5EncoderPolicy</strong>: Shardformer를 통한 T5 최적화 정책</li>
+  <li><strong>Text Sampling Utils</strong>: 텍스트 전처리 및 임베딩 준비</li>
+</ol>
+
+<h2 id="2-hfembedder-클래스-상세-분석">2. HFEmbedder 클래스 상세 분석</h2>
+
+<h3 id="21-클래스-구조-및-초기화">2.1 클래스 구조 및 초기화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># opensora/models/text/conditioner.py
+</span><span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">CLIPTextModel</span><span class="p">,</span> <span class="n">CLIPTokenizer</span><span class="p">,</span> <span class="n">T5EncoderModel</span><span class="p">,</span> <span class="n">T5Tokenizer</span>
+
+<span class="k">class</span> <span class="nc">HFEmbedder</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_pretrained</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">512</span><span class="p">,</span> <span class="n">hf_module</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">"T5EncoderModel"</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="s">"last_hidden_state"</span>
+        
+        <span class="k">if</span> <span class="n">hf_module</span> <span class="o">==</span> <span class="s">"CLIPTextModel"</span><span class="p">:</span>
+            <span class="c1"># CLIP 모델 초기화
+</span>            <span class="bp">self</span><span class="p">.</span><span class="n">hf_module</span><span class="p">:</span> <span class="n">CLIPTextModel</span> <span class="o">=</span> <span class="n">CLIPTextModel</span><span class="p">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">from_pretrained</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">:</span> <span class="n">CLIPTokenizer</span> <span class="o">=</span> <span class="n">CLIPTokenizer</span><span class="p">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">from_pretrained</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">max_length</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="s">"pooler_output"</span>
+        
+        <span class="k">elif</span> <span class="n">hf_module</span> <span class="o">==</span> <span class="s">"T5EncoderModel"</span><span class="p">:</span>
+            <span class="c1"># T5 모델 초기화
+</span>            <span class="bp">self</span><span class="p">.</span><span class="n">hf_module</span><span class="p">:</span> <span class="n">T5EncoderModel</span> <span class="o">=</span> <span class="n">T5EncoderModel</span><span class="p">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">from_pretrained</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">:</span> <span class="n">T5Tokenizer</span> <span class="o">=</span> <span class="n">T5Tokenizer</span><span class="p">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+                <span class="n">from_pretrained</span><span class="p">,</span> <span class="n">model_max_length</span><span class="o">=</span><span class="n">max_length</span><span class="p">,</span> <span class="n">legacy</span><span class="o">=</span><span class="bp">False</span>
+            <span class="p">)</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">hf_module</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">hf_module</span><span class="p">.</span><span class="nb">eval</span><span class="p">().</span><span class="n">requires_grad_</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>주요 특징:</strong></p>
+<ul>
+  <li><strong>모델 선택</strong>: T5EncoderModel 또는 CLIPTextModel 지원</li>
+  <li><strong>토크나이저 통합</strong>: 각 모델에 맞는 토크나이저 자동 설정</li>
+  <li><strong>출력 키 설정</strong>: T5는 <code class="language-plaintext highlighter-rouge">last_hidden_state</code>, CLIP은 <code class="language-plaintext highlighter-rouge">pooler_output</code> 사용</li>
+  <li><strong>Gradient 비활성화</strong>: 추론 전용으로 설정하여 메모리 절약</li>
+</ul>
+
+<h3 id="22-forward-메서드-구현">2.2 Forward 메서드 구현</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">added_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">seq_align</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="s">"""
+    텍스트를 임베딩으로 변환
+    
+    Args:
+        text: 입력 텍스트 리스트
+        added_tokens: 추가 토큰 수 (이미지 패치 수와 정렬용)
+        seq_align: 시퀀스 정렬 단위
+    """</span>
+    <span class="c1"># 토큰화 수행
+</span>    <span class="n">batch_encoding</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">,</span>
+        <span class="n">truncation</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">model_max_length</span><span class="p">,</span>
+        <span class="n">return_length</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">return_overflowing_tokens</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">padding</span><span class="o">=</span><span class="s">"max_length"</span><span class="p">,</span>
+        <span class="n">return_tensors</span><span class="o">=</span><span class="s">"pt"</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 시퀀스 정렬을 위한 패딩 조정
+</span>    <span class="n">seq_len</span> <span class="o">=</span> <span class="n">batch_encoding</span><span class="p">[</span><span class="s">"input_ids"</span><span class="p">].</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">added_tokens</span> <span class="o">+</span> <span class="n">seq_len</span><span class="p">)</span> <span class="o">%</span> <span class="n">seq_align</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">num_pad_tokens</span> <span class="o">=</span> <span class="n">seq_align</span> <span class="o">-</span> <span class="p">(</span><span class="n">added_tokens</span> <span class="o">+</span> <span class="n">seq_len</span><span class="p">)</span> <span class="o">%</span> <span class="n">seq_align</span>
+        <span class="n">batch_encoding</span><span class="p">[</span><span class="s">"input_ids"</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">functional</span><span class="p">.</span><span class="n">pad</span><span class="p">(</span>
+            <span class="n">batch_encoding</span><span class="p">[</span><span class="s">"input_ids"</span><span class="p">],</span> 
+            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_pad_tokens</span><span class="p">),</span> 
+            <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">pad_token_id</span>
+        <span class="p">)</span>
+
+    <span class="c1"># 모델 추론 수행
+</span>    <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">hf_module</span><span class="p">(</span>
+        <span class="n">input_ids</span><span class="o">=</span><span class="n">batch_encoding</span><span class="p">[</span><span class="s">"input_ids"</span><span class="p">].</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">hf_module</span><span class="p">.</span><span class="n">device</span><span class="p">),</span>
+        <span class="n">attention_mask</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">output_hidden_states</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">outputs</span><span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">output_key</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p><strong>핵심 기능:</strong></p>
+<ol>
+  <li><strong>토큰화</strong>: 텍스트를 토큰 ID로 변환</li>
+  <li><strong>시퀀스 정렬</strong>: 이미지 패치와 정렬을 위한 패딩 조정</li>
+  <li><strong>임베딩 생성</strong>: 토큰을 고차원 벡터로 변환</li>
+</ol>
+
+<h3 id="23-시퀀스-정렬-메커니즘">2.3 시퀀스 정렬 메커니즘</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 시퀀스 정렬 계산 로직
+</span><span class="n">seq_len</span> <span class="o">=</span> <span class="n">batch_encoding</span><span class="p">[</span><span class="s">"input_ids"</span><span class="p">].</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">total_len</span> <span class="o">=</span> <span class="n">added_tokens</span> <span class="o">+</span> <span class="n">seq_len</span>
+
+<span class="k">if</span> <span class="n">total_len</span> <span class="o">%</span> <span class="n">seq_align</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="c1"># seq_align 단위로 맞추기 위한 패딩 토큰 수 계산
+</span>    <span class="n">num_pad_tokens</span> <span class="o">=</span> <span class="n">seq_align</span> <span class="o">-</span> <span class="p">(</span><span class="n">total_len</span> <span class="o">%</span> <span class="n">seq_align</span><span class="p">)</span>
+    
+    <span class="c1"># 패딩 토큰 추가
+</span>    <span class="n">batch_encoding</span><span class="p">[</span><span class="s">"input_ids"</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">functional</span><span class="p">.</span><span class="n">pad</span><span class="p">(</span>
+        <span class="n">batch_encoding</span><span class="p">[</span><span class="s">"input_ids"</span><span class="p">],</span> 
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_pad_tokens</span><span class="p">),</span> 
+        <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span><span class="p">.</span><span class="n">pad_token_id</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<p>이 메커니즘은 텍스트 시퀀스와 이미지 패치 시퀀스 간의 정렬을 보장합니다.</p>
+
+<h2 id="3-t5-모델-최적화---shardformer-분석">3. T5 모델 최적화 - Shardformer 분석</h2>
+
+<h3 id="31-t5encoderpolicy-클래스">3.1 T5EncoderPolicy 클래스</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># opensora/acceleration/shardformer/policy/t5_encoder.py
+</span><span class="kn">from</span> <span class="nn">colossalai.shardformer.modeling.jit</span> <span class="kn">import</span> <span class="n">get_jit_fused_dropout_add_func</span>
+<span class="kn">from</span> <span class="nn">colossalai.shardformer.modeling.t5</span> <span class="kn">import</span> <span class="n">get_jit_fused_T5_layer_ff_forward</span><span class="p">,</span> <span class="n">get_T5_layer_self_attention_forward</span>
+<span class="kn">from</span> <span class="nn">colossalai.shardformer.policies.base_policy</span> <span class="kn">import</span> <span class="n">Policy</span>
+
+<span class="k">class</span> <span class="nc">T5EncoderPolicy</span><span class="p">(</span><span class="n">Policy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">config_sanity_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""설정 검증 - 텐서 병렬화와 Flash Attention 비활성화 확인"""</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">shard_config</span><span class="p">.</span><span class="n">enable_tensor_parallelism</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">shard_config</span><span class="p">.</span><span class="n">enable_flash_attention</span>
+
+    <span class="k">def</span> <span class="nf">module_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""모듈 최적화 정책 정의"""</span>
+        <span class="kn">from</span> <span class="nn">transformers.models.t5.modeling_t5</span> <span class="kn">import</span> <span class="n">T5LayerFF</span><span class="p">,</span> <span class="n">T5LayerSelfAttention</span>
+        
+        <span class="n">policy</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># JIT 융합 최적화 활성화
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">shard_config</span><span class="p">.</span><span class="n">enable_jit_fused</span><span class="p">:</span>
+            <span class="c1"># Feed-Forward Layer 최적화
+</span>            <span class="bp">self</span><span class="p">.</span><span class="n">append_or_create_method_replacement</span><span class="p">(</span>
+                <span class="n">description</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">"forward"</span><span class="p">:</span> <span class="n">get_jit_fused_T5_layer_ff_forward</span><span class="p">(),</span>
+                    <span class="s">"dropout_add"</span><span class="p">:</span> <span class="n">get_jit_fused_dropout_add_func</span><span class="p">(),</span>
+                <span class="p">},</span>
+                <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span>
+                <span class="n">target_key</span><span class="o">=</span><span class="n">T5LayerFF</span><span class="p">,</span>
+            <span class="p">)</span>
+            
+            <span class="c1"># Self-Attention Layer 최적화
+</span>            <span class="bp">self</span><span class="p">.</span><span class="n">append_or_create_method_replacement</span><span class="p">(</span>
+                <span class="n">description</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">"forward"</span><span class="p">:</span> <span class="n">get_T5_layer_self_attention_forward</span><span class="p">(),</span>
+                    <span class="s">"dropout_add"</span><span class="p">:</span> <span class="n">get_jit_fused_dropout_add_func</span><span class="p">(),</span>
+                <span class="p">},</span>
+                <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span>
+                <span class="n">target_key</span><span class="o">=</span><span class="n">T5LayerSelfAttention</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">policy</span>
+</code></pre></div></div>
+
+<h3 id="32-shardformer-적용-함수">3.2 Shardformer 적용 함수</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># opensora/models/text/conditioner.py
+</span><span class="k">def</span> <span class="nf">shardformer_t5</span><span class="p">(</span><span class="n">t5</span><span class="p">:</span> <span class="n">T5EncoderModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T5EncoderModel</span><span class="p">:</span>
+    <span class="s">"""
+    T5 모델에 Shardformer 최적화 적용
+    
+    Args:
+        t5: 최적화할 T5 모델
+        
+    Returns:
+        최적화된 T5 모델
+    """</span>
+    <span class="c1"># 원본 데이터 타입 보존
+</span>    <span class="n">dtype</span> <span class="o">=</span> <span class="n">t5</span><span class="p">.</span><span class="n">shared</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">dtype</span>
+    
+    <span class="c1"># Shard 설정
+</span>    <span class="n">shard_config</span> <span class="o">=</span> <span class="n">ShardConfig</span><span class="p">(</span>
+        <span class="n">enable_tensor_parallelism</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>  <span class="c1"># 텐서 병렬화 비활성화
+</span>        <span class="n">enable_jit_fused</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>            <span class="c1"># JIT 융합 최적화 활성화
+</span>    <span class="p">)</span>
+    
+    <span class="c1"># ShardFormer 인스턴스 생성
+</span>    <span class="n">shard_former</span> <span class="o">=</span> <span class="n">ShardFormer</span><span class="p">(</span><span class="n">shard_config</span><span class="o">=</span><span class="n">shard_config</span><span class="p">)</span>
+    
+    <span class="c1"># T5EncoderPolicy를 사용하여 최적화 수행
+</span>    <span class="n">optim_model</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">shard_former</span><span class="p">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">t5</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">T5EncoderPolicy</span><span class="p">())</span>
+    
+    <span class="c1"># 원본 설정 복원
+</span>    <span class="n">optim_model</span> <span class="o">=</span> <span class="n">optim_model</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="p">).</span><span class="nb">eval</span><span class="p">().</span><span class="n">requires_grad_</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">optim_model</span>
+</code></pre></div></div>
+
+<h3 id="33-jit-융합-최적화-효과">3.3 JIT 융합 최적화 효과</h3>
+
+<p>JIT (Just-In-Time) 융합 최적화의 주요 이점:</p>
+
+<ol>
+  <li><strong>연산 융합</strong>: 여러 연산을 하나로 결합하여 메모리 접근 최소화</li>
+  <li><strong>Dropout + Add 융합</strong>: 드롭아웃과 잔차 연결을 하나의 커널로 처리</li>
+  <li><strong>Feed-Forward 융합</strong>: FF 레이어의 연산들을 효율적으로 융합</li>
+  <li><strong>Self-Attention 최적화</strong>: 어텐션 계산의 메모리 효율성 향상</li>
+</ol>
+
+<h2 id="4-텍스트-샘플링-및-전처리">4. 텍스트 샘플링 및 전처리</h2>
+
+<h3 id="41-prepare-함수-분석">4.1 prepare 함수 분석</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># opensora/utils/sampling.py
+</span><span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span>
+    <span class="n">t5</span><span class="p">,</span>
+    <span class="n">clip</span><span class="p">:</span> <span class="n">HFEmbedder</span><span class="p">,</span>
+    <span class="n">img</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">seq_align</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">patch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+    <span class="s">"""
+    모델 입력 준비 함수
+    
+    Args:
+        t5: T5 모델 (HFEmbedder)
+        clip: CLIP 모델 (HFEmbedder)
+        img: 이미지 텐서 (B, C, T, H, W)
+        prompt: 텍스트 프롬프트
+        seq_align: 시퀀스 정렬 단위
+        patch_size: 패치 크기
+        
+    Returns:
+        모델 입력 딕셔너리
+    """</span>
+    <span class="n">bs</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">shape</span>
+    <span class="n">device</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">device</span><span class="p">,</span> <span class="n">img</span><span class="p">.</span><span class="n">dtype</span>
+    
+    <span class="c1"># 프롬프트 정규화
+</span>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">[</span><span class="n">prompt</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">bs</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+        <span class="n">bs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+    <span class="c1"># 이미지 패치화
+</span>    <span class="n">img</span> <span class="o">=</span> <span class="n">rearrange</span><span class="p">(</span>
+        <span class="n">img</span><span class="p">,</span> <span class="s">"b c t (h ph) (w pw) -&gt; b (t h w) (c ph pw)"</span><span class="p">,</span> 
+        <span class="n">ph</span><span class="o">=</span><span class="n">patch_size</span><span class="p">,</span> <span class="n">pw</span><span class="o">=</span><span class="n">patch_size</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 배치 크기 조정
+</span>    <span class="k">if</span> <span class="n">img</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">bs</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s">"b ... -&gt; (repeat b) ..."</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">bs</span> <span class="o">//</span> <span class="n">img</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># 이미지 위치 ID 생성 (3D: T, H, W)
+</span>    <span class="n">img_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">h</span> <span class="o">//</span> <span class="n">patch_size</span><span class="p">,</span> <span class="n">w</span> <span class="o">//</span> <span class="n">patch_size</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">img_ids</span><span class="p">[...,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_ids</span><span class="p">[...,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="n">t</span><span class="p">)[:,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">]</span>           <span class="c1"># 시간 차원
+</span>    <span class="n">img_ids</span><span class="p">[...,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_ids</span><span class="p">[...,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="n">h</span> <span class="o">//</span> <span class="n">patch_size</span><span class="p">)[</span><span class="bp">None</span><span class="p">,</span> <span class="p">:,</span> <span class="bp">None</span><span class="p">]</span>  <span class="c1"># 높이 차원
+</span>    <span class="n">img_ids</span><span class="p">[...,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_ids</span><span class="p">[...,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="n">w</span> <span class="o">//</span> <span class="n">patch_size</span><span class="p">)[</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># 너비 차원
+</span>    <span class="n">img_ids</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">img_ids</span><span class="p">,</span> <span class="s">"t h w c -&gt; b (t h w) c"</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">bs</span><span class="p">)</span>
+
+    <span class="c1"># T5 텍스트 임베딩 생성
+</span>    <span class="n">txt</span> <span class="o">=</span> <span class="n">t5</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">added_tokens</span><span class="o">=</span><span class="n">img_ids</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">seq_align</span><span class="o">=</span><span class="n">seq_align</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">txt</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">bs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="s">"1 ... -&gt; bs ..."</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">bs</span><span class="p">)</span>
+    
+    <span class="c1"># 텍스트 위치 ID (현재는 0으로 설정 - T5가 이미 위치 정보 포함)
+</span>    <span class="n">txt_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">bs</span><span class="p">,</span> <span class="n">txt</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># CLIP 벡터 임베딩 생성
+</span>    <span class="n">vec</span> <span class="o">=</span> <span class="n">clip</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">vec</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">bs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">vec</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="s">"1 ... -&gt; bs ..."</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">bs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s">"img"</span><span class="p">:</span> <span class="n">img</span><span class="p">,</span>                                    <span class="c1"># 패치화된 이미지
+</span>        <span class="s">"img_ids"</span><span class="p">:</span> <span class="n">img_ids</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>         <span class="c1"># 이미지 위치 ID
+</span>        <span class="s">"txt"</span><span class="p">:</span> <span class="n">txt</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>                 <span class="c1"># T5 텍스트 임베딩
+</span>        <span class="s">"txt_ids"</span><span class="p">:</span> <span class="n">txt_ids</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>         <span class="c1"># 텍스트 위치 ID
+</span>        <span class="s">"y_vec"</span><span class="p">:</span> <span class="n">vec</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>               <span class="c1"># CLIP 벡터 임베딩
+</span>    <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="42-위치-인코딩-시스템">4.2 위치 인코딩 시스템</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 3D 위치 인코딩 생성
+</span><span class="n">img_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">h</span> <span class="o">//</span> <span class="n">patch_size</span><span class="p">,</span> <span class="n">w</span> <span class="o">//</span> <span class="n">patch_size</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># 각 차원별 위치 정보 설정
+</span><span class="n">img_ids</span><span class="p">[...,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="n">t</span><span class="p">)[:,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">]</span>           <span class="c1"># 시간 (T)
+</span><span class="n">img_ids</span><span class="p">[...,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="n">h</span> <span class="o">//</span> <span class="n">patch_size</span><span class="p">)[</span><span class="bp">None</span><span class="p">,</span> <span class="p">:,</span> <span class="bp">None</span><span class="p">]</span>  <span class="c1"># 높이 (H)
+</span><span class="n">img_ids</span><span class="p">[...,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="n">w</span> <span class="o">//</span> <span class="n">patch_size</span><span class="p">)[</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># 너비 (W)
+</span></code></pre></div></div>
+
+<p>이 3D 위치 인코딩은 비디오의 시공간적 구조를 모델이 이해할 수 있도록 도와줍니다.</p>
+
+<h2 id="5-t5-vs-clip-역할-분석">5. T5 vs CLIP 역할 분석</h2>
+
+<h3 id="51-t5-모델의-역할">5.1 T5 모델의 역할</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># T5 텍스트 임베딩 - 상세한 텍스트 이해
+</span><span class="n">txt</span> <span class="o">=</span> <span class="n">t5</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">added_tokens</span><span class="o">=</span><span class="n">img_ids</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">seq_align</span><span class="o">=</span><span class="n">seq_align</span><span class="p">)</span>
+<span class="c1"># 출력: (batch_size, sequence_length, hidden_dim) - 시퀀스별 상세 정보
+</span></code></pre></div></div>
+
+<p><strong>T5의 특징:</strong></p>
+<ul>
+  <li><strong>Detailed Understanding</strong>: 텍스트의 세부 내용과 문맥 이해</li>
+  <li><strong>Sequence Output</strong>: 각 토큰별 임베딩 제공</li>
+  <li><strong>Long Context</strong>: 긴 텍스트 처리 가능</li>
+  <li><strong>Text-to-Text</strong>: 다양한 텍스트 태스크에 최적화</li>
+</ul>
+
+<h3 id="52-clip-모델의-역할">5.2 CLIP 모델의 역할</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># CLIP 벡터 임베딩 - 전역 의미 벡터
+</span><span class="n">vec</span> <span class="o">=</span> <span class="n">clip</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+<span class="c1"># 출력: (batch_size, vector_dim) - 전역 의미 벡터
+</span></code></pre></div></div>
+
+<p><strong>CLIP의 특징:</strong></p>
+<ul>
+  <li><strong>Global Understanding</strong>: 텍스트의 전체적인 의미 파악</li>
+  <li><strong>Vision-Language</strong>: 시각-언어 연결에 최적화</li>
+  <li><strong>Dense Vector</strong>: 고밀도 의미 벡터 생성</li>
+  <li><strong>Cross-Modal</strong>: 이미지와 텍스트 간 연결 학습</li>
+</ul>
+
+<h3 id="53-dual-embedding-시스템의-이점">5.3 Dual Embedding 시스템의 이점</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 이중 임베딩 시스템 활용
+</span><span class="n">model_input</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"txt"</span><span class="p">:</span> <span class="n">t5_embeddings</span><span class="p">,</span>     <span class="c1"># 상세 텍스트 정보 (시퀀스)
+</span>    <span class="s">"y_vec"</span><span class="p">:</span> <span class="n">clip_vector</span><span class="p">,</span>     <span class="c1"># 전역 의미 정보 (벡터)
+</span>    <span class="c1"># ... 기타 입력들
+</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>시너지 효과:</strong></p>
+<ol>
+  <li><strong>Complementary Information</strong>: T5의 상세함과 CLIP의 전역성 결합</li>
+  <li><strong>Robust Understanding</strong>: 다양한 관점에서 텍스트 이해</li>
+  <li><strong>Fine-grained Control</strong>: 세밀한 텍스트 조건부 생성</li>
+  <li><strong>Cross-modal Alignment</strong>: 비전-언어 정렬 강화</li>
+</ol>
+
+<h2 id="6-메모리-및-성능-최적화">6. 메모리 및 성능 최적화</h2>
+
+<h3 id="61-배치-처리-최적화">6.1 배치 처리 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 효율적인 배치 크기 조정
+</span><span class="k">if</span> <span class="n">txt</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">bs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">txt</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="s">"1 ... -&gt; bs ..."</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">bs</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">vec</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">bs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="s">"1 ... -&gt; bs ..."</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="n">bs</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>이 패턴은 단일 프롬프트를 여러 이미지에 적용할 때 메모리를 절약합니다.</p>
+
+<h3 id="62-데이터-타입-최적화">6.2 데이터 타입 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 원본 데이터 타입 보존
+</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">t5</span><span class="p">.</span><span class="n">shared</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">dtype</span>
+<span class="n">optim_model</span> <span class="o">=</span> <span class="n">optim_model</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="p">).</span><span class="nb">eval</span><span class="p">().</span><span class="n">requires_grad_</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="63-디바이스-관리">6.3 디바이스 관리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 일관된 디바이스 배치
+</span><span class="k">return</span> <span class="p">{</span>
+    <span class="s">"img"</span><span class="p">:</span> <span class="n">img</span><span class="p">,</span>
+    <span class="s">"img_ids"</span><span class="p">:</span> <span class="n">img_ids</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>
+    <span class="s">"txt"</span><span class="p">:</span> <span class="n">txt</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>
+    <span class="s">"txt_ids"</span><span class="p">:</span> <span class="n">txt_ids</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>
+    <span class="s">"y_vec"</span><span class="p">:</span> <span class="n">vec</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="7-실제-사용-예제">7. 실제 사용 예제</h2>
+
+<h3 id="71-모델-초기화">7.1 모델 초기화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># T5 모델 초기화
+</span><span class="n">t5_embedder</span> <span class="o">=</span> <span class="n">HFEmbedder</span><span class="p">(</span>
+    <span class="n">from_pretrained</span><span class="o">=</span><span class="s">"google/t5-v1_1-xxl"</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+    <span class="n">hf_module</span><span class="o">=</span><span class="s">"T5EncoderModel"</span>
+<span class="p">)</span>
+
+<span class="c1"># CLIP 모델 초기화
+</span><span class="n">clip_embedder</span> <span class="o">=</span> <span class="n">HFEmbedder</span><span class="p">(</span>
+    <span class="n">from_pretrained</span><span class="o">=</span><span class="s">"openai/clip-vit-large-patch14"</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="o">=</span><span class="mi">77</span><span class="p">,</span>
+    <span class="n">hf_module</span><span class="o">=</span><span class="s">"CLIPTextModel"</span>
+<span class="p">)</span>
+
+<span class="c1"># T5 최적화 적용
+</span><span class="n">t5_embedder</span><span class="p">.</span><span class="n">hf_module</span> <span class="o">=</span> <span class="n">shardformer_t5</span><span class="p">(</span><span class="n">t5_embedder</span><span class="p">.</span><span class="n">hf_module</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="72-텍스트-임베딩-생성">7.2 텍스트 임베딩 생성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 샘플 프롬프트
+</span><span class="n">prompt</span> <span class="o">=</span> <span class="s">"A beautiful sunset over the ocean with waves crashing on the shore"</span>
+
+<span class="c1"># 임베딩 생성
+</span><span class="n">t5_embedding</span> <span class="o">=</span> <span class="n">t5_embedder</span><span class="p">([</span><span class="n">prompt</span><span class="p">])</span>  <span class="c1"># (1, seq_len, hidden_dim)
+</span><span class="n">clip_embedding</span> <span class="o">=</span> <span class="n">clip_embedder</span><span class="p">([</span><span class="n">prompt</span><span class="p">])</span>  <span class="c1"># (1, vector_dim)
+</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"T5 embedding shape: </span><span class="si">{</span><span class="n">t5_embedding</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"CLIP embedding shape: </span><span class="si">{</span><span class="n">clip_embedding</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="73-완전한-입력-준비">7.3 완전한 입력 준비</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 이미지 텐서 (예시)
+</span><span class="n">img</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>  <span class="c1"># (B, C, T, H, W)
+</span>
+<span class="c1"># 모델 입력 준비
+</span><span class="n">model_inputs</span> <span class="o">=</span> <span class="n">prepare</span><span class="p">(</span>
+    <span class="n">t5</span><span class="o">=</span><span class="n">t5_embedder</span><span class="p">,</span>
+    <span class="n">clip</span><span class="o">=</span><span class="n">clip_embedder</span><span class="p">,</span>
+    <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="p">,</span>
+    <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+    <span class="n">seq_align</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">patch_size</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">)</span>
+
+<span class="c1"># 입력 형태 확인
+</span><span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">model_inputs</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">tensor</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="8-성능-벤치마크-및-분석">8. 성능 벤치마크 및 분석</h2>
+
+<h3 id="81-메모리-사용량-분석">8.1 메모리 사용량 분석</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>컴포넌트</th>
+      <th>메모리 사용량</th>
+      <th>최적화 효과</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>T5-XXL 원본</td>
+      <td>~44GB</td>
+      <td>기준</td>
+    </tr>
+    <tr>
+      <td>T5-XXL + Shardformer</td>
+      <td>~35GB</td>
+      <td>20% 절약</td>
+    </tr>
+    <tr>
+      <td>CLIP-Large</td>
+      <td>~1.7GB</td>
+      <td>가벼움</td>
+    </tr>
+    <tr>
+      <td>전체 시스템</td>
+      <td>~37GB</td>
+      <td>효율적</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="82-추론-속도-비교">8.2 추론 속도 비교</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 최적화 전후 성능 비교 (예시)
+# 원본 T5: 1.2초/배치
+# 최적화 T5: 0.8초/배치 (33% 향상)
+# CLIP: 0.1초/배치 (매우 빠름)
+</span></code></pre></div></div>
+
+<h3 id="83-jit-융합-효과">8.3 JIT 융합 효과</h3>
+
+<ul>
+  <li><strong>Dropout+Add 융합</strong>: 15-20% 속도 향상</li>
+  <li><strong>FF Layer 융합</strong>: 25-30% 메모리 절약</li>
+  <li><strong>Attention 최적화</strong>: 10-15% 전체 성능 향상</li>
+</ul>
+
+<h2 id="9-텍스트-품질과-임베딩-성능">9. 텍스트 품질과 임베딩 성능</h2>
+
+<h3 id="91-임베딩-품질-지표">9.1 임베딩 품질 지표</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 임베딩 유사도 분석 예제
+</span><span class="k">def</span> <span class="nf">analyze_embedding_quality</span><span class="p">(</span><span class="n">embedder</span><span class="p">,</span> <span class="n">prompts</span><span class="p">):</span>
+    <span class="n">embeddings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="n">prompts</span><span class="p">:</span>
+        <span class="n">emb</span> <span class="o">=</span> <span class="n">embedder</span><span class="p">([</span><span class="n">prompt</span><span class="p">])</span>
+        <span class="n">embeddings</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">emb</span><span class="p">)</span>
+    
+    <span class="c1"># 코사인 유사도 계산
+</span>    <span class="n">similarities</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cosine_similarity</span><span class="p">(</span><span class="n">embeddings</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">embeddings</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">similarities</span>
+</code></pre></div></div>
+
+<h3 id="92-텍스트-이해-능력">9.2 텍스트 이해 능력</h3>
+
+<ul>
+  <li><strong>세부 설명</strong>: T5가 긴 설명과 복잡한 문장 구조 잘 처리</li>
+  <li><strong>시각적 개념</strong>: CLIP이 시각적 요소와 스타일 잘 이해</li>
+  <li><strong>문맥 이해</strong>: 두 모델의 조합으로 풍부한 문맥 파악</li>
+</ul>
+
+<h2 id="10-한계점-및-개선-방향">10. 한계점 및 개선 방향</h2>
+
+<h3 id="101-현재-한계점">10.1 현재 한계점</h3>
+
+<ol>
+  <li><strong>메모리 요구량</strong>: T5-XXL 모델의 높은 메모리 사용량</li>
+  <li><strong>추론 지연</strong>: 실시간 응용에서의 지연 시간</li>
+  <li><strong>언어 제약</strong>: 주로 영어에 최적화된 모델</li>
+  <li><strong>토큰 길이</strong>: 최대 토큰 길이 제한</li>
+</ol>
+
+<h3 id="102-개선-방향">10.2 개선 방향</h3>
+
+<ol>
+  <li><strong>경량화</strong>: 모델 압축 및 지식 증류</li>
+  <li><strong>다국어 지원</strong>: 다국어 임베딩 모델 통합</li>
+  <li><strong>실시간 최적화</strong>: 더 빠른 추론을 위한 최적화</li>
+  <li><strong>적응형 길이</strong>: 동적 시퀀스 길이 처리</li>
+</ol>
+
+<h2 id="결론">결론</h2>
+
+<p>Open-Sora의 텍스트 임베딩 시스템은 T5와 CLIP 모델을 효과적으로 통합하여 고품질 비디오 생성을 위한 강력한 텍스트 이해 능력을 제공합니다.</p>
+
+<p><strong>핵심 성과:</strong></p>
+<ul>
+  <li><strong>이중 임베딩</strong>: T5의 세부성과 CLIP의 전역성 결합</li>
+  <li><strong>성능 최적화</strong>: Shardformer를 통한 20-30% 성능 향상</li>
+  <li><strong>메모리 효율성</strong>: JIT 융합으로 메모리 사용량 최적화</li>
+  <li><strong>확장성</strong>: 다양한 텍스트 길이와 복잡도 지원</li>
+</ul>
+
+<p>이러한 설계는 Open-Sora가 복잡한 텍스트 프롬프트를 정확히 이해하고, 이를 바탕으로 고품질 비디오를 생성할 수 있게 하는 핵심 기반이 됩니다. 앞으로의 개선을 통해 더욱 효율적이고 강력한 텍스트 이해 시스템으로 발전할 것으로 기대됩니다.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/07/22/ollama-custom-server-architecture-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Ollama Custom 서버 아키텍처 심층 분석 - Gin 기반 HTTP API 서버</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/08/12/opensora-acceleration-module-analysis/" rel="next">
+          <span class="nav-title">Open-Sora 가속화 모듈 상세 분석 - 병렬화 및 성능 최적화 기술</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

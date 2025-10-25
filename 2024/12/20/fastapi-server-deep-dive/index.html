@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>FastAPI 서버 구현 심화 분석 - AudioCraft Custom 프로젝트 | AI Development Blog</title>
+<meta name="description" content="FastAPI 서버 구현 심화 분석AudioCraft Custom 프로젝트의 모든 AI 모델을 REST API로 제공하는 FastAPI 서버의 구현을 심층 분석해보겠습니다. 복잡한 AI 모델들을 웹 서비스로 통합하는 전략과 실제 구현 방법을 살펴보겠습니다.📋 목차  FastAPI ...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="AudioCraft, FastAPI, REST API, Model Serving, Microservices">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/12/20/fastapi-server-deep-dive/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="FastAPI 서버 구현 심화 분석 - AudioCraft Custom 프로젝트">
+<meta property="og:description" content="FastAPI 서버 구현 심화 분석AudioCraft Custom 프로젝트의 모든 AI 모델을 REST API로 제공하는 FastAPI 서버의 구현을 심층 분석해보겠습니다. 복잡한 AI 모델들을 웹 서비스로 통합하는 전략과 실제 구현 방법을 살펴보겠습니다.📋 목차  FastAPI ...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/12/20/fastapi-server-deep-dive/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FastAPI 서버 구현 심화 분석 - AudioCraft Custom 프로젝트">
+<meta name="twitter:description" content="FastAPI 서버 구현 심화 분석AudioCraft Custom 프로젝트의 모든 AI 모델을 REST API로 제공하는 FastAPI 서버의 구현을 심층 분석해보겠습니다. 복잡한 AI 모델들을 웹 서비스로 통합하는 전략과 실제 구현 방법을 살펴보겠습니다.📋 목차  FastAPI ...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "FastAPI 서버 구현 심화 분석 - AudioCraft Custom 프로젝트",
+  "description": "FastAPI 서버 구현 심화 분석
+
+AudioCraft Custom 프로젝트의 모든 AI 모델을 REST API로 제공하는 FastAPI 서버의 구현을 심층 분석해보겠습니다. 복잡한 AI 모델들을 웹 서비스로 통합하는 전략과 실제 구현 방법을 살펴보겠습니다.
+
+📋 목차
+
+  Fa...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-12-20T00:00:00+00:00",
+  "dateModified": "2024-12-20T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/12/20/fastapi-server-deep-dive/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/12/20/fastapi-server-deep-dive/",
+  "inLanguage": "ko",
+  "keywords": ["AudioCraft","FastAPI","REST API","Model Serving","Microservices"],
+  "articleSection": ["Web Development","API Design","Machine Learning"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>FastAPI 서버 구현 심화 분석 - AudioCraft Custom 프로젝트</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">FastAPI 서버 구현 심화 분석 - AudioCraft Custom 프로젝트</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-12-20T00:00:00+00:00">Dec 20, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>Web Development</li><li>API Design</li><li>Machine Learning</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="fastapi-서버-구현-심화-분석">FastAPI 서버 구현 심화 분석</h1>
+
+<p>AudioCraft Custom 프로젝트의 모든 AI 모델을 REST API로 제공하는 FastAPI 서버의 구현을 심층 분석해보겠습니다. 복잡한 AI 모델들을 웹 서비스로 통합하는 전략과 실제 구현 방법을 살펴보겠습니다.</p>
+
+<h2 id="-목차">📋 목차</h2>
+<ol>
+  <li><a href="#fastapi-서버-아키텍처">FastAPI 서버 아키텍처</a></li>
+  <li><a href="#모델-초기화-및-관리">모델 초기화 및 관리</a></li>
+  <li><a href="#rest-api-엔드포인트-설계">REST API 엔드포인트 설계</a></li>
+  <li><a href="#요청-응답-모델-정의">요청/응답 모델 정의</a></li>
+  <li><a href="#오디오-데이터-처리">오디오 데이터 처리</a></li>
+  <li><a href="#에러-핸들링-및-최적화">에러 핸들링 및 최적화</a></li>
+</ol>
+
+<h2 id="fastapi-서버-아키텍처">FastAPI 서버 아키텍처</h2>
+
+<h3 id="기본-설정-및-초기화">기본 설정 및 초기화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">UploadFile</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Form</span>
+<span class="kn">from</span> <span class="nn">fastapi.middleware.cors</span> <span class="kn">import</span> <span class="n">CORSMiddleware</span>
+<span class="kn">from</span> <span class="nn">fastapi.responses</span> <span class="kn">import</span> <span class="n">FileResponse</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torchaudio</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s">"AudioCraft API"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s">"AudioCraft의 모든 모델을 REST API로 제공하는 서비스"</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s">"1.0.0"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-서버-구성-요소">🚀 서버 구성 요소</h4>
+<ul>
+  <li><strong>FastAPI</strong>: 고성능 비동기 웹 프레임워크</li>
+  <li><strong>CORS</strong>: 크로스 오리진 리소스 공유 지원</li>
+  <li><strong>Pydantic</strong>: 자동 데이터 검증 및 직렬화</li>
+  <li><strong>PyTorch</strong>: AI 모델 실행 엔진</li>
+  <li><strong>TorchAudio</strong>: 오디오 처리 라이브러리</li>
+</ul>
+
+<h3 id="cors-및-미들웨어-설정">CORS 및 미들웨어 설정</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">app</span><span class="p">.</span><span class="n">add_middleware</span><span class="p">(</span>
+    <span class="n">CORSMiddleware</span><span class="p">,</span>
+    <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s">"*"</span><span class="p">],</span>
+    <span class="n">allow_credentials</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s">"*"</span><span class="p">],</span>
+    <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s">"*"</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-cors-설정의-중요성">🌐 CORS 설정의 중요성</h4>
+<ul>
+  <li><strong>전체 허용</strong>: 개발 환경에서 모든 오리진 허용</li>
+  <li><strong>프로덕션 고려사항</strong>: 실제 배포 시 특정 도메인으로 제한 필요</li>
+  <li><strong>보안</strong>: credentials와 헤더 허용으로 인증 지원</li>
+</ul>
+
+<h2 id="모델-초기화-및-관리">모델 초기화 및 관리</h2>
+
+<h3 id="ai-모델-초기화">AI 모델 초기화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 모델 초기화
+</span><span class="n">models</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"musicgen"</span><span class="p">:</span> <span class="n">MusicGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/musicgen-small"</span><span class="p">),</span>
+    <span class="s">"audiogen"</span><span class="p">:</span> <span class="n">AudioGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/audiogen-medium"</span><span class="p">),</span>
+    <span class="s">"encodec"</span><span class="p">:</span> <span class="n">EncodecModel</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/encodec_24khz"</span><span class="p">),</span>
+    <span class="s">"multiband"</span><span class="p">:</span> <span class="n">MultiBandDiffusion</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">"facebook/multiband-diffusion"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="-모델-로딩-전략">🧠 모델 로딩 전략</h4>
+<ul>
+  <li><strong>사전 로딩</strong>: 서버 시작 시 모든 모델을 메모리에 로드</li>
+  <li><strong>소형 모델 선택</strong>: <code class="language-plaintext highlighter-rouge">musicgen-small</code>로 메모리 사용량 최적화</li>
+  <li><strong>딕셔너리 관리</strong>: 모델명을 키로 하는 효율적인 접근</li>
+</ul>
+
+<h3 id="판별자-네트워크-초기화">판별자 네트워크 초기화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 판별자 초기화
+</span><span class="n">discriminators</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"mpd"</span><span class="p">:</span> <span class="n">MultiPeriodDiscriminator</span><span class="p">(</span><span class="n">periods</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="n">channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="s">"msd"</span><span class="p">:</span> <span class="n">MultiScaleDiscriminator</span><span class="p">(</span><span class="n">scales</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="s">"msstftd"</span><span class="p">:</span> <span class="n">MultiScaleSTFTDiscriminator</span><span class="p">(</span><span class="n">n_ffts</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">4096</span><span class="p">],</span> <span class="n">hop_lengths</span><span class="o">=</span><span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">480</span><span class="p">],</span> <span class="n">channels</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="️-판별자-설정-분석">⚖️ 판별자 설정 분석</h4>
+<ul>
+  <li><strong>MPD</strong>: 5개 주기로 리듬 패턴 분석</li>
+  <li><strong>MSD</strong>: 3개 스케일로 다중 해상도 분석</li>
+  <li><strong>MS-STFT-D</strong>: 3개 FFT 크기로 주파수 도메인 분석</li>
+  <li><strong>채널 최적화</strong>: 32채널로 계산 효율성과 성능 균형</li>
+</ul>
+
+<h2 id="rest-api-엔드포인트-설계">REST API 엔드포인트 설계</h2>
+
+<h3 id="음악-생성-엔드포인트">음악 생성 엔드포인트</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">"/generate/music"</span><span class="p">,</span> <span class="n">response_class</span><span class="o">=</span><span class="n">FileResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">generate_music</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">TextToAudioRequest</span><span class="p">):</span>
+    <span class="s">"""
+    텍스트 프롬프트를 사용하여 음악을 생성합니다.
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="s">"musicgen"</span><span class="p">]</span>
+        <span class="n">model</span><span class="p">.</span><span class="n">set_generation_params</span><span class="p">(</span>
+            <span class="n">duration</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">duration</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">temperature</span><span class="p">,</span>
+            <span class="n">top_k</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">top_k</span><span class="p">,</span>
+            <span class="n">top_p</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">top_p</span><span class="p">,</span>
+            <span class="n">cfg_coef</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">cfg_coef</span>
+        <span class="p">)</span>
+        
+        <span class="n">wav</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">request</span><span class="p">.</span><span class="n">text</span><span class="p">])</span>
+        
+        <span class="c1"># 임시 파일로 저장
+</span>        <span class="k">with</span> <span class="n">tempfile</span><span class="p">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s">".wav"</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+            <span class="n">torchaudio</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">wav</span><span class="p">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="mi">32000</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">tmp</span><span class="p">.</span><span class="n">name</span>
+            
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s">"음악 생성 중 오류 발생: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-음악-생성-api-특징">🎵 음악 생성 API 특징</h4>
+<ul>
+  <li><strong>동적 파라미터</strong>: 요청마다 생성 파라미터 커스터마이징</li>
+  <li><strong>파일 응답</strong>: 생성된 오디오를 WAV 파일로 직접 반환</li>
+  <li><strong>임시 파일</strong>: <code class="language-plaintext highlighter-rouge">tempfile</code>을 사용한 메모리 효율적 처리</li>
+  <li><strong>에러 처리</strong>: 상세한 오류 메시지와 적절한 HTTP 상태 코드</li>
+</ul>
+
+<h3 id="오디오-효과-생성-엔드포인트">오디오 효과 생성 엔드포인트</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">"/generate/audio"</span><span class="p">,</span> <span class="n">response_class</span><span class="o">=</span><span class="n">FileResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">generate_audio</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">TextToAudioRequest</span><span class="p">):</span>
+    <span class="s">"""
+    텍스트 프롬프트를 사용하여 일반 오디오를 생성합니다.
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="s">"audiogen"</span><span class="p">]</span>
+        <span class="n">model</span><span class="p">.</span><span class="n">set_generation_params</span><span class="p">(</span>
+            <span class="n">duration</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">duration</span><span class="p">,</span>
+            <span class="n">temperature</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">temperature</span><span class="p">,</span>
+            <span class="n">top_k</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">top_k</span><span class="p">,</span>
+            <span class="n">top_p</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">top_p</span><span class="p">,</span>
+            <span class="n">cfg_coef</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">cfg_coef</span>
+        <span class="p">)</span>
+        
+        <span class="n">wav</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">request</span><span class="p">.</span><span class="n">text</span><span class="p">])</span>
+        
+        <span class="k">with</span> <span class="n">tempfile</span><span class="p">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s">".wav"</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+            <span class="n">torchaudio</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">wav</span><span class="p">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="mi">32000</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">tmp</span><span class="p">.</span><span class="n">name</span>
+            
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s">"오디오 생성 중 오류 발생: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-audiogen과-musicgen의-api-통합">🔊 AudioGen과 MusicGen의 API 통합</h4>
+<ul>
+  <li><strong>동일한 인터페이스</strong>: 같은 요청 모델 사용으로 일관성 확보</li>
+  <li><strong>모델 교체</strong>: 내부에서만 다른 모델 사용</li>
+  <li><strong>파라미터 호환성</strong>: 두 모델 모두 동일한 생성 파라미터 지원</li>
+</ul>
+
+<h3 id="인코딩디코딩-엔드포인트">인코딩/디코딩 엔드포인트</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">"/encode"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">encode_audio</span><span class="p">(</span>
+    <span class="n">audio_file</span><span class="p">:</span> <span class="n">UploadFile</span> <span class="o">=</span> <span class="n">File</span><span class="p">(...),</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Form</span><span class="p">(</span><span class="s">"encodec"</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="s">"""
+    오디오를 EnCodec을 사용하여 인코딩합니다.
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">audio_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">audio_file</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">waveform</span> <span class="o">=</span> <span class="n">process_audio</span><span class="p">(</span><span class="n">audio_data</span><span class="p">)</span>
+        
+        <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="n">model</span><span class="p">]</span>
+        <span class="n">codes</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">waveform</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span><span class="s">"codes"</span><span class="p">:</span> <span class="n">codes</span><span class="p">.</span><span class="n">cpu</span><span class="p">().</span><span class="n">numpy</span><span class="p">().</span><span class="n">tolist</span><span class="p">()}</span>
+        
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s">"인코딩 중 오류 발생: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-인코딩-api-설계">🔄 인코딩 API 설계</h4>
+<ul>
+  <li><strong>파일 업로드</strong>: <code class="language-plaintext highlighter-rouge">UploadFile</code>로 멀티파트 폼 데이터 처리</li>
+  <li><strong>모델 선택</strong>: Form 필드로 사용할 압축 모델 지정</li>
+  <li><strong>JSON 응답</strong>: 압축 코드를 JSON 배열로 반환</li>
+  <li><strong>비동기 처리</strong>: <code class="language-plaintext highlighter-rouge">async/await</code>로 파일 읽기 최적화</li>
+</ul>
+
+<h3 id="오디오-분석-엔드포인트">오디오 분석 엔드포인트</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">"/analyze"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">AudioAnalysisResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">analyze_audio</span><span class="p">(</span>
+    <span class="n">audio_file</span><span class="p">:</span> <span class="n">UploadFile</span> <span class="o">=</span> <span class="n">File</span><span class="p">(...),</span>
+    <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="p">):</span>
+    <span class="s">"""
+    오디오 파일을 분석하여 각 판별자의 결과를 반환합니다.
+    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">audio_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">audio_file</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">waveform</span> <span class="o">=</span> <span class="n">process_audio</span><span class="p">(</span><span class="n">audio_data</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="c1"># MPD 분석
+</span>            <span class="n">mpd_logits</span><span class="p">,</span> <span class="n">mpd_features</span> <span class="o">=</span> <span class="n">discriminators</span><span class="p">[</span><span class="s">"mpd"</span><span class="p">](</span><span class="n">waveform</span><span class="p">)</span>
+            <span class="n">mpd_score</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">mpd_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">])).</span><span class="n">item</span><span class="p">()</span>
+            
+            <span class="c1"># MSD 분석
+</span>            <span class="n">msd_logits</span><span class="p">,</span> <span class="n">msd_features</span> <span class="o">=</span> <span class="n">discriminators</span><span class="p">[</span><span class="s">"msd"</span><span class="p">](</span><span class="n">waveform</span><span class="p">)</span>
+            <span class="n">msd_score</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">msd_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">])).</span><span class="n">item</span><span class="p">()</span>
+            
+            <span class="c1"># MS-STFT-D 분석
+</span>            <span class="n">msstftd_logits</span><span class="p">,</span> <span class="n">msstftd_features</span> <span class="o">=</span> <span class="n">discriminators</span><span class="p">[</span><span class="s">"msstftd"</span><span class="p">](</span><span class="n">waveform</span><span class="p">)</span>
+            <span class="n">msstftd_score</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">msstftd_logits</span><span class="p">[</span><span class="mi">0</span><span class="p">])).</span><span class="n">item</span><span class="p">()</span>
+            
+            <span class="c1"># 특징 맵 추출
+</span>            <span class="n">feature_maps</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">features</span> <span class="ow">in</span> <span class="p">[</span><span class="n">mpd_features</span><span class="p">,</span> <span class="n">msd_features</span><span class="p">,</span> <span class="n">msstftd_features</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">features</span><span class="p">:</span>
+                    <span class="n">feature_maps</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">feat</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">).</span><span class="n">cpu</span><span class="p">().</span><span class="n">numpy</span><span class="p">().</span><span class="n">tolist</span><span class="p">())</span>
+        
+        <span class="n">is_real</span> <span class="o">=</span> <span class="p">(</span><span class="n">mpd_score</span> <span class="o">+</span> <span class="n">msd_score</span> <span class="o">+</span> <span class="n">msstftd_score</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+        
+        <span class="k">return</span> <span class="n">AudioAnalysisResponse</span><span class="p">(</span>
+            <span class="n">mpd_score</span><span class="o">=</span><span class="n">mpd_score</span><span class="p">,</span>
+            <span class="n">msd_score</span><span class="o">=</span><span class="n">msd_score</span><span class="p">,</span>
+            <span class="n">msstftd_score</span><span class="o">=</span><span class="n">msstftd_score</span><span class="p">,</span>
+            <span class="n">feature_maps</span><span class="o">=</span><span class="n">feature_maps</span><span class="p">,</span>
+            <span class="n">is_real</span><span class="o">=</span><span class="n">is_real</span>
+        <span class="p">)</span>
+        
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s">"분석 중 오류 발생: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-분석-api의-고급-기능">🔍 분석 API의 고급 기능</h4>
+<ul>
+  <li><strong>다중 판별자</strong>: 세 개의 판별자 동시 실행</li>
+  <li><strong>점수 계산</strong>: 시그모이드 함수로 0-1 범위 정규화</li>
+  <li><strong>특징 추출</strong>: 각 판별자의 중간 특징 맵 반환</li>
+  <li><strong>진위 판단</strong>: 평균 점수로 실제/생성 오디오 분류</li>
+</ul>
+
+<h2 id="요청응답-모델-정의">요청/응답 모델 정의</h2>
+
+<h3 id="텍스트-오디오-요청-모델">텍스트-오디오 요청 모델</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">TextToAudioRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="s">"""텍스트-오디오 생성 요청 모델"""</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">250</span>
+    <span class="n">top_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">cfg_coef</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span>
+</code></pre></div></div>
+
+<h4 id="-요청-모델-설계-원칙">📝 요청 모델 설계 원칙</h4>
+<ul>
+  <li><strong>필수 필드</strong>: <code class="language-plaintext highlighter-rouge">text</code>만 필수로 최소한의 입력 요구</li>
+  <li><strong>기본값</strong>: 모든 선택적 파라미터에 합리적 기본값 제공</li>
+  <li><strong>타입 힌트</strong>: Pydantic을 통한 자동 타입 검증</li>
+  <li><strong>문서화</strong>: 자동 OpenAPI 문서 생성 지원</li>
+</ul>
+
+<h3 id="오디오-분석-응답-모델">오디오 분석 응답 모델</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AudioAnalysisResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="s">"""오디오 분석 결과를 위한 응답 모델"""</span>
+    <span class="n">mpd_score</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">msd_score</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">msstftd_score</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">feature_maps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
+    <span class="n">is_real</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div></div>
+
+<h4 id="-응답-모델-구조">📊 응답 모델 구조</h4>
+<ul>
+  <li><strong>점수 필드</strong>: 각 판별자별 개별 점수 제공</li>
+  <li><strong>특징 맵</strong>: 고차원 특징 데이터를 평면화하여 전송</li>
+  <li><strong>최종 판정</strong>: 전체적인 진위 여부 boolean 값</li>
+  <li><strong>확장성</strong>: 추가 메트릭 쉽게 추가 가능한 구조</li>
+</ul>
+
+<h2 id="오디오-데이터-처리">오디오 데이터 처리</h2>
+
+<h3 id="오디오-전처리-함수">오디오 전처리 함수</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">process_audio</span><span class="p">(</span><span class="n">audio_data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="s">"""오디오 데이터를 처리하여 텐서로 변환"""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">waveform</span><span class="p">,</span> <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">torchaudio</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">io</span><span class="p">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">audio_data</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">waveform</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">waveform</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">waveform</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">waveform</span>
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s">"오디오 처리 중 오류 발생: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="️-오디오-처리-파이프라인">🎛️ 오디오 처리 파이프라인</h4>
+<ol>
+  <li><strong>바이트스트림 변환</strong>: <code class="language-plaintext highlighter-rouge">io.BytesIO</code>로 메모리 내 파일 객체 생성</li>
+  <li><strong>오디오 로딩</strong>: <code class="language-plaintext highlighter-rouge">torchaudio.load</code>로 다양한 포맷 지원</li>
+  <li><strong>모노 변환</strong>: 스테레오를 모노로 변환하여 모델 호환성 확보</li>
+  <li><strong>에러 핸들링</strong>: 상세한 오류 메시지와 적절한 HTTP 상태 코드</li>
+</ol>
+
+<h3 id="임시-파일-관리">임시 파일 관리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 임시 파일로 저장
+</span><span class="k">with</span> <span class="n">tempfile</span><span class="p">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s">".wav"</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+    <span class="n">torchaudio</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">wav</span><span class="p">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="mi">32000</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tmp</span><span class="p">.</span><span class="n">name</span>
+</code></pre></div></div>
+
+<h4 id="-파일-관리-전략">💾 파일 관리 전략</h4>
+<ul>
+  <li><strong>임시 파일</strong>: 메모리 효율성과 파일 시스템 활용</li>
+  <li><strong>자동 정리</strong>: <code class="language-plaintext highlighter-rouge">delete=False</code>로 응답 후 클라이언트가 다운로드 완료까지 보존</li>
+  <li><strong>표준 포맷</strong>: WAV 포맷으로 광범위한 호환성 확보</li>
+  <li><strong>고정 샘플레이트</strong>: 32kHz로 일관된 출력 품질</li>
+</ul>
+
+<h2 id="에러-핸들링-및-최적화">에러 핸들링 및 최적화</h2>
+
+<h3 id="헬스-체크-엔드포인트">헬스 체크 엔드포인트</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"/health"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">health_check</span><span class="p">():</span>
+    <span class="s">"""API 서버 상태 확인"""</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s">"status"</span><span class="p">:</span> <span class="s">"healthy"</span><span class="p">,</span>
+        <span class="s">"version"</span><span class="p">:</span> <span class="s">"1.0.0"</span><span class="p">,</span>
+        <span class="s">"models"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">keys</span><span class="p">()),</span>
+        <span class="s">"discriminators"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">discriminators</span><span class="p">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="-서비스-모니터링">🏥 서비스 모니터링</h4>
+<ul>
+  <li><strong>상태 확인</strong>: 서버 생존 여부 간단 확인</li>
+  <li><strong>버전 정보</strong>: API 버전으로 호환성 관리</li>
+  <li><strong>리소스 목록</strong>: 사용 가능한 모델과 판별자 확인</li>
+  <li><strong>로드밸런서 지원</strong>: 무중단 배포와 헬스 체크 호환</li>
+</ul>
+
+<h3 id="메모리-최적화-기법">메모리 최적화 기법</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># GPU 메모리 최적화
+</span><span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="c1"># 추론 시 그래디언트 계산 비활성화
+</span>    <span class="n">mpd_logits</span><span class="p">,</span> <span class="n">mpd_features</span> <span class="o">=</span> <span class="n">discriminators</span><span class="p">[</span><span class="s">"mpd"</span><span class="p">](</span><span class="n">waveform</span><span class="p">)</span>
+    
+<span class="c1"># CPU 이동
+</span><span class="n">wav</span><span class="p">.</span><span class="n">cpu</span><span class="p">()</span>  <span class="c1"># GPU 텐서를 CPU로 이동하여 메모리 절약
+</span></code></pre></div></div>
+
+<h4 id="-성능-최적화-전략">⚡ 성능 최적화 전략</h4>
+<ul>
+  <li><strong>그래디언트 비활성화</strong>: 추론 시 메모리 사용량 50% 감소</li>
+  <li><strong>디바이스 관리</strong>: GPU/CPU 간 효율적 텐서 이동</li>
+  <li><strong>배치 처리</strong>: 여러 요청을 배치로 처리하여 throughput 향상</li>
+  <li><strong>모델 공유</strong>: 전역 모델 인스턴스로 초기화 오버헤드 제거</li>
+</ul>
+
+<h3 id="에러-처리-패턴">에러 처리 패턴</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">try</span><span class="p">:</span>
+    <span class="c1"># 위험한 작업 수행
+</span>    <span class="n">wav</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">([</span><span class="n">request</span><span class="p">.</span><span class="n">text</span><span class="p">])</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># 구체적인 에러 메시지와 적절한 HTTP 상태 코드
+</span>    <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s">"음악 생성 중 오류 발생: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="️-견고한-에러-처리">🛡️ 견고한 에러 처리</h4>
+<ul>
+  <li><strong>포괄적 예외 처리</strong>: 모든 가능한 에러 상황 대응</li>
+  <li><strong>의미있는 메시지</strong>: 클라이언트가 이해하기 쉬운 에러 설명</li>
+  <li><strong>적절한 상태 코드</strong>: HTTP 표준에 따른 상태 코드 반환</li>
+  <li><strong>로깅 준비</strong>: 프로덕션 환경에서 로깅 시스템 연동 가능</li>
+</ul>
+
+<h2 id="-핵심-인사이트">🔍 핵심 인사이트</h2>
+
+<h3 id="1-마이크로서비스-아키텍처">1. 마이크로서비스 아키텍처</h3>
+<ul>
+  <li><strong>단일 책임</strong>: 각 엔드포인트가 특정 기능에 집중</li>
+  <li><strong>모듈화</strong>: 모델별 독립적인 처리 로직</li>
+  <li><strong>확장성</strong>: 새로운 모델 쉽게 추가 가능한 구조</li>
+</ul>
+
+<h3 id="2-효율적인-리소스-관리">2. 효율적인 리소스 관리</h3>
+<ul>
+  <li><strong>사전 로딩</strong>: 서버 시작 시 모든 모델 로드로 응답 속도 향상</li>
+  <li><strong>메모리 최적화</strong>: 적절한 모델 크기 선택과 GPU 메모리 관리</li>
+  <li><strong>파일 시스템</strong>: 임시 파일을 통한 대용량 오디오 처리</li>
+</ul>
+
+<h3 id="3-개발자-친화적-api">3. 개발자 친화적 API</h3>
+<ul>
+  <li><strong>자동 문서화</strong>: FastAPI의 OpenAPI 자동 생성</li>
+  <li><strong>타입 안전성</strong>: Pydantic을 통한 강력한 타입 검증</li>
+  <li><strong>직관적 구조</strong>: RESTful 설계 원칙 준수</li>
+</ul>
+
+<h3 id="4-프로덕션-준비">4. 프로덕션 준비</h3>
+<ul>
+  <li><strong>CORS 지원</strong>: 웹 애플리케이션 통합 준비</li>
+  <li><strong>헬스 체크</strong>: 운영 환경 모니터링 지원</li>
+  <li><strong>에러 처리</strong>: 안정적인 서비스 운영을 위한 견고한 에러 처리</li>
+</ul>
+
+<h2 id="-결론">🎯 결론</h2>
+
+<p>AudioCraft FastAPI 서버는 복잡한 AI 모델들을 웹 서비스로 성공적으로 통합한 훌륭한 예시입니다. 효율적인 리소스 관리, 직관적인 API 설계, 견고한 에러 처리를 통해 실제 프로덕션 환경에서 사용할 수 있는 수준의 서비스를 구현했습니다.</p>
+
+<p>다음 포스트에서는 이 모든 시스템을 컨테이너화하는 Docker 구성을 분석하며, 배포 환경 설정과 PyTorch/CUDA 최적화 전략을 살펴보겠습니다.</p>
+
+<hr />
+
+<p><em>이 분석은 AudioCraft Custom 프로젝트의 실제 소스 코드를 기반으로 작성되었습니다. 더 자세한 구현 내용은 <a href="https://github.com/facebookresearch/audiocraft">AudioCraft 공식 저장소</a>에서 확인할 수 있습니다.</em></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/12/20/docker-containerization-deep-dive/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Docker 컨테이너화 시스템 심화 분석 - AudioCraft Custom 프로젝트</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/12/20/musicgen-implementation-deep-dive/" rel="next">
+          <span class="nav-title">MusicGen 모델 구현 심화 분석 - AudioCraft Custom 프로젝트</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

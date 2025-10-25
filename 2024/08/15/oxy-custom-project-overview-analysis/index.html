@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Oxy Custom 프로젝트 개요 분석 - Rust 기반 Agentic Analytics 프레임워크 | AI Development Blog</title>
+<meta name="description" content="Oxy Custom 프로젝트 개요 분석Oxy는 Rust로 작성된 오픈 소스 agentic analytics 프레임워크입니다. 이 프로젝트는 AI 기반 데이터 분석에 소프트웨어 개발 생명주기 원칙을 적용하여, 에이전트 생성부터 프롬프트 테스팅, 프로덕션 배포까지의 구조화된 워크플로우...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="Oxy, Rust, Agentic Analytics, Framework, Open Source">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/08/15/oxy-custom-project-overview-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oxy Custom 프로젝트 개요 분석 - Rust 기반 Agentic Analytics 프레임워크">
+<meta property="og:description" content="Oxy Custom 프로젝트 개요 분석Oxy는 Rust로 작성된 오픈 소스 agentic analytics 프레임워크입니다. 이 프로젝트는 AI 기반 데이터 분석에 소프트웨어 개발 생명주기 원칙을 적용하여, 에이전트 생성부터 프롬프트 테스팅, 프로덕션 배포까지의 구조화된 워크플로우...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/08/15/oxy-custom-project-overview-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oxy Custom 프로젝트 개요 분석 - Rust 기반 Agentic Analytics 프레임워크">
+<meta name="twitter:description" content="Oxy Custom 프로젝트 개요 분석Oxy는 Rust로 작성된 오픈 소스 agentic analytics 프레임워크입니다. 이 프로젝트는 AI 기반 데이터 분석에 소프트웨어 개발 생명주기 원칙을 적용하여, 에이전트 생성부터 프롬프트 테스팅, 프로덕션 배포까지의 구조화된 워크플로우...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Oxy Custom 프로젝트 개요 분석 - Rust 기반 Agentic Analytics 프레임워크",
+  "description": "Oxy Custom 프로젝트 개요 분석
+
+Oxy는 Rust로 작성된 오픈 소스 agentic analytics 프레임워크입니다. 이 프로젝트는 AI 기반 데이터 분석에 소프트웨어 개발 생명주기 원칙을 적용하여, 에이전트 생성부터 프롬프트 테스팅, 프로덕션 배포까지의 구조화된 워크플...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-08-15T00:00:00+00:00",
+  "dateModified": "2024-08-15T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/08/15/oxy-custom-project-overview-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/08/15/oxy-custom-project-overview-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["Oxy","Rust","Agentic Analytics","Framework","Open Source"],
+  "articleSection": ["AI","Rust","Analytics"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Oxy Custom 프로젝트 개요 분석 - Rust 기반 Agentic Analytics 프레임워크</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Oxy Custom 프로젝트 개요 분석 - Rust 기반 Agentic Analytics 프레임워크</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-08-15T00:00:00+00:00">Aug 15, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Rust</li><li>Analytics</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="oxy-custom-프로젝트-개요-분석">Oxy Custom 프로젝트 개요 분석</h1>
+
+<p>Oxy는 Rust로 작성된 오픈 소스 agentic analytics 프레임워크입니다. 이 프로젝트는 AI 기반 데이터 분석에 소프트웨어 개발 생명주기 원칙을 적용하여, 에이전트 생성부터 프롬프트 테스팅, 프로덕션 배포까지의 구조화된 워크플로우를 제공합니다.</p>
+
+<h2 id="1-프로젝트-구조-개요">1. 프로젝트 구조 개요</h2>
+
+<h3 id="11-핵심-디렉토리-구성">1.1 핵심 디렉토리 구성</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>oxy-cust/
+├── crates/                    # Rust 크레이트 구조
+│   ├── core/                 # 핵심 애플리케이션 로직
+│   ├── entity/               # 데이터 엔터티 정의
+│   ├── migration/            # 데이터베이스 마이그레이션
+│   └── py/                   # Python 바인딩
+├── web-app/                  # 웹 애플리케이션 프론트엔드
+├── docs/                     # 프로젝트 문서
+├── examples/                 # 사용 예제
+├── json-schemas/             # JSON 스키마 정의
+├── oss/                      # 오픈 소스 관련 파일
+├── sample_project/           # 샘플 프로젝트
+├── docker-compose.yml        # Docker 구성
+├── Dockerfile               # 컨테이너 이미지 빌드
+└── Cargo.toml               # Rust 워크스페이스 설정
+</code></pre></div></div>
+
+<h3 id="12-프로젝트-특징">1.2 프로젝트 특징</h3>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gu">## The framework for agentic analytics</span>
+
+Oxy is an open-source framework for agentic analytics. It is declarative by design and written in Rust. 
+Oxy is built with the following product principles in mind: 
+<span class="p">-</span> open-source
+<span class="p">-</span> performant
+<span class="p">-</span> code-native
+<span class="p">-</span> declarative
+<span class="p">-</span> composable
+<span class="p">-</span> secure
+</code></pre></div></div>
+
+<p><strong>핵심 설계 원칙:</strong></p>
+<ul>
+  <li><strong>오픈 소스</strong>: Apache-2.0 라이센스 하에 완전 공개</li>
+  <li><strong>고성능</strong>: Rust의 메모리 안전성과 성능 활용</li>
+  <li><strong>코드 네이티브</strong>: 선언적 설정을 통한 코드 중심 접근</li>
+  <li><strong>조합 가능</strong>: 모듈식 아키텍처로 유연한 확장</li>
+  <li><strong>보안</strong>: Rust의 안전성 보장과 보안 설계</li>
+</ul>
+
+<h2 id="2-cargo-워크스페이스-구조-분석">2. Cargo 워크스페이스 구조 분석</h2>
+
+<h3 id="21-워크스페이스-설정">2.1 워크스페이스 설정</h3>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[workspace]</span>
+<span class="py">members</span> <span class="p">=</span> <span class="p">[</span><span class="s">"crates/core"</span><span class="p">,</span> <span class="s">"crates/entity"</span><span class="p">,</span> <span class="s">"crates/migration"</span><span class="p">,</span> <span class="s">"crates/py"</span><span class="p">]</span>
+<span class="py">default-members</span> <span class="p">=</span> <span class="nn">["crates/core"]</span>
+<span class="py">resolver</span> <span class="p">=</span> <span class="s">"2"</span>
+
+<span class="nn">[workspace.dependencies]</span>
+<span class="nn">tokio</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"1.45"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="nn">["full"]</span> <span class="p">}</span>
+<span class="nn">sea-orm</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"1.1.11"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="p">[</span>
+  <span class="s">"sqlx-sqlite"</span><span class="p">,</span>
+  <span class="s">"sqlx-postgres"</span><span class="p">,</span> 
+  <span class="s">"runtime-tokio-rustls"</span><span class="p">,</span>
+  <span class="s">"macros"</span><span class="p">,</span>
+<span class="p">]</span> <span class="p">}</span>
+<span class="nn">sea-orm-migration</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"1.1.11"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="p">[</span>
+  <span class="s">"sqlx-sqlite"</span><span class="p">,</span>
+  <span class="s">"sqlx-postgres"</span><span class="p">,</span>
+  <span class="s">"runtime-tokio-rustls"</span><span class="p">,</span>
+<span class="p">]</span> <span class="p">}</span>
+<span class="nn">log</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"0.4"</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>워크스페이스 특징:</strong></p>
+<ul>
+  <li><strong>모듈화</strong>: 기능별로 분리된 크레이트 구조</li>
+  <li><strong>의존성 공유</strong>: 워크스페이스 레벨에서 공통 의존성 관리</li>
+  <li><strong>비동기 처리</strong>: Tokio 기반 완전 비동기 런타임</li>
+  <li><strong>데이터베이스</strong>: Sea-ORM을 통한 SQLite/PostgreSQL 지원</li>
+</ul>
+
+<h3 id="22-핵심-의존성-분석">2.2 핵심 의존성 분석</h3>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 핵심 애플리케이션 의존성</span>
+<span class="py">anyhow</span> <span class="p">=</span> <span class="s">"1.0.98"</span>                    <span class="c"># 에러 처리</span>
+<span class="nn">axum</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"0.8.4"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="nn">["macros"]</span> <span class="p">}</span>  <span class="c"># 웹 프레임워크</span>
+<span class="nn">clap</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="s">"4.5.38"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="nn">["derive"]</span> <span class="p">}</span> <span class="c"># CLI 파싱</span>
+<span class="nn">async-openai</span> <span class="o">=</span> <span class="p">{</span><span class="py">version</span> <span class="p">=</span> <span class="s">"0.28.1"</span><span class="p">,</span> <span class="py">features</span> <span class="p">=</span> <span class="nn">["byot"]</span><span class="p">}</span> <span class="c"># OpenAI API</span>
+<span class="nn">duckdb</span> <span class="o">=</span> <span class="p">{</span> <span class="py">version</span> <span class="p">=</span> <span class="py">"</span><span class="p">=</span><span class="mf">1.1</span><span class="err">.</span><span class="mi">1</span><span class="s">", features = ["</span><span class="err">bundled</span><span class="s">"] }  # 임베디드 분석 DB</span><span class="err">
+</span></code></pre></div></div>
+
+<p><strong>의존성 카테고리:</strong></p>
+
+<h4 id="비동기-및-웹-서비스">비동기 및 웹 서비스</h4>
+<ul>
+  <li><strong>Tokio</strong>: 비동기 런타임 및 I/O</li>
+  <li><strong>Axum</strong>: 현대적 웹 프레임워크</li>
+  <li><strong>Tower</strong>: 미들웨어 및 서비스 추상화</li>
+</ul>
+
+<h4 id="데이터-처리">데이터 처리</h4>
+<ul>
+  <li><strong>DuckDB</strong>: 고성능 분석 데이터베이스 엔진</li>
+  <li><strong>Arrow</strong>: 컬럼형 메모리 포맷</li>
+  <li><strong>ConnectorX</strong>: 다양한 데이터베이스 연결</li>
+</ul>
+
+<h4 id="ai-및-ml">AI 및 ML</h4>
+<ul>
+  <li><strong>async-openai</strong>: OpenAI API 클라이언트</li>
+  <li><strong>LanceDB</strong>: 벡터 데이터베이스</li>
+  <li><strong>PyO3</strong>: Python 상호 운용성</li>
+</ul>
+
+<h4 id="cli-및-사용자-인터페이스">CLI 및 사용자 인터페이스</h4>
+<ul>
+  <li><strong>Clap</strong>: 명령행 인터페이스 파싱</li>
+  <li><strong>Colored</strong>: 컬러 터미널 출력</li>
+  <li><strong>Tabled</strong>: 테이블 형식 출력</li>
+</ul>
+
+<h2 id="3-핵심-모듈-아키텍처">3. 핵심 모듈 아키텍처</h2>
+
+<h3 id="31-core-크레이트-구조">3.1 Core 크레이트 구조</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/lib.rs</span>
+<span class="k">mod</span> <span class="n">adapters</span><span class="p">;</span>      <span class="c1">// 데이터 소스 어댑터</span>
+<span class="k">mod</span> <span class="n">agent</span><span class="p">;</span>         <span class="c1">// 에이전트 시스템</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">api</span><span class="p">;</span>       <span class="c1">// REST API 서버</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">cli</span><span class="p">;</span>       <span class="c1">// CLI 인터페이스</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">config</span><span class="p">;</span>    <span class="c1">// 설정 관리</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">db</span><span class="p">;</span>        <span class="c1">// 데이터베이스 클라이언트</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">errors</span><span class="p">;</span>    <span class="c1">// 에러 타입 정의</span>
+<span class="k">mod</span> <span class="n">eval</span><span class="p">;</span>          <span class="c1">// 평가 시스템</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">execute</span><span class="p">;</span>   <span class="c1">// SQL 실행 엔진</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">mcp</span><span class="p">;</span>       <span class="c1">// Model Context Protocol</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">semantic</span><span class="p">;</span>  <span class="c1">// 시맨틱 검색</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">service</span><span class="p">;</span>   <span class="c1">// 비즈니스 서비스</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">theme</span><span class="p">;</span>     <span class="c1">// UI 테마</span>
+<span class="k">mod</span> <span class="n">tools</span><span class="p">;</span>         <span class="c1">// 유틸리티 도구</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">utils</span><span class="p">;</span>     <span class="c1">// 공통 유틸리티</span>
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">workflow</span><span class="p">;</span>  <span class="c1">// 워크플로우 엔진</span>
+</code></pre></div></div>
+
+<h3 id="32-애플리케이션-진입점">3.2 애플리케이션 진입점</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/main.rs</span>
+<span class="nd">#[tokio::main]</span>
+<span class="k">async</span> <span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span> <span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span> <span class="nn">std</span><span class="p">::</span><span class="nn">error</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="c1">// Rustls 암호화 프로바이더 설정</span>
+    <span class="nn">rustls</span><span class="p">::</span><span class="nn">crypto</span><span class="p">::</span><span class="nn">aws_lc_rs</span><span class="p">::</span><span class="nf">default_provider</span><span class="p">()</span>
+        <span class="nf">.install_default</span><span class="p">()</span>
+        <span class="nf">.expect</span><span class="p">(</span><span class="s">"Failed to install rustls crypto provider"</span><span class="p">);</span>
+        
+    <span class="c1">// 패닉 핸들러 설정</span>
+    <span class="nd">setup_panic!</span><span class="p">(</span><span class="nn">Metadata</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="nd">env!</span><span class="p">(</span><span class="s">"CARGO_PKG_NAME"</span><span class="p">),</span> <span class="nd">env!</span><span class="p">(</span><span class="s">"CARGO_PKG_VERSION"</span><span class="p">))</span>
+        <span class="nf">.authors</span><span class="p">(</span><span class="s">"Robert Yi &lt;robert@oxy.tech&gt;"</span><span class="p">)</span>
+        <span class="nf">.homepage</span><span class="p">(</span><span class="s">"github.com/oxy-hq/oxy"</span><span class="p">)</span>
+        <span class="nf">.support</span><span class="p">(</span><span class="s">"- For support, please email robert@oxy.tech"</span><span class="p">)</span>
+    <span class="p">);</span>
+    
+    <span class="nf">dotenv</span><span class="p">()</span><span class="nf">.ok</span><span class="p">();</span>
+    
+    <span class="c1">// 로깅 시스템 초기화</span>
+    <span class="k">let</span> <span class="n">args</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nn">env</span><span class="p">::</span><span class="nf">args</span><span class="p">()</span><span class="nf">.collect</span><span class="p">();</span>
+    <span class="k">let</span> <span class="n">log_to_stdout</span> <span class="o">=</span> <span class="n">args</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.any</span><span class="p">(|</span><span class="n">a</span><span class="p">|</span> <span class="n">a</span> <span class="o">==</span> <span class="s">"serve"</span><span class="p">);</span>
+    <span class="nf">init_tracing_logging</span><span class="p">(</span><span class="n">log_to_stdout</span><span class="p">);</span>
+    
+    <span class="c1">// CLI 실행</span>
+    <span class="k">match</span> <span class="nf">cli</span><span class="p">()</span><span class="k">.await</span> <span class="p">{</span>
+        <span class="nf">Ok</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{}</span>
+        <span class="nf">Err</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+            <span class="nn">tracing</span><span class="p">::</span><span class="nd">error!</span><span class="p">(</span><span class="n">error</span> <span class="o">=</span> <span class="o">%</span><span class="n">e</span><span class="p">,</span> <span class="s">"Application error"</span><span class="p">);</span>
+            <span class="nd">eprintln!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="nd">format!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span><span class="nf">.error</span><span class="p">());</span>
+            <span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+    <span class="nf">Ok</span><span class="p">(())</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>진입점 특징:</strong></p>
+<ul>
+  <li><strong>비동기 메인</strong>: Tokio 런타임에서 전체 애플리케이션 실행</li>
+  <li><strong>암호화 설정</strong>: AWS LC RS 프로바이더로 TLS 보안</li>
+  <li><strong>패닉 처리</strong>: 사용자 친화적 에러 메시지</li>
+  <li><strong>구조화된 로깅</strong>: Tracing 기반 로그 시스템</li>
+</ul>
+
+<h2 id="4-개발-환경-및-도구-체인">4. 개발 환경 및 도구 체인</h2>
+
+<h3 id="41-rust-설정">4.1 Rust 설정</h3>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[workspace.package]</span>
+<span class="py">edition</span> <span class="p">=</span> <span class="s">"2024"</span>
+<span class="py">rust-version</span> <span class="p">=</span> <span class="s">"1.86.0"</span>
+<span class="py">publish</span> <span class="p">=</span> <span class="kc">false</span>
+<span class="py">description</span> <span class="p">=</span> <span class="s">"Oxy"</span>
+<span class="py">authors</span> <span class="p">=</span> <span class="p">[</span><span class="s">"oxy engineers"</span><span class="p">]</span>
+<span class="py">documentation</span> <span class="p">=</span> <span class="s">"https://docs.oxy.tech"</span>
+<span class="py">exclude</span> <span class="p">=</span> <span class="p">[</span><span class="s">"examples/"</span><span class="p">,</span> <span class="s">"tests/"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p><strong>Rust 버전 정책:</strong></p>
+<ul>
+  <li><strong>Rust 2024 에디션</strong>: 최신 언어 기능 활용</li>
+  <li><strong>최소 버전</strong>: 1.86.0으로 최신 안정성 확보</li>
+  <li><strong>비공개</strong>: 워크스페이스 레벨에서 crates.io 발행 비활성화</li>
+</ul>
+
+<h3 id="42-개발-도구-구성">4.2 개발 도구 구성</h3>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">//</span><span class="w"> </span><span class="err">package.json</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"lint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"eslint . --fix"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"prettier --write ."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"type-check"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tsc --noEmit"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"devDependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"@commitlint/cli"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^18.0.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"@commitlint/config-conventional"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^18.0.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"eslint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^8.50.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"prettier"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.0.3"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="43-품질-관리-도구">4.3 품질 관리 도구</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># .github/workflows 구조</span>
+<span class="s">.husky/</span>               <span class="c1"># Git 훅 관리</span>
+<span class="s">.lintstagedrc.js</span>     <span class="c1"># 스테이지된 파일 린트</span>
+<span class="s">commitlint.config.js</span> <span class="c1"># 커밋 메시지 규칙</span>
+<span class="s">eslint.config.js</span>     <span class="c1"># JavaScript 린트 설정</span>
+<span class="s">.prettierrc.js</span>       <span class="c1"># 코드 포맷팅 규칙</span>
+<span class="s">rustfmt.toml</span>         <span class="c1"># Rust 포맷팅 설정</span>
+<span class="s">typos.toml</span>          <span class="c1"># 오타 검사 설정</span>
+</code></pre></div></div>
+
+<p><strong>품질 보증:</strong></p>
+<ul>
+  <li><strong>Husky</strong>: Git 커밋/푸시 훅으로 자동 검사</li>
+  <li><strong>Commitlint</strong>: 컨벤셔널 커밋 규칙 강제</li>
+  <li><strong>ESLint/Prettier</strong>: JavaScript/TypeScript 코드 품질</li>
+  <li><strong>Rustfmt</strong>: Rust 코드 스타일 통일</li>
+  <li><strong>Typos</strong>: 문서 및 코드 오타 검사</li>
+</ul>
+
+<h2 id="5-컨테이너-및-배포-전략">5. 컨테이너 및 배포 전략</h2>
+
+<h3 id="51-docker-멀티-스테이지-빌드">5.1 Docker 멀티 스테이지 빌드</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Dockerfile (추정 구조)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">rust:1.86-alpine</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
+<span class="k">WORKDIR</span><span class="s"> /app</span>
+<span class="k">COPY</span><span class="s"> . .</span>
+<span class="k">RUN </span>cargo build <span class="nt">--release</span> <span class="nt">--workspace</span>
+
+<span class="k">FROM</span><span class="s"> alpine:latest</span>
+<span class="k">RUN </span>apk add <span class="nt">--no-cache</span> ca-certificates
+<span class="k">COPY</span><span class="s"> --from=builder /app/target/release/oxy /usr/local/bin/</span>
+<span class="k">EXPOSE</span><span class="s"> 8080</span>
+<span class="k">CMD</span><span class="s"> ["oxy", "serve"]</span>
+</code></pre></div></div>
+
+<h3 id="52-docker-compose-서비스">5.2 Docker Compose 서비스</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># docker-compose.yml</span>
+<span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">oxy</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span> <span class="s">.</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8080:8080"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">DATABASE_URL=sqlite:///data/oxy.db</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./data:/data</span>
+</code></pre></div></div>
+
+<h2 id="6-설치-및-배포-자동화">6. 설치 및 배포 자동화</h2>
+
+<h3 id="61-크로스-플랫폼-설치">6.1 크로스 플랫폼 설치</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 메인 설치 스크립트 (Linux/macOS/WSL)</span>
+bash &lt;<span class="o">(</span>curl <span class="nt">--proto</span> <span class="s1">'=https'</span> <span class="nt">--tlsv1</span>.2 <span class="nt">-LsSf</span> https://get.oxy.tech<span class="o">)</span>
+
+<span class="c"># Homebrew (macOS)</span>
+brew <span class="nb">install </span>oxy-hq/oxy/oxy
+
+<span class="c"># 특정 버전 설치</span>
+<span class="nv">OXY_VERSION</span><span class="o">=</span><span class="s2">"0.1.0"</span> bash &lt;<span class="o">(</span>curl <span class="nt">--proto</span> <span class="s1">'=https'</span> <span class="nt">--tlsv1</span>.2 <span class="nt">-sSf</span> <span class="se">\</span>
+    https://raw.githubusercontent.com/oxy-hq/oxy/refs/heads/main/install_oxy.sh<span class="o">)</span>
+</code></pre></div></div>
+
+<h3 id="62-릴리즈-관리">6.2 릴리즈 관리</h3>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">//</span><span class="w"> </span><span class="err">release-please-config.json</span><span class="w">
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"packages"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"."</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"release-type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"rust"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"package-name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"oxy"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><strong>릴리즈 자동화:</strong></p>
+<ul>
+  <li><strong>Release Please</strong>: 자동 버전 관리 및 체인지로그</li>
+  <li><strong>Self Update</strong>: 애플리케이션 내장 업데이트 기능</li>
+  <li><strong>크로스 플랫폼</strong>: Linux, macOS, Windows 지원</li>
+</ul>
+
+<h2 id="7-보안-및-컴플라이언스">7. 보안 및 컴플라이언스</h2>
+
+<h3 id="71-보안-스캔">7.1 보안 스캔</h3>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># .deepsource.toml</span>
+<span class="py">version</span> <span class="p">=</span> <span class="mi">1</span>
+<span class="py">analyzers</span> <span class="p">=</span> <span class="p">[</span>
+  <span class="err">{</span> <span class="py">name</span> <span class="p">=</span> <span class="s">"rust"</span><span class="p">,</span> <span class="py">enabled</span> <span class="p">=</span> <span class="kc">true</span> <span class="err">}</span><span class="p">,</span>
+  <span class="err">{</span> <span class="py">name</span> <span class="p">=</span> <span class="s">"docker"</span><span class="p">,</span> <span class="py">enabled</span> <span class="p">=</span> <span class="kc">true</span> <span class="err">}</span><span class="p">,</span>
+  <span class="err">{</span> <span class="py">name</span> <span class="p">=</span> <span class="s">"secrets"</span><span class="p">,</span> <span class="py">enabled</span> <span class="p">=</span> <span class="kc">true</span> <span class="err">}</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<h3 id="72-라이센스-관리">7.2 라이센스 관리</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># .whitesource
+{
+  "scanSettings": {
+    "baseBranches": ["main"]
+  },
+  "checkRunSettings": {
+    "vulnerableCheckRunConclusionLevel": "failure"
+  }
+}
+</code></pre></div></div>
+
+<h2 id="8-모니터링-및-관찰성">8. 모니터링 및 관찰성</h2>
+
+<h3 id="81-구조화된-로깅">8.1 구조화된 로깅</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 트레이싱 로깅 초기화</span>
+<span class="k">fn</span> <span class="nf">init_tracing_logging</span><span class="p">(</span><span class="n">log_to_stdout</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">env_filter</span> <span class="o">=</span> <span class="nn">EnvFilter</span><span class="p">::</span><span class="nf">try_from_default_env</span><span class="p">()</span>
+        <span class="nf">.unwrap_or_else</span><span class="p">(|</span><span class="n">_</span><span class="p">|</span> <span class="nn">EnvFilter</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="s">"info"</span><span class="p">))</span>
+        <span class="nf">.add_directive</span><span class="p">(</span><span class="s">"oxy=debug"</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">())</span>
+        <span class="nf">.add_directive</span><span class="p">(</span><span class="s">"tower_http=debug"</span><span class="nf">.parse</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">());</span>
+        
+    <span class="k">let</span> <span class="n">log_file_path</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">path</span><span class="p">::</span><span class="nn">Path</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="nn">client</span><span class="p">::</span><span class="nf">get_state_dir</span><span class="p">())</span><span class="nf">.join</span><span class="p">(</span><span class="s">"oxy.log"</span><span class="p">);</span>
+    <span class="c1">// 파일 또는 stdout으로 로그 출력</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>로깅 전략:</strong></p>
+<ul>
+  <li><strong>Tracing</strong>: 구조화된 로깅 및 분산 추적</li>
+  <li><strong>환경별 설정</strong>: 개발/프로덕션 환경에 따른 로그 레벨</li>
+  <li><strong>JSON 출력</strong>: 프로덕션에서 기계 가독 형식</li>
+  <li><strong>파일 로테이션</strong>: 로그 파일 자동 관리</li>
+</ul>
+
+<h2 id="9-결론">9. 결론</h2>
+
+<p>Oxy는 현대적인 Rust 개발 패턴을 충실히 따르는 고품질 agentic analytics 프레임워크입니다:</p>
+
+<h3 id="91-주요-강점">9.1 주요 강점</h3>
+
+<ul>
+  <li><strong>현대적 아키텍처</strong>: 비동기 처리와 모듈화 설계</li>
+  <li><strong>타입 안전성</strong>: Rust의 컴파일 타임 보장</li>
+  <li><strong>성능 최적화</strong>: Zero-cost abstractions와 메모리 안전성</li>
+  <li><strong>개발자 경험</strong>: 풍부한 CLI와 자동화된 도구 체인</li>
+</ul>
+
+<h3 id="92-기술적-혁신">9.2 기술적 혁신</h3>
+
+<ul>
+  <li><strong>Agentic Analytics</strong>: AI 에이전트와 데이터 분석의 융합</li>
+  <li><strong>선언적 설계</strong>: 코드 네이티브 접근으로 구성의 단순화</li>
+  <li><strong>다중 언어 지원</strong>: Rust 코어에 Python 바인딩 제공</li>
+  <li><strong>임베디드 분석</strong>: DuckDB 통합으로 고성능 분석 엔진</li>
+</ul>
+
+<p>다음 포스트에서는 애플리케이션의 진입점과 초기화 과정을 상세히 분석해보겠습니다.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/08/12/opensora-acceleration-module-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Open-Sora 가속화 모듈 상세 분석 - 병렬화 및 성능 최적화 기술</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/08/15/kag-project-overview-architecture-analysis/" rel="next">
+          <span class="nav-title">KAG (Knowledge Augmented Generation) 프로젝트 개요 및 ...</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

@@ -1,0 +1,1063 @@
+<table>
+  <tbody>
+    <tr>
+      <td>Generative Models 구현체 상세 분석</td>
+      <td>Detailed Analysis of Generative Models Implementation</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="https://www.nvidia.com/content/dam/en-zz/Solutions/about-nvidia/logo-and-brand/01-nvidia-logo-vert-500x200-2c50-d@2x.png" alt="NVIDIA Logo" width="500" height="300" /></p>
+
+<p>이 문서에서는 <code class="language-plaintext highlighter-rouge">repositories/generative-models</code> 디렉토리에 있는 다양한 생성 모델들의 구현체에 대해 상세히 분석합니다.
+This document provides a detailed analysis of various generative model implementations in the <code class="language-plaintext highlighter-rouge">repositories/generative-models</code> directory.</p>
+
+<h2 id="1-핵심-모듈-구조--core-module-structure">1. 핵심 모듈 구조 | Core Module Structure</h2>
+
+<h3 id="11-sgm">1.1. sgm/</h3>
+<p>Stable Generative Models의 핵심 구현체들이 위치한 디렉토리입니다.
+Directory containing core implementations of Stable Generative Models.</p>
+
+<h4 id="sgm">sgm/</h4>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>models/</strong>: 모델 아키텍처 구현</td>
+          <td>Model Architecture Implementation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>autoencoder.py</strong>: VAE 구현</td>
+              <td>VAE Implementation</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul>
+          <li>
+            <table>
+              <tbody>
+                <tr>
+                  <td>인코더-디코더 구조</td>
+                  <td>Encoder-Decoder Structure</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>
+            <table>
+              <tbody>
+                <tr>
+                  <td>잠재 공간 변환</td>
+                  <td>Latent Space Transformation</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>
+            <table>
+              <tbody>
+                <tr>
+                  <td>손실 함수</td>
+                  <td>Loss Functions</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>diffusion.py</strong>: 확산 모델 구현</td>
+              <td>Diffusion Model Implementation</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul>
+          <li>
+            <table>
+              <tbody>
+                <tr>
+                  <td>노이즈 스케줄링</td>
+                  <td>Noise Scheduling</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>
+            <table>
+              <tbody>
+                <tr>
+                  <td>샘플링 프로세스</td>
+                  <td>Sampling Process</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>
+            <table>
+              <tbody>
+                <tr>
+                  <td>조건부 생성</td>
+                  <td>Conditional Generation</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>unet.py</strong>: UNet 구현</td>
+              <td>UNet Implementation</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul>
+          <li>
+            <table>
+              <tbody>
+                <tr>
+                  <td>인코더-디코더 블록</td>
+                  <td>Encoder-Decoder Blocks</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>
+            <table>
+              <tbody>
+                <tr>
+                  <td>어텐션 메커니즘</td>
+                  <td>Attention Mechanism</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>
+            <table>
+              <tbody>
+                <tr>
+                  <td>스킵 커넥션</td>
+                  <td>Skip Connections</td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="12-scripts">1.2. scripts/</h3>
+<p>실행 스크립트와 학습/추론 코드들입니다.
+Execution scripts and training/inference codes.</p>
+
+<h4 id="scripts">scripts/</h4>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>train.py</strong>: 모델 학습 스크립트</td>
+          <td>Model Training Script</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>데이터 로딩</td>
+              <td>Data Loading</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>학습 루프</td>
+              <td>Training Loop</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>체크포인트 저장</td>
+              <td>Checkpoint Saving</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>sample.py</strong>: 이미지 생성 스크립트</td>
+          <td>Image Generation Script</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>모델 로딩</td>
+              <td>Model Loading</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>샘플링 프로세스</td>
+              <td>Sampling Process</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>결과 저장</td>
+              <td>Result Saving</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>convert.py</strong>: 모델 변환 스크립트</td>
+          <td>Model Conversion Script</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>포맷 변환</td>
+              <td>Format Conversion</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>가중치 변환</td>
+              <td>Weight Conversion</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>호환성 처리</td>
+              <td>Compatibility Handling</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="13-utils">1.3. utils/</h3>
+<p>유틸리티 함수들과 헬퍼 클래스들입니다.
+Utility functions and helper classes.</p>
+
+<h4 id="utils">utils/</h4>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>data_utils.py</strong>: 데이터 처리</td>
+          <td>Data Processing</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 전처리</td>
+              <td>Image Preprocessing</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>데이터 증강</td>
+              <td>Data Augmentation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>배치 생성</td>
+              <td>Batch Generation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>model_utils.py</strong>: 모델 유틸리티</td>
+          <td>Model Utilities</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>가중치 초기화</td>
+              <td>Weight Initialization</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>모델 저장/로딩</td>
+              <td>Model Saving/Loading</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>상태 관리</td>
+              <td>State Management</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="2-주요-클래스-분석--key-class-analysis">2. 주요 클래스 분석 | Key Class Analysis</h2>
+
+<h3 id="21-autoencoderkl">2.1. AutoencoderKL</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AutoencoderKL</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""
+    VAE (Variational Autoencoder) 구현체 | VAE Implementation
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">...):</span>
+        <span class="c1"># 인코더 초기화 | Encoder Initialization
+</span>        <span class="c1"># 디코더 초기화 | Decoder Initialization
+</span>        <span class="c1"># 손실 함수 설정 | Loss Function Setup
+</span>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># 이미지를 잠재 공간으로 변환 | Transform Image to Latent Space
+</span>
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="c1"># 잠재 공간에서 이미지로 복원 | Reconstruct Image from Latent Space
+</span></code></pre></div></div>
+
+<h3 id="22-diffusionmodel">2.2. DiffusionModel</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">DiffusionModel</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""
+    확산 모델 구현체 | Diffusion Model Implementation
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">...):</span>
+        <span class="c1"># UNet 초기화 | UNet Initialization
+</span>        <span class="c1"># 스케줄러 설정 | Scheduler Setup
+</span>        <span class="c1"># 조건부 생성 설정 | Conditional Generation Setup
+</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># 노이즈 예측 | Noise Prediction
+</span>        <span class="c1"># 조건부 생성 | Conditional Generation
+</span>        <span class="c1"># 샘플링 | Sampling
+</span></code></pre></div></div>
+
+<h2 id="3-핵심-프로세스-분석--core-process-analysis">3. 핵심 프로세스 분석 | Core Process Analysis</h2>
+
+<h3 id="31-이미지-생성-프로세스--image-generation-process">3.1. 이미지 생성 프로세스 | Image Generation Process</h3>
+<ol>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>초기화</td>
+          <td>Initialization</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>랜덤 노이즈 생성</td>
+              <td>Random Noise Generation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>조건 설정</td>
+              <td>Condition Setting</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>파라미터 초기화</td>
+              <td>Parameter Initialization</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>반복적 개선</td>
+          <td>Iterative Improvement</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>노이즈 제거</td>
+              <td>Noise Removal</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>특징 추출</td>
+              <td>Feature Extraction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 개선</td>
+              <td>Image Enhancement</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>최종 생성</td>
+          <td>Final Generation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>잠재 공간 변환</td>
+              <td>Latent Space Transformation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 디코딩</td>
+              <td>Image Decoding</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>후처리</td>
+              <td>Post-processing</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="32-학습-프로세스--training-process">3.2. 학습 프로세스 | Training Process</h3>
+<ol>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>데이터 준비</td>
+          <td>Data Preparation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 로딩</td>
+              <td>Image Loading</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>전처리</td>
+              <td>Preprocessing</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>배치 생성</td>
+              <td>Batch Generation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>모델 학습</td>
+          <td>Model Training</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>순전파</td>
+              <td>Forward Pass</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>손실 계산</td>
+              <td>Loss Calculation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>역전파</td>
+              <td>Backpropagation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="4-모델-아키텍처--model-architecture">4. 모델 아키텍처 | Model Architecture</h2>
+
+<h3 id="41-vae-구조--vae-structure">4.1. VAE 구조 | VAE Structure</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>인코더</td>
+          <td>Encoder</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>컨볼루션 레이어</td>
+              <td>Convolution Layers</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>다운샘플링</td>
+              <td>Downsampling</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>특징 추출</td>
+              <td>Feature Extraction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>디코더</td>
+          <td>Decoder</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>업샘플링</td>
+              <td>Upsampling</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>컨볼루션 레이어</td>
+              <td>Convolution Layers</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 복원</td>
+              <td>Image Reconstruction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="42-unet-구조--unet-structure">4.2. UNet 구조 | UNet Structure</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>인코더 블록</td>
+          <td>Encoder Block</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>컨볼루션</td>
+              <td>Convolution</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>다운샘플링</td>
+              <td>Downsampling</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>특징 추출</td>
+              <td>Feature Extraction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>디코더 블록</td>
+          <td>Decoder Block</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>업샘플링</td>
+              <td>Upsampling</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>컨볼루션</td>
+              <td>Convolution</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>스킵 커넥션</td>
+              <td>Skip Connection</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="5-성능-최적화--performance-optimization">5. 성능 최적화 | Performance Optimization</h2>
+
+<h3 id="51-메모리-최적화--memory-optimization">5.1. 메모리 최적화 | Memory Optimization</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>그래디언트 체크포인팅</td>
+          <td>Gradient Checkpointing</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>혼합 정밀도 학습</td>
+          <td>Mixed Precision Training</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>배치 크기 최적화</td>
+          <td>Batch Size Optimization</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="52-속도-최적화--speed-optimization">5.2. 속도 최적화 | Speed Optimization</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>모델 양자화</td>
+          <td>Model Quantization</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>추론 최적화</td>
+          <td>Inference Optimization</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>배치 처리 효율화</td>
+          <td>Batch Processing Efficiency</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="6-확장성과-커스터마이징--scalability-and-customization">6. 확장성과 커스터마이징 | Scalability and Customization</h2>
+
+<h3 id="61-모델-확장--model-extension">6.1. 모델 확장 | Model Extension</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>새로운 아키텍처</td>
+          <td>New Architecture</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>커스텀 손실 함수</td>
+          <td>Custom Loss Functions</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>추가 기능</td>
+          <td>Additional Features</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="62-데이터셋-확장--dataset-extension">6.2. 데이터셋 확장 | Dataset Extension</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>새로운 데이터셋</td>
+          <td>New Datasets</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>커스텀 전처리</td>
+          <td>Custom Preprocessing</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>데이터 증강</td>
+          <td>Data Augmentation</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="7-디버깅과-문제-해결--debugging-and-troubleshooting">7. 디버깅과 문제 해결 | Debugging and Troubleshooting</h2>
+
+<h3 id="71-일반적인-문제--common-issues">7.1. 일반적인 문제 | Common Issues</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>학습 불안정성</td>
+          <td>Training Instability</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>메모리 부족</td>
+          <td>Memory Insufficiency</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>품질 이슈</td>
+          <td>Quality Issues</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="72-해결-방법--solutions">7.2. 해결 방법 | Solutions</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>하이퍼파라미터 튜닝</td>
+          <td>Hyperparameter Tuning</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>배치 크기 조정</td>
+          <td>Batch Size Adjustment</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>모델 체크포인팅</td>
+          <td>Model Checkpointing</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="8-실제-사용-예시--practical-usage-examples">8. 실제 사용 예시 | Practical Usage Examples</h2>
+
+<h3 id="81-기본-사용법--basic-usage">8.1. 기본 사용법 | Basic Usage</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">sgm.models</span> <span class="kn">import</span> <span class="n">AutoencoderKL</span><span class="p">,</span> <span class="n">DiffusionModel</span>
+
+<span class="c1"># 모델 초기화 | Model Initialization
+</span><span class="n">vae</span> <span class="o">=</span> <span class="n">AutoencoderKL</span><span class="p">(...)</span>
+<span class="n">diffusion</span> <span class="o">=</span> <span class="n">DiffusionModel</span><span class="p">(...)</span>
+
+<span class="c1"># 이미지 생성 | Image Generation
+</span><span class="n">latent</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">vae</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">diffusion</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span><span class="n">latent</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h3 id="82-고급-사용법--advanced-usage">8.2. 고급 사용법 | Advanced Usage</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 조건부 생성 | Conditional Generation
+</span><span class="n">condition</span> <span class="o">=</span> <span class="n">get_condition</span><span class="p">(...)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">diffusion</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span>
+    <span class="n">latent</span><span class="p">,</span>
+    <span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">,</span>
+    <span class="n">num_steps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">guidance_scale</span><span class="o">=</span><span class="mf">7.5</span>
+<span class="p">)</span>
+
+<span class="c1"># 커스텀 샘플링 | Custom Sampling
+</span><span class="n">samples</span> <span class="o">=</span> <span class="n">diffusion</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span>
+    <span class="n">latent</span><span class="p">,</span>
+    <span class="n">sampler</span><span class="o">=</span><span class="s">"ddim"</span><span class="p">,</span>
+    <span class="n">num_steps</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">eta</span><span class="o">=</span><span class="mf">0.0</span>
+<span class="p">)</span>
+</code></pre></div></div>

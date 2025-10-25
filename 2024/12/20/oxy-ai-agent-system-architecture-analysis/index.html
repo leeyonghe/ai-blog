@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Oxy Custom - AI 에이전트 시스템 아키텍처 심층 분석 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 Oxy 프레임워크의 핵심인 AI 에이전트 시스템을 심층 분석합니다. Oxy의 에이전트 시스템은 ReACT(Reasoning and Acting) 패턴을 구현하여 AI 모델이 도구를 활용해 복잡한 작업을 수행할 수 있도록 설계되었습니다.1. 에이전트 시스템 개요...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="oxy, rust, ai-agent, openai, react, tools">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/12/20/oxy-ai-agent-system-architecture-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oxy Custom - AI 에이전트 시스템 아키텍처 심층 분석">
+<meta property="og:description" content="개요이번 포스트에서는 Oxy 프레임워크의 핵심인 AI 에이전트 시스템을 심층 분석합니다. Oxy의 에이전트 시스템은 ReACT(Reasoning and Acting) 패턴을 구현하여 AI 모델이 도구를 활용해 복잡한 작업을 수행할 수 있도록 설계되었습니다.1. 에이전트 시스템 개요...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/12/20/oxy-ai-agent-system-architecture-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oxy Custom - AI 에이전트 시스템 아키텍처 심층 분석">
+<meta name="twitter:description" content="개요이번 포스트에서는 Oxy 프레임워크의 핵심인 AI 에이전트 시스템을 심층 분석합니다. Oxy의 에이전트 시스템은 ReACT(Reasoning and Acting) 패턴을 구현하여 AI 모델이 도구를 활용해 복잡한 작업을 수행할 수 있도록 설계되었습니다.1. 에이전트 시스템 개요...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Oxy Custom - AI 에이전트 시스템 아키텍처 심층 분석",
+  "description": "개요
+
+이번 포스트에서는 Oxy 프레임워크의 핵심인 AI 에이전트 시스템을 심층 분석합니다. Oxy의 에이전트 시스템은 ReACT(Reasoning and Acting) 패턴을 구현하여 AI 모델이 도구를 활용해 복잡한 작업을 수행할 수 있도록 설계되었습니다.
+
+1. 에이전트 시스...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-12-20T03:00:00+00:00",
+  "dateModified": "2024-12-20T03:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/12/20/oxy-ai-agent-system-architecture-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/12/20/oxy-ai-agent-system-architecture-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["oxy","rust","ai-agent","openai","react","tools"],
+  "articleSection": ["Rust","AI","Agent","Architecture"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Oxy Custom - AI 에이전트 시스템 아키텍처 심층 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Oxy Custom - AI 에이전트 시스템 아키텍처 심층 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-12-20T03:00:00+00:00">Dec 20, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>Rust</li><li>AI</li><li>Agent</li><li>Architecture</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 Oxy 프레임워크의 핵심인 <strong>AI 에이전트 시스템</strong>을 심층 분석합니다. Oxy의 에이전트 시스템은 ReACT(Reasoning and Acting) 패턴을 구현하여 AI 모델이 도구를 활용해 복잡한 작업을 수행할 수 있도록 설계되었습니다.</p>
+
+<h2 id="1-에이전트-시스템-개요">1. 에이전트 시스템 개요</h2>
+
+<h3 id="11-에이전트-입력-구조">1.1 에이전트 입력 구조</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(Debug,</span> <span class="nd">Clone)]</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="n">AgentInput</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="n">agent_ref</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">impl</span> <span class="nb">From</span><span class="o">&lt;&amp;</span><span class="n">AgentTask</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">AgentInput</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">from</span><span class="p">(</span><span class="n">task</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">AgentTask</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
+        <span class="k">Self</span> <span class="p">{</span>
+            <span class="n">agent_ref</span><span class="p">:</span> <span class="n">task</span><span class="py">.agent_ref</span><span class="nf">.clone</span><span class="p">(),</span>
+            <span class="n">prompt</span><span class="p">:</span> <span class="n">task</span><span class="py">.prompt</span><span class="nf">.clone</span><span class="p">(),</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>에이전트 입력의 구성 요소:</strong></p>
+<ul>
+  <li><strong>agent_ref</strong>: 실행할 에이전트의 참조 ID</li>
+  <li><strong>prompt</strong>: 에이전트에게 전달할 사용자 프롬프트</li>
+</ul>
+
+<h3 id="12-에이전트-런처-시스템">1.2 에이전트 런처 시스템</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">struct</span> <span class="n">AgentLauncher</span> <span class="p">{</span>
+    <span class="n">execution_context</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="n">ExecutionContext</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">buf_writer</span><span class="p">:</span> <span class="n">BufWriter</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">impl</span> <span class="n">AgentLauncher</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
+        <span class="k">Self</span> <span class="p">{</span>
+            <span class="n">execution_context</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+            <span class="n">buf_writer</span><span class="p">:</span> <span class="nn">BufWriter</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">pub</span> <span class="k">async</span> <span class="k">fn</span> <span class="n">launch</span><span class="o">&lt;</span><span class="n">H</span><span class="p">:</span> <span class="n">EventHandler</span> <span class="o">+</span> <span class="nb">Send</span> <span class="o">+</span> <span class="k">'static</span><span class="o">&gt;</span><span class="p">(</span>
+        <span class="k">self</span><span class="p">,</span>
+        <span class="n">agent_input</span><span class="p">:</span> <span class="n">AgentInput</span><span class="p">,</span>
+        <span class="n">event_handler</span><span class="p">:</span> <span class="n">H</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">OutputContainer</span><span class="p">,</span> <span class="n">OxyError</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">execution_context</span> <span class="o">=</span> <span class="k">self</span>
+            <span class="py">.execution_context</span>
+            <span class="nf">.ok_or</span><span class="p">(</span><span class="nn">OxyError</span><span class="p">::</span><span class="nf">RuntimeError</span><span class="p">(</span>
+                <span class="s">"ExecutionContext is required"</span><span class="nf">.to_string</span><span class="p">(),</span>
+            <span class="p">))</span><span class="o">?</span>
+            <span class="nf">.with_child_source</span><span class="p">(</span><span class="n">agent_input</span><span class="py">.agent_ref</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">AGENT_SOURCE</span><span class="nf">.to_string</span><span class="p">());</span>
+        
+        <span class="k">let</span> <span class="n">handle</span> <span class="o">=</span> <span class="nn">tokio</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span>
+            <span class="n">AgentExecutable</span>
+                <span class="nf">.execute</span><span class="p">(</span><span class="o">&amp;</span><span class="n">execution_context</span><span class="p">,</span> <span class="n">agent_input</span><span class="p">)</span>
+                <span class="k">.await</span>
+        <span class="p">});</span>
+
+        <span class="k">let</span> <span class="n">buf_writer</span> <span class="o">=</span> <span class="k">self</span><span class="py">.buf_writer</span><span class="p">;</span>
+        <span class="k">let</span> <span class="n">event_handle</span> <span class="o">=</span>
+            <span class="nn">tokio</span><span class="p">::</span><span class="nf">spawn</span><span class="p">(</span><span class="k">async</span> <span class="k">move</span> <span class="p">{</span> <span class="n">buf_writer</span><span class="nf">.write_to_handler</span><span class="p">(</span><span class="n">event_handler</span><span class="p">)</span><span class="k">.await</span> <span class="p">});</span>
+        
+        <span class="k">let</span> <span class="n">response</span> <span class="o">=</span> <span class="n">handle</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+        <span class="n">event_handle</span><span class="k">.await</span><span class="o">??</span><span class="p">;</span>
+        <span class="n">response</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="에이전트-런처의-핵심-기능">에이전트 런처의 핵심 기능:</h4>
+
+<ol>
+  <li><strong>컨텍스트 관리</strong>: 로컬/외부 실행 컨텍스트 지원</li>
+  <li><strong>비동기 실행</strong>: Tokio 기반 병렬 처리</li>
+  <li><strong>이벤트 핸들링</strong>: 실시간 결과 스트리밍</li>
+  <li><strong>에러 처리</strong>: 견고한 에러 복구 메커니즘</li>
+</ol>
+
+<h2 id="2-에이전트-실행-아키텍처">2. 에이전트 실행 아키텍처</h2>
+
+<h3 id="21-메인-에이전트-실행기">2.1 메인 에이전트 실행기</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(Debug,</span> <span class="nd">Clone)]</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="n">AgentExecutable</span><span class="p">;</span>
+
+<span class="nd">#[async_trait::async_trait]</span>
+<span class="k">impl</span> <span class="n">Executable</span><span class="o">&lt;</span><span class="n">AgentInput</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">AgentExecutable</span> <span class="p">{</span>
+    <span class="k">type</span> <span class="n">Response</span> <span class="o">=</span> <span class="n">OutputContainer</span><span class="p">;</span>
+
+    <span class="k">async</span> <span class="k">fn</span> <span class="nf">execute</span><span class="p">(</span>
+        <span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span>
+        <span class="n">execution_context</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">ExecutionContext</span><span class="p">,</span>
+        <span class="n">input</span><span class="p">:</span> <span class="n">AgentInput</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">::</span><span class="n">Response</span><span class="p">,</span> <span class="n">OxyError</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">AgentInput</span> <span class="p">{</span> <span class="n">agent_ref</span><span class="p">,</span> <span class="n">prompt</span> <span class="p">}</span> <span class="o">=</span> <span class="n">input</span><span class="p">;</span>
+        <span class="k">let</span> <span class="n">agent_config</span> <span class="o">=</span> <span class="n">execution_context</span><span class="py">.config</span><span class="nf">.resolve_agent</span><span class="p">(</span><span class="o">&amp;</span><span class="n">agent_ref</span><span class="p">)</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+        <span class="k">let</span> <span class="n">source_id</span> <span class="o">=</span> <span class="nn">short_uuid</span><span class="p">::</span><span class="nd">short!</span><span class="p">();</span>
+        
+        <span class="k">let</span> <span class="n">handler</span> <span class="o">=</span> <span class="nn">AgentReferencesHandler</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span>
+            <span class="n">execution_context</span><span class="py">.writer</span><span class="nf">.clone</span><span class="p">(),</span>
+            <span class="nf">Some</span><span class="p">(</span><span class="n">source_id</span><span class="nf">.to_string</span><span class="p">()),</span>
+        <span class="p">);</span>
+        
+        <span class="k">let</span> <span class="n">references</span> <span class="o">=</span> <span class="n">handler</span><span class="py">.references</span><span class="nf">.clone</span><span class="p">();</span>
+        <span class="k">let</span> <span class="n">metadata</span> <span class="o">=</span> <span class="nn">HashMap</span><span class="p">::</span><span class="nf">from_iter</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">AGENT_SOURCE_TYPE</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">agent_config</span><span class="py">.r</span><span class="err">#</span><span class="k">type</span><span class="nf">.to_string</span><span class="p">()),</span>
+            <span class="p">(</span><span class="n">AGENT_SOURCE_PROMPT</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">prompt</span><span class="nf">.to_string</span><span class="p">()),</span>
+        <span class="p">]);</span>
+        
+        <span class="k">let</span> <span class="n">routing_context</span> <span class="o">=</span>
+            <span class="n">execution_context</span><span class="nf">.with_child_source</span><span class="p">(</span><span class="n">source_id</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">AGENT_SOURCE</span><span class="nf">.to_string</span><span class="p">());</span>
+        
+        <span class="k">let</span> <span class="n">output_container</span> <span class="o">=</span> <span class="k">match</span> <span class="n">agent_config</span><span class="py">.r</span><span class="err">#</span><span class="k">type</span> <span class="p">{</span>
+            <span class="nn">AgentType</span><span class="p">::</span><span class="nf">Default</span><span class="p">(</span><span class="n">default_agent</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="c1">// Default 에이전트 실행</span>
+            <span class="p">}</span>
+            <span class="nn">AgentType</span><span class="p">::</span><span class="nf">Routing</span><span class="p">(</span><span class="n">routing_agent</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="c1">// Routing 에이전트 실행</span>
+            <span class="p">}</span>
+        <span class="p">}</span><span class="o">?</span><span class="p">;</span>
+
+        <span class="k">let</span> <span class="n">references</span> <span class="o">=</span> <span class="nn">Arc</span><span class="p">::</span><span class="nf">try_unwrap</span><span class="p">(</span><span class="n">references</span><span class="p">)</span>
+            <span class="nf">.map_err</span><span class="p">(|</span><span class="n">_</span><span class="p">|</span> <span class="nn">OxyError</span><span class="p">::</span><span class="nf">RuntimeError</span><span class="p">(</span><span class="s">"Failed to unwrap agent references"</span><span class="nf">.to_string</span><span class="p">()))</span><span class="o">?</span>
+            <span class="nf">.into_inner</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+            
+        <span class="nf">Ok</span><span class="p">(</span><span class="nn">OutputContainer</span><span class="p">::</span><span class="n">Metadata</span> <span class="p">{</span>
+            <span class="n">value</span><span class="p">:</span> <span class="n">Metadata</span> <span class="p">{</span>
+                <span class="n">output</span><span class="p">:</span> <span class="nn">Box</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">output_container</span><span class="p">),</span>
+                <span class="n">references</span><span class="p">,</span>
+                <span class="n">metadata</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="22-에이전트-타입별-실행">2.2 에이전트 타입별 실행</h3>
+
+<p>Oxy는 두 가지 주요 에이전트 타입을 지원합니다:</p>
+
+<ol>
+  <li><strong>Default Agent</strong>: 단일 AI 모델 기반 에이전트</li>
+  <li><strong>Routing Agent</strong>: 다중 에이전트 라우팅 시스템</li>
+</ol>
+
+<h2 id="3-default-에이전트-심층-분석">3. Default 에이전트 심층 분석</h2>
+
+<h3 id="31-default-에이전트-구조">3.1 Default 에이전트 구조</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(Debug,</span> <span class="nd">Clone)]</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="n">DefaultAgentInput</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="n">agent_name</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">model</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">default_agent</span><span class="p">:</span> <span class="n">DefaultAgent</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">contexts</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">AgentContext</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="nd">#[derive(Debug,</span> <span class="nd">Clone)]</span>
+<span class="k">pub</span><span class="p">(</span><span class="k">super</span><span class="p">)</span> <span class="k">struct</span> <span class="n">DefaultAgentExecutable</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="32-default-에이전트-실행-로직">3.2 Default 에이전트 실행 로직</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[async_trait::async_trait]</span>
+<span class="k">impl</span> <span class="n">Executable</span><span class="o">&lt;</span><span class="n">DefaultAgentInput</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">DefaultAgentExecutable</span> <span class="p">{</span>
+    <span class="k">type</span> <span class="n">Response</span> <span class="o">=</span> <span class="n">Output</span><span class="p">;</span>
+
+    <span class="k">async</span> <span class="k">fn</span> <span class="nf">execute</span><span class="p">(</span>
+        <span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span>
+        <span class="n">execution_context</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">ExecutionContext</span><span class="p">,</span>
+        <span class="n">input</span><span class="p">:</span> <span class="n">DefaultAgentInput</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">::</span><span class="n">Response</span><span class="p">,</span> <span class="n">OxyError</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">DefaultAgentInput</span> <span class="p">{</span>
+            <span class="n">agent_name</span><span class="p">,</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">prompt</span><span class="p">,</span>
+            <span class="n">contexts</span><span class="p">:</span> <span class="n">_</span><span class="p">,</span>
+            <span class="n">default_agent</span><span class="p">:</span>
+                <span class="n">DefaultAgent</span> <span class="p">{</span>
+                    <span class="n">system_instructions</span><span class="p">,</span>
+                    <span class="n">tools_config</span><span class="p">:</span>
+                        <span class="n">AgentToolsConfig</span> <span class="p">{</span>
+                            <span class="n">tools</span><span class="p">,</span>
+                            <span class="n">max_tool_calls</span><span class="p">,</span>
+                            <span class="n">max_tool_concurrency</span><span class="p">,</span>
+                        <span class="p">},</span>
+                <span class="p">},</span>
+        <span class="p">}</span> <span class="o">=</span> <span class="n">input</span><span class="p">;</span>
+
+        <span class="c1">// 1. AI 모델 클라이언트 생성</span>
+        <span class="k">let</span> <span class="n">model_config</span> <span class="o">=</span> <span class="n">execution_context</span><span class="py">.config</span><span class="nf">.resolve_model</span><span class="p">(</span><span class="o">&amp;</span><span class="n">model</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+        <span class="k">let</span> <span class="n">client</span> <span class="o">=</span> <span class="nn">OpenAIClient</span><span class="p">::</span><span class="nf">with_config</span><span class="p">(</span><span class="n">model_config</span><span class="nf">.try_into</span><span class="p">()</span><span class="o">?</span><span class="p">);</span>
+        
+        <span class="c1">// 2. 시스템 지침 렌더링</span>
+        <span class="k">let</span> <span class="n">system_instructions</span> <span class="o">=</span> <span class="n">execution_context</span>
+            <span class="py">.renderer</span>
+            <span class="nf">.render_async</span><span class="p">(</span><span class="o">&amp;</span><span class="n">system_instructions</span><span class="p">)</span>
+            <span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+        
+        <span class="c1">// 3. 메시지 구성</span>
+        <span class="k">let</span> <span class="n">messages</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ChatCompletionRequestMessage</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span>
+            <span class="nn">ChatCompletionRequestSystemMessageArgs</span><span class="p">::</span><span class="nf">default</span><span class="p">()</span>
+                <span class="nf">.content</span><span class="p">(</span><span class="n">system_instructions</span><span class="p">)</span>
+                <span class="nf">.build</span><span class="p">()</span><span class="o">?</span>
+                <span class="nf">.into</span><span class="p">(),</span>
+            <span class="nn">ChatCompletionRequestUserMessageArgs</span><span class="p">::</span><span class="nf">default</span><span class="p">()</span>
+                <span class="nf">.content</span><span class="p">(</span><span class="n">prompt</span><span class="nf">.clone</span><span class="p">())</span>
+                <span class="nf">.build</span><span class="p">()</span><span class="o">?</span>
+                <span class="nf">.into</span><span class="p">(),</span>
+        <span class="p">];</span>
+        
+        <span class="c1">// 4. 프롬프트 청크 기록</span>
+        <span class="n">execution_context</span>
+            <span class="nf">.write_chunk</span><span class="p">(</span><span class="n">Chunk</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="nf">Some</span><span class="p">(</span><span class="n">AGENT_SOURCE_PROMPT</span><span class="nf">.to_string</span><span class="p">()),</span>
+                <span class="n">delta</span><span class="p">:</span> <span class="nn">Prompt</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">prompt</span><span class="nf">.clone</span><span class="p">())</span><span class="nf">.into</span><span class="p">(),</span>
+                <span class="n">finished</span><span class="p">:</span> <span class="k">true</span><span class="p">,</span>
+            <span class="p">})</span>
+            <span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+        
+        <span class="c1">// 5. ReACT 루프 실행</span>
+        <span class="k">let</span> <span class="k">mut</span> <span class="n">react_executable</span> <span class="o">=</span> <span class="nf">build_react_loop</span><span class="p">(</span>
+            <span class="n">agent_name</span><span class="p">,</span>
+            <span class="n">tools</span><span class="p">,</span>
+            <span class="n">max_tool_concurrency</span><span class="p">,</span>
+            <span class="n">client</span><span class="p">,</span>
+            <span class="n">model_config</span><span class="nf">.model_name</span><span class="p">()</span><span class="nf">.to_string</span><span class="p">(),</span>
+            <span class="n">max_tool_calls</span><span class="p">,</span>
+        <span class="p">)</span><span class="k">.await</span><span class="p">;</span>
+        
+        <span class="k">let</span> <span class="n">response</span> <span class="o">=</span> <span class="n">react_executable</span>
+            <span class="nf">.execute</span><span class="p">(</span><span class="n">execution_context</span><span class="p">,</span> <span class="n">messages</span><span class="p">)</span>
+            <span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+            
+        <span class="nf">Ok</span><span class="p">(</span><span class="n">response</span><span class="py">.content</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="default-에이전트-실행-단계">Default 에이전트 실행 단계:</h4>
+
+<ol>
+  <li><strong>모델 설정</strong>: 설정된 AI 모델 클라이언트 생성</li>
+  <li><strong>지침 렌더링</strong>: 템플릿 엔진으로 동적 시스템 지침 생성</li>
+  <li><strong>메시지 구성</strong>: 시스템 메시지와 사용자 메시지 구성</li>
+  <li><strong>프롬프트 로깅</strong>: 실행 추적을 위한 프롬프트 기록</li>
+  <li><strong>ReACT 실행</strong>: 도구 사용이 가능한 추론-행동 루프 시작</li>
+</ol>
+
+<h2 id="4-react-reasoning-and-acting-패턴">4. ReACT (Reasoning and Acting) 패턴</h2>
+
+<h3 id="41-react-루프-구축">4.1 ReACT 루프 구축</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">fn</span> <span class="nf">build_react_loop</span><span class="p">(</span>
+    <span class="n">agent_name</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="n">tool_configs</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ToolType</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">max_concurrency</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+    <span class="n">client</span><span class="p">:</span> <span class="n">OpenAIClient</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+<span class="p">)</span> <span class="k">-&gt;</span> <span class="k">impl</span> <span class="n">Executable</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ChatCompletionRequestMessage</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Response</span> <span class="o">=</span> <span class="n">OpenAIExecutableResponse</span><span class="o">&gt;</span> <span class="p">{</span>
+    
+    <span class="c1">// 1. 도구 변환</span>
+    <span class="k">let</span> <span class="n">tools</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ChatCompletionTool</span><span class="o">&gt;</span> <span class="o">=</span>
+        <span class="nn">futures</span><span class="p">::</span><span class="nn">future</span><span class="p">::</span><span class="nf">join_all</span><span class="p">(</span><span class="n">tool_configs</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.map</span><span class="p">(</span><span class="nn">ChatCompletionTool</span><span class="p">::</span><span class="n">from_tool_async</span><span class="p">))</span>
+            <span class="k">.await</span>
+            <span class="nf">.into_iter</span><span class="p">()</span>
+            <span class="nf">.collect</span><span class="p">();</span>
+    
+    <span class="c1">// 2. ReACT 실행기 구축</span>
+    <span class="nn">ExecutableBuilder</span><span class="p">::</span><span class="nf">new</span><span class="p">()</span>
+        <span class="nf">.react</span><span class="p">(</span>
+            <span class="nn">OpenAITool</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">agent_name</span><span class="p">,</span> <span class="n">tool_configs</span><span class="p">,</span> <span class="n">max_concurrency</span><span class="p">),</span>
+            <span class="p">|</span><span class="n">response</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">OpenAIExecutableResponse</span><span class="p">,</span>
+             <span class="n">new_response</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;&amp;</span><span class="n">OpenAIExecutableResponse</span><span class="o">&gt;</span><span class="p">|</span> <span class="p">{</span>
+                <span class="c1">// 응답 병합 로직</span>
+                <span class="k">match</span> <span class="n">new_response</span> <span class="p">{</span>
+                    <span class="nf">Some</span><span class="p">(</span><span class="n">new_response</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="n">OpenAIExecutableResponse</span> <span class="p">{</span>
+                        <span class="n">content</span><span class="p">:</span> <span class="n">response</span><span class="py">.content</span><span class="nf">.merge</span><span class="p">(</span><span class="o">&amp;</span><span class="n">new_response</span><span class="py">.content</span><span class="p">),</span>
+                        <span class="n">tool_calls</span><span class="p">:</span> <span class="n">response</span>
+                            <span class="py">.tool_calls</span>
+                            <span class="nf">.iter</span><span class="p">()</span>
+                            <span class="nf">.chain</span><span class="p">(</span><span class="n">new_response</span><span class="py">.tool_calls</span><span class="nf">.iter</span><span class="p">())</span>
+                            <span class="nf">.cloned</span><span class="p">()</span>
+                            <span class="nf">.collect</span><span class="p">(),</span>
+                    <span class="p">},</span>
+                    <span class="nb">None</span> <span class="k">=&gt;</span> <span class="n">OpenAIExecutableResponse</span> <span class="p">{</span>
+                        <span class="n">content</span><span class="p">:</span> <span class="n">response</span><span class="py">.content</span><span class="nf">.clone</span><span class="p">(),</span>
+                        <span class="n">tool_calls</span><span class="p">:</span> <span class="n">response</span><span class="py">.tool_calls</span><span class="nf">.clone</span><span class="p">(),</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="p">|</span><span class="n">input</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ChatCompletionRequestMessage</span><span class="o">&gt;</span><span class="p">,</span>
+             <span class="n">new_input</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ChatCompletionRequestMessage</span><span class="o">&gt;</span><span class="p">|</span> <span class="p">{</span>
+                <span class="c1">// 입력 병합 로직</span>
+                <span class="n">input</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.chain</span><span class="p">(</span><span class="n">new_input</span><span class="nf">.iter</span><span class="p">())</span><span class="nf">.cloned</span><span class="p">()</span><span class="nf">.collect</span><span class="p">()</span>
+            <span class="p">},</span>
+            <span class="n">max_iterations</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nf">.executable</span><span class="p">(</span><span class="nn">OpenAIExecutable</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">tools</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="42-react-패턴의-핵심-구조">4.2 ReACT 패턴의 핵심 구조</h3>
+
+<p><strong>ReACT 루프의 구성 요소:</strong></p>
+
+<ol>
+  <li><strong>도구 등록</strong>: 사용 가능한 도구들을 OpenAI Function Call 형식으로 변환</li>
+  <li><strong>응답 병합</strong>: 여러 도구 호출 결과를 단일 응답으로 통합</li>
+  <li><strong>입력 병합</strong>: 이전 대화 히스토리와 새로운 메시지 결합</li>
+  <li><strong>반복 제한</strong>: 무한 루프 방지를 위한 최대 반복 횟수 설정</li>
+</ol>
+
+<h3 id="43-react-실행-흐름">4.3 ReACT 실행 흐름</h3>
+
+<pre><code class="language-mermaid">graph TD
+    A[사용자 프롬프트] --&gt; B[AI 모델 추론]
+    B --&gt; C{도구 호출 필요?}
+    C --&gt;|Yes| D[도구 실행]
+    D --&gt; E[도구 결과]
+    E --&gt; F[결과를 컨텍스트에 추가]
+    F --&gt; B
+    C --&gt;|No| G[최종 응답 생성]
+    G --&gt; H[사용자에게 반환]
+    
+    B --&gt; I{최대 반복 도달?}
+    I --&gt;|Yes| J[강제 종료]
+    I --&gt;|No| C
+</code></pre>
+
+<h2 id="5-글로벌-컨텍스트-시스템">5. 글로벌 컨텍스트 시스템</h2>
+
+<h3 id="51-컨텍스트-빌더">5.1 컨텍스트 빌더</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">build_global_context</span><span class="p">(</span>
+    <span class="n">execution_context</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">ExecutionContext</span><span class="p">,</span>
+    <span class="n">agent_name</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">,</span>
+    <span class="n">default_agent</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">DefaultAgent</span><span class="p">,</span>
+    <span class="n">contexts</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">AgentContext</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="n">Value</span><span class="p">,</span> <span class="n">OxyError</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">contexts</span> <span class="o">=</span> <span class="nn">Contexts</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">contexts</span><span class="p">,</span> <span class="n">execution_context</span><span class="py">.config</span><span class="nf">.clone</span><span class="p">());</span>
+    <span class="k">let</span> <span class="n">databases</span> <span class="o">=</span> <span class="nn">DatabasesContext</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">execution_context</span><span class="py">.config</span><span class="nf">.clone</span><span class="p">());</span>
+    <span class="k">let</span> <span class="n">tools</span> <span class="o">=</span> <span class="nn">ToolsContext</span><span class="p">::</span><span class="nf">from_execution_context</span><span class="p">(</span>
+        <span class="n">execution_context</span><span class="p">,</span>
+        <span class="n">agent_name</span><span class="nf">.to_string</span><span class="p">(),</span>
+        <span class="n">default_agent</span><span class="py">.tools_config.tools</span><span class="nf">.clone</span><span class="p">(),</span>
+        <span class="n">prompt</span><span class="nf">.to_string</span><span class="p">(),</span>
+    <span class="p">);</span>
+    
+    <span class="nf">Ok</span><span class="p">(</span><span class="nd">context!</span> <span class="p">{</span>
+        <span class="n">context</span> <span class="k">=&gt;</span> <span class="nn">Value</span><span class="p">::</span><span class="nf">from_object</span><span class="p">(</span><span class="n">contexts</span><span class="p">),</span>
+        <span class="n">databases</span> <span class="k">=&gt;</span> <span class="nn">Value</span><span class="p">::</span><span class="nf">from_object</span><span class="p">(</span><span class="n">databases</span><span class="p">),</span>
+        <span class="n">tools</span> <span class="k">=&gt;</span> <span class="nn">Value</span><span class="p">::</span><span class="nf">from_object</span><span class="p">(</span><span class="n">tools</span><span class="p">)</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="52-컨텍스트-구성-요소">5.2 컨텍스트 구성 요소</h3>
+
+<p><strong>글로벌 컨텍스트의 세 가지 핵심 요소:</strong></p>
+
+<ol>
+  <li><strong>Contexts</strong>: 에이전트별 사용자 정의 컨텍스트
+    <ul>
+      <li>파일 컨텍스트 (코드, 문서 등)</li>
+      <li>시맨틱 모델 컨텍스트 (데이터 스키마)</li>
+      <li>커스텀 컨텍스트 (도메인 지식)</li>
+    </ul>
+  </li>
+  <li><strong>Databases</strong>: 데이터베이스 연결 정보
+    <ul>
+      <li>사용 가능한 데이터소스 목록</li>
+      <li>연결 파라미터 및 스키마 정보</li>
+    </ul>
+  </li>
+  <li><strong>Tools</strong>: 사용 가능한 도구 목록
+    <ul>
+      <li>SQL 실행 도구</li>
+      <li>파일 조작 도구</li>
+      <li>API 호출 도구</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="6-파라미터-매핑-시스템">6. 파라미터 매핑 시스템</h2>
+
+<h3 id="61-default-에이전트-매퍼">6.1 Default 에이전트 매퍼</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(Clone)]</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="n">DefaultAgentMapper</span><span class="p">;</span>
+
+<span class="nd">#[async_trait::async_trait]</span>
+<span class="k">impl</span> <span class="n">ParamMapper</span><span class="o">&lt;</span><span class="n">DefaultAgentInput</span><span class="p">,</span> <span class="n">DefaultAgentInput</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">DefaultAgentMapper</span> <span class="p">{</span>
+    <span class="k">async</span> <span class="k">fn</span> <span class="nf">map</span><span class="p">(</span>
+        <span class="o">&amp;</span><span class="k">self</span><span class="p">,</span>
+        <span class="n">execution_context</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">ExecutionContext</span><span class="p">,</span>
+        <span class="n">input</span><span class="p">:</span> <span class="n">DefaultAgentInput</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Result</span><span class="o">&lt;</span><span class="p">(</span><span class="n">DefaultAgentInput</span><span class="p">,</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="n">ExecutionContext</span><span class="o">&gt;</span><span class="p">),</span> <span class="n">OxyError</span><span class="o">&gt;</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">default_agent</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">input</span><span class="py">.default_agent</span><span class="p">;</span>
+        
+        <span class="k">let</span> <span class="n">global_context</span> <span class="o">=</span> <span class="nf">build_global_context</span><span class="p">(</span>
+            <span class="o">&amp;</span><span class="n">execution_context</span><span class="p">,</span>
+            <span class="o">&amp;</span><span class="n">input</span><span class="py">.agent_name</span><span class="p">,</span>
+            <span class="n">default_agent</span><span class="p">,</span>
+            <span class="n">input</span><span class="py">.contexts</span><span class="nf">.clone</span><span class="p">()</span><span class="nf">.unwrap_or_default</span><span class="p">(),</span>
+            <span class="o">&amp;</span><span class="n">input</span><span class="py">.prompt</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">?</span><span class="p">;</span>
+        
+        <span class="k">let</span> <span class="n">renderer</span> <span class="o">=</span> <span class="nn">Renderer</span><span class="p">::</span><span class="nf">from_template</span><span class="p">(</span>
+            <span class="n">global_context</span><span class="p">,</span>
+            <span class="o">&amp;</span><span class="n">input</span><span class="py">.default_agent.system_instructions</span><span class="nf">.as_str</span><span class="p">(),</span>
+        <span class="p">)</span><span class="o">?</span><span class="p">;</span>
+        
+        <span class="k">let</span> <span class="n">execution_context</span> <span class="o">=</span> <span class="n">execution_context</span><span class="nf">.wrap_renderer</span><span class="p">(</span><span class="n">renderer</span><span class="p">);</span>
+        <span class="nf">Ok</span><span class="p">((</span><span class="n">input</span><span class="p">,</span> <span class="nf">Some</span><span class="p">(</span><span class="n">execution_context</span><span class="p">)))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="62-매퍼의-역할">6.2 매퍼의 역할</h3>
+
+<p><strong>파라미터 매퍼의 핵심 기능:</strong></p>
+
+<ol>
+  <li><strong>컨텍스트 주입</strong>: 글로벌 컨텍스트를 렌더러에 주입</li>
+  <li><strong>템플릿 준비</strong>: 시스템 지침 템플릿 사전 처리</li>
+  <li><strong>실행 컨텍스트 래핑</strong>: 새로운 렌더러로 컨텍스트 확장</li>
+  <li><strong>동적 설정</strong>: 런타임 시 에이전트 동작 커스터마이징</li>
+</ol>
+
+<h2 id="7-에이전트-빌더-패턴">7. 에이전트 빌더 패턴</h2>
+
+<h3 id="71-실행-가능한-빌더">7.1 실행 가능한 빌더</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span><span class="p">(</span><span class="k">super</span><span class="p">)</span> <span class="k">fn</span> <span class="nf">build_default_agent_executable</span><span class="p">()</span>
+<span class="k">-&gt;</span> <span class="k">impl</span> <span class="n">Executable</span><span class="o">&lt;</span><span class="n">DefaultAgentInput</span><span class="p">,</span> <span class="n">Response</span> <span class="o">=</span> <span class="n">Output</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nn">ExecutableBuilder</span><span class="p">::</span><span class="nf">new</span><span class="p">()</span>
+        <span class="nf">.map</span><span class="p">(</span><span class="n">DefaultAgentMapper</span><span class="p">)</span>
+        <span class="nf">.executable</span><span class="p">(</span><span class="n">DefaultAgentExecutable</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="72-빌더-패턴의-장점">7.2 빌더 패턴의 장점</h3>
+
+<p><strong>ExecutableBuilder의 이점:</strong></p>
+
+<ol>
+  <li><strong>조합성</strong>: 여러 실행 단계를 조합하여 복잡한 파이프라인 구성</li>
+  <li><strong>재사용성</strong>: 공통 매퍼와 실행기를 다양한 컨텍스트에서 재사용</li>
+  <li><strong>테스트 용이성</strong>: 각 단계를 독립적으로 테스트 가능</li>
+  <li><strong>확장성</strong>: 새로운 매퍼나 실행기를 쉽게 추가</li>
+</ol>
+
+<h2 id="8-에이전트-시스템의-혁신적-특징">8. 에이전트 시스템의 혁신적 특징</h2>
+
+<h3 id="81-동적-도구-시스템">8.1 동적 도구 시스템</h3>
+
+<ul>
+  <li><strong>런타임 도구 등록</strong>: 에이전트 실행 시점에 도구 동적 로드</li>
+  <li><strong>도구 동시성</strong>: 여러 도구를 병렬로 실행하여 성능 향상</li>
+  <li><strong>도구 체이닝</strong>: 한 도구의 결과를 다른 도구의 입력으로 사용</li>
+</ul>
+
+<h3 id="82-컨텍스트-인식-시스템">8.2 컨텍스트 인식 시스템</h3>
+
+<ul>
+  <li><strong>시맨틱 모델 통합</strong>: 데이터 스키마를 AI가 이해할 수 있는 형태로 제공</li>
+  <li><strong>파일 컨텍스트</strong>: 코드베이스나 문서를 에이전트가 참조</li>
+  <li><strong>데이터베이스 인식</strong>: 사용 가능한 데이터소스를 자동 인식</li>
+</ul>
+
+<h3 id="83-확장-가능한-아키텍처">8.3 확장 가능한 아키텍처</h3>
+
+<ul>
+  <li><strong>플러그인 시스템</strong>: 새로운 도구나 컨텍스트 타입 쉽게 추가</li>
+  <li><strong>모델 추상화</strong>: OpenAI 외 다른 AI 모델 제공자 지원</li>
+  <li><strong>실행 추적</strong>: 전체 실행 과정 로깅 및 디버깅</li>
+</ul>
+
+<h2 id="결론">결론</h2>
+
+<p>Oxy의 AI 에이전트 시스템은 <strong>모듈러 아키텍처</strong>와 <strong>ReACT 패턴</strong>을 결합하여 강력하고 유연한 AI 에이전트 플랫폼을 제공합니다. 특히 동적 컨텍스트 주입과 도구 시스템을 통해 AI가 실제 작업을 수행할 수 있는 실용적인 환경을 구현했습니다.</p>
+
+<p><strong>핵심 혁신 포인트:</strong></p>
+<ul>
+  <li><strong>컨텍스트 인식</strong>: 데이터 스키마와 코드베이스를 AI가 이해</li>
+  <li><strong>도구 중심 설계</strong>: AI가 실제 작업을 수행할 수 있는 도구 생태계</li>
+  <li><strong>확장 가능성</strong>: 플러그인 아키텍처로 무한한 확장 가능</li>
+  <li><strong>실행 추적</strong>: 전체 추론 과정의 투명성 제공</li>
+</ul>
+
+<p>다음 포스트에서는 Oxy의 데이터베이스 시스템과 Sea-ORM 통합을 상세히 분석하겠습니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li><a href="/2024/08/15/oxy-custom-project-overview-analysis/">Oxy Custom 프로젝트 개요 분석</a></li>
+  <li><a href="/2024/12/20/oxy-rust-application-entry-point-analysis/">Oxy Custom - Rust 애플리케이션 진입점 및 CLI 시스템 심층 분석</a></li>
+  <li><a href="/2024/12/20/oxy-cli-make-command-analysis/">Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석</a></li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2210.03629">ReACT: Reasoning and Acting in Language Models</a></li>
+  <li><a href="https://platform.openai.com/docs/guides/function-calling">OpenAI Function Calling</a></li>
+  <li><a href="https://github.com/dtolnay/async-trait">Async-trait Rust Crate</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/12/20/oxy-cli-make-command-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/12/21/docker-compose-orchestration-deep-dive/" rel="next">
+          <span class="nav-title">Docker Compose 오케스트레이션 심화 분석 - AudioCraft Custo...</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

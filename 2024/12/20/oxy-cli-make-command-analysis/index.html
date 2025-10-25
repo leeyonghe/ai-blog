@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 Oxy 프레임워크의 CLI Make 명령어를 심층 분석합니다. Make 명령어는 CSV 파일 하나만으로 완전한 분석 프로젝트를 자동 생성하는 혁신적인 기능으로, 데이터 분석 워크플로우의 생산성을 획기적으로 향상시킵니다.1. Make 명령어 시스템 개요1.1 기...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="oxy, rust, cli, make, csv, automation">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/12/20/oxy-cli-make-command-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석">
+<meta property="og:description" content="개요이번 포스트에서는 Oxy 프레임워크의 CLI Make 명령어를 심층 분석합니다. Make 명령어는 CSV 파일 하나만으로 완전한 분석 프로젝트를 자동 생성하는 혁신적인 기능으로, 데이터 분석 워크플로우의 생산성을 획기적으로 향상시킵니다.1. Make 명령어 시스템 개요1.1 기...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/12/20/oxy-cli-make-command-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석">
+<meta name="twitter:description" content="개요이번 포스트에서는 Oxy 프레임워크의 CLI Make 명령어를 심층 분석합니다. Make 명령어는 CSV 파일 하나만으로 완전한 분석 프로젝트를 자동 생성하는 혁신적인 기능으로, 데이터 분석 워크플로우의 생산성을 획기적으로 향상시킵니다.1. Make 명령어 시스템 개요1.1 기...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석",
+  "description": "개요
+
+이번 포스트에서는 Oxy 프레임워크의 CLI Make 명령어를 심층 분석합니다. Make 명령어는 CSV 파일 하나만으로 완전한 분석 프로젝트를 자동 생성하는 혁신적인 기능으로, 데이터 분석 워크플로우의 생산성을 획기적으로 향상시킵니다.
+
+1. Make 명령어 시스템 개요
+...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-12-20T02:00:00+00:00",
+  "dateModified": "2024-12-20T02:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/12/20/oxy-cli-make-command-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/12/20/oxy-cli-make-command-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["oxy","rust","cli","make","csv","automation"],
+  "articleSection": ["Rust","Analytics","Framework"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Oxy Custom - CLI Make 명령어와 프로젝트 자동 생성 시스템 심층 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-12-20T02:00:00+00:00">Dec 20, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>Rust</li><li>Analytics</li><li>Framework</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 Oxy 프레임워크의 <strong>CLI Make 명령어</strong>를 심층 분석합니다. Make 명령어는 CSV 파일 하나만으로 완전한 분석 프로젝트를 자동 생성하는 혁신적인 기능으로, 데이터 분석 워크플로우의 생산성을 획기적으로 향상시킵니다.</p>
+
+<h2 id="1-make-명령어-시스템-개요">1. Make 명령어 시스템 개요</h2>
+
+<h3 id="11-기본-개념">1.1 기본 개념</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">async</span> <span class="k">fn</span> <span class="nf">handle_make_command</span><span class="p">(</span><span class="n">make_args</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">MakeArgs</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nn">anyhow</span><span class="p">::</span><span class="nb">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">setup</span> <span class="o">=</span> <span class="nf">setup_project</span><span class="p">(</span><span class="n">make_args</span><span class="py">.file</span><span class="nf">.clone</span><span class="p">())</span><span class="o">?</span><span class="p">;</span>
+    <span class="k">let</span> <span class="p">(</span><span class="n">db_dir</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">)</span> <span class="o">=</span> <span class="nf">setup_directories</span><span class="p">(</span><span class="o">&amp;</span><span class="n">setup</span><span class="p">)</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+    
+    <span class="c1">// 1. 데이터베이스 파일 처리</span>
+    <span class="c1">// 2. SQL 파일 생성</span>
+    <span class="c1">// 3. 시맨틱 모델 생성</span>
+    <span class="c1">// 4. 설정 파일 생성</span>
+    <span class="c1">// 5. AI 에이전트 생성</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>Make 명령어의 핵심 기능:</strong></p>
+<ul>
+  <li>CSV 파일을 입력받아 완전한 분석 환경 구축</li>
+  <li>DuckDB 데이터베이스 자동 설정</li>
+  <li>시맨틱 모델 자동 추출</li>
+  <li>AI 에이전트 자동 구성</li>
+  <li>프로젝트 구조 자동 생성</li>
+</ul>
+
+<h3 id="12-프로젝트-구조-설정">1.2 프로젝트 구조 설정</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">ProjectSetup</span> <span class="p">{</span>
+    <span class="n">file_path</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">PathBuf</span><span class="p">,</span>
+    <span class="n">file_name</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="n">file_name_without_ext</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">setup_project</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">String</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nn">anyhow</span><span class="p">::</span><span class="nb">Result</span><span class="o">&lt;</span><span class="n">ProjectSetup</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="o">!</span><span class="n">file_path</span><span class="nf">.ends_with</span><span class="p">(</span><span class="s">".csv"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nd">eprintln!</span><span class="p">(</span><span class="s">"Invalid file format. Must be a CSV file."</span><span class="p">);</span>
+        <span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="o">!</span><span class="nn">std</span><span class="p">::</span><span class="nn">path</span><span class="p">::</span><span class="nn">Path</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">file_path</span><span class="p">)</span><span class="nf">.exists</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nd">eprintln!</span><span class="p">(</span><span class="s">"File not found: {}"</span><span class="p">,</span> <span class="n">file_path</span><span class="p">);</span>
+        <span class="nf">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">let</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">String</span> <span class="o">=</span> <span class="nn">std</span><span class="p">::</span><span class="nn">path</span><span class="p">::</span><span class="nn">Path</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="nf">.file_name</span><span class="p">()</span>
+        <span class="nf">.expect</span><span class="p">(</span><span class="s">"Failed to get file name"</span><span class="p">)</span>
+        <span class="nf">.to_str</span><span class="p">()</span>
+        <span class="nf">.expect</span><span class="p">(</span><span class="s">"Failed to convert file name to string"</span><span class="p">)</span>
+        <span class="nf">.to_string</span><span class="p">();</span>
+
+    <span class="k">let</span> <span class="n">file_name_without_ext</span> <span class="o">=</span> <span class="n">file_name</span><span class="nf">.replace</span><span class="p">(</span><span class="s">".csv"</span><span class="p">,</span> <span class="s">""</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="nf">current_dir</span><span class="p">()</span><span class="nf">.expect</span><span class="p">(</span><span class="s">"Could not get current directory"</span><span class="p">);</span>
+
+    <span class="nf">Ok</span><span class="p">(</span><span class="n">ProjectSetup</span> <span class="p">{</span>
+        <span class="n">file_path</span><span class="p">,</span>
+        <span class="n">output_dir</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="p">,</span>
+        <span class="n">file_name_without_ext</span><span class="p">,</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="입력-검증-및-프로젝트-초기화">입력 검증 및 프로젝트 초기화:</h4>
+<ol>
+  <li><strong>파일 형식 검증</strong>: CSV 파일만 허용</li>
+  <li><strong>파일 존재 확인</strong>: 입력 파일의 실제 존재 여부 검증</li>
+  <li><strong>파일명 추출</strong>: 확장자 제거 및 프로젝트명 생성</li>
+  <li><strong>출력 디렉토리</strong>: 현재 작업 디렉토리를 기준으로 설정</li>
+</ol>
+
+<h2 id="2-디렉토리-구조-자동-생성">2. 디렉토리 구조 자동 생성</h2>
+
+<h3 id="21-프로젝트-디렉토리-생성">2.1 프로젝트 디렉토리 생성</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">fn</span> <span class="nf">setup_directories</span><span class="p">(</span><span class="n">setup</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">ProjectSetup</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nn">anyhow</span><span class="p">::</span><span class="nb">Result</span><span class="o">&lt;</span><span class="p">(</span><span class="n">PathBuf</span><span class="p">,</span> <span class="n">PathBuf</span><span class="p">)</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">db_dir</span> <span class="o">=</span> <span class="n">setup</span><span class="py">.output_dir</span><span class="nf">.join</span><span class="p">(</span><span class="s">"db"</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">data_dir</span> <span class="o">=</span> <span class="n">setup</span><span class="py">.output_dir</span><span class="nf">.join</span><span class="p">(</span><span class="s">"data"</span><span class="p">);</span>
+    <span class="nf">create_dir</span><span class="p">(</span><span class="n">db_dir</span><span class="nf">.clone</span><span class="p">())</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+    <span class="nf">create_dir</span><span class="p">(</span><span class="n">data_dir</span><span class="nf">.clone</span><span class="p">())</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+    <span class="nf">Ok</span><span class="p">((</span><span class="n">db_dir</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>생성되는 디렉토리 구조:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>project/
+├── db/           # 데이터베이스 파일 저장
+├── data/         # SQL 파일 및 시맨틱 모델
+├── agents/       # AI 에이전트 설정
+└── config.yml    # 프로젝트 설정
+</code></pre></div></div>
+
+<h3 id="22-파일-복사-및-배치">2.2 파일 복사 및 배치</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 데이터베이스 파일 처리</span>
+<span class="k">let</span> <span class="n">db_file_path</span> <span class="o">=</span> <span class="n">db_dir</span><span class="nf">.join</span><span class="p">(</span><span class="o">&amp;</span><span class="n">setup</span><span class="py">.file_name</span><span class="p">);</span>
+<span class="k">if</span> <span class="o">!</span><span class="n">db_file_path</span><span class="nf">.exists</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nn">std</span><span class="p">::</span><span class="nn">fs</span><span class="p">::</span><span class="nf">copy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">setup</span><span class="py">.file_path</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">db_file_path</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Copied file to: {}"</span><span class="p">,</span> <span class="n">db_file_path</span><span class="nf">.display</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>원본 CSV 파일을 <code class="language-plaintext highlighter-rouge">db/</code> 디렉토리로 복사하여 DuckDB가 직접 접근할 수 있도록 배치합니다.</p>
+
+<h2 id="3-ai-모델-자동-감지-시스템">3. AI 모델 자동 감지 시스템</h2>
+
+<h3 id="31-환경변수-기반-모델-선택">3.1 환경변수 기반 모델 선택</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span> <span class="n">OPENAI_API_KEY_VAR</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span> <span class="o">=</span> <span class="s">"OPENAI_API_KEY"</span><span class="p">;</span>
+<span class="k">const</span> <span class="n">GEMINI_API_KEY_VAR</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span> <span class="o">=</span> <span class="s">"GEMINI_API_KEY"</span><span class="p">;</span>
+<span class="k">const</span> <span class="n">ANTHROPIC_API_KEY_VAR</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span> <span class="o">=</span> <span class="s">"ANTHROPIC_API_KEY"</span><span class="p">;</span>
+
+<span class="k">fn</span> <span class="nf">determine_model</span><span class="p">()</span> <span class="k">-&gt;</span> <span class="p">(</span><span class="nb">String</span><span class="p">,</span> <span class="n">Model</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nn">std</span><span class="p">::</span><span class="nn">env</span><span class="p">::</span><span class="nf">var</span><span class="p">(</span><span class="n">GEMINI_API_KEY_VAR</span><span class="p">)</span><span class="nf">.is_ok</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"gemini1.5pro"</span><span class="nf">.to_string</span><span class="p">();</span>
+        <span class="p">(</span>
+            <span class="n">name</span><span class="nf">.clone</span><span class="p">(),</span>
+            <span class="nn">Model</span><span class="p">::</span><span class="n">Google</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">,</span>
+                <span class="n">model_ref</span><span class="p">:</span> <span class="s">"gemini-1.5-pro"</span><span class="nf">.to_string</span><span class="p">(),</span>
+                <span class="n">key_var</span><span class="p">:</span> <span class="n">GEMINI_API_KEY_VAR</span><span class="nf">.to_string</span><span class="p">(),</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nn">std</span><span class="p">::</span><span class="nn">env</span><span class="p">::</span><span class="nf">var</span><span class="p">(</span><span class="n">ANTHROPIC_API_KEY_VAR</span><span class="p">)</span><span class="nf">.is_ok</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"claude-3-7-sonnet"</span><span class="nf">.to_string</span><span class="p">();</span>
+        <span class="p">(</span>
+            <span class="n">name</span><span class="nf">.clone</span><span class="p">(),</span>
+            <span class="nn">Model</span><span class="p">::</span><span class="n">Anthropic</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">,</span>
+                <span class="n">model_ref</span><span class="p">:</span> <span class="s">"claude-3-7-sonnet-20250219"</span><span class="nf">.to_string</span><span class="p">(),</span>
+                <span class="n">key_var</span><span class="p">:</span> <span class="n">ANTHROPIC_API_KEY_VAR</span><span class="nf">.to_string</span><span class="p">(),</span>
+                <span class="n">api_url</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nn">std</span><span class="p">::</span><span class="nn">env</span><span class="p">::</span><span class="nf">var</span><span class="p">(</span><span class="n">OPENAI_API_KEY_VAR</span><span class="p">)</span><span class="nf">.is_ok</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"openai-4.1"</span><span class="nf">.to_string</span><span class="p">();</span>
+        <span class="p">(</span>
+            <span class="n">name</span><span class="nf">.clone</span><span class="p">(),</span>
+            <span class="nn">Model</span><span class="p">::</span><span class="n">OpenAI</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">,</span>
+                <span class="n">model_ref</span><span class="p">:</span> <span class="s">"gpt-4.1"</span><span class="nf">.to_string</span><span class="p">(),</span>
+                <span class="n">key_var</span><span class="p">:</span> <span class="n">OPENAI_API_KEY_VAR</span><span class="nf">.to_string</span><span class="p">(),</span>
+                <span class="n">api_url</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+                <span class="n">azure</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// 기본값으로 OpenAI 설정 (환경변수 없어도)</span>
+        <span class="k">let</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"openai-4.1"</span><span class="nf">.to_string</span><span class="p">();</span>
+        <span class="p">(</span>
+            <span class="n">name</span><span class="nf">.clone</span><span class="p">(),</span>
+            <span class="nn">Model</span><span class="p">::</span><span class="n">OpenAI</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">,</span>
+                <span class="n">model_ref</span><span class="p">:</span> <span class="s">"gpt-4.1"</span><span class="nf">.to_string</span><span class="p">(),</span>
+                <span class="n">key_var</span><span class="p">:</span> <span class="n">OPENAI_API_KEY_VAR</span><span class="nf">.to_string</span><span class="p">(),</span>
+                <span class="n">api_url</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+                <span class="n">azure</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="32-모델-우선순위-시스템">3.2 모델 우선순위 시스템</h3>
+
+<p><strong>자동 감지 우선순위:</strong></p>
+<ol>
+  <li><strong>Google Gemini 1.5 Pro</strong> - <code class="language-plaintext highlighter-rouge">GEMINI_API_KEY</code> 환경변수 존재 시</li>
+  <li><strong>Anthropic Claude-3.7 Sonnet</strong> - <code class="language-plaintext highlighter-rouge">ANTHROPIC_API_KEY</code> 환경변수 존재 시</li>
+  <li><strong>OpenAI GPT-4.1</strong> - <code class="language-plaintext highlighter-rouge">OPENAI_API_KEY</code> 환경변수 존재 시</li>
+  <li><strong>기본 OpenAI 설정</strong> - 환경변수가 없을 때 폴백 옵션</li>
+</ol>
+
+<p>이 시스템을 통해 사용자가 보유한 API 키에 따라 자동으로 최적의 AI 모델을 선택합니다.</p>
+
+<h2 id="4-시맨틱-모델-자동-생성">4. 시맨틱 모델 자동 생성</h2>
+
+<h3 id="41-csv-메타데이터-추출">4.1 CSV 메타데이터 추출</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">create_semantic_models</span><span class="p">(</span>
+    <span class="n">file_path</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">,</span>
+    <span class="n">db_file_path</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">PathBuf</span><span class="p">,</span>
+    <span class="n">db_dir</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">PathBuf</span><span class="p">,</span>
+<span class="p">)</span> <span class="k">-&gt;</span> <span class="nn">anyhow</span><span class="p">::</span><span class="nb">Result</span><span class="o">&lt;</span><span class="n">SemanticModels</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">path</span><span class="p">::</span><span class="n">Path</span><span class="p">;</span>
+
+    <span class="k">let</span> <span class="n">dimensions</span> <span class="o">=</span> <span class="nf">extract_csv_dimensions</span><span class="p">(</span><span class="nn">Path</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
+        <span class="nf">.map_err</span><span class="p">(|</span><span class="n">e</span><span class="p">|</span> <span class="nn">anyhow</span><span class="p">::</span><span class="nd">anyhow!</span><span class="p">(</span><span class="s">"Failed to extract CSV dimensions: {e}"</span><span class="p">))</span><span class="o">?</span><span class="p">;</span>
+
+    <span class="nf">Ok</span><span class="p">(</span><span class="n">SemanticModels</span> <span class="p">{</span>
+        <span class="n">table</span><span class="p">:</span> <span class="nf">get_relative_path</span><span class="p">(</span><span class="n">db_file_path</span><span class="nf">.clone</span><span class="p">(),</span> <span class="n">db_dir</span><span class="nf">.clone</span><span class="p">())</span><span class="o">?</span><span class="p">,</span>
+        <span class="n">database</span><span class="p">:</span> <span class="s">"local"</span><span class="nf">.to_string</span><span class="p">(),</span>
+        <span class="n">dimensions</span><span class="p">,</span>
+        <span class="n">description</span><span class="p">:</span> <span class="nn">Path</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="nf">.file_stem</span><span class="p">()</span>
+            <span class="nf">.map</span><span class="p">(|</span><span class="n">s</span><span class="p">|</span> <span class="n">s</span><span class="nf">.to_string_lossy</span><span class="p">()</span><span class="nf">.to_string</span><span class="p">())</span>
+            <span class="nf">.unwrap_or_default</span><span class="p">(),</span>
+        <span class="n">entities</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[],</span>
+        <span class="n">measures</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[],</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="42-시맨틱-모델-구조">4.2 시맨틱 모델 구조</h3>
+
+<p>생성되는 시맨틱 모델은 다음 정보를 포함합니다:</p>
+
+<ul>
+  <li><strong>테이블 경로</strong>: 상대 경로로 데이터베이스 파일 참조</li>
+  <li><strong>데이터베이스</strong>: “local” DuckDB 인스턴스</li>
+  <li><strong>차원(Dimensions)</strong>: CSV에서 자동 추출된 컬럼 메타데이터</li>
+  <li><strong>설명(Description)</strong>: 파일명 기반 자동 생성</li>
+  <li><strong>엔티티/측정값</strong>: 향후 확장을 위한 빈 배열</li>
+</ul>
+
+<h3 id="43-sql-파일-자동-생성">4.3 SQL 파일 자동 생성</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">sql_file_path</span> <span class="o">=</span> <span class="n">data_dir</span><span class="nf">.join</span><span class="p">(</span><span class="nd">format!</span><span class="p">(</span><span class="s">"{}.sql"</span><span class="p">,</span> <span class="n">setup</span><span class="py">.file_name_without_ext</span><span class="p">));</span>
+<span class="nn">std</span><span class="p">::</span><span class="nn">fs</span><span class="p">::</span><span class="nf">write</span><span class="p">(</span>
+    <span class="o">&amp;</span><span class="n">sql_file_path</span><span class="p">,</span>
+    <span class="nd">format!</span><span class="p">(</span>
+        <span class="s">"select * from {};"</span><span class="p">,</span>
+        <span class="nf">get_relative_path</span><span class="p">(</span><span class="n">db_file_path</span><span class="nf">.clone</span><span class="p">(),</span> <span class="n">db_dir</span><span class="nf">.clone</span><span class="p">())</span><span class="o">?</span>
+    <span class="p">),</span>
+<span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"Created SQL file: {}"</span><span class="p">,</span> <span class="n">sql_file_path</span><span class="nf">.display</span><span class="p">());</span>
+</code></pre></div></div>
+
+<p><strong>기본 SQL 쿼리 생성:</strong></p>
+<ul>
+  <li>파일명과 동일한 이름의 <code class="language-plaintext highlighter-rouge">.sql</code> 파일 생성</li>
+  <li><code class="language-plaintext highlighter-rouge">SELECT * FROM [테이블명]</code> 형태의 기본 쿼리</li>
+  <li>상대 경로를 사용하여 포터블한 참조 보장</li>
+</ul>
+
+<h2 id="5-ai-에이전트-자동-구성">5. AI 에이전트 자동 구성</h2>
+
+<h3 id="51-에이전트-설정-생성">5.1 에이전트 설정 생성</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">fn</span> <span class="nf">create_agent_file</span><span class="p">(</span>
+    <span class="n">setup</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">ProjectSetup</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="n">semantic_file_path</span><span class="p">:</span> <span class="n">PathBuf</span><span class="p">,</span>
+    <span class="n">sql_file_path</span><span class="p">:</span> <span class="n">PathBuf</span><span class="p">,</span>
+<span class="p">)</span> <span class="k">-&gt;</span> <span class="nn">anyhow</span><span class="p">::</span><span class="nb">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">agents_dir</span> <span class="o">=</span> <span class="n">setup</span><span class="py">.output_dir</span><span class="nf">.join</span><span class="p">(</span><span class="s">"agents"</span><span class="p">);</span>
+    <span class="nf">create_dir</span><span class="p">(</span><span class="n">agents_dir</span><span class="nf">.clone</span><span class="p">())</span><span class="k">.await</span><span class="o">?</span><span class="p">;</span>
+    <span class="k">let</span> <span class="n">agent_file</span> <span class="o">=</span> <span class="n">agents_dir</span><span class="nf">.join</span><span class="p">(</span><span class="nd">format!</span><span class="p">(</span><span class="s">"{}.agent.yml"</span><span class="p">,</span> <span class="n">setup</span><span class="py">.file_name_without_ext</span><span class="p">));</span>
+
+    <span class="k">let</span> <span class="n">agent_content</span> <span class="o">=</span> <span class="n">AgentConfig</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">:</span> <span class="n">setup</span><span class="py">.file_name_without_ext</span><span class="nf">.clone</span><span class="p">(),</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">model_name</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="nf">Some</span><span class="p">(</span><span class="nd">vec!</span><span class="p">[</span>
+            <span class="n">AgentContext</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="s">"semantic_model"</span><span class="nf">.to_string</span><span class="p">(),</span>
+                <span class="n">context_type</span><span class="p">:</span> <span class="nn">AgentContextType</span><span class="p">::</span><span class="nf">SemanticModel</span><span class="p">(</span><span class="n">SemanticModelContext</span> <span class="p">{</span>
+                    <span class="n">src</span><span class="p">:</span> <span class="nf">get_relative_path</span><span class="p">(</span><span class="n">semantic_file_path</span><span class="p">,</span> <span class="n">setup</span><span class="py">.output_dir</span><span class="nf">.clone</span><span class="p">())</span><span class="o">?</span><span class="p">,</span>
+                <span class="p">}),</span>
+            <span class="p">},</span>
+            <span class="n">AgentContext</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="s">"sql"</span><span class="nf">.to_string</span><span class="p">(),</span>
+                <span class="n">context_type</span><span class="p">:</span> <span class="nn">AgentContextType</span><span class="p">::</span><span class="nf">File</span><span class="p">(</span><span class="n">FileContext</span> <span class="p">{</span>
+                    <span class="n">src</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="nf">get_relative_path</span><span class="p">(</span><span class="n">sql_file_path</span><span class="p">,</span> <span class="n">setup</span><span class="py">.output_dir</span><span class="nf">.clone</span><span class="p">())</span><span class="o">?</span><span class="p">],</span>
+                <span class="p">}),</span>
+            <span class="p">},</span>
+        <span class="p">]),</span>
+        <span class="n">r</span><span class="err">#</span><span class="k">type</span><span class="p">:</span> <span class="nn">AgentType</span><span class="p">::</span><span class="nf">Default</span><span class="p">(</span><span class="n">DefaultAgent</span> <span class="p">{</span>
+            <span class="n">system_instructions</span><span class="p">:</span> <span class="nd">include_str!</span><span class="p">(</span><span class="s">"../templates/agent_instructions.txt"</span><span class="p">)</span><span class="nf">.to_string</span><span class="p">(),</span>
+            <span class="n">tools_config</span><span class="p">:</span> <span class="n">AgentToolsConfig</span> <span class="p">{</span>
+                <span class="n">max_tool_calls</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="n">max_tool_concurrency</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="n">tools</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="nn">ToolType</span><span class="p">::</span><span class="nf">ExecuteSQL</span><span class="p">(</span><span class="n">ExecuteSQLTool</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="s">"execute_sql"</span><span class="nf">.to_string</span><span class="p">(),</span>
+                    <span class="n">description</span><span class="p">:</span> <span class="s">""</span><span class="nf">.to_string</span><span class="p">(),</span>
+                    <span class="n">database</span><span class="p">:</span> <span class="s">"local"</span><span class="nf">.to_string</span><span class="p">(),</span>
+                    <span class="n">dry_run_limit</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+                    <span class="n">sql</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+                <span class="p">})],</span>
+            <span class="p">},</span>
+        <span class="p">}),</span>
+        <span class="n">tests</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[],</span>
+        <span class="n">description</span><span class="p">:</span> <span class="s">""</span><span class="nf">.to_string</span><span class="p">(),</span>
+    <span class="p">};</span>
+
+    <span class="nn">serde_yaml</span><span class="p">::</span><span class="nf">to_writer</span><span class="p">(</span><span class="nn">std</span><span class="p">::</span><span class="nn">fs</span><span class="p">::</span><span class="nn">File</span><span class="p">::</span><span class="nf">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">agent_file</span><span class="p">)</span><span class="o">?</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">agent_content</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"Created agent file: {}"</span><span class="p">,</span> <span class="n">agent_file</span><span class="nf">.display</span><span class="p">());</span>
+    <span class="nf">Ok</span><span class="p">(())</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="52-에이전트-구성-요소">5.2 에이전트 구성 요소</h3>
+
+<p><strong>생성되는 AI 에이전트의 구성:</strong></p>
+
+<ol>
+  <li><strong>컨텍스트 설정</strong>:
+    <ul>
+      <li><strong>시맨틱 모델</strong>: 데이터 구조와 메타데이터 제공</li>
+      <li><strong>SQL 파일</strong>: 기본 쿼리 템플릿 제공</li>
+    </ul>
+  </li>
+  <li><strong>도구 설정</strong>:
+    <ul>
+      <li><strong>SQL 실행 도구</strong>: 데이터베이스 쿼리 실행 능력</li>
+      <li><strong>최대 도구 호출</strong>: 5회로 제한</li>
+      <li><strong>동시성</strong>: 단일 도구 실행</li>
+    </ul>
+  </li>
+  <li><strong>시스템 지침</strong>:
+    <ul>
+      <li>템플릿 파일에서 로드된 기본 지침</li>
+      <li>데이터 분석 및 SQL 쿼리 최적화 가이드</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="6-통합-설정-파일-생성">6. 통합 설정 파일 생성</h2>
+
+<h3 id="61-프로젝트-설정-통합">6.1 프로젝트 설정 통합</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">config_content</span> <span class="o">=</span> <span class="n">Config</span> <span class="p">{</span>
+    <span class="n">databases</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="n">Database</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">:</span> <span class="s">"local"</span><span class="nf">.to_string</span><span class="p">(),</span>
+        <span class="n">database_type</span><span class="p">:</span> <span class="nn">DatabaseType</span><span class="p">::</span><span class="nf">DuckDB</span><span class="p">(</span><span class="n">DuckDB</span> <span class="p">{</span>
+            <span class="n">file_search_path</span><span class="p">:</span> <span class="s">"db/"</span><span class="nf">.to_string</span><span class="p">(),</span>
+        <span class="p">}),</span>
+    <span class="p">}],</span>
+    <span class="n">defaults</span><span class="p">:</span> <span class="nf">Some</span><span class="p">(</span><span class="n">Defaults</span> <span class="p">{</span>
+        <span class="n">database</span><span class="p">:</span> <span class="nf">Some</span><span class="p">(</span><span class="s">"local"</span><span class="nf">.to_string</span><span class="p">()),</span>
+    <span class="p">}),</span>
+    <span class="n">models</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="n">model</span><span class="nf">.clone</span><span class="p">()],</span>
+    <span class="n">project_path</span><span class="p">:</span> <span class="nn">PathBuf</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"."</span><span class="p">),</span>
+    <span class="n">builder_agent</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="nn">serde_yaml</span><span class="p">::</span><span class="nf">to_writer</span><span class="p">(</span>
+    <span class="nn">std</span><span class="p">::</span><span class="nn">fs</span><span class="p">::</span><span class="nn">File</span><span class="p">::</span><span class="nf">create</span><span class="p">(</span><span class="n">setup</span><span class="py">.output_dir</span><span class="nf">.join</span><span class="p">(</span><span class="s">"config.yml"</span><span class="p">))</span><span class="o">?</span><span class="p">,</span>
+    <span class="o">&amp;</span><span class="n">config_content</span><span class="p">,</span>
+<span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="62-설정-파일-구성">6.2 설정 파일 구성</h3>
+
+<p><strong>생성되는 <code class="language-plaintext highlighter-rouge">config.yml</code>의 주요 구성:</strong></p>
+
+<ul>
+  <li><strong>데이터베이스 설정</strong>: DuckDB를 “local”로 명명하고 <code class="language-plaintext highlighter-rouge">db/</code> 디렉토리 지정</li>
+  <li><strong>기본값</strong>: “local” 데이터베이스를 기본으로 설정</li>
+  <li><strong>모델 설정</strong>: 자동 감지된 AI 모델 정보</li>
+  <li><strong>프로젝트 경로</strong>: 현재 디렉토리(<code class="language-plaintext highlighter-rouge">.</code>)로 설정</li>
+</ul>
+
+<h2 id="7-make-명령어-실행-흐름">7. Make 명령어 실행 흐름</h2>
+
+<h3 id="71-전체-실행-순서">7.1 전체 실행 순서</h3>
+
+<pre><code class="language-mermaid">graph TD
+    A[CSV 파일 입력] --&gt; B[파일 검증 및 프로젝트 설정]
+    B --&gt; C[디렉토리 구조 생성]
+    C --&gt; D[CSV 파일 복사]
+    D --&gt; E[기본 SQL 파일 생성]
+    E --&gt; F[시맨틱 모델 추출]
+    F --&gt; G[AI 모델 자동 감지]
+    G --&gt; H[에이전트 설정 생성]
+    H --&gt; I[통합 설정 파일 생성]
+    I --&gt; J[프로젝트 완료]
+</code></pre>
+
+<h3 id="72-에러-처리-및-피드백">7.2 에러 처리 및 피드백</h3>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">println!</span><span class="p">(</span><span class="s">"Copied file to: {}"</span><span class="p">,</span> <span class="n">db_file_path</span><span class="nf">.display</span><span class="p">());</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"Created SQL file: {}"</span><span class="p">,</span> <span class="n">sql_file_path</span><span class="nf">.display</span><span class="p">());</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"Created semantic file: {}"</span><span class="p">,</span> <span class="n">semantic_file_path</span><span class="nf">.display</span><span class="p">());</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"Created agent file: {}"</span><span class="p">,</span> <span class="n">agent_file</span><span class="nf">.display</span><span class="p">());</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="s">"Make command completed successfully"</span><span class="nf">.success</span><span class="p">());</span>
+</code></pre></div></div>
+
+<p>각 단계마다 명확한 피드백을 제공하여 사용자가 진행 상황을 추적할 수 있습니다.</p>
+
+<h2 id="8-혁신적인-특징-분석">8. 혁신적인 특징 분석</h2>
+
+<h3 id="81-zero-configuration-접근법">8.1 Zero-Configuration 접근법</h3>
+
+<p><strong>기존 방식의 문제점:</strong></p>
+<ul>
+  <li>복잡한 설정 파일 작성 필요</li>
+  <li>데이터베이스 연결 설정의 복잡성</li>
+  <li>AI 모델 수동 구성</li>
+  <li>프로젝트 구조 수동 생성</li>
+</ul>
+
+<p><strong>Oxy Make의 해결책:</strong></p>
+<ul>
+  <li>CSV 파일 하나로 전체 프로젝트 생성</li>
+  <li>자동 메타데이터 추출</li>
+  <li>지능적 AI 모델 선택</li>
+  <li>표준화된 프로젝트 구조</li>
+</ul>
+
+<h3 id="82-확장성-고려사항">8.2 확장성 고려사항</h3>
+
+<ol>
+  <li><strong>다중 파일 지원</strong>: 향후 여러 CSV 파일 동시 처리 가능</li>
+  <li><strong>커스텀 템플릿</strong>: 에이전트 지침 템플릿 커스터마이징</li>
+  <li><strong>고급 시맨틱 모델</strong>: 자동 관계 추출 및 측정값 정의</li>
+  <li><strong>데이터베이스 확장</strong>: PostgreSQL, BigQuery 등 다른 DB 지원</li>
+</ol>
+
+<h3 id="83-생산성-향상-효과">8.3 생산성 향상 효과</h3>
+
+<p><strong>전통적 방식 vs Oxy Make:</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>작업</th>
+      <th>전통적 방식</th>
+      <th>Oxy Make</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>프로젝트 설정</td>
+      <td>30분+</td>
+      <td>30초</td>
+    </tr>
+    <tr>
+      <td>데이터베이스 설정</td>
+      <td>15분+</td>
+      <td>자동</td>
+    </tr>
+    <tr>
+      <td>AI 에이전트 구성</td>
+      <td>1시간+</td>
+      <td>자동</td>
+    </tr>
+    <tr>
+      <td>메타데이터 작성</td>
+      <td>45분+</td>
+      <td>자동 추출</td>
+    </tr>
+    <tr>
+      <td><strong>총 소요시간</strong></td>
+      <td><strong>2시간+</strong></td>
+      <td><strong>30초</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="결론">결론</h2>
+
+<p>Oxy의 Make 명령어는 <strong>단순함 속의 복잡성</strong>을 구현한 뛰어난 예시입니다. CSV 파일 하나만으로 완전한 AI 기반 데이터 분석 환경을 구축할 수 있는 혁신적인 접근법을 제시합니다.</p>
+
+<p><strong>핵심 혁신 포인트:</strong></p>
+<ul>
+  <li><strong>Zero-Configuration</strong>: 설정 없는 즉시 사용 가능한 환경</li>
+  <li><strong>지능적 자동화</strong>: AI 모델 자동 감지 및 최적 구성</li>
+  <li><strong>표준화</strong>: 일관된 프로젝트 구조와 베스트 프랙티스</li>
+  <li><strong>확장성</strong>: 향후 기능 확장을 고려한 유연한 아키텍처</li>
+</ul>
+
+<p>다음 포스트에서는 생성된 AI 에이전트 시스템의 내부 아키텍처와 실행 메커니즘을 상세히 분석하겠습니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li><a href="/2024/08/15/oxy-custom-project-overview-analysis/">Oxy Custom 프로젝트 개요 분석</a></li>
+  <li><a href="/2024/12/20/oxy-rust-application-entry-point-analysis/">Oxy Custom - Rust 애플리케이션 진입점 및 CLI 시스템 심층 분석</a></li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://duckdb.org/">DuckDB 공식 문서</a></li>
+  <li><a href="https://github.com/dtolnay/serde-yaml">Serde YAML</a></li>
+  <li><a href="https://tokio.rs/">Tokio Async Runtime</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/12/20/oxy-rust-application-entry-point-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Oxy Custom - Rust 애플리케이션 진입점 및 CLI 시스템 심층 분석</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/12/20/oxy-ai-agent-system-architecture-analysis/" rel="next">
+          <span class="nav-title">Oxy Custom - AI 에이전트 시스템 아키텍처 심층 분석</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

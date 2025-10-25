@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 KAG Solver 모듈의 심층 아키텍처를 분석합니다. Solver는 구축된 지식 그래프를 기반으로 지능형 추론을 수행하고, 복잡한 질의를 단계적으로 분해하여 정확한 답변을 생성하는 KAG 프레임워크의 핵심 추론 엔진입니다.1. KAG Solver 개요1.1 ...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="kag, reasoning-engine, qa-system, llm-integration, pipeline-architecture">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/05/12/kag-solver-module-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템">
+<meta property="og:description" content="개요이번 포스트에서는 KAG Solver 모듈의 심층 아키텍처를 분석합니다. Solver는 구축된 지식 그래프를 기반으로 지능형 추론을 수행하고, 복잡한 질의를 단계적으로 분해하여 정확한 답변을 생성하는 KAG 프레임워크의 핵심 추론 엔진입니다.1. KAG Solver 개요1.1 ...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/05/12/kag-solver-module-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템">
+<meta name="twitter:description" content="개요이번 포스트에서는 KAG Solver 모듈의 심층 아키텍처를 분석합니다. Solver는 구축된 지식 그래프를 기반으로 지능형 추론을 수행하고, 복잡한 질의를 단계적으로 분해하여 정확한 답변을 생성하는 KAG 프레임워크의 핵심 추론 엔진입니다.1. KAG Solver 개요1.1 ...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템",
+  "description": "개요
+
+이번 포스트에서는 KAG Solver 모듈의 심층 아키텍처를 분석합니다. Solver는 구축된 지식 그래프를 기반으로 지능형 추론을 수행하고, 복잡한 질의를 단계적으로 분해하여 정확한 답변을 생성하는 KAG 프레임워크의 핵심 추론 엔진입니다.
+
+1. KAG Solver 개요...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-05-12T07:30:00+00:00",
+  "dateModified": "2024-05-12T07:30:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/05/12/kag-solver-module-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/05/12/kag-solver-module-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["kag","reasoning-engine","qa-system","llm-integration","pipeline-architecture"],
+  "articleSection": ["AI","Knowledge Graph","Reasoning","QA"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-05-12T07:30:00+00:00">May 12, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Knowledge Graph</li><li>Reasoning</li><li>QA</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 <strong>KAG Solver 모듈</strong>의 심층 아키텍처를 분석합니다. Solver는 구축된 지식 그래프를 기반으로 지능형 추론을 수행하고, 복잡한 질의를 단계적으로 분해하여 정확한 답변을 생성하는 KAG 프레임워크의 핵심 추론 엔진입니다.</p>
+
+<h2 id="1-kag-solver-개요">1. KAG Solver 개요</h2>
+
+<h3 id="11-solver-아키텍처-전체-구조">1.1 Solver 아키텍처 전체 구조</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># KAG Solver의 핵심 구성 요소
+</span><span class="n">kag</span><span class="o">/</span><span class="n">solver</span><span class="o">/</span>
+<span class="err">├──</span> <span class="n">main_solver</span><span class="p">.</span><span class="n">py</span>       <span class="c1"># 메인 진입점 및 QA 오케스트레이션
+</span><span class="err">├──</span> <span class="n">planner</span><span class="o">/</span>             <span class="c1"># 작업 계획 수립
+</span><span class="err">├──</span> <span class="n">executor</span><span class="o">/</span>            <span class="c1"># 작업 실행 엔진들
+</span><span class="err">├──</span> <span class="n">generator</span><span class="o">/</span>           <span class="c1"># 답변 생성기
+</span><span class="err">├──</span> <span class="n">pipeline</span><span class="o">/</span>            <span class="c1"># 처리 파이프라인들
+</span><span class="err">├──</span> <span class="n">prompt</span><span class="o">/</span>              <span class="c1"># 프롬프트 템플릿들
+</span><span class="err">└──</span> <span class="n">reporter</span><span class="o">/</span>            <span class="c1"># 결과 리포팅
+</span></code></pre></div></div>
+
+<p><strong>Solver의 핵심 역할:</strong></p>
+<ul>
+  <li><strong>질의 분석</strong>: 복잡한 질문을 하위 작업으로 분해</li>
+  <li><strong>지식 검색</strong>: 그래프 DB에서 관련 지식 검색</li>
+  <li><strong>추론 실행</strong>: 논리적 추론과 계산 수행</li>
+  <li><strong>답변 생성</strong>: LLM을 활용한 자연스러운 응답 생성</li>
+</ul>
+
+<h3 id="12-문제-해결-플로우">1.2 문제 해결 플로우</h3>
+
+<pre><code class="language-mermaid">graph TD
+    A[사용자 질의] --&gt; B[Self-Cognition 검사]
+    B --&gt; C{자체 답변 가능?}
+    C --&gt;|Yes| D[직접 답변 생성]
+    C --&gt;|No| E[Pipeline 선택]
+    E --&gt; F[Iterative Planning]
+    F --&gt; G[Task 분해]
+    G --&gt; H[Executor 선택]
+    H --&gt; I[Knowledge 검색]
+    I --&gt; J[추론 실행]
+    J --&gt; K{완료 여부?}
+    K --&gt;|No| F
+    K --&gt;|Yes| L[Answer Generator]
+    L --&gt; M[최종 응답]
+    
+    subgraph "Pipeline Types"
+        N[Think Pipeline]
+        O[Static Pipeline]
+        P[MCP Pipeline]
+        Q[RAG Pipeline]
+    end
+</code></pre>
+
+<h2 id="2-main-solver---중앙-오케스트레이터">2. Main Solver - 중앙 오케스트레이터</h2>
+
+<h3 id="21-qa-함수---질의응답-진입점">2.1 QA 함수 - 질의응답 진입점</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">def</span> <span class="nf">qa</span><span class="p">(</span><span class="n">task_id</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">host_addr</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="s">"""중앙 질의응답 처리 함수"""</span>
+    
+    <span class="c1"># 1. 설정 초기화
+</span>    <span class="n">use_pipeline</span> <span class="o">=</span> <span class="n">params</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"usePipeline"</span><span class="p">,</span> <span class="s">"think_pipeline"</span><span class="p">)</span>
+    <span class="n">qa_config</span> <span class="o">=</span> <span class="n">params</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"config"</span><span class="p">,</span> <span class="n">KAG_CONFIG</span><span class="p">.</span><span class="n">all_config</span><span class="p">)</span>
+    <span class="n">thinking_enabled</span> <span class="o">=</span> <span class="n">use_pipeline</span> <span class="o">==</span> <span class="s">"think_pipeline"</span>
+    
+    <span class="c1"># 2. 리포터 시작
+</span>    <span class="n">reporter</span> <span class="o">=</span> <span class="n">OpenSPGReporter</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span>
+        <span class="n">host_addr</span><span class="o">=</span><span class="n">host_addr</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+        <span class="n">thinking_enabled</span><span class="o">=</span><span class="n">thinking_enabled</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">await</span> <span class="n">reporter</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 3. 언어 감지 및 설정
+</span>        <span class="k">if</span> <span class="n">is_chinese</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+            <span class="n">KAG_PROJECT_CONF</span><span class="p">.</span><span class="n">language</span> <span class="o">=</span> <span class="s">"zh"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">KAG_PROJECT_CONF</span><span class="p">.</span><span class="n">language</span> <span class="o">=</span> <span class="s">"en"</span>
+        
+        <span class="c1"># 4. Self-Cognition 단계
+</span>        <span class="n">self_cognition_conf</span> <span class="o">=</span> <span class="n">get_pipeline_conf</span><span class="p">(</span><span class="s">"self_cognition_pipeline"</span><span class="p">,</span> <span class="n">qa_config</span><span class="p">)</span>
+        <span class="n">self_cognition_pipeline</span> <span class="o">=</span> <span class="n">SolverPipelineABC</span><span class="p">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">self_cognition_conf</span><span class="p">)</span>
+        <span class="n">self_cognition_res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">self_cognition_pipeline</span><span class="p">.</span><span class="n">ainvoke</span><span class="p">(</span>
+            <span class="n">query</span><span class="p">,</span> <span class="n">reporter</span><span class="o">=</span><span class="n">reporter</span>
+        <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">self_cognition_res</span><span class="p">:</span>
+            <span class="c1"># 5. 메인 파이프라인 실행
+</span>            <span class="k">if</span> <span class="n">custom_pipeline_conf</span><span class="p">:</span>
+                <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">custom_pipeline_conf</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">get_pipeline_conf</span><span class="p">(</span><span class="n">use_pipeline</span><span class="p">,</span> <span class="n">qa_config</span><span class="p">)</span>
+            
+            <span class="n">pipeline</span> <span class="o">=</span> <span class="n">SolverPipelineABC</span><span class="p">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_config</span><span class="p">)</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="p">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">reporter</span><span class="o">=</span><span class="n">reporter</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="n">self_cognition_res</span>
+            
+    <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># 에러 처리 및 다국어 지원
+</span>        <span class="k">if</span> <span class="n">KAG_PROJECT_CONF</span><span class="p">.</span><span class="n">language</span> <span class="o">==</span> <span class="s">"en"</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"Sorry, An exception occurred while processing query: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s">..."</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"抱歉，处理查询 </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s"> 时发생异常..."</span>
+    
+    <span class="k">await</span> <span class="n">reporter</span><span class="p">.</span><span class="n">stop</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">answer</span>
+</code></pre></div></div>
+
+<h3 id="22-파이프라인-설정-관리">2.2 파이프라인 설정 관리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_pipeline_conf</span><span class="p">(</span><span class="n">use_pipeline_name</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="s">"""동적 파이프라인 설정 로딩"""</span>
+    
+    <span class="c1"># 1. YAML 설정 파일들 로딩
+</span>    <span class="n">conf_map</span> <span class="o">=</span> <span class="n">load_yaml_files_from_conf_dir</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">use_pipeline_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conf_map</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nb">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s">"Pipeline configuration not found: </span><span class="si">{</span><span class="n">use_pipeline_name</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    
+    <span class="c1"># 2. 플레이스홀더 추출 및 교체
+</span>    <span class="n">placeholders</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">get_all_placeholders</span><span class="p">(</span><span class="n">conf_map</span><span class="p">[</span><span class="n">use_pipeline_name</span><span class="p">],</span> <span class="n">placeholders</span><span class="p">)</span>
+    <span class="n">placeholders</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">placeholders</span><span class="p">))</span>
+    
+    <span class="n">placeholders_replacement_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">placeholder</span> <span class="ow">in</span> <span class="n">placeholders</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">config</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">placeholder</span><span class="p">)</span>
+        
+        <span class="c1"># 백업 키 처리 (llm, vectorizer 등)
+</span>        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">backup_key</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="s">"llm"</span> <span class="ow">in</span> <span class="n">placeholder</span><span class="p">:</span>
+                <span class="n">backup_key</span> <span class="o">=</span> <span class="s">"llm"</span>
+            <span class="k">if</span> <span class="s">"vectorizer"</span> <span class="ow">in</span> <span class="n">placeholder</span><span class="p">:</span>
+                <span class="n">backup_key</span> <span class="o">=</span> <span class="s">"vectorizer"</span>
+            <span class="k">if</span> <span class="n">backup_key</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">config</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">backup_key</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s">"Placeholder '</span><span class="si">{</span><span class="n">placeholder</span><span class="si">}</span><span class="s">' not found in config."</span><span class="p">)</span>
+        
+        <span class="n">value</span><span class="p">[</span><span class="s">"enable_check"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">placeholders_replacement_map</span><span class="p">[</span><span class="n">placeholder</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="c1"># 3. 플레이스홀더 교체 및 설정 반환
+</span>    <span class="n">default_pipeline_conf</span> <span class="o">=</span> <span class="n">replace_placeholders</span><span class="p">(</span>
+        <span class="n">conf_map</span><span class="p">[</span><span class="n">use_pipeline_name</span><span class="p">],</span> <span class="n">placeholders_replacement_map</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 4. KAG_CONFIG 업데이트
+</span>    <span class="n">KAG_CONFIG</span><span class="p">.</span><span class="n">update_conf</span><span class="p">(</span><span class="n">default_pipeline_conf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">default_pipeline_conf</span><span class="p">[</span><span class="s">"solver_pipeline"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="3-planner---지능형-작업-계획-수립">3. Planner - 지능형 작업 계획 수립</h2>
+
+<h3 id="31-반복적-계획-수립기">3.1 반복적 계획 수립기</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">PlannerABC</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"kag_iterative_planner"</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">KAGIterativePlanner</span><span class="p">(</span><span class="n">PlannerABC</span><span class="p">):</span>
+    <span class="s">"""LLM 기반 반복적 작업 계획 수립기"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">LLMClient</span><span class="p">,</span> <span class="n">plan_prompt</span><span class="p">:</span> <span class="n">PromptABC</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">llm</span> <span class="o">=</span> <span class="n">llm</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">plan_prompt</span> <span class="o">=</span> <span class="n">plan_prompt</span>
+    
+    <span class="k">def</span> <span class="nf">format_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="s">"""실행 컨텍스트를 구조화된 이력으로 포맷팅"""</span>
+        <span class="n">formatted_context</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">if</span> <span class="n">context</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">Context</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">context</span><span class="p">.</span><span class="n">gen_task</span><span class="p">():</span>
+                <span class="n">formatted_context</span><span class="p">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s">"action"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s">"name"</span><span class="p">:</span> <span class="n">task</span><span class="p">.</span><span class="n">executor</span><span class="p">,</span> 
+                        <span class="s">"argument"</span><span class="p">:</span> <span class="n">task</span><span class="p">.</span><span class="n">arguments</span>
+                    <span class="p">},</span>
+                    <span class="s">"result"</span><span class="p">:</span> <span class="p">(</span>
+                        <span class="n">task</span><span class="p">.</span><span class="n">result</span><span class="p">.</span><span class="n">to_string</span><span class="p">()</span> 
+                        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="n">result</span><span class="p">,</span> <span class="s">"to_string"</span><span class="p">)</span>
+                        <span class="k">else</span> <span class="n">task</span><span class="p">.</span><span class="n">result</span>
+                    <span class="p">),</span>
+                <span class="p">})</span>
+        <span class="k">return</span> <span class="n">formatted_context</span>
+    
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">ainvoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Task</span><span class="p">]:</span>
+        <span class="s">"""비동기 작업 계획 생성"""</span>
+        <span class="n">num_iteration</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"num_iteration"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">llm</span><span class="p">.</span><span class="n">ainvoke</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s">"query"</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span>
+                <span class="s">"context"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">format_context</span><span class="p">(</span><span class="n">kwargs</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"context"</span><span class="p">)),</span>
+                <span class="s">"executors"</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"executors"</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="p">},</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">plan_prompt</span><span class="p">,</span>
+            <span class="n">segment_name</span><span class="o">=</span><span class="s">"thinker"</span><span class="p">,</span>
+            <span class="n">tag_name</span><span class="o">=</span><span class="sa">f</span><span class="s">"Iterative planning </span><span class="si">{</span><span class="n">num_iteration</span><span class="si">}</span><span class="s">"</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="32-계획-수립-프롬프트-예시">3.2 계획 수립 프롬프트 예시</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 실제 계획 수립 시 LLM에 전달되는 구조
+</span><span class="n">planning_input</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"query"</span><span class="p">:</span> <span class="s">"알리바바 2024년 9월까지 총수입과 은행 이자 계산"</span><span class="p">,</span>
+    <span class="s">"context"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">"action"</span><span class="p">:</span> <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"KnowledgeSearch"</span><span class="p">,</span> <span class="s">"argument"</span><span class="p">:</span> <span class="p">{</span><span class="s">"query"</span><span class="p">:</span> <span class="s">"알리바바 2024년 수입"</span><span class="p">}},</span>
+            <span class="s">"result"</span><span class="p">:</span> <span class="s">"2024년 9월까지 총수입: 2,365억 위안"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s">"executors"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"KnowledgeSearch"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"지식 그래프 검색"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"Calculator"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"수학적 계산 수행"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"Finish"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"작업 완료"</span><span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="4-executor---작업-실행-엔진들">4. Executor - 작업 실행 엔진들</h2>
+
+<h3 id="41-실행기-타입별-분류">4.1 실행기 타입별 분류</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">kag</span><span class="o">/</span><span class="n">solver</span><span class="o">/</span><span class="n">executor</span><span class="o">/</span>
+<span class="err">├──</span> <span class="n">retriever</span><span class="o">/</span>           <span class="c1"># 정보 검색 실행기들
+</span><span class="err">│</span>   <span class="err">├──</span> <span class="n">local_knowledge_base</span><span class="o">/</span>  <span class="c1"># 로컬 지식베이스 검색
+</span><span class="err">│</span>   <span class="err">└──</span> <span class="n">web_search</span><span class="o">/</span>      <span class="c1"># 웹 검색
+</span><span class="err">├──</span> <span class="n">deduce</span><span class="o">/</span>              <span class="c1"># 논리적 추론 실행기들
+</span><span class="err">├──</span> <span class="n">math</span><span class="o">/</span>                <span class="c1"># 수학적 계산 실행기들
+</span><span class="err">├──</span> <span class="n">mcp</span><span class="o">/</span>                 <span class="c1"># Model Context Protocol 실행기들
+</span><span class="err">└──</span> <span class="n">finish_executor</span><span class="p">.</span><span class="n">py</span>   <span class="c1"># 작업 완료 표시 실행기
+</span></code></pre></div></div>
+
+<h3 id="42-kag-하이브리드-검색-실행기">4.2 KAG 하이브리드 검색 실행기</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">KAGRetrievedResponse</span><span class="p">(</span><span class="n">ExecutorResponse</span><span class="p">):</span>
+    <span class="s">"""지식 그래프 검색 결과 응답 객체"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">task_id</span> <span class="o">=</span> <span class="s">"0"</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">sub_retrieved_set</span> <span class="o">=</span> <span class="p">[]</span>      <span class="c1"># 하위 질의 결과들
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">retrieved_task</span> <span class="o">=</span> <span class="s">""</span>         <span class="c1"># 원본 작업 설명
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">graph_data</span> <span class="o">=</span> <span class="bp">None</span>           <span class="c1"># 그래프 데이터
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">chunk_datas</span> <span class="o">=</span> <span class="p">[]</span>            <span class="c1"># 텍스트 청크들
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">summary</span> <span class="o">=</span> <span class="s">""</span>                <span class="c1"># 검색 결과 요약
+</span>    
+    <span class="k">def</span> <span class="nf">get_chunk_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""검색된 청크들을 리스트로 반환"""</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">chunk_datas</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">c</span><span class="p">.</span><span class="n">content</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">to_reference_list</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">task_id</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">graph_data</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">res</span>
+    
+    <span class="k">def</span> <span class="nf">to_reference_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""참조 형식으로 변환"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"id"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">task_id</span><span class="si">}</span><span class="s">"</span><span class="p">,</span>
+            <span class="s">"content"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">summary</span><span class="p">,</span>
+            <span class="s">"chunks"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">get_chunk_list</span><span class="p">(),</span>
+            <span class="s">"graph_data"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">graph_data</span><span class="p">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">graph_data</span> <span class="k">else</span> <span class="bp">None</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="43-완료-실행기">4.3 완료 실행기</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">ExecutorABC</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"finish_executor"</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">FinishExecutor</span><span class="p">(</span><span class="n">ExecutorABC</span><span class="p">):</span>
+    <span class="s">"""작업 완료를 나타내는 특수 실행기"""</span>
+    
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"name"</span><span class="p">:</span> <span class="s">"Finish"</span><span class="p">,</span>
+            <span class="s">"description"</span><span class="p">:</span> <span class="s">"작업이 완료되었음을 나타내는 무연산 실행기"</span><span class="p">,</span>
+            <span class="s">"parameters"</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="5-pipeline---처리-파이프라인들">5. Pipeline - 처리 파이프라인들</h2>
+
+<h3 id="51-반복적-파이프라인-아키텍처">5.1 반복적 파이프라인 아키텍처</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">SolverPipelineABC</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"kag_iterative_pipeline"</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">KAGIterativePipeline</span><span class="p">(</span><span class="n">SolverPipelineABC</span><span class="p">):</span>
+    <span class="s">"""단계별 문제 분해 및 해결 파이프라인"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">planner</span><span class="p">:</span> <span class="n">PlannerABC</span><span class="p">,</span>
+        <span class="n">executors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ExecutorABC</span><span class="p">],</span>
+        <span class="n">generator</span><span class="p">:</span> <span class="n">GeneratorABC</span><span class="p">,</span>
+        <span class="n">max_iteration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">planner</span> <span class="o">=</span> <span class="n">planner</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">executors</span> <span class="o">=</span> <span class="n">executors</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">generator</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">max_iteration</span> <span class="o">=</span> <span class="n">max_iteration</span>
+        
+        <span class="c1"># 완료 실행기 자동 추가
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">finish_executor</span> <span class="o">=</span> <span class="n">ExecutorABC</span><span class="p">.</span><span class="n">from_config</span><span class="p">({</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"finish_executor"</span><span class="p">})</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">executors</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">finish_executor</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">select_executor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executor_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="s">"""실행기 이름으로 실행기 선택"""</span>
+        <span class="k">for</span> <span class="n">executor</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">executors</span><span class="p">:</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">executor</span><span class="p">.</span><span class="n">schema</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">executor_name</span> <span class="o">==</span> <span class="n">schema</span><span class="p">[</span><span class="s">"name"</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">executor</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="o">@</span><span class="n">retry</span><span class="p">(</span><span class="n">stop</span><span class="o">=</span><span class="n">stop_after_attempt</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">reraise</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">planning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s">"""계획 수립 단계"""</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">planner</span><span class="p">.</span><span class="n">ainvoke</span><span class="p">(</span>
+            <span class="n">query</span><span class="p">,</span>
+            <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
+            <span class="n">executors</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">.</span><span class="n">schema</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">executors</span><span class="p">],</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            
+        <span class="n">executor</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">select_executor</span><span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="n">executor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s">"Executor </span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">executor</span><span class="si">}</span><span class="s"> not found"</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">task</span><span class="p">,</span> <span class="n">executor</span>
+    
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">ainvoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s">"""메인 처리 루프"""</span>
+        <span class="n">num_iteration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">Context</span><span class="p">()</span>
+        
+        <span class="c1"># 반복적 계획-실행 루프
+</span>        <span class="k">while</span> <span class="n">num_iteration</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">max_iteration</span><span class="p">:</span>
+            <span class="n">num_iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+            <span class="c1"># 1. 계획 수립
+</span>            <span class="n">task</span><span class="p">,</span> <span class="n">executor</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">planning</span><span class="p">(</span>
+                <span class="n">query</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">num_iteration</span><span class="o">=</span><span class="n">num_iteration</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">context</span><span class="p">.</span><span class="n">append_task</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+            
+            <span class="c1"># 2. 완료 체크
+</span>            <span class="k">if</span> <span class="n">executor</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">finish_executor</span><span class="p">:</span>
+                <span class="k">break</span>
+            
+            <span class="c1"># 3. 작업 실행
+</span>            <span class="k">await</span> <span class="n">executor</span><span class="p">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="c1"># 4. 최종 답변 생성
+</span>        <span class="n">answer</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">generator</span><span class="p">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">answer</span>
+</code></pre></div></div>
+
+<h3 id="52-실행-과정-시각화">5.2 실행 과정 시각화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 실제 실행 과정 예시
+</span><span class="s">"""
+Iteration 1:
+Planning → Task: {"executor": "KnowledgeSearch", "args": {"query": "알리바바 2024년 수입"}}
+Execution → Result: "2024년 9월까지 총수입: 2,365억 위안"
+
+Iteration 2:
+Planning → Task: {"executor": "Calculator", "args": {"expression": "2365*100000000*0.0009*88"}}
+Execution → Result: "이자 계산 결과: 1,873만 위안"
+
+Iteration 3:
+Planning → Task: {"executor": "Finish", "args": {}}
+Execution → Pipeline 종료
+
+Answer Generation:
+Context: [알리바바 수입 정보, 이자 계산 결과]
+Final Answer: "알리바바 2024년 9월까지 총수입은 2,365억 위안입니다. 이를 은행에 예치 시 예상 이자는..."
+"""</span>
+</code></pre></div></div>
+
+<h2 id="6-generator---답변-생성기">6. Generator - 답변 생성기</h2>
+
+<h3 id="61-llm-기반-답변-생성기">6.1 LLM 기반 답변 생성기</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">GeneratorABC</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"llm_generator"</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">LLMGenerator</span><span class="p">(</span><span class="n">GeneratorABC</span><span class="p">):</span>
+    <span class="s">"""LLM을 활용한 최종 답변 생성기"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">llm_client</span><span class="p">:</span> <span class="n">LLMClient</span><span class="p">,</span>
+        <span class="n">generated_prompt</span><span class="p">:</span> <span class="n">PromptABC</span><span class="p">,</span>
+        <span class="n">chunk_reranker</span><span class="p">:</span> <span class="n">RerankByVector</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="n">enable_ref</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">llm_client</span> <span class="o">=</span> <span class="n">llm_client</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">generated_prompt</span> <span class="o">=</span> <span class="n">generated_prompt</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">chunk_reranker</span> <span class="o">=</span> <span class="n">chunk_reranker</span> <span class="ow">or</span> <span class="n">RerankByVector</span><span class="p">.</span><span class="n">from_config</span><span class="p">({</span>
+            <span class="s">"type"</span><span class="p">:</span> <span class="s">"rerank_by_vector"</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">enable_ref</span> <span class="o">=</span> <span class="n">enable_ref</span>
+        
+        <span class="c1"># 참조 모드별 프롬프트 초기화
+</span>        <span class="k">if</span> <span class="n">enable_ref</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">with_out_ref_prompt</span> <span class="o">=</span> <span class="n">init_prompt_with_fallback</span><span class="p">(</span>
+                <span class="s">"without_refer_generator_prompt"</span><span class="p">,</span> <span class="n">KAG_PROJECT_CONF</span><span class="p">.</span><span class="n">biz_scene</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">with_ref_prompt</span> <span class="o">=</span> <span class="n">init_prompt_with_fallback</span><span class="p">(</span>
+                <span class="s">"refer_generator_prompt"</span><span class="p">,</span> <span class="n">KAG_PROJECT_CONF</span><span class="p">.</span><span class="n">biz_scene</span>
+            <span class="p">)</span>
+    
+    <span class="o">@</span><span class="n">retry</span><span class="p">(</span><span class="n">stop</span><span class="o">=</span><span class="n">stop_after_attempt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">generate_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">refer_data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s">"""답변 생성 (재시도 로직 포함)"""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">enable_ref</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">llm_client</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+                <span class="p">{</span><span class="s">"query"</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span> <span class="s">"content"</span><span class="p">:</span> <span class="n">content</span><span class="p">},</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">generated_prompt</span><span class="p">,</span>
+                <span class="n">segment_name</span><span class="o">=</span><span class="s">"answer"</span><span class="p">,</span>
+                <span class="n">tag_name</span><span class="o">=</span><span class="s">"Final Answer"</span><span class="p">,</span>
+                <span class="n">with_json_parse</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">generated_prompt</span><span class="p">.</span><span class="n">is_json_format</span><span class="p">(),</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+        
+        <span class="c1"># 참조 데이터 유무에 따른 프롬프트 선택
+</span>        <span class="k">if</span> <span class="n">refer_data</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">refer_data</span><span class="p">):</span>
+            <span class="n">refer_data_str</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">refer_data</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">llm_client</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+                <span class="p">{</span><span class="s">"query"</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span> <span class="s">"content"</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span> <span class="s">"ref"</span><span class="p">:</span> <span class="n">refer_data_str</span><span class="p">},</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">with_ref_prompt</span><span class="p">,</span>
+                <span class="n">segment_name</span><span class="o">=</span><span class="s">"answer"</span><span class="p">,</span>
+                <span class="n">tag_name</span><span class="o">=</span><span class="s">"Final Answer"</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">llm_client</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span>
+                <span class="p">{</span><span class="s">"query"</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span> <span class="s">"content"</span><span class="p">:</span> <span class="n">content</span><span class="p">},</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">with_out_ref_prompt</span><span class="p">,</span>
+                <span class="n">segment_name</span><span class="o">=</span><span class="s">"answer"</span><span class="p">,</span> 
+                <span class="n">tag_name</span><span class="o">=</span><span class="s">"Final Answer"</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s">"""컨텍스트 기반 답변 생성"""</span>
+        <span class="n">reporter</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"reporter"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rerank_queries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">graph_data</span> <span class="o">=</span> <span class="n">context</span><span class="p">.</span><span class="n">variables_graph</span>
+        
+        <span class="c1"># 1. 컨텍스트에서 결과 수집
+</span>        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">context</span><span class="p">.</span><span class="n">gen_task</span><span class="p">(</span><span class="bp">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="n">result</span><span class="p">,</span> <span class="n">KAGRetrievedResponse</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">.</span><span class="n">chunk_reranker</span><span class="p">:</span>
+                <span class="n">rerank_queries</span><span class="p">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">task</span><span class="p">.</span><span class="n">arguments</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"rewrite_query"</span><span class="p">,</span> <span class="n">task</span><span class="p">.</span><span class="n">arguments</span><span class="p">[</span><span class="s">"query"</span><span class="p">])</span>
+                <span class="p">)</span>
+                <span class="n">chunks</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="n">result</span><span class="p">.</span><span class="n">chunk_datas</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_task_context_str</span><span class="p">(</span><span class="n">task</span><span class="p">.</span><span class="n">get_task_context</span><span class="p">()))</span>
+        
+        <span class="c1"># 2. 청크 재순위화
+</span>        <span class="n">rerank_chunks</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">chunk_reranker</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">rerank_queries</span><span class="p">,</span> <span class="n">chunks</span><span class="p">)</span>
+        <span class="n">refer_data</span> <span class="o">=</span> <span class="n">to_reference_list</span><span class="p">(</span><span class="n">prefix_id</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">retrieved_datas</span><span class="o">=</span><span class="n">rerank_chunks</span><span class="p">)</span>
+        
+        <span class="c1"># 3. 컨텐츠 구성
+</span>        <span class="n">content_json</span> <span class="o">=</span> <span class="p">{</span><span class="s">"step"</span><span class="p">:</span> <span class="n">results</span><span class="p">}</span>
+        
+        <span class="c1"># 4. 리포터에 정보 전달
+</span>        <span class="k">if</span> <span class="n">reporter</span><span class="p">:</span>
+            <span class="n">reporter</span><span class="p">.</span><span class="n">add_report_line</span><span class="p">(</span>
+                <span class="s">"generator"</span><span class="p">,</span> <span class="s">"final_generator_input"</span><span class="p">,</span> <span class="n">content_json</span><span class="p">,</span> <span class="s">"FINISH"</span>
+            <span class="p">)</span>
+            <span class="n">reporter</span><span class="p">.</span><span class="n">add_report_line</span><span class="p">(</span>
+                <span class="s">"generator_reference"</span><span class="p">,</span> <span class="s">"reference_chunk"</span><span class="p">,</span> <span class="n">rerank_chunks</span><span class="p">,</span> <span class="s">"FINISH"</span>
+            <span class="p">)</span>
+            
+        <span class="c1"># 5. 참조 데이터 포함
+</span>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">refer_data</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">enable_ref</span><span class="p">):</span>
+            <span class="n">content_json</span><span class="p">[</span><span class="s">"reference"</span><span class="p">]</span> <span class="o">=</span> <span class="n">refer_data</span>
+        
+        <span class="n">content</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">content_json</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c1"># 6. 최종 답변 생성
+</span>        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">generate_answer</span><span class="p">(</span>
+            <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span> <span class="n">refer_data</span><span class="o">=</span><span class="n">refer_data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="62-컨텍스트-구조화">6.2 컨텍스트 구조화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">to_task_context_str</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+    <span class="s">"""작업 컨텍스트를 문자열로 변환"""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span> <span class="ow">or</span> <span class="s">"task"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">""</span>
+    
+    <span class="k">return</span> <span class="sa">f</span><span class="s">"""</span><span class="si">{</span><span class="n">context</span><span class="p">[</span><span class="s">'name'</span><span class="p">]</span><span class="si">}</span><span class="s">:</span><span class="si">{</span><span class="n">context</span><span class="p">[</span><span class="s">'task'</span><span class="p">]</span><span class="si">}</span><span class="s">
+thought: </span><span class="si">{</span><span class="n">context</span><span class="p">[</span><span class="s">'result'</span><span class="p">]</span><span class="si">}</span><span class="s">.</span><span class="si">{</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'thought'</span><span class="p">,</span> <span class="s">''</span><span class="p">)</span><span class="si">}</span><span class="s">"""</span>
+
+<span class="c1"># 실제 컨텍스트 예시
+</span><span class="s">"""
+KnowledgeSearch:알리바바 2024년 수입 조회
+thought: 2024년 9월까지 총수입은 2,365억 위안입니다.
+
+Calculator:이자 계산
+thought: 2365억 위안을 88일간 예치 시 일이율 0.0009로 계산하면 1,873만 위안의 이자가 발생합니다.
+"""</span>
+</code></pre></div></div>
+
+<h2 id="7-고급-기능들">7. 고급 기능들</h2>
+
+<h3 id="71-self-cognition-시스템">7.1 Self-Cognition 시스템</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Self-Cognition 파이프라인을 통한 자체 답변 능력
+</span><span class="n">self_cognition_conf</span> <span class="o">=</span> <span class="n">get_pipeline_conf</span><span class="p">(</span><span class="s">"self_cognition_pipeline"</span><span class="p">,</span> <span class="n">qa_config</span><span class="p">)</span>
+<span class="n">self_cognition_pipeline</span> <span class="o">=</span> <span class="n">SolverPipelineABC</span><span class="p">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">self_cognition_conf</span><span class="p">)</span>
+<span class="n">self_cognition_res</span> <span class="o">=</span> <span class="k">await</span> <span class="n">self_cognition_pipeline</span><span class="p">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">reporter</span><span class="o">=</span><span class="n">reporter</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">self_cognition_res</span><span class="p">:</span>
+    <span class="c1"># LLM이 직접 답변 가능한 경우
+</span>    <span class="k">return</span> <span class="n">self_cognition_res</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># 복잡한 추론이 필요한 경우 메인 파이프라인 실행
+</span>    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">SolverPipelineABC</span><span class="p">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_config</span><span class="p">)</span>
+    <span class="n">answer</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="p">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">reporter</span><span class="o">=</span><span class="n">reporter</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="72-다중-파이프라인-지원">7.2 다중 파이프라인 지원</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 다양한 파이프라인 타입들
+</span><span class="n">PIPELINE_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"think_pipeline"</span><span class="p">:</span> <span class="n">KAGIterativePipeline</span><span class="p">,</span>      <span class="c1"># 단계별 사고 파이프라인
+</span>    <span class="s">"static_pipeline"</span><span class="p">:</span> <span class="n">KAGStaticPipeline</span><span class="p">,</span>        <span class="c1"># 정적 처리 파이프라인  
+</span>    <span class="s">"mcp_pipeline"</span><span class="p">:</span> <span class="n">MCPPipeline</span><span class="p">,</span>                 <span class="c1"># MCP 통합 파이프라인
+</span>    <span class="s">"naive_rag_pipeline"</span><span class="p">:</span> <span class="n">NaiveRAGPipeline</span><span class="p">,</span>      <span class="c1"># 단순 RAG 파이프라인
+</span>    <span class="s">"naive_generation_pipeline"</span><span class="p">:</span> <span class="n">NaiveGenerationPipeline</span><span class="p">,</span>  <span class="c1"># 직접 생성 파이프라인
+</span><span class="p">}</span>
+
+<span class="c1"># 동적 파이프라인 선택
+</span><span class="n">use_pipeline</span> <span class="o">=</span> <span class="n">params</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"usePipeline"</span><span class="p">,</span> <span class="s">"think_pipeline"</span><span class="p">)</span>
+<span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">get_pipeline_conf</span><span class="p">(</span><span class="n">use_pipeline</span><span class="p">,</span> <span class="n">qa_config</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="73-mcp-model-context-protocol-지원">7.3 MCP (Model Context Protocol) 지원</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># MCP 서버 통합을 통한 외부 도구 연결
+</span><span class="k">if</span> <span class="n">use_pipeline_name</span> <span class="o">==</span> <span class="s">"mcp_pipeline"</span><span class="p">:</span>
+    <span class="n">mcp_servers</span> <span class="o">=</span> <span class="n">config</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"mcpServers"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">mcp_executors</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">if</span> <span class="n">mcp_servers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">mcp_name</span><span class="p">,</span> <span class="n">mcp_conf</span> <span class="ow">in</span> <span class="n">mcp_servers</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">mcp_conf</span><span class="p">[</span><span class="s">"description"</span><span class="p">]</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">mcp_conf</span><span class="p">[</span><span class="s">"env"</span><span class="p">]</span>
+            <span class="n">store_path</span> <span class="o">=</span> <span class="n">mcp_conf</span><span class="p">[</span><span class="s">"store_path"</span><span class="p">]</span>
+            
+            <span class="n">mcp_executors</span><span class="p">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s">"type"</span><span class="p">:</span> <span class="s">"mcp_executor"</span><span class="p">,</span>
+                <span class="s">"store_path"</span><span class="p">:</span> <span class="n">store_path</span><span class="p">,</span>
+                <span class="s">"name"</span><span class="p">:</span> <span class="n">mcp_name</span><span class="p">,</span>
+                <span class="s">"description"</span><span class="p">:</span> <span class="n">desc</span><span class="p">,</span>
+                <span class="s">"env"</span><span class="p">:</span> <span class="n">env</span><span class="p">,</span>
+                <span class="s">"llm"</span><span class="p">:</span> <span class="n">config</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"llm"</span><span class="p">),</span>
+            <span class="p">})</span>
+    
+    <span class="n">default_solver_pipeline</span><span class="p">[</span><span class="s">"executors"</span><span class="p">]</span> <span class="o">=</span> <span class="n">mcp_executors</span>
+</code></pre></div></div>
+
+<h2 id="8-리포팅-및-모니터링">8. 리포팅 및 모니터링</h2>
+
+<h3 id="81-openspg-리포터">8.1 OpenSPG 리포터</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">reporter</span> <span class="o">=</span> <span class="n">OpenSPGReporter</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span>
+    <span class="n">host_addr</span><span class="o">=</span><span class="n">host_addr</span><span class="p">,</span> 
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">thinking_enabled</span><span class="o">=</span><span class="n">thinking_enabled</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 실행 과정 상세 기록
+</span><span class="n">reporter</span><span class="p">.</span><span class="n">add_report_line</span><span class="p">(</span><span class="s">"generator"</span><span class="p">,</span> <span class="s">"final_generator_input"</span><span class="p">,</span> <span class="n">content_json</span><span class="p">,</span> <span class="s">"FINISH"</span><span class="p">)</span>
+<span class="n">reporter</span><span class="p">.</span><span class="n">add_report_line</span><span class="p">(</span><span class="s">"generator_reference"</span><span class="p">,</span> <span class="s">"reference_chunk"</span><span class="p">,</span> <span class="n">rerank_chunks</span><span class="p">,</span> <span class="s">"FINISH"</span><span class="p">)</span>
+<span class="n">reporter</span><span class="p">.</span><span class="n">add_report_line</span><span class="p">(</span><span class="s">"generator_reference_graphs"</span><span class="p">,</span> <span class="s">"reference_graph"</span><span class="p">,</span> <span class="n">graph_data</span><span class="p">,</span> <span class="s">"FINISH"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="82-실행-추적-및-디버깅">8.2 실행 추적 및 디버깅</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 각 단계별 상세 로깅
+</span><span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Planning iteration </span><span class="si">{</span><span class="n">num_iteration</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Executor selected: </span><span class="si">{</span><span class="n">executor</span><span class="p">.</span><span class="n">__class__</span><span class="p">.</span><span class="n">__name__</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Task result: </span><span class="si">{</span><span class="n">task</span><span class="p">.</span><span class="n">result</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Final answer: </span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>KAG Solver 모듈은 <strong>계층적 추론 아키텍처</strong>와 <strong>적응형 파이프라인</strong>을 통해 복잡한 질의를 체계적으로 분해하고 해결하는 지능형 시스템입니다.</p>
+
+<p><strong>핵심 혁신 포인트:</strong></p>
+<ul>
+  <li><strong>반복적 계획-실행</strong>: 동적 문제 분해 및 단계적 해결</li>
+  <li><strong>다중 파이프라인</strong>: 질의 유형에 맞는 최적화된 처리 경로</li>
+  <li><strong>하이브리드 검색</strong>: 그래프 + 벡터 + 텍스트 통합 검색</li>
+  <li><strong>Self-Cognition</strong>: LLM의 내재적 지식 활용</li>
+</ul>
+
+<p>다음 포스트에서는 KAG의 데이터베이스 통합 전략과 Neo4j, Elasticsearch 활용 방안을 상세히 분석하겠습니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li>
+    <h2 id="관련-글">관련 글</h2>
+  </li>
+  <li><a href="/2024/08/15/kag-project-overview-architecture-analysis/">KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석</a></li>
+  <li><a href="/2025/02/28/kag-docker-container-orchestration-analysis/">KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석</a></li>
+  <li><a href="/2024/11/15/kag-builder-module-architecture-analysis/">KAG Builder 모듈 아키텍처 심층 분석 - 지식 추출 및 그래프 구축 엔진</a></li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://python.langchain.com/docs/modules/agents/agent_types/react">LangChain ReAct Agent</a></li>
+  <li><a href="https://modelcontextprotocol.io/">Model Context Protocol</a></li>
+  <li><a href="https://tenacity.readthedocs.io/">Tenacity 재시도 라이브러리</a></li>
+  <li><a href="https://neo4j.com/docs/python-manual/current/">Neo4j Python Driver</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/05/08/ollama-custom-cli-command-system-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Ollama Custom CLI 명령어 시스템 심층 분석 - Cobra 프레임워크 기...</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/05/17/opensora-vae-implementation-analysis/" rel="next">
+          <span class="nav-title">Open-Sora VAE 모델 소스코드 심층 분석: AutoEncoder부터 Disc...</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

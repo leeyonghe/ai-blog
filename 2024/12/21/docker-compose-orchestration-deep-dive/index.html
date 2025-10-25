@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Docker Compose 오케스트레이션 심화 분석 - AudioCraft Custom 프로젝트 | AI Development Blog</title>
+<meta name="description" content="Docker Compose 오케스트레이션 심화 분석AudioCraft Custom 프로젝트의 Docker Compose 구성을 통해 컨테이너 오케스트레이션의 고급 기법들을 심층 분석해보겠습니다. GPU 리소스 관리, 볼륨 마운트 전략, 환경 변수 관리 등 실제 프로덕션 환경에서 중...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="AudioCraft, Docker Compose, GPU Resources, Volume Management, Service Definition">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/12/21/docker-compose-orchestration-deep-dive/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker Compose 오케스트레이션 심화 분석 - AudioCraft Custom 프로젝트">
+<meta property="og:description" content="Docker Compose 오케스트레이션 심화 분석AudioCraft Custom 프로젝트의 Docker Compose 구성을 통해 컨테이너 오케스트레이션의 고급 기법들을 심층 분석해보겠습니다. GPU 리소스 관리, 볼륨 마운트 전략, 환경 변수 관리 등 실제 프로덕션 환경에서 중...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/12/21/docker-compose-orchestration-deep-dive/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Docker Compose 오케스트레이션 심화 분석 - AudioCraft Custom 프로젝트">
+<meta name="twitter:description" content="Docker Compose 오케스트레이션 심화 분석AudioCraft Custom 프로젝트의 Docker Compose 구성을 통해 컨테이너 오케스트레이션의 고급 기법들을 심층 분석해보겠습니다. GPU 리소스 관리, 볼륨 마운트 전략, 환경 변수 관리 등 실제 프로덕션 환경에서 중...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Docker Compose 오케스트레이션 심화 분석 - AudioCraft Custom 프로젝트",
+  "description": "Docker Compose 오케스트레이션 심화 분석
+
+AudioCraft Custom 프로젝트의 Docker Compose 구성을 통해 컨테이너 오케스트레이션의 고급 기법들을 심층 분석해보겠습니다. GPU 리소스 관리, 볼륨 마운트 전략, 환경 변수 관리 등 실제 프로덕션 환경에서...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-12-21T00:00:00+00:00",
+  "dateModified": "2024-12-21T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/12/21/docker-compose-orchestration-deep-dive/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/12/21/docker-compose-orchestration-deep-dive/",
+  "inLanguage": "ko",
+  "keywords": ["AudioCraft","Docker Compose","GPU Resources","Volume Management","Service Definition"],
+  "articleSection": ["DevOps","Docker","Container Orchestration"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Docker Compose 오케스트레이션 심화 분석 - AudioCraft Custom 프로젝트</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Docker Compose 오케스트레이션 심화 분석 - AudioCraft Custom 프로젝트</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-12-21T00:00:00+00:00">Dec 21, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>DevOps</li><li>Docker</li><li>Container Orchestration</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="docker-compose-오케스트레이션-심화-분석">Docker Compose 오케스트레이션 심화 분석</h1>
+
+<p>AudioCraft Custom 프로젝트의 Docker Compose 구성을 통해 컨테이너 오케스트레이션의 고급 기법들을 심층 분석해보겠습니다. GPU 리소스 관리, 볼륨 마운트 전략, 환경 변수 관리 등 실제 프로덕션 환경에서 중요한 구성 요소들을 상세히 살펴보겠습니다.</p>
+
+<h2 id="-목차">📋 목차</h2>
+<ol>
+  <li><a href="#서비스-정의-아키텍처">서비스 정의 아키텍처</a></li>
+  <li><a href="#볼륨-마운트-전략">볼륨 마운트 전략</a></li>
+  <li><a href="#gpu-리소스-관리">GPU 리소스 관리</a></li>
+  <li><a href="#환경-변수-구성">환경 변수 구성</a></li>
+  <li><a href="#네트워크-및-포트-관리">네트워크 및 포트 관리</a></li>
+  <li><a href="#프로덕션-최적화-전략">프로덕션 최적화 전략</a></li>
+</ol>
+
+<h2 id="서비스-정의-아키텍처">서비스 정의 아키텍처</h2>
+
+<h3 id="기본-서비스-구성">기본 서비스 구성</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft</span><span class="pi">:</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">.</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile</span>
+</code></pre></div></div>
+
+<h4 id="️-서비스-정의-분석">🏗️ 서비스 정의 분석</h4>
+<ul>
+  <li><strong>tty: true</strong>: 터미널 할당으로 대화형 셸 지원</li>
+  <li><strong>build 컨텍스트</strong>: 현재 디렉토리를 빌드 컨텍스트로 설정</li>
+  <li><strong>Dockerfile 지정</strong>: 명시적 Dockerfile 경로 설정</li>
+</ul>
+
+<h4 id="-tty-할당의-중요성">💡 TTY 할당의 중요성</h4>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+</code></pre></div></div>
+<ul>
+  <li><strong>대화형 디버깅</strong>: 컨테이너 내부에서 직접 명령 실행 가능</li>
+  <li><strong>프로세스 안정성</strong>: 장기 실행 프로세스의 안정적 동작</li>
+  <li><strong>로그 출력</strong>: 실시간 로그 확인과 디버깅 지원</li>
+</ul>
+
+<h3 id="빌드-컨텍스트-최적화">빌드 컨텍스트 최적화</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">build</span><span class="pi">:</span>
+  <span class="na">context</span><span class="pi">:</span> <span class="s">.</span>
+  <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile</span>
+  <span class="na">args</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}</span>
+  <span class="na">target</span><span class="pi">:</span> <span class="s">production</span>  <span class="c1"># 다단계 빌드에서 특정 스테이지 선택</span>
+</code></pre></div></div>
+
+<h4 id="-고급-빌드-옵션">🔧 고급 빌드 옵션</h4>
+<ul>
+  <li><strong>빌드 인수</strong>: 런타임 변수를 빌드 타임에 전달</li>
+  <li><strong>타겟 스테이지</strong>: 다단계 빌드에서 특정 단계만 빌드</li>
+  <li><strong>캐시 전략</strong>: 빌드 성능 최적화</li>
+</ul>
+
+<h2 id="볼륨-마운트-전략">볼륨 마운트 전략</h2>
+
+<h3 id="계층화된-볼륨-구조">계층화된 볼륨 구조</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">volumes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">.:/workspace</span>  <span class="c1"># 현재 디렉토리를 컨테이너의 /workspace에 마운트</span>
+  <span class="pi">-</span> <span class="s">./dataset:/workspace/dataset</span>  <span class="c1"># 데이터셋 디렉토리 마운트</span>
+  <span class="pi">-</span> <span class="s">./api:/workspace/api</span>  <span class="c1"># API 디렉토리 마운트</span>
+</code></pre></div></div>
+
+<h4 id="-볼륨-마운트-전략-분석">📁 볼륨 마운트 전략 분석</h4>
+
+<h5 id="1-전체-프로젝트-마운트">1. 전체 프로젝트 마운트</h5>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="s">.:/workspace</span>
+</code></pre></div></div>
+<ul>
+  <li><strong>개발 효율성</strong>: 코드 변경 시 즉시 반영</li>
+  <li><strong>실시간 테스트</strong>: 컨테이너 재빌드 없이 테스트 가능</li>
+  <li><strong>디버깅 지원</strong>: 호스트에서 직접 파일 수정 가능</li>
+</ul>
+
+<h5 id="2-데이터셋-분리-마운트">2. 데이터셋 분리 마운트</h5>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="s">./dataset:/workspace/dataset</span>
+</code></pre></div></div>
+<ul>
+  <li><strong>데이터 격리</strong>: 대용량 데이터의 독립적 관리</li>
+  <li><strong>성능 최적화</strong>: 데이터 로딩 성능 향상</li>
+  <li><strong>백업 전략</strong>: 데이터와 코드의 분리된 백업</li>
+</ul>
+
+<h5 id="3-api-서비스-마운트">3. API 서비스 마운트</h5>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="s">./api:/workspace/api</span>
+</code></pre></div></div>
+<ul>
+  <li><strong>서비스 분리</strong>: API 코드의 독립적 개발</li>
+  <li><strong>핫 리로드</strong>: FastAPI 서버의 자동 재시작</li>
+  <li><strong>모듈화</strong>: 마이크로서비스 아키텍처 지원</li>
+</ul>
+
+<h3 id="고급-볼륨-옵션">고급 볼륨 옵션</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">volumes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">bind</span>
+    <span class="na">source</span><span class="pi">:</span> <span class="s">./models</span>
+    <span class="na">target</span><span class="pi">:</span> <span class="s">/workspace/models</span>
+    <span class="na">read_only</span><span class="pi">:</span> <span class="no">true</span>  <span class="c1"># 읽기 전용 마운트</span>
+  <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">tmpfs</span>
+    <span class="na">target</span><span class="pi">:</span> <span class="s">/tmp/audio_processing</span>
+    <span class="na">tmpfs</span><span class="pi">:</span>
+      <span class="na">size</span><span class="pi">:</span> <span class="s">1G</span>  <span class="c1"># 임시 파일시스템 크기 제한</span>
+  <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">volume</span>
+    <span class="na">source</span><span class="pi">:</span> <span class="s">model_cache</span>
+    <span class="na">target</span><span class="pi">:</span> <span class="s">/root/.cache/huggingface</span>
+</code></pre></div></div>
+
+<h4 id="️-볼륨-보안-및-성능">🛡️ 볼륨 보안 및 성능</h4>
+<ul>
+  <li><strong>읽기 전용</strong>: 중요한 모델 파일 보호</li>
+  <li><strong>tmpfs</strong>: 메모리 기반 임시 저장소로 I/O 성능 향상</li>
+  <li><strong>명명된 볼륨</strong>: 영구 캐시 데이터 관리</li>
+</ul>
+
+<h2 id="gpu-리소스-관리">GPU 리소스 관리</h2>
+
+<h3 id="nvidia-gpu-할당">NVIDIA GPU 할당</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">deploy</span><span class="pi">:</span>
+  <span class="na">resources</span><span class="pi">:</span>
+    <span class="na">reservations</span><span class="pi">:</span>
+      <span class="na">devices</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">driver</span><span class="pi">:</span> <span class="s">nvidia</span>  <span class="c1"># NVIDIA GPU 사용 설정</span>
+          <span class="na">count</span><span class="pi">:</span> <span class="m">1</span>
+          <span class="na">capabilities</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">gpu</span><span class="pi">]</span>
+</code></pre></div></div>
+
+<h4 id="-gpu-리소스-예약-전략">🎯 GPU 리소스 예약 전략</h4>
+
+<h5 id="리소스-예약-vs-제한">리소스 예약 vs 제한</h5>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">deploy</span><span class="pi">:</span>
+  <span class="na">resources</span><span class="pi">:</span>
+    <span class="na">reservations</span><span class="pi">:</span>  <span class="c1"># 최소 보장 리소스</span>
+      <span class="na">devices</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">driver</span><span class="pi">:</span> <span class="s">nvidia</span>
+          <span class="na">count</span><span class="pi">:</span> <span class="m">1</span>
+          <span class="na">capabilities</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">gpu</span><span class="pi">]</span>
+    <span class="na">limits</span><span class="pi">:</span>  <span class="c1"># 최대 사용 가능 리소스</span>
+      <span class="na">memory</span><span class="pi">:</span> <span class="s">8G</span>
+      <span class="na">cpus</span><span class="pi">:</span> <span class="s1">'</span><span class="s">4.0'</span>
+</code></pre></div></div>
+
+<h5 id="gpu-세부-설정">GPU 세부 설정</h5>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">devices</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">driver</span><span class="pi">:</span> <span class="s">nvidia</span>
+    <span class="na">device_ids</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">0'</span><span class="pi">,</span> <span class="s1">'</span><span class="s">1'</span><span class="pi">]</span>  <span class="c1"># 특정 GPU 지정</span>
+    <span class="na">capabilities</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">gpu</span><span class="pi">,</span> <span class="nv">utility</span><span class="pi">]</span>  <span class="c1"># 추가 기능 활성화</span>
+    <span class="na">options</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">compute-capability=8.0"</span>  <span class="c1"># CUDA Compute Capability</span>
+</code></pre></div></div>
+
+<h4 id="-gpu-메모리-최적화">⚡ GPU 메모리 최적화</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">environment</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">NVIDIA_VISIBLE_DEVICES=all</span>  <span class="c1"># 모든 GPU 사용 가능하도록 설정</span>
+  <span class="pi">-</span> <span class="s">CUDA_VISIBLE_DEVICES=0,1</span>   <span class="c1"># 특정 GPU만 사용</span>
+  <span class="pi">-</span> <span class="s">PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512</span>
+</code></pre></div></div>
+
+<h5 id="gpu-메모리-관리-옵션">GPU 메모리 관리 옵션</h5>
+<ul>
+  <li><strong>NVIDIA_VISIBLE_DEVICES</strong>: Docker에서 보이는 GPU 제어</li>
+  <li><strong>CUDA_VISIBLE_DEVICES</strong>: CUDA 애플리케이션에서 사용할 GPU</li>
+  <li><strong>PyTorch 메모리 설정</strong>: 메모리 할당 전략 최적화</li>
+</ul>
+
+<h3 id="다중-gpu-환경-구성">다중 GPU 환경 구성</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft-worker-1</span><span class="pi">:</span>
+    <span class="na">extends</span><span class="pi">:</span>
+      <span class="na">service</span><span class="pi">:</span> <span class="s">audiocraft</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">resources</span><span class="pi">:</span>
+        <span class="na">reservations</span><span class="pi">:</span>
+          <span class="na">devices</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">driver</span><span class="pi">:</span> <span class="s">nvidia</span>
+              <span class="na">device_ids</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">0'</span><span class="pi">]</span>
+              <span class="na">capabilities</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">gpu</span><span class="pi">]</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">CUDA_VISIBLE_DEVICES=0</span>
+      <span class="pi">-</span> <span class="s">WORKER_ID=1</span>
+
+  <span class="na">audiocraft-worker-2</span><span class="pi">:</span>
+    <span class="na">extends</span><span class="pi">:</span>
+      <span class="na">service</span><span class="pi">:</span> <span class="s">audiocraft</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">resources</span><span class="pi">:</span>
+        <span class="na">reservations</span><span class="pi">:</span>
+          <span class="na">devices</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">driver</span><span class="pi">:</span> <span class="s">nvidia</span>
+              <span class="na">device_ids</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">1'</span><span class="pi">]</span>
+              <span class="na">capabilities</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">gpu</span><span class="pi">]</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">CUDA_VISIBLE_DEVICES=1</span>
+      <span class="pi">-</span> <span class="s">WORKER_ID=2</span>
+</code></pre></div></div>
+
+<h4 id="-로드-밸런싱-전략">🔀 로드 밸런싱 전략</h4>
+<ul>
+  <li><strong>GPU별 워커</strong>: 각 GPU에 전용 워커 할당</li>
+  <li><strong>작업 분산</strong>: 여러 GPU 간 작업 분배</li>
+  <li><strong>장애 복구</strong>: GPU 장애 시 다른 워커로 자동 전환</li>
+</ul>
+
+<h2 id="환경-변수-구성">환경 변수 구성</h2>
+
+<h3 id="기본-환경-변수">기본 환경 변수</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">environment</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN}</span>
+  <span class="pi">-</span> <span class="s">NVIDIA_VISIBLE_DEVICES=all</span>
+</code></pre></div></div>
+
+<h4 id="-보안-환경-변수-관리">🔐 보안 환경 변수 관리</h4>
+
+<h5 id="env-파일-활용">.env 파일 활용</h5>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># .env 파일</span>
+<span class="nv">HUGGING_FACE_HUB_TOKEN</span><span class="o">=</span>hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+<span class="nv">WANDB_API_KEY</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+<span class="nv">MODEL_CACHE_DIR</span><span class="o">=</span>/models
+<span class="nv">DEBUG_MODE</span><span class="o">=</span><span class="nb">false</span>
+</code></pre></div></div>
+
+<h5 id="환경별-설정-분리">환경별 설정 분리</h5>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># docker-compose.override.yml (개발환경)</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft</span><span class="pi">:</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">DEBUG_MODE=true</span>
+      <span class="pi">-</span> <span class="s">LOG_LEVEL=debug</span>
+      <span class="pi">-</span> <span class="s">RELOAD=true</span>
+
+<span class="c1"># docker-compose.prod.yml (프로덕션)</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft</span><span class="pi">:</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">DEBUG_MODE=false</span>
+      <span class="pi">-</span> <span class="s">LOG_LEVEL=warning</span>
+      <span class="pi">-</span> <span class="s">WORKERS=4</span>
+</code></pre></div></div>
+
+<h3 id="고급-환경-변수-패턴">고급 환경 변수 패턴</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">environment</span><span class="pi">:</span>
+  <span class="c1"># 모델 설정</span>
+  <span class="pi">-</span> <span class="s">MODEL_CACHE_DIR=/root/.cache/huggingface</span>
+  <span class="pi">-</span> <span class="s">TRANSFORMERS_CACHE=/root/.cache/transformers</span>
+  <span class="pi">-</span> <span class="s">TORCH_HOME=/root/.cache/torch</span>
+  
+  <span class="c1"># 성능 튜닝</span>
+  <span class="pi">-</span> <span class="s">OMP_NUM_THREADS=4</span>
+  <span class="pi">-</span> <span class="s">MKL_NUM_THREADS=4</span>
+  <span class="pi">-</span> <span class="s">CUDA_LAUNCH_BLOCKING=0</span>
+  
+  <span class="c1"># 메모리 관리</span>
+  <span class="pi">-</span> <span class="s">PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512,garbage_collection_threshold:0.6</span>
+  
+  <span class="c1"># 로깅 및 모니터링</span>
+  <span class="pi">-</span> <span class="s">PYTHONUNBUFFERED=1</span>
+  <span class="pi">-</span> <span class="s">CUDA_VISIBLE_DEVICES=${CUDA_DEVICES:-all}</span>
+</code></pre></div></div>
+
+<h4 id="️-환경-변수-카테고리">🎛️ 환경 변수 카테고리</h4>
+<ul>
+  <li><strong>인증 정보</strong>: API 키, 토큰 등 보안 정보</li>
+  <li><strong>경로 설정</strong>: 캐시, 모델, 데이터 경로</li>
+  <li><strong>성능 튜닝</strong>: 스레드 수, 메모리 설정</li>
+  <li><strong>디버깅</strong>: 로그 레벨, 버퍼링 설정</li>
+</ul>
+
+<h2 id="네트워크-및-포트-관리">네트워크 및 포트 관리</h2>
+
+<h3 id="포트-매핑-전략">포트 매핑 전략</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">8000:8000"</span>  <span class="c1"># FastAPI 서버 포트</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">7860:7860"</span>  <span class="c1"># Gradio UI 포트 (옵션)</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">6006:6006"</span>  <span class="c1"># TensorBoard 포트 (옵션)</span>
+</code></pre></div></div>
+
+<h4 id="-네트워크-구성-최적화">🌐 네트워크 구성 최적화</h4>
+
+<h5 id="사용자-정의-네트워크">사용자 정의 네트워크</h5>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">networks</span><span class="pi">:</span>
+  <span class="na">audiocraft-network</span><span class="pi">:</span>
+    <span class="na">driver</span><span class="pi">:</span> <span class="s">bridge</span>
+    <span class="na">ipam</span><span class="pi">:</span>
+      <span class="na">config</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">subnet</span><span class="pi">:</span> <span class="s">172.20.0.0/16</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft</span><span class="pi">:</span>
+    <span class="na">networks</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">audiocraft-network</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8000:8000"</span>
+</code></pre></div></div>
+
+<h5 id="서비스-간-통신">서비스 간 통신</h5>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft-api</span><span class="pi">:</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8000:8000"</span>
+    <span class="na">networks</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">audiocraft-network</span>
+
+  <span class="na">audiocraft-worker</span><span class="pi">:</span>
+    <span class="na">expose</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8001"</span>  <span class="c1"># 내부 통신용 포트</span>
+    <span class="na">networks</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">audiocraft-network</span>
+</code></pre></div></div>
+
+<h3 id="로드-밸런서-통합">로드 밸런서 통합</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">nginx</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:alpine</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">80:80"</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">443:443"</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./nginx.conf:/etc/nginx/nginx.conf</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">audiocraft-api</span>
+    <span class="na">networks</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">audiocraft-network</span>
+
+  <span class="na">audiocraft-api</span><span class="pi">:</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">expose</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8000"</span>
+    <span class="na">networks</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">audiocraft-network</span>
+</code></pre></div></div>
+
+<h2 id="프로덕션-최적화-전략">프로덕션 최적화 전략</h2>
+
+<h3 id="헬스-체크-구성">헬스 체크 구성</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft</span><span class="pi">:</span>
+    <span class="na">healthcheck</span><span class="pi">:</span>
+      <span class="na">test</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">CMD"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">curl"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">-f"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">http://localhost:8000/health"</span><span class="pi">]</span>
+      <span class="na">interval</span><span class="pi">:</span> <span class="s">30s</span>
+      <span class="na">timeout</span><span class="pi">:</span> <span class="s">10s</span>
+      <span class="na">retries</span><span class="pi">:</span> <span class="m">3</span>
+      <span class="na">start_period</span><span class="pi">:</span> <span class="s">40s</span>
+</code></pre></div></div>
+
+<h4 id="-헬스-체크-패턴">🏥 헬스 체크 패턴</h4>
+<ul>
+  <li><strong>HTTP 체크</strong>: API 엔드포인트 상태 확인</li>
+  <li><strong>간격 설정</strong>: 30초마다 상태 점검</li>
+  <li><strong>재시도 정책</strong>: 3회 실패 시 unhealthy 상태</li>
+</ul>
+
+<h3 id="리소스-제한-및-모니터링">리소스 제한 및 모니터링</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft</span><span class="pi">:</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">resources</span><span class="pi">:</span>
+        <span class="na">limits</span><span class="pi">:</span>
+          <span class="na">cpus</span><span class="pi">:</span> <span class="s1">'</span><span class="s">4.0'</span>
+          <span class="na">memory</span><span class="pi">:</span> <span class="s">8G</span>
+        <span class="na">reservations</span><span class="pi">:</span>
+          <span class="na">cpus</span><span class="pi">:</span> <span class="s1">'</span><span class="s">2.0'</span>
+          <span class="na">memory</span><span class="pi">:</span> <span class="s">4G</span>
+      <span class="na">restart_policy</span><span class="pi">:</span>
+        <span class="na">condition</span><span class="pi">:</span> <span class="s">on-failure</span>
+        <span class="na">delay</span><span class="pi">:</span> <span class="s">5s</span>
+        <span class="na">max_attempts</span><span class="pi">:</span> <span class="m">3</span>
+        <span class="na">window</span><span class="pi">:</span> <span class="s">120s</span>
+</code></pre></div></div>
+
+<h4 id="-리소스-관리-전략">📊 리소스 관리 전략</h4>
+<ul>
+  <li><strong>CPU 제한</strong>: 시스템 자원 보호</li>
+  <li><strong>메모리 제한</strong>: OOM 방지</li>
+  <li><strong>재시작 정책</strong>: 장애 복구 자동화</li>
+</ul>
+
+<h3 id="로깅-및-모니터링">로깅 및 모니터링</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft</span><span class="pi">:</span>
+    <span class="na">logging</span><span class="pi">:</span>
+      <span class="na">driver</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json-file"</span>
+      <span class="na">options</span><span class="pi">:</span>
+        <span class="na">max-size</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100m"</span>
+        <span class="na">max-file</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">traefik.enable=true"</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">traefik.http.routers.audiocraft.rule=Host(`audiocraft.example.com`)"</span>
+</code></pre></div></div>
+
+<h4 id="-로깅-구성">📝 로깅 구성</h4>
+<ul>
+  <li><strong>로그 드라이버</strong>: JSON 파일 형식</li>
+  <li><strong>로그 로테이션</strong>: 크기 및 파일 수 제한</li>
+  <li><strong>라벨링</strong>: 서비스 디스커버리 지원</li>
+</ul>
+
+<h3 id="시크릿-관리">시크릿 관리</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">secrets</span><span class="pi">:</span>
+  <span class="na">hf_token</span><span class="pi">:</span>
+    <span class="na">external</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">ssl_cert</span><span class="pi">:</span>
+    <span class="na">file</span><span class="pi">:</span> <span class="s">./certs/cert.pem</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">audiocraft</span><span class="pi">:</span>
+    <span class="na">secrets</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">source</span><span class="pi">:</span> <span class="s">hf_token</span>
+        <span class="na">target</span><span class="pi">:</span> <span class="s">/run/secrets/hugging_face_token</span>
+        <span class="na">mode</span><span class="pi">:</span> <span class="m">0400</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">HUGGING_FACE_HUB_TOKEN_FILE=/run/secrets/hugging_face_token</span>
+</code></pre></div></div>
+
+<h4 id="-보안-강화">🔒 보안 강화</h4>
+<ul>
+  <li><strong>외부 시크릿</strong>: Docker Swarm/Kubernetes 통합</li>
+  <li><strong>파일 권한</strong>: 읽기 전용 권한 설정</li>
+  <li><strong>환경 분리</strong>: 시크릿과 환경 변수 분리</li>
+</ul>
+
+<h2 id="-핵심-인사이트">🔍 핵심 인사이트</h2>
+
+<h3 id="1-계층화된-볼륨-전략">1. 계층화된 볼륨 전략</h3>
+<ul>
+  <li><strong>개발 효율성</strong>: 실시간 코드 반영으로 개발 속도 향상</li>
+  <li><strong>데이터 분리</strong>: 코드와 데이터의 독립적 관리</li>
+  <li><strong>성능 최적화</strong>: 용도별 최적화된 볼륨 타입 선택</li>
+</ul>
+
+<h3 id="2-정교한-gpu-관리">2. 정교한 GPU 관리</h3>
+<ul>
+  <li><strong>리소스 격리</strong>: GPU별 워커 할당으로 안정성 확보</li>
+  <li><strong>메모리 최적화</strong>: CUDA 설정을 통한 메모리 효율성</li>
+  <li><strong>확장성</strong>: 다중 GPU 환경에서의 수평 확장</li>
+</ul>
+
+<h3 id="3-환경별-설정-분리">3. 환경별 설정 분리</h3>
+<ul>
+  <li><strong>개발/프로덕션</strong>: 환경별 최적화된 설정</li>
+  <li><strong>보안 관리</strong>: 시크릿과 환경 변수의 체계적 관리</li>
+  <li><strong>유연성</strong>: 동적 환경 변수로 런타임 설정 변경</li>
+</ul>
+
+<h3 id="4-프로덕션-준비도">4. 프로덕션 준비도</h3>
+<ul>
+  <li><strong>헬스 체크</strong>: 자동 장애 감지 및 복구</li>
+  <li><strong>리소스 제한</strong>: 시스템 안정성 보장</li>
+  <li><strong>모니터링</strong>: 종합적인 로깅 및 메트릭 수집</li>
+</ul>
+
+<h2 id="-결론">🎯 결론</h2>
+
+<p>AudioCraft Custom 프로젝트의 Docker Compose 구성은 개발 편의성과 프로덕션 안정성을 모두 고려한 균형잡힌 설계를 보여줍니다. GPU 리소스의 효율적 관리, 계층화된 볼륨 전략, 그리고 환경별 설정 분리를 통해 AI 워크로드에 특화된 컨테이너 오케스트레이션 모범 사례를 제시합니다.</p>
+
+<p>특히 GPU 메모리 최적화와 다중 워커 구성은 대용량 AI 모델 서빙에서 중요한 성능 향상을 가져다주며, 체계적인 환경 변수 관리는 다양한 배포 환경에서의 유연성을 확보합니다.</p>
+
+<hr />
+
+<p><em>이 분석은 AudioCraft Custom 프로젝트의 실제 Docker Compose 구성을 기반으로 작성되었습니다. 더 자세한 구현 내용은 <a href="https://github.com/facebookresearch/audiocraft">AudioCraft 공식 저장소</a>에서 확인할 수 있습니다.</em></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/12/20/oxy-ai-agent-system-architecture-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Oxy Custom - AI 에이전트 시스템 아키텍처 심층 분석</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/12/21/musicgen-architecture-deep-dive/" rel="next">
+          <span class="nav-title">MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

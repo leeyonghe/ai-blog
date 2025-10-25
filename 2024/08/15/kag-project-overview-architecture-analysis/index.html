@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 KAG(Knowledge Augmented Generation) 프로젝트를 심층 분석합니다. KAG는 OpenSPG 생태계의 핵심 프로젝트로, 기존 RAG(Retrieval-Augmented Generation)의 한계를 극복하고 지식 그래프 기반의 고도화된 ...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="kag, knowledge-graph, rag, docker, elasticsearch, neo4j, openspg">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/08/15/kag-project-overview-architecture-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석">
+<meta property="og:description" content="개요이번 포스트에서는 KAG(Knowledge Augmented Generation) 프로젝트를 심층 분석합니다. KAG는 OpenSPG 생태계의 핵심 프로젝트로, 기존 RAG(Retrieval-Augmented Generation)의 한계를 극복하고 지식 그래프 기반의 고도화된 ...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/08/15/kag-project-overview-architecture-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석">
+<meta name="twitter:description" content="개요이번 포스트에서는 KAG(Knowledge Augmented Generation) 프로젝트를 심층 분석합니다. KAG는 OpenSPG 생태계의 핵심 프로젝트로, 기존 RAG(Retrieval-Augmented Generation)의 한계를 극복하고 지식 그래프 기반의 고도화된 ...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석",
+  "description": "개요
+
+이번 포스트에서는 KAG(Knowledge Augmented Generation) 프로젝트를 심층 분석합니다. KAG는 OpenSPG 생태계의 핵심 프로젝트로, 기존 RAG(Retrieval-Augmented Generation)의 한계를 극복하고 지식 그래프 기반의 고도화...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-08-15T05:20:00+00:00",
+  "dateModified": "2024-08-15T05:20:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/08/15/kag-project-overview-architecture-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/08/15/kag-project-overview-architecture-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["kag","knowledge-graph","rag","docker","elasticsearch","neo4j","openspg"],
+  "articleSection": ["AI","Knowledge Graph","RAG"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-08-15T05:20:00+00:00">Aug 15, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Knowledge Graph</li><li>RAG</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 <strong>KAG(Knowledge Augmented Generation)</strong> 프로젝트를 심층 분석합니다. KAG는 OpenSPG 생태계의 핵심 프로젝트로, 기존 RAG(Retrieval-Augmented Generation)의 한계를 극복하고 지식 그래프 기반의 고도화된 질의응답 시스템을 구현한 혁신적인 프레임워크입니다.</p>
+
+<h2 id="1-kag-프로젝트-소개">1. KAG 프로젝트 소개</h2>
+
+<h3 id="11-kag란-무엇인가">1.1 KAG란 무엇인가?</h3>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gh"># KAG: 지식 증강 생성 (Knowledge Augmented Generation)</span>
+
+KAG는 대규모 언어 모델(LLM)을 기반으로 한 논리적 추론 및 Q&amp;A 프레임워크로, 
+수직 도메인 지식 기반을 위한 논리적 추론 및 Q&amp;A 솔루션을 구축하는 데 사용됩니다.
+</code></pre></div></div>
+
+<p><strong>KAG의 핵심 혁신점:</strong></p>
+
+<ol>
+  <li><strong>기존 RAG의 한계 극복</strong>: 벡터 유사도 계산의 모호성 문제 해결</li>
+  <li><strong>GraphRAG 노이즈 제거</strong>: OpenIE로 인한 노이즈 문제 효과적 해결</li>
+  <li><strong>논리적 추론 강화</strong>: 단순 검색을 넘어선 지식 기반 추론</li>
+  <li><strong>수직 도메인 특화</strong>: 특정 영역에 최적화된 지식 처리</li>
+</ol>
+
+<h3 id="12-openspg-생태계와의-관계">1.2 OpenSPG 생태계와의 관계</h3>
+
+<pre><code class="language-mermaid">graph TD
+    A[OpenSPG Platform] --&gt; B[KAG Framework]
+    B --&gt; C[Knowledge Builder]
+    B --&gt; D[Knowledge Solver]
+    B --&gt; E[Knowledge Interface]
+    
+    C --&gt; F[데이터 수집 및 처리]
+    C --&gt; G[지식 그래프 구축]
+    
+    D --&gt; H[논리적 추론 엔진]
+    D --&gt; I[질의 계획 수립]
+    
+    E --&gt; J[웹 인터페이스]
+    E --&gt; K[API 서비스]
+</code></pre>
+
+<p><strong>OpenSPG 연동 구조:</strong></p>
+<ul>
+  <li><strong>OpenSPG</strong>: 지식 그래프 플랫폼 기반 제공</li>
+  <li><strong>KAG</strong>: 지식 증강 생성 프레임워크 구현</li>
+  <li><strong>통합 워크플로우</strong>: 데이터 수집 → 지식 구축 → 추론 실행</li>
+</ul>
+
+<h2 id="2-프로젝트-구조-분석">2. 프로젝트 구조 분석</h2>
+
+<h3 id="21-전체-디렉토리-구조">2.1 전체 디렉토리 구조</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kag-docker/
+├── kag/                    <span class="c"># 핵심 KAG 프레임워크</span>
+│   ├── builder/           <span class="c"># 지식 빌더 모듈</span>
+│   ├── solver/            <span class="c"># 추론 솔버 모듈</span>
+│   ├── interface/         <span class="c"># 사용자 인터페이스</span>
+│   ├── common/           <span class="c"># 공통 유틸리티</span>
+│   ├── bridge/           <span class="c"># 외부 시스템 연동</span>
+│   └── tools/            <span class="c"># 개발 도구</span>
+├── knext/                  <span class="c"># 확장 모듈</span>
+├── tests/                  <span class="c"># 테스트 코드</span>
+├── docs/                   <span class="c"># 문서화</span>
+├── docker-compose.yml      <span class="c"># 컨테이너 오케스트레이션</span>
+├── Dockerfile              <span class="c"># 애플리케이션 컨테이너</span>
+└── requirements.txt        <span class="c"># Python 의존성</span>
+</code></pre></div></div>
+
+<h3 id="22-핵심-모듈별-역할">2.2 핵심 모듈별 역할</h3>
+
+<h4 id="221-kag-builder-지식-빌더">2.2.1 KAG Builder (지식 빌더)</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">kag</span><span class="o">/</span><span class="n">builder</span><span class="o">/</span>
+<span class="err">├──</span> <span class="n">component</span><span class="o">/</span>           <span class="c1"># 빌더 컴포넌트
+</span><span class="err">├──</span> <span class="n">model</span><span class="o">/</span>              <span class="c1"># 데이터 모델
+</span><span class="err">├──</span> <span class="n">operator</span><span class="o">/</span>           <span class="c1"># 데이터 처리 연산자
+</span><span class="err">├──</span> <span class="n">prompt</span><span class="o">/</span>             <span class="c1"># 프롬프트 템플릿
+</span><span class="err">├──</span> <span class="n">main_builder</span><span class="p">.</span><span class="n">py</span>     <span class="c1"># 메인 빌더 로직
+</span><span class="err">├──</span> <span class="n">default_chain</span><span class="p">.</span><span class="n">py</span>    <span class="c1"># 기본 처리 체인
+</span><span class="err">└──</span> <span class="n">runner</span><span class="p">.</span><span class="n">py</span>           <span class="c1"># 실행 엔진
+</span></code></pre></div></div>
+
+<p><strong>주요 기능:</strong></p>
+<ul>
+  <li><strong>데이터 수집</strong>: 다양한 소스에서 지식 데이터 수집</li>
+  <li><strong>지식 추출</strong>: 텍스트에서 구조화된 지식 추출</li>
+  <li><strong>그래프 구축</strong>: Neo4j 기반 지식 그래프 생성</li>
+  <li><strong>인덱싱</strong>: Elasticsearch 기반 검색 인덱스 구축</li>
+</ul>
+
+<h4 id="222-kag-solver-추론-솔버">2.2.2 KAG Solver (추론 솔버)</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">kag</span><span class="o">/</span><span class="n">solver</span><span class="o">/</span>
+<span class="err">├──</span> <span class="n">executor</span><span class="o">/</span>           <span class="c1"># 실행 엔진
+</span><span class="err">├──</span> <span class="n">generator</span><span class="o">/</span>          <span class="c1"># 응답 생성기
+</span><span class="err">├──</span> <span class="n">planner</span><span class="o">/</span>           <span class="c1"># 질의 계획 수립
+</span><span class="err">├──</span> <span class="n">pipeline</span><span class="o">/</span>          <span class="c1"># 처리 파이프라인
+</span><span class="err">├──</span> <span class="n">reporter</span><span class="o">/</span>          <span class="c1"># 결과 보고
+</span><span class="err">├──</span> <span class="n">main_solver</span><span class="p">.</span><span class="n">py</span>     <span class="c1"># 메인 솔버 로직
+</span><span class="err">└──</span> <span class="n">utils</span><span class="p">.</span><span class="n">py</span>           <span class="c1"># 유틸리티 함수
+</span></code></pre></div></div>
+
+<p><strong>주요 기능:</strong></p>
+<ul>
+  <li><strong>질의 분석</strong>: 사용자 질의의 의도 파악</li>
+  <li><strong>논리적 추론</strong>: 지식 그래프 기반 추론 수행</li>
+  <li><strong>증거 수집</strong>: 관련 지식과 증거 검색</li>
+  <li><strong>응답 생성</strong>: 컨텍스트 기반 최종 응답 생성</li>
+</ul>
+
+<h2 id="3-기술-스택-분석">3. 기술 스택 분석</h2>
+
+<h3 id="31-코어-기술-스택">3.1 코어 기술 스택</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 핵심 기술 구성</span>
+<span class="na">Language</span><span class="pi">:</span> <span class="s">Python 3.9+</span>
+<span class="na">Framework</span><span class="pi">:</span> 
+  <span class="pi">-</span> <span class="s">LangChain (LLM 통합)</span>
+  <span class="pi">-</span> <span class="s">FastAPI (웹 서비스)</span>
+<span class="na">Database</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">Neo4j (그래프 데이터베이스)</span>
+  <span class="pi">-</span> <span class="s">Elasticsearch (검색 엔진)</span>
+<span class="na">AI/ML</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">OpenAI GPT</span>
+  <span class="pi">-</span> <span class="s">Dashscope (알리바바 AI)</span>
+  <span class="pi">-</span> <span class="s">Ollama (로컬 LLM)</span>
+<span class="na">Infrastructure</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">Docker &amp; Docker Compose</span>
+  <span class="pi">-</span> <span class="s">Python Package Management</span>
+</code></pre></div></div>
+
+<h3 id="32-의존성-분석-requirementstxt">3.2 의존성 분석 (requirements.txt)</h3>
+
+<h4 id="321-aiml-관련-패키지">3.2.1 AI/ML 관련 패키지</h4>
+
+<pre><code class="language-pip-requirements"># LLM 및 AI 서비스
+openai                    # OpenAI API 클라이언트
+dashscope                 # 알리바바 클라우드 AI 서비스
+ollama                    # 로컬 LLM 실행
+langchain-community       # LangChain 커뮤니티 확장
+langchain-text-splitters  # 텍스트 분할 도구
+
+# 자연어 처리
+jieba==0.42.1            # 중국어 분할
+nltk==3.8.1              # 자연어 처리 툴킷
+</code></pre>
+
+<h4 id="322-데이터베이스-및-검색">3.2.2 데이터베이스 및 검색</h4>
+
+<pre><code class="language-pip-requirements"># 데이터베이스
+neo4j                     # Neo4j 그래프 데이터베이스 드라이버
+elasticsearch==8.10.0    # Elasticsearch 클라이언트
+
+# 데이터 처리
+pandas                    # 데이터 프레임 처리
+numpy&gt;=1.23.1            # 수치 연산
+networkx==3.1            # 그래프 알고리즘
+</code></pre>
+
+<h4 id="323-문서-처리-및-포맷">3.2.3 문서 처리 및 포맷</h4>
+
+<pre><code class="language-pip-requirements"># 문서 처리
+pypdf                     # PDF 파일 처리
+python-docx              # Word 문서 처리
+pdfminer.six==20231228   # PDF 텍스트 추출
+markdown                 # Markdown 처리
+bs4                      # HTML 파싱
+
+# 데이터 직렬화
+protobuf==3.20.1         # Protocol Buffers
+json5                    # JSON5 파서
+</code></pre>
+
+<h2 id="4-docker-컨테이너-아키텍처">4. Docker 컨테이너 아키텍처</h2>
+
+<h3 id="41-서비스-구성-docker-composeyml">4.1 서비스 구성 (docker-compose.yml)</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="c1"># 메인 애플리케이션</span>
+  <span class="na">app</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">.</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8000:8000"</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">elasticsearch</span>
+      <span class="pi">-</span> <span class="s">neo4j</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">ELASTICSEARCH_HOST=elasticsearch</span>
+      <span class="pi">-</span> <span class="s">NEO4J_HOST=neo4j</span>
+      <span class="pi">-</span> <span class="s">NEO4J_USER=neo4j</span>
+      <span class="pi">-</span> <span class="s">NEO4J_PASSWORD=password</span>
+
+  <span class="c1"># Elasticsearch 검색 엔진</span>
+  <span class="na">elasticsearch</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">docker.elastic.co/elasticsearch/elasticsearch:8.10.0</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">discovery.type=single-node</span>
+      <span class="pi">-</span> <span class="s">xpack.security.enabled=false</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">ES_JAVA_OPTS=-Xms512m</span><span class="nv"> </span><span class="s">-Xmx512m"</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">9200:9200"</span>
+
+  <span class="c1"># Neo4j 그래프 데이터베이스</span>
+  <span class="na">neo4j</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">neo4j:5.15</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">NEO4J_AUTH=neo4j/password</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">7474:7474"</span>  <span class="c1"># HTTP</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">7687:7687"</span>  <span class="c1"># Bolt</span>
+</code></pre></div></div>
+
+<h3 id="42-컨테이너-구성도">4.2 컨테이너 구성도</h3>
+
+<pre><code class="language-mermaid">graph TB
+    subgraph "Docker Network"
+        A[KAG App Container:8000]
+        B[Elasticsearch:9200]
+        C[Neo4j:7474/7687]
+    end
+    
+    subgraph "External Access"
+        D[Web Browser]
+        E[API Clients]
+    end
+    
+    D --&gt;|HTTP:8000| A
+    E --&gt;|REST API| A
+    A --&gt;|검색 쿼리| B
+    A --&gt;|그래프 쿼리| C
+    
+    subgraph "Data Flow"
+        F[문서 업로드] --&gt; A
+        A --&gt; G[지식 추출]
+        G --&gt; B
+        G --&gt; C
+        H[사용자 질의] --&gt; A
+        A --&gt; I[추론 결과]
+    end
+</code></pre>
+
+<h2 id="5-애플리케이션-컨테이너-분석">5. 애플리케이션 컨테이너 분석</h2>
+
+<h3 id="51-dockerfile-구조">5.1 Dockerfile 구조</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> python:3.9-slim</span>
+
+<span class="k">WORKDIR</span><span class="s"> /app</span>
+
+<span class="c"># 시스템 의존성 설치</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="se">\
+</span>    build-essential <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="c"># Python 의존성 설치 (레이어 캐싱 최적화)</span>
+<span class="k">COPY</span><span class="s"> requirements.txt .</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">--no-cache-dir</span> <span class="nt">-r</span> requirements.txt
+
+<span class="c"># 애플리케이션 코드 복사</span>
+<span class="k">COPY</span><span class="s"> . .</span>
+
+<span class="c"># 환경 변수 설정</span>
+<span class="k">ENV</span><span class="s"> PYTHONPATH=/app</span>
+<span class="k">ENV</span><span class="s"> PYTHONUNBUFFERED=1</span>
+
+<span class="c"># 포트 노출</span>
+<span class="k">EXPOSE</span><span class="s"> 8000</span>
+
+<span class="c"># 애플리케이션 실행</span>
+<span class="k">CMD</span><span class="s"> ["python", "-m", "kag"]</span>
+</code></pre></div></div>
+
+<h3 id="52-컨테이너-최적화-전략">5.2 컨테이너 최적화 전략</h3>
+
+<p><strong>레이어 캐싱 최적화:</strong></p>
+<ol>
+  <li><strong>requirements.txt 먼저 복사</strong>: 의존성 변경 시에만 재설치</li>
+  <li><strong>애플리케이션 코드 나중 복사</strong>: 코드 변경 시 빠른 빌드</li>
+  <li><strong>multi-stage build 미적용</strong>: 단일 스테이지로 단순화</li>
+</ol>
+
+<p><strong>환경 변수 활용:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">PYTHONPATH=/app</code>: 모듈 경로 설정</li>
+  <li><code class="language-plaintext highlighter-rouge">PYTHONUNBUFFERED=1</code>: 실시간 로그 출력</li>
+  <li>외부 서비스 연결 정보 주입</li>
+</ul>
+
+<h2 id="6-kag-vs-기존-rag-비교">6. KAG vs 기존 RAG 비교</h2>
+
+<h3 id="61-기술적-차별점">6.1 기술적 차별점</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>특성</th>
+      <th>기존 RAG</th>
+      <th>KAG</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>검색 방식</strong></td>
+      <td>벡터 유사도</td>
+      <td>지식 그래프 + 벡터</td>
+    </tr>
+    <tr>
+      <td><strong>추론 능력</strong></td>
+      <td>단순 검색</td>
+      <td>논리적 추론</td>
+    </tr>
+    <tr>
+      <td><strong>노이즈 처리</strong></td>
+      <td>제한적</td>
+      <td>구조화된 필터링</td>
+    </tr>
+    <tr>
+      <td><strong>도메인 적응</strong></td>
+      <td>일반적</td>
+      <td>수직 도메인 특화</td>
+    </tr>
+    <tr>
+      <td><strong>지식 표현</strong></td>
+      <td>임베딩 벡터</td>
+      <td>그래프 + 임베딩</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="62-아키텍처-비교">6.2 아키텍처 비교</h3>
+
+<pre><code class="language-mermaid">graph TB
+    subgraph "기존 RAG"
+        A1[문서] --&gt; B1[청킹]
+        B1 --&gt; C1[벡터 임베딩]
+        C1 --&gt; D1[벡터 DB]
+        E1[질의] --&gt; F1[유사도 검색]
+        F1 --&gt; G1[컨텍스트 생성]
+        D1 --&gt; F1
+    end
+    
+    subgraph "KAG"
+        A2[문서] --&gt; B2[지식 추출]
+        B2 --&gt; C2[그래프 구축]
+        B2 --&gt; D2[벡터 인덱싱]
+        C2 --&gt; E2[Neo4j]
+        D2 --&gt; F2[Elasticsearch]
+        G2[질의] --&gt; H2[논리적 추론]
+        E2 --&gt; H2
+        F2 --&gt; H2
+        H2 --&gt; I2[증강된 응답]
+    end
+</code></pre>
+
+<h2 id="7-핵심-혁신-기능">7. 핵심 혁신 기능</h2>
+
+<h3 id="71-하이브리드-검색-시스템">7.1 하이브리드 검색 시스템</h3>
+
+<p><strong>지식 그래프 + 벡터 검색 통합:</strong></p>
+<ul>
+  <li>Neo4j를 통한 구조화된 지식 탐색</li>
+  <li>Elasticsearch를 통한 의미적 유사성 검색</li>
+  <li>두 결과의 지능적 융합</li>
+</ul>
+
+<h3 id="72-논리적-추론-엔진">7.2 논리적 추론 엔진</h3>
+
+<p><strong>다단계 추론 프로세스:</strong></p>
+<ol>
+  <li><strong>질의 분석</strong>: 사용자 의도 파악</li>
+  <li><strong>지식 탐색</strong>: 관련 정보 수집</li>
+  <li><strong>논리적 연결</strong>: 지식 간 관계 분석</li>
+  <li><strong>결론 도출</strong>: 증거 기반 답변 생성</li>
+</ol>
+
+<h3 id="73-수직-도메인-최적화">7.3 수직 도메인 최적화</h3>
+
+<p><strong>도메인별 특화 기능:</strong></p>
+<ul>
+  <li>도메인 온톨로지 활용</li>
+  <li>전문 용어 처리</li>
+  <li>업계 특화 추론 규칙</li>
+  <li>맞춤형 평가 지표</li>
+</ul>
+
+<h2 id="8-실제-사용-시나리오">8. 실제 사용 시나리오</h2>
+
+<h3 id="81-기업-지식-관리">8.1 기업 지식 관리</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 적용 영역</span>
+<span class="pi">-</span> <span class="s">내부 문서 기반 Q&amp;A</span>
+<span class="pi">-</span> <span class="s">정책 및 규정 해석</span>
+<span class="pi">-</span> <span class="s">기술 문서 검색</span>
+<span class="pi">-</span> <span class="s">업무 프로세스 가이드</span>
+</code></pre></div></div>
+
+<h3 id="82-연구-및-학술-분야">8.2 연구 및 학술 분야</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 활용 사례</span>
+<span class="pi">-</span> <span class="s">논문 및 연구 자료 분석</span>
+<span class="pi">-</span> <span class="s">문헌 리뷰 자동화</span>
+<span class="pi">-</span> <span class="s">가설 검증 지원</span>
+<span class="pi">-</span> <span class="s">연구 동향 분석</span>
+</code></pre></div></div>
+
+<h2 id="9-성능-및-확장성">9. 성능 및 확장성</h2>
+
+<h3 id="91-시스템-요구사항">9.1 시스템 요구사항</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 최소 사양</span>
+<span class="na">CPU</span><span class="pi">:</span> <span class="s">4 cores</span>
+<span class="na">RAM</span><span class="pi">:</span> <span class="s">8GB</span>
+<span class="na">Storage</span><span class="pi">:</span> <span class="s">50GB SSD</span>
+<span class="na">Network</span><span class="pi">:</span> <span class="s">1Gbps</span>
+
+<span class="c1"># 권장 사양  </span>
+<span class="na">CPU</span><span class="pi">:</span> <span class="s">8+ cores</span>
+<span class="na">RAM</span><span class="pi">:</span> <span class="s">16GB+</span>
+<span class="na">Storage</span><span class="pi">:</span> <span class="s">100GB+ NVMe SSD</span>
+<span class="na">Network</span><span class="pi">:</span> <span class="s">10Gbps</span>
+</code></pre></div></div>
+
+<h3 id="92-확장성-고려사항">9.2 확장성 고려사항</h3>
+
+<p><strong>수평 확장:</strong></p>
+<ul>
+  <li>마이크로서비스 아키텍처 적용</li>
+  <li>Kubernetes 오케스트레이션</li>
+  <li>로드 밸런싱 구성</li>
+</ul>
+
+<p><strong>성능 최적화:</strong></p>
+<ul>
+  <li>캐싱 레이어 도입</li>
+  <li>비동기 처리 파이프라인</li>
+  <li>GPU 가속 추론</li>
+</ul>
+
+<h2 id="결론">결론</h2>
+
+<p>KAG 프로젝트는 <strong>지식 그래프와 벡터 검색의 하이브리드 접근법</strong>을 통해 기존 RAG 시스템의 한계를 혁신적으로 극복한 차세대 지식 증강 생성 프레임워크입니다.</p>
+
+<p><strong>핵심 성과:</strong></p>
+<ul>
+  <li><strong>정확도 향상</strong>: 논리적 추론을 통한 높은 정확도</li>
+  <li><strong>노이즈 제거</strong>: 구조화된 지식 표현으로 노이즈 최소화</li>
+  <li><strong>도메인 특화</strong>: 수직 영역에 최적화된 성능</li>
+  <li><strong>확장성</strong>: 모듈화된 아키텍처로 높은 확장성</li>
+</ul>
+
+<p>다음 포스트에서는 KAG의 Docker 컨테이너 오케스트레이션과 각 서비스 간의 상호작용을 더 자세히 분석하겠습니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li>[다음: KAG Docker 컨테이너 오케스트레이션 심층 분석] (예정)</li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://spg.openkg.cn/">OpenSPG 공식 문서</a></li>
+  <li><a href="https://github.com/OpenSPG/KAG">KAG GitHub Repository</a></li>
+  <li><a href="https://neo4j.com/">Neo4j 그래프 데이터베이스</a></li>
+  <li><a href="https://www.elastic.co/">Elasticsearch 검색 엔진</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/08/15/oxy-custom-project-overview-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Oxy Custom 프로젝트 개요 분석 - Rust 기반 Agentic Analyti...</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/08/22/foundation-models-post-training-strategies/" rel="next">
+          <span class="nav-title">파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

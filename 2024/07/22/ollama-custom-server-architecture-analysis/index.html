@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Ollama Custom 서버 아키텍처 심층 분석 - Gin 기반 HTTP API 서버 | AI Development Blog</title>
+<meta name="description" content="Ollama Custom 서버 아키텍처 심층 분석Ollama Custom의 서버 아키텍처는 Gin 웹 프레임워크를 기반으로 구축된 고성능 HTTP API 서버입니다. 이 포스트에서는 server/routes.go의 1,700여 라인에 걸친 복잡한 서버 구현과 스케줄링 시스템을 상세...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="Ollama, Gin, HTTP Server, RESTful API, Go Web Framework">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/07/22/ollama-custom-server-architecture-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ollama Custom 서버 아키텍처 심층 분석 - Gin 기반 HTTP API 서버">
+<meta property="og:description" content="Ollama Custom 서버 아키텍처 심층 분석Ollama Custom의 서버 아키텍처는 Gin 웹 프레임워크를 기반으로 구축된 고성능 HTTP API 서버입니다. 이 포스트에서는 server/routes.go의 1,700여 라인에 걸친 복잡한 서버 구현과 스케줄링 시스템을 상세...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/07/22/ollama-custom-server-architecture-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ollama Custom 서버 아키텍처 심층 분석 - Gin 기반 HTTP API 서버">
+<meta name="twitter:description" content="Ollama Custom 서버 아키텍처 심층 분석Ollama Custom의 서버 아키텍처는 Gin 웹 프레임워크를 기반으로 구축된 고성능 HTTP API 서버입니다. 이 포스트에서는 server/routes.go의 1,700여 라인에 걸친 복잡한 서버 구현과 스케줄링 시스템을 상세...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Ollama Custom 서버 아키텍처 심층 분석 - Gin 기반 HTTP API 서버",
+  "description": "Ollama Custom 서버 아키텍처 심층 분석
+
+Ollama Custom의 서버 아키텍처는 Gin 웹 프레임워크를 기반으로 구축된 고성능 HTTP API 서버입니다. 이 포스트에서는 server/routes.go의 1,700여 라인에 걸친 복잡한 서버 구현과 스케줄링 시스템을 ...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-07-22T00:00:00+00:00",
+  "dateModified": "2024-07-22T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/07/22/ollama-custom-server-architecture-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/07/22/ollama-custom-server-architecture-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["Ollama","Gin","HTTP Server","RESTful API","Go Web Framework"],
+  "articleSection": ["AI","Go","Server"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Ollama Custom 서버 아키텍처 심층 분석 - Gin 기반 HTTP API 서버</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Ollama Custom 서버 아키텍처 심층 분석 - Gin 기반 HTTP API 서버</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-07-22T00:00:00+00:00">Jul 22, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Go</li><li>Server</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="ollama-custom-서버-아키텍처-심층-분석">Ollama Custom 서버 아키텍처 심층 분석</h1>
+
+<p>Ollama Custom의 서버 아키텍처는 Gin 웹 프레임워크를 기반으로 구축된 고성능 HTTP API 서버입니다. 이 포스트에서는 <code class="language-plaintext highlighter-rouge">server/routes.go</code>의 1,700여 라인에 걸친 복잡한 서버 구현과 스케줄링 시스템을 상세히 분석해보겠습니다.</p>
+
+<h2 id="1-서버-아키텍처-개요">1. 서버 아키텍처 개요</h2>
+
+<h3 id="11-핵심-구조체와-설계">1.1 핵심 구조체와 설계</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Server</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">addr</span>  <span class="n">net</span><span class="o">.</span><span class="n">Addr</span>
+    <span class="n">sched</span> <span class="o">*</span><span class="n">Scheduler</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Scheduler</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">pendingReqCh</span>  <span class="k">chan</span> <span class="o">*</span><span class="n">LlmRequest</span>  <span class="c">// 대기 중인 요청</span>
+    <span class="n">finishedReqCh</span> <span class="k">chan</span> <span class="o">*</span><span class="n">LlmRequest</span>  <span class="c">// 완료된 요청</span>
+    <span class="n">expiredCh</span>     <span class="k">chan</span> <span class="o">*</span><span class="n">runnerRef</span>   <span class="c">// 만료된 러너</span>
+    <span class="n">unloadedCh</span>    <span class="k">chan</span> <span class="n">any</span>          <span class="c">// 언로드된 모델</span>
+    
+    <span class="n">loaded</span>   <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="o">*</span><span class="n">runnerRef</span>   <span class="c">// 로드된 모델 맵</span>
+    <span class="n">loadedMu</span> <span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span>              <span class="c">// 동시성 제어</span>
+    
+    <span class="n">loadFn</span>       <span class="k">func</span><span class="p">(</span><span class="n">req</span> <span class="o">*</span><span class="n">LlmRequest</span><span class="p">,</span> <span class="n">f</span> <span class="o">*</span><span class="n">ggml</span><span class="o">.</span><span class="n">GGML</span><span class="p">,</span> <span class="n">gpus</span> <span class="n">discover</span><span class="o">.</span><span class="n">GpuInfoList</span><span class="p">,</span> <span class="n">numParallel</span> <span class="kt">int</span><span class="p">)</span>
+    <span class="n">newServerFn</span>  <span class="k">func</span><span class="p">(</span><span class="n">gpus</span> <span class="n">discover</span><span class="o">.</span><span class="n">GpuInfoList</span><span class="p">,</span> <span class="n">model</span> <span class="kt">string</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="p">(</span><span class="n">llm</span><span class="o">.</span><span class="n">LlamaServer</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+    <span class="n">getGpuFn</span>     <span class="k">func</span><span class="p">()</span> <span class="n">discover</span><span class="o">.</span><span class="n">GpuInfoList</span>
+    <span class="n">getCpuFn</span>     <span class="k">func</span><span class="p">()</span> <span class="n">discover</span><span class="o">.</span><span class="n">GpuInfoList</span>
+    <span class="n">reschedDelay</span> <span class="n">time</span><span class="o">.</span><span class="n">Duration</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>아키텍처 특징:</strong></p>
+<ul>
+  <li><strong>채널 기반 통신</strong>: 비동기 요청 처리를 위한 채널 시스템</li>
+  <li><strong>스케줄링 분리</strong>: 모델 로딩과 요청 처리의 명확한 분리</li>
+  <li><strong>함수형 인터페이스</strong>: 테스트 가능한 의존성 주입 패턴</li>
+  <li><strong>동시성 안전</strong>: 뮤텍스를 활용한 안전한 상태 관리</li>
+</ul>
+
+<h3 id="12-gin-라우터-설정">1.2 Gin 라우터 설정</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">GenerateRoutes</span><span class="p">(</span><span class="n">rc</span> <span class="o">*</span><span class="n">ollama</span><span class="o">.</span><span class="n">Registry</span><span class="p">)</span> <span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">Handler</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c">// CORS 설정</span>
+    <span class="n">corsConfig</span> <span class="o">:=</span> <span class="n">cors</span><span class="o">.</span><span class="n">DefaultConfig</span><span class="p">()</span>
+    <span class="n">corsConfig</span><span class="o">.</span><span class="n">AllowWildcard</span> <span class="o">=</span> <span class="no">true</span>
+    <span class="n">corsConfig</span><span class="o">.</span><span class="n">AllowBrowserExtensions</span> <span class="o">=</span> <span class="no">true</span>
+    <span class="n">corsConfig</span><span class="o">.</span><span class="n">AllowHeaders</span> <span class="o">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span>
+        <span class="s">"Authorization"</span><span class="p">,</span> <span class="s">"Content-Type"</span><span class="p">,</span> <span class="s">"User-Agent"</span><span class="p">,</span> <span class="s">"Accept"</span><span class="p">,</span>
+        <span class="s">"X-Requested-With"</span><span class="p">,</span>
+        <span class="c">// OpenAI 호환성 헤더들</span>
+        <span class="s">"OpenAI-Beta"</span><span class="p">,</span> <span class="s">"x-stainless-arch"</span><span class="p">,</span> <span class="s">"x-stainless-async"</span><span class="p">,</span>
+        <span class="s">"x-stainless-custom-poll-interval"</span><span class="p">,</span> <span class="s">"x-stainless-helper-method"</span><span class="p">,</span>
+        <span class="c">// ... 추가 헤더들</span>
+    <span class="p">}</span>
+    <span class="n">corsConfig</span><span class="o">.</span><span class="n">AllowOrigins</span> <span class="o">=</span> <span class="n">envconfig</span><span class="o">.</span><span class="n">AllowedOrigins</span><span class="p">()</span>
+    
+    <span class="n">r</span> <span class="o">:=</span> <span class="n">gin</span><span class="o">.</span><span class="n">Default</span><span class="p">()</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">HandleMethodNotAllowed</span> <span class="o">=</span> <span class="no">true</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">Use</span><span class="p">(</span>
+        <span class="n">cors</span><span class="o">.</span><span class="n">New</span><span class="p">(</span><span class="n">corsConfig</span><span class="p">),</span>
+        <span class="n">allowedHostsMiddleware</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">addr</span><span class="p">),</span>
+    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>CORS 및 보안:</strong></p>
+<ul>
+  <li><strong>광범위한 CORS 지원</strong>: 브라우저 확장 및 외부 애플리케이션 지원</li>
+  <li><strong>OpenAI 호환성</strong>: OpenAI API와 호환되는 헤더 지원</li>
+  <li><strong>호스트 검증</strong>: 허용된 호스트만 접근 가능하도록 제한</li>
+  <li><strong>메소드 제어</strong>: 허용되지 않은 HTTP 메소드 처리</li>
+</ul>
+
+<h2 id="2-restful-api-엔드포인트-분석">2. RESTful API 엔드포인트 분석</h2>
+
+<h3 id="21-핵심-api-라우팅-구조">2.1 핵심 API 라우팅 구조</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// 일반적인 엔드포인트</span>
+<span class="n">r</span><span class="o">.</span><span class="n">HEAD</span><span class="p">(</span><span class="s">"/"</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span> <span class="n">c</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span> <span class="s">"Ollama is running"</span><span class="p">)</span> <span class="p">})</span>
+<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s">"/"</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span> <span class="n">c</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span> <span class="s">"Ollama is running"</span><span class="p">)</span> <span class="p">})</span>
+<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s">"/api/version"</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"version"</span><span class="o">:</span> <span class="n">version</span><span class="o">.</span><span class="n">Version</span><span class="p">})</span> 
+<span class="p">})</span>
+
+<span class="c">// 모델 관리</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/pull"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">PullHandler</span><span class="p">)</span>        <span class="c">// 모델 다운로드</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/push"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">PushHandler</span><span class="p">)</span>        <span class="c">// 모델 업로드</span>
+<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s">"/api/tags"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">ListHandler</span><span class="p">)</span>         <span class="c">// 모델 목록</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/show"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">ShowHandler</span><span class="p">)</span>        <span class="c">// 모델 정보</span>
+<span class="n">r</span><span class="o">.</span><span class="n">DELETE</span><span class="p">(</span><span class="s">"/api/delete"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">DeleteHandler</span><span class="p">)</span>  <span class="c">// 모델 삭제</span>
+
+<span class="c">// 모델 생성 및 관리</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/create"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">CreateHandler</span><span class="p">)</span>    <span class="c">// 모델 생성</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/blobs/:digest"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">CreateBlobHandler</span><span class="p">)</span>  <span class="c">// 블롭 생성</span>
+<span class="n">r</span><span class="o">.</span><span class="n">HEAD</span><span class="p">(</span><span class="s">"/api/blobs/:digest"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">HeadBlobHandler</span><span class="p">)</span>    <span class="c">// 블롭 확인</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/copy"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">CopyHandler</span><span class="p">)</span>        <span class="c">// 모델 복사</span>
+
+<span class="c">// 추론 엔드포인트</span>
+<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s">"/api/ps"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">PsHandler</span><span class="p">)</span>             <span class="c">// 실행 중인 모델</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/generate"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">GenerateHandler</span><span class="p">)</span> <span class="c">// 텍스트 생성</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/chat"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">ChatHandler</span><span class="p">)</span>        <span class="c">// 대화형 채팅</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/embed"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">EmbedHandler</span><span class="p">)</span>      <span class="c">// 임베딩 생성</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/api/embeddings"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">EmbeddingsHandler</span><span class="p">)</span> <span class="c">// 레거시 임베딩</span>
+
+<span class="c">// OpenAI 호환성</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/v1/chat/completions"</span><span class="p">,</span> <span class="n">openai</span><span class="o">.</span><span class="n">ChatMiddleware</span><span class="p">(),</span> <span class="n">s</span><span class="o">.</span><span class="n">ChatHandler</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/v1/completions"</span><span class="p">,</span> <span class="n">openai</span><span class="o">.</span><span class="n">CompletionsMiddleware</span><span class="p">(),</span> <span class="n">s</span><span class="o">.</span><span class="n">GenerateHandler</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">POST</span><span class="p">(</span><span class="s">"/v1/embeddings"</span><span class="p">,</span> <span class="n">openai</span><span class="o">.</span><span class="n">EmbeddingsMiddleware</span><span class="p">(),</span> <span class="n">s</span><span class="o">.</span><span class="n">EmbedHandler</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s">"/v1/models"</span><span class="p">,</span> <span class="n">openai</span><span class="o">.</span><span class="n">ListMiddleware</span><span class="p">(),</span> <span class="n">s</span><span class="o">.</span><span class="n">ListHandler</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">GET</span><span class="p">(</span><span class="s">"/v1/models/:model"</span><span class="p">,</span> <span class="n">openai</span><span class="o">.</span><span class="n">RetrieveMiddleware</span><span class="p">(),</span> <span class="n">s</span><span class="o">.</span><span class="n">ShowHandler</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>API 설계 원칙:</strong></p>
+<ul>
+  <li><strong>RESTful 패턴</strong>: HTTP 메소드와 리소스 기반 URL 설계</li>
+  <li><strong>OpenAI 호환성</strong>: 기존 OpenAI 클라이언트와 호환</li>
+  <li><strong>미들웨어 활용</strong>: 요청 변환과 검증을 위한 미들웨어 패턴</li>
+  <li><strong>버전 관리</strong>: <code class="language-plaintext highlighter-rouge">/v1/</code> 프리픽스로 API 버전 관리</li>
+</ul>
+
+<h3 id="22-generatehandler---텍스트-생성-핵심">2.2 GenerateHandler - 텍스트 생성 핵심</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">GenerateHandler</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">checkpointStart</span> <span class="o">:=</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span>
+    <span class="k">var</span> <span class="n">req</span> <span class="n">api</span><span class="o">.</span><span class="n">GenerateRequest</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">c</span><span class="o">.</span><span class="n">ShouldBindJSON</span><span class="p">(</span><span class="o">&amp;</span><span class="n">req</span><span class="p">);</span> <span class="n">errors</span><span class="o">.</span><span class="n">Is</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">EOF</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatusJSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"missing request body"</span><span class="p">})</span>
+        <span class="k">return</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatusJSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="n">name</span> <span class="o">:=</span> <span class="n">model</span><span class="o">.</span><span class="n">ParseName</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Model</span><span class="p">)</span>
+    <span class="k">if</span> <span class="o">!</span><span class="n">name</span><span class="o">.</span><span class="n">IsValid</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusNotFound</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"model '%s' not found"</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">Model</span><span class="p">)})</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="c">// 모델 언로드 요청 처리</span>
+    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Prompt</span> <span class="o">==</span> <span class="s">""</span> <span class="o">&amp;&amp;</span> <span class="n">req</span><span class="o">.</span><span class="n">KeepAlive</span> <span class="o">!=</span> <span class="no">nil</span> <span class="o">&amp;&amp;</span> <span class="kt">int</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">KeepAlive</span><span class="o">.</span><span class="n">Seconds</span><span class="p">())</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">sched</span><span class="o">.</span><span class="n">expireRunner</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span> <span class="n">api</span><span class="o">.</span><span class="n">GenerateResponse</span><span class="p">{</span>
+            <span class="n">Model</span><span class="o">:</span>      <span class="n">req</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span>
+            <span class="n">CreatedAt</span><span class="o">:</span>  <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">UTC</span><span class="p">(),</span>
+            <span class="n">Response</span><span class="o">:</span>   <span class="s">""</span><span class="p">,</span>
+            <span class="n">Done</span><span class="o">:</span>       <span class="no">true</span><span class="p">,</span>
+            <span class="n">DoneReason</span><span class="o">:</span> <span class="s">"unload"</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="c">// 모델 능력 검증</span>
+    <span class="n">caps</span> <span class="o">:=</span> <span class="p">[]</span><span class="n">model</span><span class="o">.</span><span class="n">Capability</span><span class="p">{</span><span class="n">model</span><span class="o">.</span><span class="n">CapabilityCompletion</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Suffix</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+        <span class="n">caps</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">caps</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">CapabilityInsert</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">r</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">opts</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">s</span><span class="o">.</span><span class="n">scheduleRunner</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="n">name</span><span class="o">.</span><span class="n">String</span><span class="p">(),</span> <span class="n">caps</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">Options</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">KeepAlive</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">errors</span><span class="o">.</span><span class="n">Is</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">errCapabilityCompletion</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"%q does not support generate"</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">Model</span><span class="p">)})</span>
+        <span class="k">return</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="n">handleScheduleError</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="n">checkpointLoaded</span> <span class="o">:=</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span>
+    
+    <span class="c">// 프롬프트가 비어있으면 모델만 로드</span>
+    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Prompt</span> <span class="o">==</span> <span class="s">""</span> <span class="p">{</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span> <span class="n">api</span><span class="o">.</span><span class="n">GenerateResponse</span><span class="p">{</span>
+            <span class="n">Model</span><span class="o">:</span>      <span class="n">req</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span>
+            <span class="n">CreatedAt</span><span class="o">:</span>  <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">UTC</span><span class="p">(),</span>
+            <span class="n">Done</span><span class="o">:</span>       <span class="no">true</span><span class="p">,</span>
+            <span class="n">DoneReason</span><span class="o">:</span> <span class="s">"load"</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>핵심 특징:</strong></p>
+<ul>
+  <li><strong>성능 측정</strong>: 체크포인트 기반 성능 추적</li>
+  <li><strong>점진적 검증</strong>: 단계별 입력 검증과 에러 처리</li>
+  <li><strong>능력 기반 라우팅</strong>: 모델 능력에 따른 요청 처리</li>
+  <li><strong>지연 로딩</strong>: 필요시에만 모델 로드</li>
+</ul>
+
+<h3 id="23-스케줄러-통합">2.3 스케줄러 통합</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">scheduleRunner</span><span class="p">(</span><span class="n">ctx</span> <span class="n">context</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">name</span> <span class="kt">string</span><span class="p">,</span> <span class="n">caps</span> <span class="p">[]</span><span class="n">model</span><span class="o">.</span><span class="n">Capability</span><span class="p">,</span> <span class="n">requestOpts</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="n">any</span><span class="p">,</span> <span class="n">keepAlive</span> <span class="o">*</span><span class="n">api</span><span class="o">.</span><span class="n">Duration</span><span class="p">)</span> <span class="p">(</span><span class="n">llm</span><span class="o">.</span><span class="n">LlamaServer</span><span class="p">,</span> <span class="o">*</span><span class="n">Model</span><span class="p">,</span> <span class="o">*</span><span class="n">api</span><span class="o">.</span><span class="n">Options</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">""</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"model %w"</span><span class="p">,</span> <span class="n">errRequired</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">model</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">GetModel</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">model</span><span class="o">.</span><span class="n">CheckCapabilities</span><span class="p">(</span><span class="n">caps</span><span class="o">...</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"%s %w"</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">opts</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">modelOptions</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">requestOpts</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span>
+    <span class="p">}</span>
+
+    <span class="n">runnerCh</span><span class="p">,</span> <span class="n">errCh</span> <span class="o">:=</span> <span class="n">s</span><span class="o">.</span><span class="n">sched</span><span class="o">.</span><span class="n">GetRunner</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">opts</span><span class="p">,</span> <span class="n">keepAlive</span><span class="p">)</span>
+    <span class="k">var</span> <span class="n">runner</span> <span class="o">*</span><span class="n">runnerRef</span>
+    <span class="k">select</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="n">runner</span> <span class="o">=</span> <span class="o">&lt;-</span><span class="n">runnerCh</span><span class="o">:</span>
+    <span class="k">case</span> <span class="n">err</span> <span class="o">=</span> <span class="o">&lt;-</span><span class="n">errCh</span><span class="o">:</span>
+        <span class="k">return</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="no">nil</span><span class="p">,</span> <span class="n">err</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">runner</span><span class="o">.</span><span class="n">llama</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">opts</span><span class="p">,</span> <span class="no">nil</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>스케줄링 전략:</strong></p>
+<ul>
+  <li><strong>비동기 스케줄링</strong>: 채널 기반 비동기 모델 할당</li>
+  <li><strong>능력 검증</strong>: 요청된 기능을 모델이 지원하는지 사전 검증</li>
+  <li><strong>옵션 통합</strong>: 모델 기본 옵션과 요청 옵션 병합</li>
+  <li><strong>컨텍스트 인식</strong>: 취소 가능한 요청 처리</li>
+</ul>
+
+<h2 id="3-이미지-처리-및-멀티모달-지원">3. 이미지 처리 및 멀티모달 지원</h2>
+
+<h3 id="31-mllama-모델-특화-처리">3.1 MLLama 모델 특화 처리</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// MLLama 모델 확인</span>
+<span class="n">isMllama</span> <span class="o">:=</span> <span class="n">checkMllamaModelFamily</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">isMllama</span> <span class="o">&amp;&amp;</span> <span class="nb">len</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Images</span><span class="p">)</span> <span class="o">&gt;</span> <span class="m">1</span> <span class="p">{</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatusJSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"this model only supports one image: more than one image sent"</span><span class="p">})</span>
+    <span class="k">return</span>
+<span class="p">}</span>
+
+<span class="n">images</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="n">llm</span><span class="o">.</span><span class="n">ImageData</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Images</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">req</span><span class="o">.</span><span class="n">Images</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="n">isMllama</span> <span class="o">&amp;&amp;</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">ProjectorPaths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="m">0</span> <span class="p">{</span>
+        <span class="c">// MLLama 전용 이미지 전처리</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">opts</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">mllama</span><span class="o">.</span><span class="n">Preprocess</span><span class="p">(</span><span class="n">bytes</span><span class="o">.</span><span class="n">NewReader</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Images</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatusJSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"error processing image"</span><span class="p">})</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+
+        <span class="n">ar</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">opts</span><span class="p">[</span><span class="s">"aspectRatioIndex"</span><span class="p">]</span><span class="o">.</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatusJSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"error processing image"</span><span class="p">})</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+
+        <span class="n">buf</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="n">bytes</span><span class="o">.</span><span class="n">Buffer</span><span class="p">)</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">LittleEndian</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatusJSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"error processing image"</span><span class="p">})</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+
+        <span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">ImageData</span><span class="p">{</span><span class="n">ID</span><span class="o">:</span> <span class="n">i</span><span class="p">,</span> <span class="n">Data</span><span class="o">:</span> <span class="n">buf</span><span class="o">.</span><span class="n">Bytes</span><span class="p">(),</span> <span class="n">AspectRatioID</span><span class="o">:</span> <span class="n">ar</span><span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">ImageData</span><span class="p">{</span><span class="n">ID</span><span class="o">:</span> <span class="n">i</span><span class="p">,</span> <span class="n">Data</span><span class="o">:</span> <span class="n">req</span><span class="o">.</span><span class="n">Images</span><span class="p">[</span><span class="n">i</span><span class="p">]}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>멀티모달 특징:</strong></p>
+<ul>
+  <li><strong>모델별 최적화</strong>: MLLama 모델을 위한 특화된 이미지 처리</li>
+  <li><strong>종횡비 인덱싱</strong>: 이미지 종횡비 정보 보존</li>
+  <li><strong>바이너리 처리</strong>: Little Endian 바이너리 변환</li>
+  <li><strong>타입 안전성</strong>: 런타임 타입 체크와 에러 처리</li>
+</ul>
+
+<h3 id="32-템플릿-처리-시스템">3.2 템플릿 처리 시스템</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="o">!</span><span class="n">req</span><span class="o">.</span><span class="n">Raw</span> <span class="p">{</span>
+    <span class="n">tmpl</span> <span class="o">:=</span> <span class="n">m</span><span class="o">.</span><span class="n">Template</span>
+    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Template</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+        <span class="n">tmpl</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">Parse</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">Template</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">var</span> <span class="n">values</span> <span class="n">template</span><span class="o">.</span><span class="n">Values</span>
+    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Suffix</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">Prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">Suffix</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">Suffix</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="n">msgs</span> <span class="p">[]</span><span class="n">api</span><span class="o">.</span><span class="n">Message</span>
+        <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">System</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+            <span class="n">msgs</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">msgs</span><span class="p">,</span> <span class="n">api</span><span class="o">.</span><span class="n">Message</span><span class="p">{</span><span class="n">Role</span><span class="o">:</span> <span class="s">"system"</span><span class="p">,</span> <span class="n">Content</span><span class="o">:</span> <span class="n">req</span><span class="o">.</span><span class="n">System</span><span class="p">})</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">System</span> <span class="o">!=</span> <span class="s">""</span> <span class="p">{</span>
+            <span class="n">msgs</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">msgs</span><span class="p">,</span> <span class="n">api</span><span class="o">.</span><span class="n">Message</span><span class="p">{</span><span class="n">Role</span><span class="o">:</span> <span class="s">"system"</span><span class="p">,</span> <span class="n">Content</span><span class="o">:</span> <span class="n">m</span><span class="o">.</span><span class="n">System</span><span class="p">})</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Context</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">msgs</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">msgs</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">Messages</span><span class="o">...</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="c">// 이미지 프롬프트 추가</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">images</span> <span class="p">{</span>
+            <span class="n">imgPrompt</span> <span class="o">:=</span> <span class="s">""</span>
+            <span class="k">if</span> <span class="n">isMllama</span> <span class="p">{</span>
+                <span class="n">imgPrompt</span> <span class="o">=</span> <span class="s">"&lt;|image|&gt;"</span>
+            <span class="p">}</span>
+            <span class="n">msgs</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">msgs</span><span class="p">,</span> <span class="n">api</span><span class="o">.</span><span class="n">Message</span><span class="p">{</span><span class="n">Role</span><span class="o">:</span> <span class="s">"user"</span><span class="p">,</span> <span class="n">Content</span><span class="o">:</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"[img-%d]"</span><span class="o">+</span><span class="n">imgPrompt</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">ID</span><span class="p">)})</span>
+        <span class="p">}</span>
+
+        <span class="n">values</span><span class="o">.</span><span class="n">Messages</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">msgs</span><span class="p">,</span> <span class="n">api</span><span class="o">.</span><span class="n">Message</span><span class="p">{</span><span class="n">Role</span><span class="o">:</span> <span class="s">"user"</span><span class="p">,</span> <span class="n">Content</span><span class="o">:</span> <span class="n">req</span><span class="o">.</span><span class="n">Prompt</span><span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="k">var</span> <span class="n">b</span> <span class="n">bytes</span><span class="o">.</span><span class="n">Buffer</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">tmpl</span><span class="o">.</span><span class="n">Execute</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span> <span class="n">values</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>템플릿 시스템:</strong></p>
+<ul>
+  <li><strong>동적 템플릿</strong>: 런타임 템플릿 파싱과 적용</li>
+  <li><strong>메시지 구조화</strong>: 시스템/사용자 메시지 자동 구성</li>
+  <li><strong>이미지 통합</strong>: 텍스트와 이미지의 자연스러운 통합</li>
+  <li><strong>컨텍스트 관리</strong>: 대화 히스토리와 새 메시지 병합</li>
+</ul>
+
+<h2 id="4-스트리밍-응답-처리">4. 스트리밍 응답 처리</h2>
+
+<h3 id="41-비동기-스트리밍-아키텍처">4.1 비동기 스트리밍 아키텍처</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="k">chan</span> <span class="n">any</span><span class="p">)</span>
+<span class="k">go</span> <span class="k">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="n">sb</span> <span class="n">strings</span><span class="o">.</span><span class="n">Builder</span>
+    <span class="k">defer</span> <span class="nb">close</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">Completion</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="n">llm</span><span class="o">.</span><span class="n">CompletionRequest</span><span class="p">{</span>
+        <span class="n">Prompt</span><span class="o">:</span>  <span class="n">prompt</span><span class="p">,</span>
+        <span class="n">Images</span><span class="o">:</span>  <span class="n">images</span><span class="p">,</span>
+        <span class="n">Format</span><span class="o">:</span>  <span class="n">req</span><span class="o">.</span><span class="n">Format</span><span class="p">,</span>
+        <span class="n">Options</span><span class="o">:</span> <span class="n">opts</span><span class="p">,</span>
+    <span class="p">},</span> <span class="k">func</span><span class="p">(</span><span class="n">cr</span> <span class="n">llm</span><span class="o">.</span><span class="n">CompletionResponse</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">res</span> <span class="o">:=</span> <span class="n">api</span><span class="o">.</span><span class="n">GenerateResponse</span><span class="p">{</span>
+            <span class="n">Model</span><span class="o">:</span>     <span class="n">req</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span>
+            <span class="n">CreatedAt</span><span class="o">:</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">UTC</span><span class="p">(),</span>
+            <span class="n">Response</span><span class="o">:</span>  <span class="n">cr</span><span class="o">.</span><span class="n">Content</span><span class="p">,</span>
+            <span class="n">Done</span><span class="o">:</span>      <span class="n">cr</span><span class="o">.</span><span class="n">Done</span><span class="p">,</span>
+            <span class="n">Metrics</span><span class="o">:</span> <span class="n">api</span><span class="o">.</span><span class="n">Metrics</span><span class="p">{</span>
+                <span class="n">PromptEvalCount</span><span class="o">:</span>    <span class="n">cr</span><span class="o">.</span><span class="n">PromptEvalCount</span><span class="p">,</span>
+                <span class="n">PromptEvalDuration</span><span class="o">:</span> <span class="n">cr</span><span class="o">.</span><span class="n">PromptEvalDuration</span><span class="p">,</span>
+                <span class="n">EvalCount</span><span class="o">:</span>          <span class="n">cr</span><span class="o">.</span><span class="n">EvalCount</span><span class="p">,</span>
+                <span class="n">EvalDuration</span><span class="o">:</span>       <span class="n">cr</span><span class="o">.</span><span class="n">EvalDuration</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">sb</span><span class="o">.</span><span class="n">WriteString</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">Content</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">ch</span> <span class="o">&lt;-</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()}</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">cr</span><span class="o">.</span><span class="n">Done</span> <span class="p">{</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">DoneReason</span> <span class="o">=</span> <span class="n">cr</span><span class="o">.</span><span class="n">DoneReason</span><span class="o">.</span><span class="n">String</span><span class="p">()</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">TotalDuration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">Since</span><span class="p">(</span><span class="n">checkpointStart</span><span class="p">)</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">LoadDuration</span> <span class="o">=</span> <span class="n">checkpointLoaded</span><span class="o">.</span><span class="n">Sub</span><span class="p">(</span><span class="n">checkpointStart</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="o">!</span><span class="n">req</span><span class="o">.</span><span class="n">Raw</span> <span class="p">{</span>
+                <span class="n">tokens</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">Tokenize</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="n">prompt</span><span class="o">+</span><span class="n">sb</span><span class="o">.</span><span class="n">String</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+                    <span class="n">ch</span> <span class="o">&lt;-</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()}</span>
+                    <span class="k">return</span>
+                <span class="p">}</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">tokens</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">ch</span> <span class="o">&lt;-</span> <span class="n">res</span>
+    <span class="p">});</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="n">ch</span> <span class="o">&lt;-</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()}</span>
+    <span class="p">}</span>
+<span class="p">}()</span>
+</code></pre></div></div>
+
+<p><strong>스트리밍 특징:</strong></p>
+<ul>
+  <li><strong>고루틴 분리</strong>: 메인 요청과 분리된 스트리밍 처리</li>
+  <li><strong>콜백 패턴</strong>: 실시간 응답 생성을 위한 콜백 메커니즘</li>
+  <li><strong>성능 메트릭</strong>: 토큰 처리 속도와 지연 시간 측정</li>
+  <li><strong>에러 전파</strong>: 스트리밍 중 에러의 안전한 전달</li>
+</ul>
+
+<h3 id="42-응답-형태-처리">4.2 응답 형태 처리</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">streamResponse</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">ch</span> <span class="k">chan</span> <span class="n">any</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">Header</span><span class="p">(</span><span class="s">"Content-Type"</span><span class="p">,</span> <span class="s">"application/x-ndjson"</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">Stream</span><span class="p">(</span><span class="k">func</span><span class="p">(</span><span class="n">w</span> <span class="n">io</span><span class="o">.</span><span class="n">Writer</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+        <span class="n">val</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="n">ch</span>
+        <span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="no">false</span>
+        <span class="p">}</span>
+
+        <span class="n">bts</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">json</span><span class="o">.</span><span class="n">Marshal</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">slog</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"streamResponse: json.Marshal failed with %s"</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="k">return</span> <span class="no">false</span>
+        <span class="p">}</span>
+
+        <span class="c">// 개행 문자로 청크 구분</span>
+        <span class="n">bts</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">bts</span><span class="p">,</span> <span class="sc">'\n'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">w</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span><span class="n">bts</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">slog</span><span class="o">.</span><span class="n">Info</span><span class="p">(</span><span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"streamResponse: w.Write failed with %s"</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="k">return</span> <span class="no">false</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="no">true</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">waitForStream</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">ch</span> <span class="k">chan</span> <span class="n">any</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">Header</span><span class="p">(</span><span class="s">"Content-Type"</span><span class="p">,</span> <span class="s">"application/json"</span><span class="p">)</span>
+    <span class="k">var</span> <span class="n">latest</span> <span class="n">api</span><span class="o">.</span><span class="n">ProgressResponse</span>
+    <span class="k">for</span> <span class="n">resp</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">ch</span> <span class="p">{</span>
+        <span class="k">switch</span> <span class="n">r</span> <span class="o">:=</span> <span class="n">resp</span><span class="o">.</span><span class="p">(</span><span class="k">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="n">api</span><span class="o">.</span><span class="n">ProgressResponse</span><span class="o">:</span>
+            <span class="n">latest</span> <span class="o">=</span> <span class="n">r</span>
+        <span class="k">case</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="o">:</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">r</span><span class="p">[</span><span class="s">"status"</span><span class="p">]</span><span class="o">.</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span>
+            <span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span>
+            <span class="p">}</span>
+            <span class="n">errorMsg</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">r</span><span class="p">[</span><span class="s">"error"</span><span class="p">]</span><span class="o">.</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span>
+            <span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+                <span class="n">errorMsg</span> <span class="o">=</span> <span class="s">"unknown error"</span>
+            <span class="p">}</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">errorMsg</span><span class="p">})</span>
+            <span class="k">return</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"unknown message type"</span><span class="p">})</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span> <span class="n">latest</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>응답 처리 전략:</strong></p>
+<ul>
+  <li><strong>NDJSON 스트리밍</strong>: 개행 구분자 기반 JSON 스트리밍</li>
+  <li><strong>조건부 스트리밍</strong>: 클라이언트 요청에 따른 스트림/배치 선택</li>
+  <li><strong>타입 안전성</strong>: 런타임 타입 검증과 에러 처리</li>
+  <li><strong>상태 추적</strong>: 마지막 응답 상태 보존</li>
+</ul>
+
+<h2 id="5-임베딩-및-벡터-처리">5. 임베딩 및 벡터 처리</h2>
+
+<h3 id="51-임베딩-생성-핸들러">5.1 임베딩 생성 핸들러</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">EmbedHandler</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">checkpointStart</span> <span class="o">:=</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span>
+    <span class="k">var</span> <span class="n">req</span> <span class="n">api</span><span class="o">.</span><span class="n">EmbedRequest</span>
+    <span class="c">// ... 입력 검증 코드 ...</span>
+
+    <span class="c">// 입력 타입 처리</span>
+    <span class="k">var</span> <span class="n">input</span> <span class="p">[]</span><span class="kt">string</span>
+    <span class="k">switch</span> <span class="n">i</span> <span class="o">:=</span> <span class="n">req</span><span class="o">.</span><span class="n">Input</span><span class="o">.</span><span class="p">(</span><span class="k">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="kt">string</span><span class="o">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="m">0</span> <span class="p">{</span>
+            <span class="n">input</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="k">case</span> <span class="p">[]</span><span class="n">any</span><span class="o">:</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">i</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="n">_</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">v</span><span class="o">.</span><span class="p">(</span><span class="kt">string</span><span class="p">);</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatusJSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"invalid input type"</span><span class="p">})</span>
+                <span class="k">return</span>
+            <span class="p">}</span>
+            <span class="n">input</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="p">(</span><span class="kt">string</span><span class="p">))</span>
+        <span class="p">}</span>
+    <span class="k">default</span><span class="o">:</span>
+        <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Input</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatusJSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"invalid input type"</span><span class="p">})</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c">// 병렬 임베딩 생성</span>
+    <span class="k">var</span> <span class="n">g</span> <span class="n">errgroup</span><span class="o">.</span><span class="n">Group</span>
+    <span class="n">embeddings</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([][]</span><span class="kt">float32</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">input</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">input</span> <span class="p">{</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">Go</span><span class="p">(</span><span class="k">func</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+            <span class="n">embedding</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="n">text</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="n">err</span>
+            <span class="p">}</span>
+            <span class="n">embeddings</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">embedding</span><span class="p">)</span>  <span class="c">// 벡터 정규화</span>
+            <span class="k">return</span> <span class="no">nil</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">g</span><span class="o">.</span><span class="n">Wait</span><span class="p">();</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatusJSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">strings</span><span class="o">.</span><span class="n">TrimSpace</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">())})</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="n">resp</span> <span class="o">:=</span> <span class="n">api</span><span class="o">.</span><span class="n">EmbedResponse</span><span class="p">{</span>
+        <span class="n">Model</span><span class="o">:</span>           <span class="n">req</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span>
+        <span class="n">Embeddings</span><span class="o">:</span>      <span class="n">embeddings</span><span class="p">,</span>
+        <span class="n">TotalDuration</span><span class="o">:</span>   <span class="n">time</span><span class="o">.</span><span class="n">Since</span><span class="p">(</span><span class="n">checkpointStart</span><span class="p">),</span>
+        <span class="n">LoadDuration</span><span class="o">:</span>    <span class="n">checkpointLoaded</span><span class="o">.</span><span class="n">Sub</span><span class="p">(</span><span class="n">checkpointStart</span><span class="p">),</span>
+        <span class="n">PromptEvalCount</span><span class="o">:</span> <span class="n">count</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span> <span class="n">resp</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c">// 벡터 정규화 함수</span>
+<span class="k">func</span> <span class="n">normalize</span><span class="p">(</span><span class="n">vec</span> <span class="p">[]</span><span class="kt">float32</span><span class="p">)</span> <span class="p">[]</span><span class="kt">float32</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="n">sum</span> <span class="kt">float32</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">vec</span> <span class="p">{</span>
+        <span class="n">sum</span> <span class="o">+=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">v</span>
+    <span class="p">}</span>
+
+    <span class="n">norm</span> <span class="o">:=</span> <span class="kt">float32</span><span class="p">(</span><span class="m">0.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sum</span> <span class="o">&gt;</span> <span class="m">0</span> <span class="p">{</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="kt">float32</span><span class="p">(</span><span class="m">1.0</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">Sqrt</span><span class="p">(</span><span class="kt">float64</span><span class="p">(</span><span class="n">sum</span><span class="p">)))</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">vec</span> <span class="p">{</span>
+        <span class="n">vec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="n">norm</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">vec</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>임베딩 처리 특징:</strong></p>
+<ul>
+  <li><strong>동적 입력 타입</strong>: 문자열과 배열 입력 모두 지원</li>
+  <li><strong>병렬 처리</strong>: <code class="language-plaintext highlighter-rouge">errgroup</code>을 활용한 동시 임베딩 생성</li>
+  <li><strong>벡터 정규화</strong>: L2 노름 기반 벡터 정규화</li>
+  <li><strong>성능 측정</strong>: 처리 시간과 토큰 수 추적</li>
+</ul>
+
+<h3 id="52-컨텍스트-길이-관리">5.2 컨텍스트 길이 관리</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">kvData</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">getModelData</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">ModelPath</span><span class="p">,</span> <span class="no">false</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+    <span class="k">return</span>
+<span class="p">}</span>
+
+<span class="k">var</span> <span class="n">count</span> <span class="kt">int</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">input</span> <span class="p">{</span>
+    <span class="n">tokens</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">Tokenize</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+        <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="n">ctxLen</span> <span class="o">:=</span> <span class="n">min</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">NumCtx</span><span class="p">,</span> <span class="kt">int</span><span class="p">(</span><span class="n">kvData</span><span class="o">.</span><span class="n">ContextLength</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ctxLen</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="o">!</span><span class="n">truncate</span> <span class="p">{</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"input length exceeds maximum context length"</span><span class="p">})</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="o">:</span><span class="n">ctxLen</span><span class="p">]</span>
+        <span class="n">s</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">Detokenize</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Context</span><span class="p">(),</span> <span class="n">tokens</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+    <span class="n">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>컨텍스트 관리:</strong></p>
+<ul>
+  <li><strong>동적 제한</strong>: 모델별 컨텍스트 길이 동적 적용</li>
+  <li><strong>자동 절단</strong>: 옵션에 따른 입력 텍스트 자동 절단</li>
+  <li><strong>토큰 재구성</strong>: 절단된 토큰의 텍스트 재변환</li>
+  <li><strong>사용량 추적</strong>: 전체 토큰 사용량 계산</li>
+</ul>
+
+<h2 id="6-보안-및-접근-제어">6. 보안 및 접근 제어</h2>
+
+<h3 id="61-호스트-검증-미들웨어">6.1 호스트 검증 미들웨어</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">allowedHostsMiddleware</span><span class="p">(</span><span class="n">addr</span> <span class="n">net</span><span class="o">.</span><span class="n">Addr</span><span class="p">)</span> <span class="n">gin</span><span class="o">.</span><span class="n">HandlerFunc</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">func</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">addr</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+
+        <span class="c">// 루프백이 아닌 주소에서 바인딩된 경우 통과</span>
+        <span class="k">if</span> <span class="n">addr</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">netip</span><span class="o">.</span><span class="n">ParseAddrPort</span><span class="p">(</span><span class="n">addr</span><span class="o">.</span><span class="n">String</span><span class="p">());</span> <span class="n">err</span> <span class="o">==</span> <span class="no">nil</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">addr</span><span class="o">.</span><span class="n">Addr</span><span class="p">()</span><span class="o">.</span><span class="n">IsLoopback</span><span class="p">()</span> <span class="p">{</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+
+        <span class="n">host</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">net</span><span class="o">.</span><span class="n">SplitHostPort</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Host</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="n">host</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Host</span>
+        <span class="p">}</span>
+
+        <span class="c">// IP 주소 검증</span>
+        <span class="k">if</span> <span class="n">addr</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">netip</span><span class="o">.</span><span class="n">ParseAddr</span><span class="p">(</span><span class="n">host</span><span class="p">);</span> <span class="n">err</span> <span class="o">==</span> <span class="no">nil</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="n">addr</span><span class="o">.</span><span class="n">IsLoopback</span><span class="p">()</span> <span class="o">||</span> <span class="n">addr</span><span class="o">.</span><span class="n">IsPrivate</span><span class="p">()</span> <span class="o">||</span> <span class="n">addr</span><span class="o">.</span><span class="n">IsUnspecified</span><span class="p">()</span> <span class="o">||</span> <span class="n">isLocalIP</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span>
+                <span class="k">return</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c">// 허용된 호스트명 검증</span>
+        <span class="k">if</span> <span class="n">allowedHost</span><span class="p">(</span><span class="n">host</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Method</span> <span class="o">==</span> <span class="n">http</span><span class="o">.</span><span class="n">MethodOptions</span> <span class="p">{</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatus</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusNoContent</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="p">}</span>
+
+            <span class="n">c</span><span class="o">.</span><span class="n">Next</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+
+        <span class="n">c</span><span class="o">.</span><span class="n">AbortWithStatus</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusForbidden</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">allowedHost</span><span class="p">(</span><span class="n">host</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="n">strings</span><span class="o">.</span><span class="n">ToLower</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">host</span> <span class="o">==</span> <span class="s">""</span> <span class="o">||</span> <span class="n">host</span> <span class="o">==</span> <span class="s">"localhost"</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="no">true</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">os</span><span class="o">.</span><span class="n">Hostname</span><span class="p">();</span> <span class="n">err</span> <span class="o">==</span> <span class="no">nil</span> <span class="o">&amp;&amp;</span> <span class="n">host</span> <span class="o">==</span> <span class="n">strings</span><span class="o">.</span><span class="n">ToLower</span><span class="p">(</span><span class="n">hostname</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="no">true</span>
+    <span class="p">}</span>
+
+    <span class="n">tlds</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">"localhost"</span><span class="p">,</span> <span class="s">"local"</span><span class="p">,</span> <span class="s">"internal"</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">tld</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">tlds</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">strings</span><span class="o">.</span><span class="n">HasSuffix</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="s">"."</span><span class="o">+</span><span class="n">tld</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="no">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="no">false</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>보안 검증:</strong></p>
+<ul>
+  <li><strong>네트워크 기반 제어</strong>: IP 주소 유형별 접근 제어</li>
+  <li><strong>호스트명 화이트리스트</strong>: 안전한 호스트명만 허용</li>
+  <li><strong>CORS preflight 처리</strong>: OPTIONS 요청 적절한 처리</li>
+  <li><strong>로컬 환경 감지</strong>: 개발 환경에서의 유연한 접근</li>
+</ul>
+
+<h3 id="62-실험적-기능-제어">6.2 실험적 기능 제어</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">experimentEnabled</span><span class="p">(</span><span class="n">name</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">slices</span><span class="o">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">strings</span><span class="o">.</span><span class="n">Split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">Getenv</span><span class="p">(</span><span class="s">"OLLAMA_EXPERIMENT"</span><span class="p">),</span> <span class="s">","</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">var</span> <span class="n">useClient2</span> <span class="o">=</span> <span class="n">experimentEnabled</span><span class="p">(</span><span class="s">"client2"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>기능 토글:</strong></p>
+<ul>
+  <li><strong>환경 변수 기반</strong>: <code class="language-plaintext highlighter-rouge">OLLAMA_EXPERIMENT</code>로 실험 기능 활성화</li>
+  <li><strong>쉼표 구분</strong>: 여러 실험 기능 동시 활성화</li>
+  <li><strong>런타임 제어</strong>: 재컴파일 없는 기능 토글</li>
+</ul>
+
+<h2 id="7-에러-처리-및-복구-전략">7. 에러 처리 및 복구 전략</h2>
+
+<h3 id="71-계층화된-에러-처리">7.1 계층화된 에러 처리</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">handleScheduleError</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">name</span> <span class="kt">string</span><span class="p">,</span> <span class="n">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">switch</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="n">errors</span><span class="o">.</span><span class="n">Is</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">errCapabilities</span><span class="p">),</span> <span class="n">errors</span><span class="o">.</span><span class="n">Is</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">errRequired</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusBadRequest</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+    <span class="k">case</span> <span class="n">errors</span><span class="o">.</span><span class="n">Is</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">context</span><span class="o">.</span><span class="n">Canceled</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="m">499</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="s">"request canceled"</span><span class="p">})</span>  <span class="c">// 비표준 상태 코드</span>
+    <span class="k">case</span> <span class="n">errors</span><span class="o">.</span><span class="n">Is</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">ErrMaxQueue</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusServiceUnavailable</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+    <span class="k">case</span> <span class="n">errors</span><span class="o">.</span><span class="n">Is</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">ErrNotExist</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusNotFound</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"model %q not found, try pulling it first"</span><span class="p">,</span> <span class="n">name</span><span class="p">)})</span>
+    <span class="k">default</span><span class="o">:</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusInternalServerError</span><span class="p">,</span> <span class="n">gin</span><span class="o">.</span><span class="n">H</span><span class="p">{</span><span class="s">"error"</span><span class="o">:</span> <span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">()})</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>에러 분류 전략:</strong></p>
+<ul>
+  <li><strong>에러 타입 기반</strong>: <code class="language-plaintext highlighter-rouge">errors.Is</code>를 활용한 정확한 에러 분류</li>
+  <li><strong>적절한 HTTP 코드</strong>: 에러 유형에 맞는 상태 코드 반환</li>
+  <li><strong>사용자 친화적 메시지</strong>: 기술적 에러의 이해하기 쉬운 변환</li>
+  <li><strong>특수 상태 코드</strong>: 499(Client Closed Request) 같은 특수 케이스 처리</li>
+</ul>
+
+<h3 id="72-모델-상태-관리">7.2 모델 상태 관리</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">Server</span><span class="p">)</span> <span class="n">PsHandler</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span><span class="n">gin</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">models</span> <span class="o">:=</span> <span class="p">[]</span><span class="n">api</span><span class="o">.</span><span class="n">ProcessModelResponse</span><span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">s</span><span class="o">.</span><span class="n">sched</span><span class="o">.</span><span class="n">loaded</span> <span class="p">{</span>
+        <span class="n">model</span> <span class="o">:=</span> <span class="n">v</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">mr</span> <span class="o">:=</span> <span class="n">api</span><span class="o">.</span><span class="n">ProcessModelResponse</span><span class="p">{</span>
+            <span class="n">Model</span><span class="o">:</span>     <span class="n">model</span><span class="o">.</span><span class="n">ShortName</span><span class="p">,</span>
+            <span class="n">Name</span><span class="o">:</span>      <span class="n">model</span><span class="o">.</span><span class="n">ShortName</span><span class="p">,</span>
+            <span class="n">Size</span><span class="o">:</span>      <span class="kt">int64</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">estimatedTotal</span><span class="p">),</span>
+            <span class="n">SizeVRAM</span><span class="o">:</span>  <span class="kt">int64</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">estimatedVRAM</span><span class="p">),</span>
+            <span class="n">Digest</span><span class="o">:</span>    <span class="n">model</span><span class="o">.</span><span class="n">Digest</span><span class="p">,</span>
+            <span class="n">ExpiresAt</span><span class="o">:</span> <span class="n">v</span><span class="o">.</span><span class="n">expiresAt</span><span class="p">,</span>
+        <span class="p">}</span>
+        
+        <span class="c">// 로딩 중인 모델 처리</span>
+        <span class="k">var</span> <span class="n">epoch</span> <span class="n">time</span><span class="o">.</span><span class="n">Time</span>
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">expiresAt</span> <span class="o">==</span> <span class="n">epoch</span> <span class="p">{</span>
+            <span class="n">mr</span><span class="o">.</span><span class="n">ExpiresAt</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">sessionDuration</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="n">models</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">mr</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c">// 만료 시간 기준 정렬 (오래 남은 것부터)</span>
+    <span class="n">slices</span><span class="o">.</span><span class="n">SortStableFunc</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="n">api</span><span class="o">.</span><span class="n">ProcessModelResponse</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">cmp</span><span class="o">.</span><span class="n">Compare</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">ExpiresAt</span><span class="o">.</span><span class="n">Unix</span><span class="p">(),</span> <span class="n">i</span><span class="o">.</span><span class="n">ExpiresAt</span><span class="o">.</span><span class="n">Unix</span><span class="p">())</span>
+    <span class="p">})</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="n">JSON</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">StatusOK</span><span class="p">,</span> <span class="n">api</span><span class="o">.</span><span class="n">ProcessResponse</span><span class="p">{</span><span class="n">Models</span><span class="o">:</span> <span class="n">models</span><span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>상태 모니터링:</strong></p>
+<ul>
+  <li><strong>메모리 사용량</strong>: 총 메모리와 VRAM 사용량 추적</li>
+  <li><strong>만료 시간</strong>: 모델 언로드 예정 시간 관리</li>
+  <li><strong>로딩 상태</strong>: 로딩 중인 모델의 적절한 시간 계산</li>
+  <li><strong>정렬된 표시</strong>: 사용자 편의를 위한 정렬된 모델 목록</li>
+</ul>
+
+<h2 id="8-결론">8. 결론</h2>
+
+<p>Ollama Custom의 서버 아키텍처는 현대적인 Go 웹 개발 패턴을 충실히 구현한 고품질 API 서버입니다:</p>
+
+<h3 id="81-주요-강점">8.1 주요 강점</h3>
+
+<ul>
+  <li><strong>확장 가능한 구조</strong>: 모듈화된 핸들러와 미들웨어 시스템</li>
+  <li><strong>성능 최적화</strong>: 비동기 처리와 스트리밍 응답</li>
+  <li><strong>호환성</strong>: OpenAI API와의 완벽한 호환성</li>
+  <li><strong>보안</strong>: 다층 보안 검증과 접근 제어</li>
+</ul>
+
+<h3 id="82-설계-철학">8.2 설계 철학</h3>
+
+<ul>
+  <li><strong>관심사 분리</strong>: 라우팅, 비즈니스 로직, 스케줄링의 명확한 분리</li>
+  <li><strong>에러 투명성</strong>: 계층화된 에러 처리로 디버깅 용이성 제공</li>
+  <li><strong>성능 중심</strong>: 메트릭 수집과 성능 최적화 내장</li>
+  <li><strong>확장성</strong>: 새로운 엔드포인트와 기능 추가 용이</li>
+</ul>
+
+<p>다음 포스트에서는 모델 관리 시스템과 생명주기 관리를 분석해보겠습니다.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/07/15/foundation-models-data-and-architecture/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">파운데이션 모델 이해하기 (1부) - 학습 데이터와 모델 아키텍처 심층 분석</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/07/28/opensora-text-embedding-system-analysis/" rel="next">
+          <span class="nav-title">Open-Sora 텍스트 임베딩 시스템 상세 분석 - T5/CLIP 통합 및 Shar...</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

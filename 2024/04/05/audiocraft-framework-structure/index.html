@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>AudioCraft 프레임워크 구조 분석 | AI Development Blog</title>
+<meta name="description" content="AudioCraft 프레임워크 구조 분석AudioCraft는 Meta Platforms에서 개발한 오디오 생성 모델을 위한 종합적인 프레임워크입니다. 이 글에서는 AudioCraft의 디렉토리 구조와 주요 컴포넌트에 대해 자세히 살펴보겠습니다.디렉토리 구조AudioCraft의 주요...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="AudioCraft, MusicGen, AudioGen, EnCodec, AI">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/04/05/audiocraft-framework-structure/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="AudioCraft 프레임워크 구조 분석">
+<meta property="og:description" content="AudioCraft 프레임워크 구조 분석AudioCraft는 Meta Platforms에서 개발한 오디오 생성 모델을 위한 종합적인 프레임워크입니다. 이 글에서는 AudioCraft의 디렉토리 구조와 주요 컴포넌트에 대해 자세히 살펴보겠습니다.디렉토리 구조AudioCraft의 주요...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/04/05/audiocraft-framework-structure/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AudioCraft 프레임워크 구조 분석">
+<meta name="twitter:description" content="AudioCraft 프레임워크 구조 분석AudioCraft는 Meta Platforms에서 개발한 오디오 생성 모델을 위한 종합적인 프레임워크입니다. 이 글에서는 AudioCraft의 디렉토리 구조와 주요 컴포넌트에 대해 자세히 살펴보겠습니다.디렉토리 구조AudioCraft의 주요...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AudioCraft 프레임워크 구조 분석",
+  "description": "AudioCraft 프레임워크 구조 분석
+
+AudioCraft는 Meta Platforms에서 개발한 오디오 생성 모델을 위한 종합적인 프레임워크입니다. 이 글에서는 AudioCraft의 디렉토리 구조와 주요 컴포넌트에 대해 자세히 살펴보겠습니다.
+
+디렉토리 구조
+
+AudioCra...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-04-05T06:00:00+00:00",
+  "dateModified": "2024-04-05T06:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/04/05/audiocraft-framework-structure/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/04/05/audiocraft-framework-structure/",
+  "inLanguage": "ko",
+  "keywords": ["AudioCraft","MusicGen","AudioGen","EnCodec","AI"],
+  "articleSection": ["AI","Audio Generation"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>AudioCraft 프레임워크 구조 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">AudioCraft 프레임워크 구조 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-04-05T06:00:00+00:00">Apr 5, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Audio Generation</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="audiocraft-프레임워크-구조-분석">AudioCraft 프레임워크 구조 분석</h1>
+
+<p>AudioCraft는 Meta Platforms에서 개발한 오디오 생성 모델을 위한 종합적인 프레임워크입니다. 이 글에서는 AudioCraft의 디렉토리 구조와 주요 컴포넌트에 대해 자세히 살펴보겠습니다.</p>
+
+<h2 id="디렉토리-구조">디렉토리 구조</h2>
+
+<p>AudioCraft의 주요 디렉토리 구조는 다음과 같습니다:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>audiocraft/
+├── adversarial/     # 적대적 학습 관련 모듈
+├── data/           # 데이터 처리 및 로딩 관련 모듈
+├── grids/          # 실험 설정 및 그리드 서치 관련 파일
+├── losses/         # 손실 함수 구현
+├── metrics/        # 평가 메트릭 구현
+├── models/         # 주요 모델 구현
+├── modules/        # 재사용 가능한 모듈 컴포넌트
+├── optim/          # 최적화 관련 모듈
+├── quantization/   # 양자화 관련 모듈
+├── solvers/        # 모델 학습을 위한 솔버 구현
+└── utils/          # 유틸리티 함수들
+</code></pre></div></div>
+
+<h2 id="주요-파일">주요 파일</h2>
+
+<p>프레임워크의 핵심 파일들은 다음과 같습니다:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">train.py</code>: 모델 학습을 위한 메인 스크립트</li>
+  <li><code class="language-plaintext highlighter-rouge">environment.py</code>: 환경 설정 및 구성 관련 코드</li>
+  <li><code class="language-plaintext highlighter-rouge">__init__.py</code>: 패키지 초기화 및 버전 정보 (현재 버전: 1.4.0a2)</li>
+</ul>
+
+<h2 id="지원하는-주요-모델">지원하는 주요 모델</h2>
+
+<h3 id="1-musicgen">1. MusicGen</h3>
+<p>MusicGen은 텍스트-음악 및 멜로디+텍스트 자동회귀 생성 모델입니다. 주요 특징:</p>
+<ul>
+  <li>텍스트 프롬프트를 통한 음악 생성</li>
+  <li>멜로디와 텍스트를 결합한 생성 가능</li>
+  <li>관련 파일: <code class="language-plaintext highlighter-rouge">solvers/musicgen/MusicGenSolver</code>, <code class="language-plaintext highlighter-rouge">models/musicgen/MusicGen</code></li>
+</ul>
+
+<h3 id="2-audiogen">2. AudioGen</h3>
+<p>AudioGen은 텍스트-일반오디오 생성 모델로, 다양한 종류의 오디오를 생성할 수 있습니다:</p>
+<ul>
+  <li>텍스트 설명을 통한 오디오 생성</li>
+  <li>고품질 오디오 출력 제공</li>
+</ul>
+
+<h3 id="3-encodec">3. EnCodec</h3>
+<p>EnCodec은 효율적이고 고품질의 신경망 오디오 코덱입니다:</p>
+<ul>
+  <li>효율적인 오디오 압축</li>
+  <li>자동회귀 언어 모델을 위한 토크나이저 제공</li>
+  <li>관련 파일: <code class="language-plaintext highlighter-rouge">solvers/compression/CompressionSolver</code>, <code class="language-plaintext highlighter-rouge">models/encodec/EncodecModel</code></li>
+</ul>
+
+<h3 id="4-multibanddiffusion">4. MultiBandDiffusion</h3>
+<p>MultiBandDiffusion은 EnCodec과 호환되는 디퓨전 기반 디코더입니다:</p>
+<ul>
+  <li>적대적 디코더의 아티팩트 감소</li>
+  <li>향상된 지각 품질 제공</li>
+</ul>
+
+<h3 id="5-jasco">5. JASCO</h3>
+<p>JASCO(Joint Audio and Symbolic Conditioning)는 시간 제어가 가능한 텍스트-음악 생성 모델입니다:</p>
+<ul>
+  <li>시간적 제어가 가능한 음악 생성</li>
+  <li>오디오와 심볼릭 조건을 결합한 생성</li>
+</ul>
+
+<h2 id="주요-기능">주요 기능</h2>
+
+<p>AudioCraft는 다음과 같은 주요 기능을 제공합니다:</p>
+
+<ul>
+  <li>오디오 생성 모델 학습을 위한 종합적인 프레임워크</li>
+  <li>다양한 오디오 생성 태스크 지원</li>
+  <li>효율적인 오디오 코딩 및 디코딩</li>
+  <li>고품질 오디오 생성 및 처리</li>
+</ul>
+
+<h2 id="사용-방법">사용 방법</h2>
+
+<p>일반적인 사용 흐름은 다음과 같습니다:</p>
+
+<ol>
+  <li>데이터 준비 및 전처리</li>
+  <li>모델 구성 및 초기화</li>
+  <li>학습 설정 및 실행</li>
+  <li>모델 평가 및 추론</li>
+</ol>
+
+<h2 id="결론">결론</h2>
+
+<p>AudioCraft는 오디오 생성 AI 분야에서 중요한 프레임워크로, 다양한 모델과 기능을 제공합니다. 특히 MusicGen, AudioGen, EnCodec 등의 모델을 통해 고품질의 오디오 생성이 가능하며, 지속적인 업데이트와 개선이 이루어지고 있습니다.</p>
+
+<h2 id="참고-자료">참고 자료</h2>
+
+<ul>
+  <li><a href="https://github.com/facebookresearch/audiocraft">AudioCraft GitHub Repository</a></li>
+  <li><a href="https://arxiv.org/abs/2306.05284">MusicGen Paper</a></li>
+  <li><a href="https://arxiv.org/abs/2209.15352">AudioGen Paper</a></li>
+  <li><a href="https://arxiv.org/abs/2210.13438">EnCodec Paper</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/04/05/audiocraft-discriminators-detailed-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">AudioCraft의 판별자(Discriminators) 상세 분석</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/04/06/hypernetworks-module-analysis/" rel="next">
+          <span class="nav-title">Stable Diffusion Hypernetworks Module Analysis ...</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

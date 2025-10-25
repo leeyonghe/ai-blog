@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Open-Sora 가속화 모듈 상세 분석 - 병렬화 및 성능 최적화 기술 | AI Development Blog</title>
+<meta name="description" content="개요Open-Sora는 11B 파라미터의 대규모 AI 비디오 생성 모델로, 효율적인 학습과 추론을 위해 다양한 가속화 기술을 활용합니다. 이번 포스트에서는 Open-Sora의 가속화 모듈을 상세히 분석하여 Activation Checkpointing, 분산 통신, 병렬 상태 관리,...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="opensora, acceleration, shardformer, checkpoint, communication, parallel-computing">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/08/12/opensora-acceleration-module-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Open-Sora 가속화 모듈 상세 분석 - 병렬화 및 성능 최적화 기술">
+<meta property="og:description" content="개요Open-Sora는 11B 파라미터의 대규모 AI 비디오 생성 모델로, 효율적인 학습과 추론을 위해 다양한 가속화 기술을 활용합니다. 이번 포스트에서는 Open-Sora의 가속화 모듈을 상세히 분석하여 Activation Checkpointing, 분산 통신, 병렬 상태 관리,...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/08/12/opensora-acceleration-module-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Open-Sora 가속화 모듈 상세 분석 - 병렬화 및 성능 최적화 기술">
+<meta name="twitter:description" content="개요Open-Sora는 11B 파라미터의 대규모 AI 비디오 생성 모델로, 효율적인 학습과 추론을 위해 다양한 가속화 기술을 활용합니다. 이번 포스트에서는 Open-Sora의 가속화 모듈을 상세히 분석하여 Activation Checkpointing, 분산 통신, 병렬 상태 관리,...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Open-Sora 가속화 모듈 상세 분석 - 병렬화 및 성능 최적화 기술",
+  "description": "개요
+
+Open-Sora는 11B 파라미터의 대규모 AI 비디오 생성 모델로, 효율적인 학습과 추론을 위해 다양한 가속화 기술을 활용합니다. 이번 포스트에서는 Open-Sora의 가속화 모듈을 상세히 분석하여 Activation Checkpointing, 분산 통신, 병렬 상태 관...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-08-12T09:00:00+00:00",
+  "dateModified": "2024-08-12T09:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/08/12/opensora-acceleration-module-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/08/12/opensora-acceleration-module-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["opensora","acceleration","shardformer","checkpoint","communication","parallel-computing"],
+  "articleSection": ["AI","Video Generation","Performance Optimization","Parallel Computing"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Open-Sora 가속화 모듈 상세 분석 - 병렬화 및 성능 최적화 기술</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Open-Sora 가속화 모듈 상세 분석 - 병렬화 및 성능 최적화 기술</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-08-12T09:00:00+00:00">Aug 12, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Video Generation</li><li>Performance Optimization</li><li>Parallel Computing</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>Open-Sora는 11B 파라미터의 대규모 AI 비디오 생성 모델로, 효율적인 학습과 추론을 위해 다양한 가속화 기술을 활용합니다. 이번 포스트에서는 Open-Sora의 가속화 모듈을 상세히 분석하여 Activation Checkpointing, 분산 통신, 병렬 상태 관리, Shardformer 최적화 등의 핵심 기술들을 살펴보겠습니다.</p>
+
+<h2 id="1-가속화-모듈-아키텍처-개요">1. 가속화 모듈 아키텍처 개요</h2>
+
+<h3 id="11-전체-구조">1.1 전체 구조</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Open-Sora Acceleration Module
+    ├── checkpoint.py          # Activation Checkpointing
+    ├── communications.py      # 분산 통신 프리미티브  
+    ├── parallel_states.py     # 병렬 상태 관리
+    └── shardformer/          # 모델 최적화 프레임워크
+        ├── modeling/         # 커스텀 모델 구현
+        └── policy/          # 최적화 정책
+</code></pre></div></div>
+
+<h3 id="12-핵심-최적화-기술">1.2 핵심 최적화 기술</h3>
+
+<ol>
+  <li><strong>Activation Checkpointing</strong>: 메모리 사용량 감소</li>
+  <li><strong>분산 통신</strong>: All-to-All, Gather-Split 연산</li>
+  <li><strong>병렬 상태 관리</strong>: 다양한 병렬화 그룹 관리</li>
+  <li><strong>Shardformer</strong>: 모델 분산 및 최적화</li>
+</ol>
+
+<h2 id="2-activation-checkpointing-상세-분석">2. Activation Checkpointing 상세 분석</h2>
+
+<h3 id="21-activationmanager-클래스">2.1 ActivationManager 클래스</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># opensora/acceleration/checkpoint.py
+</span><span class="k">class</span> <span class="nc">ActivationManager</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">enable</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="p">.</span><span class="nb">buffer</span> <span class="o">=</span> <span class="bp">None</span>                    <span class="c1"># CPU 메모리 버퍼
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>                   <span class="c1"># 총 버퍼 크기
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">avail_offset</span> <span class="o">=</span> <span class="mi">0</span>                 <span class="c1"># 현재 사용 가능한 오프셋
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">tensor_id_queue</span> <span class="o">=</span> <span class="p">[]</span>             <span class="c1"># 텐서 ID 큐 (스택 구조)
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">ignore_tensor_id_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>     <span class="c1"># 무시할 텐서 ID 집합
+</span>
+    <span class="k">def</span> <span class="nf">setup_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">dtype</span><span class="p">):</span>
+        <span class="s">"""CPU에 고정 메모리 버퍼 설정"""</span>
+        <span class="bp">self</span><span class="p">.</span><span class="nb">buffer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">empty</span><span class="p">(</span><span class="n">numel</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">total_size</span> <span class="o">=</span> <span class="n">numel</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">enable</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">offload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="s">"""GPU 텐서를 CPU로 오프로드"""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">enable</span> <span class="ow">or</span> <span class="nb">id</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">ignore_tensor_id_set</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="n">size</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">numel</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">avail_offset</span> <span class="o">+</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">total_size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">RuntimeError</span><span class="p">(</span><span class="s">"Activation buffer is full"</span><span class="p">)</span>
+        
+        <span class="k">assert</span> <span class="n">x</span><span class="p">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="nb">buffer</span><span class="p">.</span><span class="n">dtype</span><span class="p">,</span> <span class="sa">f</span><span class="s">"Wrong dtype of offload tensor"</span>
+        
+        <span class="c1"># CPU 버퍼의 일부를 텐서 모양으로 변환
+</span>        <span class="n">cpu_x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="nb">buffer</span><span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">avail_offset</span> <span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">avail_offset</span> <span class="o">+</span> <span class="n">size</span><span class="p">].</span><span class="n">view_as</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">cpu_x</span><span class="p">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># GPU → CPU 복사
+</span>        <span class="n">x</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">cpu_x</span>  <span class="c1"># 원본 텐서의 데이터를 CPU 데이터로 교체
+</span>        
+        <span class="bp">self</span><span class="p">.</span><span class="n">avail_offset</span> <span class="o">+=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tensor_id_queue</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">onload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="s">"""CPU 텐서를 GPU로 온로드"""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">.</span><span class="n">enable</span> <span class="ow">or</span> <span class="nb">id</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">ignore_tensor_id_set</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="k">assert</span> <span class="bp">self</span><span class="p">.</span><span class="n">tensor_id_queue</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">id</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="sa">f</span><span class="s">"Wrong order of offload/onload"</span>
+        <span class="k">assert</span> <span class="n">x</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">is_pinned</span><span class="p">()</span>  <span class="c1"># 고정 메모리 확인
+</span>        
+        <span class="c1"># CPU → GPU 비동기 전송
+</span>        <span class="n">x</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">get_current_device</span><span class="p">(),</span> <span class="n">non_blocking</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">tensor_id_queue</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">avail_offset</span> <span class="o">-=</span> <span class="n">x</span><span class="p">.</span><span class="n">numel</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">tensor_id_queue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">ignore_tensor_id_set</span><span class="p">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><strong>핵심 특징:</strong></p>
+<ul>
+  <li><strong>스택 기반 관리</strong>: LIFO 방식으로 텐서 관리</li>
+  <li><strong>고정 메모리</strong>: GPU-CPU 간 빠른 전송을 위한 pinned memory 사용</li>
+  <li><strong>비동기 전송</strong>: non_blocking=True로 성능 최적화</li>
+  <li><strong>메모리 재사용</strong>: 단일 버퍼를 여러 텐서가 공유</li>
+</ul>
+
+<h3 id="22-checkpointfunctionwithoffload-클래스">2.2 CheckpointFunctionWithOffload 클래스</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CheckpointFunctionWithOffload</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">autograd</span><span class="p">.</span><span class="n">Function</span><span class="p">):</span>
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">run_function</span><span class="p">,</span> <span class="n">preserve_rng_state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="c1"># 순환 참조 처리: 여러 체크포인트에서 사용되는 텐서 처리
+</span>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">GLOBAL_ACTIVATION_MANAGER</span><span class="p">.</span><span class="n">is_top_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="n">GLOBAL_ACTIVATION_MANAGER</span><span class="p">.</span><span class="n">onload</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">GLOBAL_ACTIVATION_MANAGER</span><span class="p">.</span><span class="n">add_ignore_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        
+        <span class="c1"># 기본 체크포인트 forward 실행
+</span>        <span class="n">out</span> <span class="o">=</span> <span class="n">CheckpointFunction</span><span class="p">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">run_function</span><span class="p">,</span> <span class="n">preserve_rng_state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        
+        <span class="c1"># Forward 후 입력 텐서들을 CPU로 오프로드
+</span>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">torch</span><span class="p">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="n">GLOBAL_ACTIVATION_MANAGER</span><span class="p">.</span><span class="n">offload</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="c1"># Backward 시 저장된 텐서들을 GPU로 온로드
+</span>        <span class="k">for</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">ctx</span><span class="p">.</span><span class="n">saved_tensors</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">GLOBAL_ACTIVATION_MANAGER</span><span class="p">.</span><span class="n">onload</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">CheckpointFunction</span><span class="p">.</span><span class="n">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>동작 원리:</strong></p>
+<ol>
+  <li><strong>Forward Pass</strong>: 입력 텐서를 CPU로 오프로드하여 GPU 메모리 절약</li>
+  <li><strong>Backward Pass</strong>: 필요한 텐서를 GPU로 다시 로드하여 gradient 계산</li>
+  <li><strong>순환 참조 처리</strong>: 여러 체크포인트에서 공유되는 텐서 관리</li>
+</ol>
+
+<h3 id="23-자동-gradient-checkpointing">2.3 자동 Gradient Checkpointing</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">set_grad_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">use_fp32_attention</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">gc_step</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="s">"""모델에 gradient checkpointing 설정 적용"""</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="n">module</span><span class="p">):</span>
+        <span class="n">module</span><span class="p">.</span><span class="n">grad_checkpointing</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">module</span><span class="p">.</span><span class="n">fp32_attention</span> <span class="o">=</span> <span class="n">use_fp32_attention</span>      <span class="c1"># FP32 attention 사용
+</span>        <span class="n">module</span><span class="p">.</span><span class="n">grad_checkpointing_step</span> <span class="o">=</span> <span class="n">gc_step</span>        <span class="c1"># 체크포인트 단계
+</span>
+    <span class="n">model</span><span class="p">.</span><span class="nb">apply</span><span class="p">(</span><span class="n">set_attr</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">auto_grad_checkpoint</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="s">"""자동 gradient checkpointing 실행"""</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s">"grad_checkpointing"</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="c1"># 단일 모듈: 기본 체크포인트 사용
+</span>            <span class="k">return</span> <span class="n">checkpoint</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">use_reentrant</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="c1"># 시퀀셜 모듈: 단계별 체크포인트 사용
+</span>        <span class="n">gc_step</span> <span class="o">=</span> <span class="n">module</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">grad_checkpointing_step</span>
+        <span class="k">return</span> <span class="n">checkpoint_sequential</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">gc_step</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">use_reentrant</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">module</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="3-분산-통신-시스템">3. 분산 통신 시스템</h2>
+
+<h3 id="31-all-to-all-통신">3.1 All-to-All 통신</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># opensora/acceleration/communications.py
+</span><span class="k">def</span> <span class="nf">_all_to_all</span><span class="p">(</span>
+    <span class="n">input_</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">group</span><span class="p">:</span> <span class="n">dist</span><span class="p">.</span><span class="n">ProcessGroup</span><span class="p">,</span>
+    <span class="n">scatter_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">gather_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="s">"""All-to-All 통신의 핵심 구현"""</span>
+    <span class="c1"># 입력 텐서를 world_size만큼 분할
+</span>    <span class="n">input_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">contiguous</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">torch</span><span class="p">.</span><span class="n">tensor_split</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">scatter_dim</span><span class="p">)]</span>
+    
+    <span class="c1"># 출력 버퍼 준비
+</span>    <span class="n">output_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">input_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">world_size</span><span class="p">)]</span>
+    
+    <span class="c1"># 분산 All-to-All 통신 수행
+</span>    <span class="n">dist</span><span class="p">.</span><span class="n">all_to_all</span><span class="p">(</span><span class="n">output_list</span><span class="p">,</span> <span class="n">input_list</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
+    
+    <span class="c1"># 결과를 gather_dim을 따라 연결
+</span>    <span class="k">return</span> <span class="n">torch</span><span class="p">.</span><span class="n">cat</span><span class="p">(</span><span class="n">output_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">gather_dim</span><span class="p">).</span><span class="n">contiguous</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">_AllToAll</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">autograd</span><span class="p">.</span><span class="n">Function</span><span class="p">):</span>
+    <span class="s">"""All-to-All 통신을 위한 autograd 함수"""</span>
+    
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">process_group</span><span class="p">,</span> <span class="n">scatter_dim</span><span class="p">,</span> <span class="n">gather_dim</span><span class="p">):</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">process_group</span> <span class="o">=</span> <span class="n">process_group</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">scatter_dim</span> <span class="o">=</span> <span class="n">scatter_dim</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">gather_dim</span> <span class="o">=</span> <span class="n">gather_dim</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">world_size</span> <span class="o">=</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_world_size</span><span class="p">(</span><span class="n">process_group</span><span class="p">)</span>
+        
+        <span class="n">output</span> <span class="o">=</span> <span class="n">_all_to_all</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">ctx</span><span class="p">.</span><span class="n">world_size</span><span class="p">,</span> <span class="n">process_group</span><span class="p">,</span> <span class="n">scatter_dim</span><span class="p">,</span> <span class="n">gather_dim</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">):</span>
+        <span class="c1"># Backward에서는 scatter와 gather 차원을 바꿔서 실행
+</span>        <span class="n">grad_output</span> <span class="o">=</span> <span class="n">_all_to_all</span><span class="p">(</span>
+            <span class="n">grad_output</span><span class="p">,</span>
+            <span class="n">ctx</span><span class="p">.</span><span class="n">world_size</span><span class="p">,</span>
+            <span class="n">ctx</span><span class="p">.</span><span class="n">process_group</span><span class="p">,</span>
+            <span class="n">ctx</span><span class="p">.</span><span class="n">gather_dim</span><span class="p">,</span>    <span class="c1"># 차원 교체
+</span>            <span class="n">ctx</span><span class="p">.</span><span class="n">scatter_dim</span><span class="p">,</span>   <span class="c1"># 차원 교체
+</span>        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">grad_output</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p><strong>사용 시나리오:</strong></p>
+<ul>
+  <li><strong>Sequence Parallel</strong>: 시퀀스 차원을 여러 GPU에 분산</li>
+  <li><strong>Tensor Parallel</strong>: 텐서의 특정 차원을 병렬 처리</li>
+  <li><strong>통신 최적화</strong>: 대용량 텐서의 효율적 재분배</li>
+</ul>
+
+<h3 id="32-gather-split-통신-패턴">3.2 Gather-Split 통신 패턴</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">_GatherForwardSplitBackward</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">autograd</span><span class="p">.</span><span class="n">Function</span><span class="p">):</span>
+    <span class="s">"""Forward에서 Gather, Backward에서 Split"""</span>
+    
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">process_group</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">grad_scale</span><span class="p">):</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">process_group</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">grad_scale</span> <span class="o">=</span> <span class="n">grad_scale</span>
+        <span class="k">return</span> <span class="n">_gather</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">process_group</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">):</span>
+        <span class="c1"># Gradient scaling 적용
+</span>        <span class="k">if</span> <span class="n">ctx</span><span class="p">.</span><span class="n">grad_scale</span> <span class="o">==</span> <span class="s">"up"</span><span class="p">:</span>
+            <span class="n">grad_output</span> <span class="o">=</span> <span class="n">grad_output</span> <span class="o">*</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_world_size</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ctx</span><span class="p">.</span><span class="n">grad_scale</span> <span class="o">==</span> <span class="s">"down"</span><span class="p">:</span>
+            <span class="n">grad_output</span> <span class="o">=</span> <span class="n">grad_output</span> <span class="o">/</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_world_size</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">mode</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_split</span><span class="p">(</span><span class="n">grad_output</span><span class="p">,</span> <span class="n">ctx</span><span class="p">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">ctx</span><span class="p">.</span><span class="n">dim</span><span class="p">),</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+
+<span class="k">class</span> <span class="nc">_SplitForwardGatherBackward</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">autograd</span><span class="p">.</span><span class="n">Function</span><span class="p">):</span>
+    <span class="s">"""Forward에서 Split, Backward에서 Gather"""</span>
+    
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">process_group</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">grad_scale</span><span class="p">):</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">process_group</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+        <span class="n">ctx</span><span class="p">.</span><span class="n">grad_scale</span> <span class="o">=</span> <span class="n">grad_scale</span>
+        <span class="k">return</span> <span class="n">_split</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">process_group</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">):</span>
+        <span class="c1"># Gradient scaling 적용
+</span>        <span class="k">if</span> <span class="n">ctx</span><span class="p">.</span><span class="n">grad_scale</span> <span class="o">==</span> <span class="s">"up"</span><span class="p">:</span>
+            <span class="n">grad_output</span> <span class="o">=</span> <span class="n">grad_output</span> <span class="o">*</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_world_size</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ctx</span><span class="p">.</span><span class="n">grad_scale</span> <span class="o">==</span> <span class="s">"down"</span><span class="p">:</span>
+            <span class="n">grad_output</span> <span class="o">=</span> <span class="n">grad_output</span> <span class="o">/</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_world_size</span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="n">mode</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">_gather</span><span class="p">(</span><span class="n">grad_output</span><span class="p">,</span> <span class="n">ctx</span><span class="p">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">ctx</span><span class="p">.</span><span class="n">dim</span><span class="p">),</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p><strong>통신 패턴 분석:</strong></p>
+<ul>
+  <li><strong>GatherForwardSplitBackward</strong>: 모든 데이터를 수집 → 역전파에서 분할</li>
+  <li><strong>SplitForwardGatherBackward</strong>: 데이터를 분할 → 역전파에서 수집</li>
+  <li><strong>Gradient Scaling</strong>: 병렬화로 인한 gradient 스케일링 보정</li>
+</ul>
+
+<h3 id="33-분산-통신-최적화">3.3 분산 통신 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_gather</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">pg</span><span class="p">:</span> <span class="n">dist</span><span class="p">.</span><span class="n">ProcessGroup</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="s">"""효율적인 All-Gather 구현"""</span>
+    <span class="n">input_</span> <span class="o">=</span> <span class="n">input_</span><span class="p">.</span><span class="n">contiguous</span><span class="p">()</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_world_size</span><span class="p">(</span><span class="n">pg</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">world_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">input_</span>  <span class="c1"># 단일 GPU일 때 통신 생략
+</span>
+    <span class="c1"># All-Gather를 위한 버퍼 준비
+</span>    <span class="n">tensor_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">world_size</span><span class="p">)]</span>
+    
+    <span class="c1"># CUDA 디바이스 확인
+</span>    <span class="k">assert</span> <span class="n">input_</span><span class="p">.</span><span class="n">device</span><span class="p">.</span><span class="nb">type</span> <span class="o">==</span> <span class="s">"cuda"</span>
+    
+    <span class="c1"># All-Gather 수행
+</span>    <span class="n">torch</span><span class="p">.</span><span class="n">distributed</span><span class="p">.</span><span class="n">all_gather</span><span class="p">(</span><span class="n">tensor_list</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">pg</span><span class="p">)</span>
+
+    <span class="c1"># 결과 연결
+</span>    <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cat</span><span class="p">(</span><span class="n">tensor_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">).</span><span class="n">contiguous</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">output</span>
+
+<span class="k">def</span> <span class="nf">_split</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">pg</span><span class="p">:</span> <span class="n">dist</span><span class="p">.</span><span class="n">ProcessGroup</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="s">"""균등 분할 함수"""</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_world_size</span><span class="p">(</span><span class="n">pg</span><span class="p">)</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_rank</span><span class="p">(</span><span class="n">pg</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">world_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">input_</span>
+
+    <span class="c1"># 분할 가능성 검증
+</span>    <span class="n">dim_size</span> <span class="o">=</span> <span class="n">input_</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">dim_size</span> <span class="o">%</span> <span class="n">world_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s">"The dimension to split (</span><span class="si">{</span><span class="n">dim_size</span><span class="si">}</span><span class="s">) is not a multiple of world size (</span><span class="si">{</span><span class="n">world_size</span><span class="si">}</span><span class="s">), "</span>
+        <span class="sa">f</span><span class="s">"cannot split tensor evenly"</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 텐서 분할 및 해당 rank의 부분 반환
+</span>    <span class="n">tensor_list</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">dim_size</span> <span class="o">//</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">tensor_list</span><span class="p">[</span><span class="n">rank</span><span class="p">].</span><span class="n">contiguous</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">output</span>
+</code></pre></div></div>
+
+<h2 id="4-병렬-상태-관리">4. 병렬 상태 관리</h2>
+
+<h3 id="41-전역-병렬-그룹-관리">4.1 전역 병렬 그룹 관리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># opensora/acceleration/parallel_states.py
+</span><span class="n">_GLOBAL_PARALLEL_GROUPS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">set_data_parallel_group</span><span class="p">(</span><span class="n">group</span><span class="p">:</span> <span class="n">dist</span><span class="p">.</span><span class="n">ProcessGroup</span><span class="p">):</span>
+    <span class="s">"""데이터 병렬 그룹 설정"""</span>
+    <span class="n">_GLOBAL_PARALLEL_GROUPS</span><span class="p">[</span><span class="s">"data"</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span>
+
+<span class="k">def</span> <span class="nf">get_data_parallel_group</span><span class="p">(</span><span class="n">get_mixed_dp_pg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="s">"""데이터 병렬 그룹 반환"""</span>
+    <span class="k">if</span> <span class="n">get_mixed_dp_pg</span> <span class="ow">and</span> <span class="s">"mixed_dp_group"</span> <span class="ow">in</span> <span class="n">_GLOBAL_PARALLEL_GROUPS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_GLOBAL_PARALLEL_GROUPS</span><span class="p">[</span><span class="s">"mixed_dp_group"</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">_GLOBAL_PARALLEL_GROUPS</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"data"</span><span class="p">,</span> <span class="n">dist</span><span class="p">.</span><span class="n">group</span><span class="p">.</span><span class="n">WORLD</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">set_sequence_parallel_group</span><span class="p">(</span><span class="n">group</span><span class="p">:</span> <span class="n">dist</span><span class="p">.</span><span class="n">ProcessGroup</span><span class="p">):</span>
+    <span class="s">"""시퀀스 병렬 그룹 설정"""</span>
+    <span class="n">_GLOBAL_PARALLEL_GROUPS</span><span class="p">[</span><span class="s">"sequence"</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span>
+
+<span class="k">def</span> <span class="nf">get_sequence_parallel_group</span><span class="p">():</span>
+    <span class="s">"""시퀀스 병렬 그룹 반환"""</span>
+    <span class="k">return</span> <span class="n">_GLOBAL_PARALLEL_GROUPS</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"sequence"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">set_tensor_parallel_group</span><span class="p">(</span><span class="n">group</span><span class="p">:</span> <span class="n">dist</span><span class="p">.</span><span class="n">ProcessGroup</span><span class="p">):</span>
+    <span class="s">"""텐서 병렬 그룹 설정"""</span>
+    <span class="n">_GLOBAL_PARALLEL_GROUPS</span><span class="p">[</span><span class="s">"tensor"</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span>
+
+<span class="k">def</span> <span class="nf">get_tensor_parallel_group</span><span class="p">():</span>
+    <span class="s">"""텐서 병렬 그룹 반환"""</span>
+    <span class="k">return</span> <span class="n">_GLOBAL_PARALLEL_GROUPS</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"tensor"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>병렬화 그룹 종류:</strong></p>
+<ol>
+  <li><strong>Data Parallel</strong>: 서로 다른 배치 데이터를 처리</li>
+  <li><strong>Sequence Parallel</strong>: 시퀀스 차원을 분할하여 처리</li>
+  <li><strong>Tensor Parallel</strong>: 텐서 차원을 분할하여 처리</li>
+  <li><strong>Mixed DP</strong>: 혼합 데이터 병렬 처리</li>
+</ol>
+
+<h3 id="42-병렬화-전략-비교">4.2 병렬화 전략 비교</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>병렬화 방식</th>
+      <th>분할 대상</th>
+      <th>통신 패턴</th>
+      <th>메모리 절약</th>
+      <th>통신 오버헤드</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Data Parallel</td>
+      <td>배치</td>
+      <td>All-Reduce</td>
+      <td>낮음</td>
+      <td>낮음</td>
+    </tr>
+    <tr>
+      <td>Tensor Parallel</td>
+      <td>텐서 차원</td>
+      <td>All-Gather/Split</td>
+      <td>높음</td>
+      <td>높음</td>
+    </tr>
+    <tr>
+      <td>Sequence Parallel</td>
+      <td>시퀀스</td>
+      <td>All-to-All</td>
+      <td>중간</td>
+      <td>중간</td>
+    </tr>
+    <tr>
+      <td>Mixed</td>
+      <td>조합</td>
+      <td>복합</td>
+      <td>높음</td>
+      <td>최적화됨</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="5-shardformer-모델-최적화">5. Shardformer 모델 최적화</h2>
+
+<h3 id="51-t5layernorm-최적화">5.1 T5LayerNorm 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># opensora/acceleration/shardformer/modeling/t5.py
+</span><span class="k">class</span> <span class="nc">T5LayerNorm</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
+        <span class="s">"""
+        T5 스타일 Layer Normalization
+        - bias 없음
+        - 평균 차감 없음 (RMS Normalization)
+        """</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">ones</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">variance_epsilon</span> <span class="o">=</span> <span class="n">eps</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_states</span><span class="p">):</span>
+        <span class="s">"""
+        RMS Layer Normalization 수행
+        Root Mean Square Layer Normalization (https://arxiv.org/abs/1910.07467)
+        """</span>
+        <span class="c1"># FP32에서 분산 계산 (수치적 안정성)
+</span>        <span class="n">variance</span> <span class="o">=</span> <span class="n">hidden_states</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">float32</span><span class="p">).</span><span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">mean</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">hidden_states</span> <span class="o">=</span> <span class="n">hidden_states</span> <span class="o">*</span> <span class="n">torch</span><span class="p">.</span><span class="n">rsqrt</span><span class="p">(</span><span class="n">variance</span> <span class="o">+</span> <span class="bp">self</span><span class="p">.</span><span class="n">variance_epsilon</span><span class="p">)</span>
+
+        <span class="c1"># 필요시 half-precision으로 변환
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">float16</span><span class="p">,</span> <span class="n">torch</span><span class="p">.</span><span class="n">bfloat16</span><span class="p">]:</span>
+            <span class="n">hidden_states</span> <span class="o">=</span> <span class="n">hidden_states</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">weight</span> <span class="o">*</span> <span class="n">hidden_states</span>
+
+    <span class="o">@</span><span class="nb">staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_native_module</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s">"""기존 FusedRMSNorm에서 변환"""</span>
+        <span class="k">assert</span> <span class="n">module</span><span class="p">.</span><span class="n">__class__</span><span class="p">.</span><span class="n">__name__</span> <span class="o">==</span> <span class="s">"FusedRMSNorm"</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s">"Recovering T5LayerNorm requires the original layer to be apex's Fused RMS Norm."</span>
+        <span class="p">)</span>
+
+        <span class="n">layer_norm</span> <span class="o">=</span> <span class="n">T5LayerNorm</span><span class="p">(</span><span class="n">module</span><span class="p">.</span><span class="n">normalized_shape</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">module</span><span class="p">.</span><span class="n">eps</span><span class="p">)</span>
+        <span class="n">layer_norm</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">module</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">layer_norm</span> <span class="o">=</span> <span class="n">layer_norm</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">module</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">layer_norm</span>
+</code></pre></div></div>
+
+<p><strong>최적화 특징:</strong></p>
+<ul>
+  <li><strong>RMS Normalization</strong>: 평균 계산 생략으로 연산량 감소</li>
+  <li><strong>Mixed Precision</strong>: FP32 분산 계산 + FP16 출력</li>
+  <li><strong>Fused Operation</strong>: 단일 커널로 모든 연산 수행</li>
+  <li><strong>메모리 효율성</strong>: bias 파라미터 제거</li>
+</ul>
+
+<h2 id="6-실제-사용-예제">6. 실제 사용 예제</h2>
+
+<h3 id="61-activation-checkpointing-설정">6.1 Activation Checkpointing 설정</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">opensora.acceleration.checkpoint</span> <span class="kn">import</span> <span class="n">set_grad_checkpoint</span><span class="p">,</span> <span class="n">auto_grad_checkpoint</span>
+
+<span class="c1"># 모델 정의
+</span><span class="k">class</span> <span class="nc">LargeTransformerBlock</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">attention</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">MultiheadAttention</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">feedforward</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span> <span class="o">*</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">GELU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">norm1</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">norm2</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># Attention + 잔차 연결
+</span>        <span class="n">attn_out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">attention</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">attn_out</span><span class="p">)</span>
+        
+        <span class="c1"># Feed-forward + 잔차 연결
+</span>        <span class="n">ff_out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">feedforward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">norm2</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">ff_out</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">x</span>
+
+<span class="c1"># 모델 인스턴스 생성
+</span><span class="n">model</span> <span class="o">=</span> <span class="n">LargeTransformerBlock</span><span class="p">(</span><span class="mi">768</span><span class="p">)</span>
+
+<span class="c1"># Gradient checkpointing 설정
+</span><span class="n">set_grad_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">use_fp32_attention</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">gc_step</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># 사용 예제
+</span><span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
+    <span class="c1"># auto_grad_checkpoint가 자동으로 체크포인팅 적용
+</span>    <span class="n">output</span> <span class="o">=</span> <span class="n">auto_grad_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span>
+</code></pre></div></div>
+
+<h3 id="62-분산-통신-사용-예제">6.2 분산 통신 사용 예제</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="n">dist</span>
+<span class="kn">from</span> <span class="nn">opensora.acceleration.communications</span> <span class="kn">import</span> <span class="n">all_to_all</span><span class="p">,</span> <span class="n">gather_forward_split_backward</span>
+
+<span class="c1"># 분산 환경 초기화
+</span><span class="n">dist</span><span class="p">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s">'nccl'</span><span class="p">)</span>
+
+<span class="c1"># All-to-All 통신 예제
+</span><span class="k">def</span> <span class="nf">sequence_parallel_example</span><span class="p">():</span>
+    <span class="c1"># 입력 텐서: (batch, seq_len, hidden)
+</span>    <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">).</span><span class="n">cuda</span><span class="p">()</span>
+    
+    <span class="c1"># 시퀀스 차원을 여러 GPU에 분산
+</span>    <span class="n">output</span> <span class="o">=</span> <span class="n">all_to_all</span><span class="p">(</span>
+        <span class="n">input_tensor</span><span class="p">,</span> 
+        <span class="n">process_group</span><span class="o">=</span><span class="n">dist</span><span class="p">.</span><span class="n">group</span><span class="p">.</span><span class="n">WORLD</span><span class="p">,</span>
+        <span class="n">scatter_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># seq_len 차원 분할
+</span>        <span class="n">gather_dim</span><span class="o">=</span><span class="mi">2</span>    <span class="c1"># hidden 차원으로 수집
+</span>    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">output</span>
+
+<span class="c1"># Gather-Split 패턴 예제
+</span><span class="k">def</span> <span class="nf">tensor_parallel_example</span><span class="p">():</span>
+    <span class="c1"># 텐서 병렬 처리
+</span>    <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">768</span><span class="p">).</span><span class="n">cuda</span><span class="p">()</span>
+    
+    <span class="c1"># Forward에서 gather, backward에서 split
+</span>    <span class="n">output</span> <span class="o">=</span> <span class="n">gather_forward_split_backward</span><span class="p">(</span>
+        <span class="n">input_tensor</span><span class="p">,</span>
+        <span class="n">process_group</span><span class="o">=</span><span class="n">dist</span><span class="p">.</span><span class="n">group</span><span class="p">.</span><span class="n">WORLD</span><span class="p">,</span>
+        <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># hidden 차원
+</span>        <span class="n">grad_scale</span><span class="o">=</span><span class="s">"down"</span>  <span class="c1"># gradient 스케일링
+</span>    <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">output</span>
+</code></pre></div></div>
+
+<h3 id="63-병렬-그룹-설정-예제">6.3 병렬 그룹 설정 예제</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="n">dist</span>
+<span class="kn">from</span> <span class="nn">opensora.acceleration.parallel_states</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">def</span> <span class="nf">setup_parallel_groups</span><span class="p">():</span>
+    <span class="s">"""다양한 병렬 그룹 설정"""</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_world_size</span><span class="p">()</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="n">dist</span><span class="p">.</span><span class="n">get_rank</span><span class="p">()</span>
+    
+    <span class="c1"># 데이터 병렬 그룹 (전체)
+</span>    <span class="n">data_pg</span> <span class="o">=</span> <span class="n">dist</span><span class="p">.</span><span class="n">new_group</span><span class="p">(</span><span class="n">ranks</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">world_size</span><span class="p">)))</span>
+    <span class="n">set_data_parallel_group</span><span class="p">(</span><span class="n">data_pg</span><span class="p">)</span>
+    
+    <span class="c1"># 텐서 병렬 그룹 (2개씩 묶음)
+</span>    <span class="k">if</span> <span class="n">world_size</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">tensor_ranks</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">world_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+            <span class="n">tensor_pg</span> <span class="o">=</span> <span class="n">dist</span><span class="p">.</span><span class="n">new_group</span><span class="p">(</span><span class="n">ranks</span><span class="o">=</span><span class="n">tensor_ranks</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rank</span> <span class="ow">in</span> <span class="n">tensor_ranks</span><span class="p">:</span>
+                <span class="n">set_tensor_parallel_group</span><span class="p">(</span><span class="n">tensor_pg</span><span class="p">)</span>
+    
+    <span class="c1"># 시퀀스 병렬 그룹 (4개씩 묶음)
+</span>    <span class="k">if</span> <span class="n">world_size</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">seq_ranks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">world_size</span><span class="p">))</span>
+        <span class="n">seq_pg</span> <span class="o">=</span> <span class="n">dist</span><span class="p">.</span><span class="n">new_group</span><span class="p">(</span><span class="n">ranks</span><span class="o">=</span><span class="n">seq_ranks</span><span class="p">)</span>
+        <span class="n">set_sequence_parallel_group</span><span class="p">(</span><span class="n">seq_pg</span><span class="p">)</span>
+
+<span class="c1"># 사용법
+</span><span class="n">setup_parallel_groups</span><span class="p">()</span>
+
+<span class="c1"># 그룹 조회
+</span><span class="n">data_group</span> <span class="o">=</span> <span class="n">get_data_parallel_group</span><span class="p">()</span>
+<span class="n">tensor_group</span> <span class="o">=</span> <span class="n">get_tensor_parallel_group</span><span class="p">()</span>
+<span class="n">seq_group</span> <span class="o">=</span> <span class="n">get_sequence_parallel_group</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="7-성능-최적화-분석">7. 성능 최적화 분석</h2>
+
+<h3 id="71-메모리-효율성-비교">7.1 메모리 효율성 비교</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>기술</th>
+      <th>메모리 절약률</th>
+      <th>계산 오버헤드</th>
+      <th>적용 대상</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Activation Checkpointing</td>
+      <td>50-80%</td>
+      <td>+30%</td>
+      <td>Forward activations</td>
+    </tr>
+    <tr>
+      <td>CPU Offloading</td>
+      <td>60-90%</td>
+      <td>+20%</td>
+      <td>Optimizer states</td>
+    </tr>
+    <tr>
+      <td>Gradient Checkpointing</td>
+      <td>40-60%</td>
+      <td>+25%</td>
+      <td>Backward pass</td>
+    </tr>
+    <tr>
+      <td>Mixed Precision</td>
+      <td>30-50%</td>
+      <td>-10%</td>
+      <td>전체 모델</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="72-통신-성능-분석">7.2 통신 성능 분석</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 통신 시간 측정 예제
+</span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">def</span> <span class="nf">benchmark_communication</span><span class="p">():</span>
+    <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1024</span><span class="p">).</span><span class="n">cuda</span><span class="p">()</span>
+    
+    <span class="c1"># All-to-All 통신 벤치마크
+</span>    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">all_to_all</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">dist</span><span class="p">.</span><span class="n">group</span><span class="p">.</span><span class="n">WORLD</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">all_to_all_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    
+    <span class="c1"># Gather-Split 벤치마크
+</span>    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">gather_forward_split_backward</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">dist</span><span class="p">.</span><span class="n">group</span><span class="p">.</span><span class="n">WORLD</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">gather_split_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"All-to-All time: </span><span class="si">{</span><span class="n">all_to_all_time</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="s">s"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Gather-Split time: </span><span class="si">{</span><span class="n">gather_split_time</span><span class="si">:</span><span class="p">.</span><span class="mi">3</span><span class="n">f</span><span class="si">}</span><span class="s">s"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="73-스케일링-효율성">7.3 스케일링 효율성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 약한 스케일링 (Weak Scaling) 분석
+</span><span class="k">def</span> <span class="nf">weak_scaling_analysis</span><span class="p">():</span>
+    <span class="s">"""GPU 수가 증가해도 GPU당 작업량 일정"""</span>
+    <span class="n">gpu_counts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>
+    <span class="n">batch_per_gpu</span> <span class="o">=</span> <span class="mi">2</span>
+    
+    <span class="n">scaling_efficiency</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">gpu_count</span> <span class="ow">in</span> <span class="n">gpu_counts</span><span class="p">:</span>
+        <span class="n">total_batch</span> <span class="o">=</span> <span class="n">batch_per_gpu</span> <span class="o">*</span> <span class="n">gpu_count</span>
+        <span class="c1"># 실제 처리 시간 측정 코드
+</span>        <span class="c1"># processing_time = measure_training_time(total_batch, gpu_count)
+</span>        <span class="c1"># efficiency = baseline_time / processing_time
+</span>        <span class="c1"># scaling_efficiency.append(efficiency)
+</span>    
+    <span class="k">return</span> <span class="n">scaling_efficiency</span>
+
+<span class="c1"># 강한 스케일링 (Strong Scaling) 분석  
+</span><span class="k">def</span> <span class="nf">strong_scaling_analysis</span><span class="p">():</span>
+    <span class="s">"""고정된 전체 작업량을 더 많은 GPU로 처리"""</span>
+    <span class="n">gpu_counts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">]</span>
+    <span class="n">total_batch</span> <span class="o">=</span> <span class="mi">32</span>
+    
+    <span class="n">scaling_efficiency</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">gpu_count</span> <span class="ow">in</span> <span class="n">gpu_counts</span><span class="p">:</span>
+        <span class="n">batch_per_gpu</span> <span class="o">=</span> <span class="n">total_batch</span> <span class="o">//</span> <span class="n">gpu_count</span>
+        <span class="c1"># 실제 처리 시간 측정 코드
+</span>        <span class="c1"># processing_time = measure_training_time(total_batch, gpu_count)
+</span>        <span class="c1"># efficiency = (baseline_time * gpu_count) / processing_time
+</span>        <span class="c1"># scaling_efficiency.append(efficiency)
+</span>    
+    <span class="k">return</span> <span class="n">scaling_efficiency</span>
+</code></pre></div></div>
+
+<h2 id="8-고급-최적화-기법">8. 고급 최적화 기법</h2>
+
+<h3 id="81-동적-메모리-관리">8.1 동적 메모리 관리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">DynamicActivationManager</span><span class="p">(</span><span class="n">ActivationManager</span><span class="p">):</span>
+    <span class="s">"""동적 activation 관리"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">peak_memory</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">allocation_history</span> <span class="o">=</span> <span class="p">[]</span>
+        
+    <span class="k">def</span> <span class="nf">adaptive_offload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="s">"""메모리 사용량에 따른 적응적 오프로드"""</span>
+        <span class="n">current_memory</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">memory_allocated</span><span class="p">()</span>
+        <span class="n">memory_threshold</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">get_device_properties</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">total_memory</span> <span class="o">*</span> <span class="mf">0.8</span>
+        
+        <span class="k">if</span> <span class="n">current_memory</span> <span class="o">&gt;</span> <span class="n">memory_threshold</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">offload</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 메모리 여유시 GPU에 유지
+</span>            <span class="k">pass</span>
+            
+    <span class="k">def</span> <span class="nf">memory_profiling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""메모리 사용 패턴 분석"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">'peak_memory'</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">peak_memory</span><span class="p">,</span>
+            <span class="s">'allocation_history'</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">allocation_history</span><span class="p">,</span>
+            <span class="s">'buffer_utilization'</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">avail_offset</span> <span class="o">/</span> <span class="bp">self</span><span class="p">.</span><span class="n">total_size</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="82-지능형-통신-스케줄링">8.2 지능형 통신 스케줄링</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CommunicationScheduler</span><span class="p">:</span>
+    <span class="s">"""통신 작업 스케줄링"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">pending_ops</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">bandwidth_monitor</span> <span class="o">=</span> <span class="n">BandwidthMonitor</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">schedule_communication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comm_type</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="s">"""통신 작업을 대역폭 상황에 따라 스케줄링"""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">bandwidth_monitor</span><span class="p">.</span><span class="n">is_congested</span><span class="p">():</span>
+            <span class="c1"># 네트워크 혼잡시 지연
+</span>            <span class="bp">self</span><span class="p">.</span><span class="n">pending_ops</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">comm_type</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">group</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 즉시 실행
+</span>            <span class="bp">self</span><span class="p">.</span><span class="n">execute_communication</span><span class="p">(</span><span class="n">comm_type</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">execute_communication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comm_type</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="s">"""실제 통신 실행"""</span>
+        <span class="k">if</span> <span class="n">comm_type</span> <span class="o">==</span> <span class="s">"all_to_all"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">all_to_all</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">comm_type</span> <span class="o">==</span> <span class="s">"gather_split"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gather_forward_split_backward</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="9-디버깅-및-모니터링">9. 디버깅 및 모니터링</h2>
+
+<h3 id="91-성능-프로파일링">9.1 성능 프로파일링</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AccelerationProfiler</span><span class="p">:</span>
+    <span class="s">"""가속화 모듈 성능 프로파일링"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">timings</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">memory_usage</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">communication_stats</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">def</span> <span class="nf">profile_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s">"""체크포인트 성능 측정"""</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">start_memory</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">memory_allocated</span><span class="p">()</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">end_memory</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">memory_allocated</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">timings</span><span class="p">[</span><span class="s">'checkpoint'</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">memory_usage</span><span class="p">[</span><span class="s">'checkpoint'</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_memory</span> <span class="o">-</span> <span class="n">start_memory</span>
+        
+        <span class="k">return</span> <span class="n">result</span>
+    
+    <span class="k">def</span> <span class="nf">profile_communication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comm_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s">"""통신 성능 측정"""</span>
+        <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">synchronize</span><span class="p">()</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">comm_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">synchronize</span><span class="p">()</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">communication_stats</span><span class="p">[</span><span class="n">comm_func</span><span class="p">.</span><span class="n">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+        
+        <span class="k">return</span> <span class="n">result</span>
+    
+    <span class="k">def</span> <span class="nf">generate_report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""성능 리포트 생성"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">'timing_breakdown'</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">timings</span><span class="p">,</span>
+            <span class="s">'memory_breakdown'</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">memory_usage</span><span class="p">,</span>
+            <span class="s">'communication_breakdown'</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">communication_stats</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="92-에러-처리-및-복구">9.2 에러 처리 및 복구</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">RobustCommunication</span><span class="p">:</span>
+    <span class="s">"""견고한 통신 시스템"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">max_retries</span> <span class="o">=</span> <span class="n">max_retries</span>
+        
+    <span class="k">def</span> <span class="nf">safe_all_to_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="s">"""재시도 메커니즘이 있는 All-to-All"""</span>
+        <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">max_retries</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">all_to_all</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">e</span>
+                
+                <span class="c1"># 지수 백오프로 재시도
+</span>                <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span><span class="p">)</span>
+                <span class="k">continue</span>
+    
+    <span class="k">def</span> <span class="nf">verify_communication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_tensor</span><span class="p">,</span> <span class="n">output_tensor</span><span class="p">,</span> <span class="n">comm_type</span><span class="p">):</span>
+        <span class="s">"""통신 결과 검증"""</span>
+        <span class="k">if</span> <span class="n">comm_type</span> <span class="o">==</span> <span class="s">"all_to_all"</span><span class="p">:</span>
+            <span class="n">expected_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">calculate_expected_shape</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">,</span> <span class="n">comm_type</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">output_tensor</span><span class="p">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">expected_shape</span><span class="p">,</span> <span class="sa">f</span><span class="s">"Shape mismatch: </span><span class="si">{</span><span class="n">output_tensor</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s"> vs </span><span class="si">{</span><span class="n">expected_shape</span><span class="si">}</span><span class="s">"</span>
+        
+        <span class="c1"># 수치적 안정성 검증
+</span>        <span class="k">assert</span> <span class="n">torch</span><span class="p">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">output_tensor</span><span class="p">).</span><span class="nb">all</span><span class="p">(),</span> <span class="s">"Non-finite values detected"</span>
+</code></pre></div></div>
+
+<h2 id="10-한계점-및-개선-방향">10. 한계점 및 개선 방향</h2>
+
+<h3 id="101-현재-한계점">10.1 현재 한계점</h3>
+
+<ol>
+  <li><strong>메모리 오버헤드</strong>: CPU-GPU 간 복사 비용</li>
+  <li><strong>통신 병목</strong>: 네트워크 대역폭 제한</li>
+  <li><strong>동기화 비용</strong>: 분산 처리의 동기화 오버헤드</li>
+  <li><strong>하드웨어 의존성</strong>: 특정 GPU 아키텍처에 최적화</li>
+</ol>
+
+<h3 id="102-개선-방향">10.2 개선 방향</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 미래 개선 방향 (예시)
+</span><span class="k">class</span> <span class="nc">NextGenAcceleration</span><span class="p">:</span>
+    <span class="s">"""차세대 가속화 기술"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">use_nccl_v3</span> <span class="o">=</span> <span class="bp">True</span>          <span class="c1"># 최신 통신 라이브러리
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">enable_compression</span> <span class="o">=</span> <span class="bp">True</span>    <span class="c1"># 통신 데이터 압축
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">adaptive_precision</span> <span class="o">=</span> <span class="bp">True</span>    <span class="c1"># 적응적 정밀도
+</span>        
+    <span class="k">def</span> <span class="nf">zero_copy_communication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""제로 카피 통신"""</span>
+        <span class="c1"># RDMA 기반 직접 메모리 접근
+</span>        <span class="k">pass</span>
+        
+    <span class="k">def</span> <span class="nf">predictive_scheduling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""예측 기반 스케줄링"""</span>
+        <span class="c1"># ML 기반 통신 패턴 예측
+</span>        <span class="k">pass</span>
+        
+    <span class="k">def</span> <span class="nf">hierarchical_communication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""계층적 통신"""</span>
+        <span class="c1"># 노드 내/노드 간 최적화된 통신 패턴
+</span>        <span class="k">pass</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>Open-Sora의 가속화 모듈은 대규모 AI 모델의 효율적인 학습과 추론을 위한 핵심 기술들을 포함하고 있습니다.</p>
+
+<p><strong>핵심 성과:</strong></p>
+<ul>
+  <li><strong>메모리 효율성</strong>: Activation Checkpointing으로 50-80% 메모리 절약</li>
+  <li><strong>통신 최적화</strong>: 효율적인 분산 통신 프리미티브 제공</li>
+  <li><strong>병렬화 지원</strong>: 다양한 병렬화 전략의 통합 관리</li>
+  <li><strong>확장성</strong>: 대규모 클러스터 환경에서의 선형 확장</li>
+</ul>
+
+<p>이러한 최적화 기술들은 Open-Sora가 11B 파라미터의 대규모 모델임에도 불구하고 실용적인 수준에서 학습과 추론이 가능하게 하는 핵심 기반이 됩니다. 앞으로 더욱 발전된 하드웨어와 알고리즘의 등장으로 더욱 효율적인 가속화 시스템으로 발전할 것으로 기대됩니다.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/07/28/opensora-text-embedding-system-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Open-Sora 텍스트 임베딩 시스템 상세 분석 - T5/CLIP 통합 및 Shar...</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/08/15/oxy-custom-project-overview-analysis/" rel="next">
+          <span class="nav-title">Oxy Custom 프로젝트 개요 분석 - Rust 기반 Agentic Analyti...</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

@@ -1,0 +1,935 @@
+<table>
+  <tbody>
+    <tr>
+      <td>Taming Transformers 구현체 상세 분석</td>
+      <td>Detailed Analysis of Taming Transformers Implementation</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="https://www.nvidia.com/content/dam/en-zz/Solutions/about-nvidia/logo-and-brand/01-nvidia-logo-vert-500x200-2c50-d@2x.png" alt="NVIDIA Logo" width="500" height="300" /></p>
+
+<p>이 문서에서는 <code class="language-plaintext highlighter-rouge">repositories/taming-transformers</code> 디렉토리에 있는 Taming Transformers 모델의 구현체에 대해 상세히 분석합니다.
+This document provides a detailed analysis of the Taming Transformers model implementation in the <code class="language-plaintext highlighter-rouge">repositories/taming-transformers</code> directory.</p>
+
+<h2 id="1-프로젝트-구조--project-structure">1. 프로젝트 구조 | Project Structure</h2>
+
+<h3 id="11-핵심-디렉토리--core-directories">1.1. 핵심 디렉토리 | Core Directories</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>taming/</strong>: 핵심 모듈 구현</td>
+          <td>Core module implementation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>modules/</strong>: 기본 모듈 구현</td>
+              <td>Basic module implementation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>models/</strong>: 모델 아키텍처</td>
+              <td>Model architecture</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>data/</strong>: 데이터 처리 유틸리티</td>
+              <td>Data processing utilities</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>configs/</strong>: 모델 설정 파일</td>
+          <td>Model configuration files</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>VQGAN 설정</td>
+              <td>VQGAN configuration</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>Transformer 설정</td>
+              <td>Transformer configuration</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>학습 파라미터</td>
+              <td>Training parameters</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>scripts/</strong>: 실행 스크립트</td>
+          <td>Execution scripts</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>학습 스크립트</td>
+              <td>Training scripts</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>추론 스크립트</td>
+              <td>Inference scripts</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>유틸리티 스크립트</td>
+              <td>Utility scripts</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="12-주요-파일--key-files">1.2. 주요 파일 | Key Files</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>main.py</strong>: 메인 실행 파일</td>
+          <td>Main execution file</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>setup.py</strong>: 패키지 설정</td>
+          <td>Package configuration</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>environment.yaml</strong>: 의존성 관리</td>
+          <td>Dependency management</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="2-핵심-모듈-분석--core-module-analysis">2. 핵심 모듈 분석 | Core Module Analysis</h2>
+
+<h3 id="21-vqgan-vector-quantized-gan">2.1. VQGAN (Vector Quantized GAN)</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">VQModel</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""
+    VQGAN의 핵심 구현체 | Core implementation of VQGAN
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">...):</span>
+        <span class="c1"># 인코더 초기화 | Encoder initialization
+</span>        <span class="c1"># 벡터 양자화 레이어 | Vector quantization layer
+</span>        <span class="c1"># 디코더 초기화 | Decoder initialization
+</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># 인코딩 | Encoding
+</span>        <span class="c1"># 양자화 | Quantization
+</span>        <span class="c1"># 디코딩 | Decoding
+</span></code></pre></div></div>
+
+<h3 id="22-transformer-모듈--transformer-module">2.2. Transformer 모듈 | Transformer Module</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Transformer</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""
+    조건부 Transformer 구현 | Conditional Transformer implementation
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">...):</span>
+        <span class="c1"># 어텐션 레이어 | Attention layers
+</span>        <span class="c1"># 피드포워드 네트워크 | Feedforward network
+</span>        <span class="c1"># 위치 인코딩 | Positional encoding
+</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="c1"># 셀프 어텐션 | Self attention
+</span>        <span class="c1"># 크로스 어텐션 | Cross attention
+</span>        <span class="c1"># 출력 생성 | Output generation
+</span></code></pre></div></div>
+
+<h2 id="3-주요-프로세스--key-processes">3. 주요 프로세스 | Key Processes</h2>
+
+<h3 id="31-이미지-생성-프로세스--image-generation-process">3.1. 이미지 생성 프로세스 | Image Generation Process</h3>
+<ol>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>이미지 인코딩</td>
+          <td>Image Encoding</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>VQGAN 인코더</td>
+              <td>VQGAN encoder</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>벡터 양자화</td>
+              <td>Vector quantization</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>토큰화</td>
+              <td>Tokenization</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>Transformer 처리</td>
+          <td>Transformer Processing</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>조건부 생성</td>
+              <td>Conditional generation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>토큰 예측</td>
+              <td>Token prediction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>시퀀스 생성</td>
+              <td>Sequence generation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>이미지 복원</td>
+          <td>Image Reconstruction</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>VQGAN 디코더</td>
+              <td>VQGAN decoder</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 재구성</td>
+              <td>Image reconstruction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>후처리</td>
+              <td>Post-processing</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="32-학습-프로세스--training-process">3.2. 학습 프로세스 | Training Process</h3>
+<ol>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>데이터 준비</td>
+          <td>Data Preparation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 전처리</td>
+              <td>Image preprocessing</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>토큰화</td>
+              <td>Tokenization</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>배치 생성</td>
+              <td>Batch creation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>VQGAN 학습</td>
+          <td>VQGAN Training</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>인코더-디코더 학습</td>
+              <td>Encoder-decoder training</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>벡터 양자화 학습</td>
+              <td>Vector quantization training</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>GAN 학습</td>
+              <td>GAN training</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>Transformer 학습</td>
+          <td>Transformer Training</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>조건부 생성 학습</td>
+              <td>Conditional generation training</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>시퀀스 예측</td>
+              <td>Sequence prediction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>손실 최적화</td>
+              <td>Loss optimization</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="4-모델-아키텍처--model-architecture">4. 모델 아키텍처 | Model Architecture</h2>
+
+<h3 id="41-vqgan-구조--vqgan-structure">4.1. VQGAN 구조 | VQGAN Structure</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>인코더</td>
+          <td>Encoder</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>컨볼루션 레이어</td>
+              <td>Convolutional layers</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>다운샘플링</td>
+              <td>Downsampling</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>특징 추출</td>
+              <td>Feature extraction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>벡터 양자화</td>
+          <td>Vector Quantization</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>코드북</td>
+              <td>Codebook</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>양자화 레이어</td>
+              <td>Quantization layer</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>커밋먼트 손실</td>
+              <td>Commitment loss</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>디코더</td>
+          <td>Decoder</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>업샘플링</td>
+              <td>Upsampling</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>컨볼루션 레이어</td>
+              <td>Convolutional layers</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 복원</td>
+              <td>Image reconstruction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="42-transformer-구조--transformer-structure">4.2. Transformer 구조 | Transformer Structure</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>어텐션 메커니즘</td>
+          <td>Attention Mechanism</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>셀프 어텐션</td>
+              <td>Self attention</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>크로스 어텐션</td>
+              <td>Cross attention</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>멀티헤드 어텐션</td>
+              <td>Multi-head attention</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>피드포워드 네트워크</td>
+          <td>Feedforward Network</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>선형 레이어</td>
+              <td>Linear layers</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>활성화 함수</td>
+              <td>Activation functions</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>레지듀얼 커넥션</td>
+              <td>Residual connections</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="5-최적화-기법--optimization-techniques">5. 최적화 기법 | Optimization Techniques</h2>
+
+<h3 id="51-학습-최적화--training-optimization">5.1. 학습 최적화 | Training Optimization</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>그래디언트 클리핑</td>
+          <td>Gradient clipping</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>학습률 스케줄링</td>
+          <td>Learning rate scheduling</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>배치 정규화</td>
+          <td>Batch normalization</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="52-메모리-최적화--memory-optimization">5.2. 메모리 최적화 | Memory Optimization</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>그래디언트 체크포인팅</td>
+          <td>Gradient checkpointing</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>혼합 정밀도 학습</td>
+          <td>Mixed precision training</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>효율적인 어텐션</td>
+          <td>Efficient attention</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="6-확장성--scalability">6. 확장성 | Scalability</h2>
+
+<h3 id="61-모델-확장--model-extension">6.1. 모델 확장 | Model Extension</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>새로운 아키텍처</td>
+          <td>New architectures</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>커스텀 손실 함수</td>
+          <td>Custom loss functions</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>추가 기능</td>
+          <td>Additional features</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="62-데이터-확장--data-extension">6.2. 데이터 확장 | Data Extension</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>새로운 데이터셋</td>
+          <td>New datasets</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>전처리 파이프라인</td>
+          <td>Preprocessing pipeline</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>증강 기법</td>
+          <td>Augmentation techniques</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="7-실제-사용-예시--practical-usage-examples">7. 실제 사용 예시 | Practical Usage Examples</h2>
+
+<h3 id="71-기본-사용법--basic-usage">7.1. 기본 사용법 | Basic Usage</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">taming.models</span> <span class="kn">import</span> <span class="n">VQModel</span><span class="p">,</span> <span class="n">Transformer</span>
+
+<span class="c1"># 모델 초기화 | Model initialization
+</span><span class="n">vqgan</span> <span class="o">=</span> <span class="n">VQModel</span><span class="p">(...)</span>
+<span class="n">transformer</span> <span class="o">=</span> <span class="n">Transformer</span><span class="p">(...)</span>
+
+<span class="c1"># 이미지 생성 | Image generation
+</span><span class="n">image</span> <span class="o">=</span> <span class="n">generate_image</span><span class="p">(</span><span class="n">vqgan</span><span class="p">,</span> <span class="n">transformer</span><span class="p">,</span> <span class="n">condition</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="72-고급-사용법--advanced-usage">7.2. 고급 사용법 | Advanced Usage</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 조건부 생성 | Conditional generation
+</span><span class="n">condition</span> <span class="o">=</span> <span class="n">get_condition</span><span class="p">(...)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">transformer</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span>
+    <span class="n">condition</span><span class="p">,</span>
+    <span class="n">num_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">)</span>
+
+<span class="c1"># 이미지 변환 | Image transformation
+</span><span class="n">transformed</span> <span class="o">=</span> <span class="n">vqgan</span><span class="p">.</span><span class="n">transform</span><span class="p">(</span>
+    <span class="n">input_image</span><span class="p">,</span>
+    <span class="n">condition</span><span class="p">,</span>
+    <span class="n">strength</span><span class="o">=</span><span class="mf">0.8</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="8-문제-해결--troubleshooting">8. 문제 해결 | Troubleshooting</h2>
+
+<h3 id="81-일반적인-이슈--common-issues">8.1. 일반적인 이슈 | Common Issues</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>학습 불안정성</td>
+          <td>Training instability</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>메모리 부족</td>
+          <td>Memory shortage</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>생성 품질</td>
+          <td>Generation quality</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="82-해결-방법--solutions">8.2. 해결 방법 | Solutions</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>하이퍼파라미터 튜닝</td>
+          <td>Hyperparameter tuning</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>배치 크기 조정</td>
+          <td>Batch size adjustment</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>모델 체크포인팅</td>
+          <td>Model checkpointing</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>

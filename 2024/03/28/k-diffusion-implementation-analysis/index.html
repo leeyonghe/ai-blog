@@ -1,0 +1,917 @@
+<table>
+  <tbody>
+    <tr>
+      <td>K-Diffusion 구현체 상세 분석</td>
+      <td>Detailed Analysis of K-Diffusion Implementation</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="https://www.nvidia.com/content/dam/en-zz/Solutions/about-nvidia/logo-and-brand/01-nvidia-logo-vert-500x200-2c50-d@2x.png" alt="NVIDIA Logo" width="500" height="300" /></p>
+
+<p>이 문서에서는 <code class="language-plaintext highlighter-rouge">repositories/k-diffusion</code> 디렉토리에 있는 K-Diffusion 모델의 구현체에 대해 상세히 분석합니다.
+This document provides a detailed analysis of the K-Diffusion model implementation located in the <code class="language-plaintext highlighter-rouge">repositories/k-diffusion</code> directory.</p>
+
+<h2 id="1-핵심-모듈-구조--core-module-structure">1. 핵심 모듈 구조 | Core Module Structure</h2>
+
+<h3 id="11-k_diffusion">1.1. k_diffusion/</h3>
+<p>K-Diffusion의 핵심 구현체들이 위치한 디렉토리입니다.
+Directory containing the core implementations of K-Diffusion.</p>
+
+<h4 id="k_diffusion">k_diffusion/</h4>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>sampling.py</strong>: 샘플링 알고리즘 구현</td>
+          <td>Sampling Algorithm Implementation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>Euler 샘플러</td>
+              <td>Euler Sampler</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>Heun 샘플러</td>
+              <td>Heun Sampler</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>DPM-Solver</li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>DDIM 샘플러</td>
+              <td>DDIM Sampler</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>models.py</strong>: 모델 아키텍처 구현</td>
+          <td>Model Architecture Implementation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>UNet 기반 모델</td>
+              <td>UNet-based Model</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>컨디셔닝 메커니즘</td>
+              <td>Conditioning Mechanism</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>타임스텝 임베딩</td>
+              <td>Timestep Embedding</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>external.py</strong>: 외부 모델 통합</td>
+          <td>External Model Integration</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>Stable Diffusion 통합</td>
+              <td>Stable Diffusion Integration</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>기타 확산 모델 지원</td>
+              <td>Other Diffusion Model Support</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="12-training">1.2. training/</h3>
+<p>학습 관련 모듈들입니다.
+Training-related modules.</p>
+
+<h4 id="training">training/</h4>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>trainer.py</strong>: 학습 로직 구현</td>
+          <td>Training Logic Implementation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>손실 함수 계산</td>
+              <td>Loss Function Calculation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>옵티마이저 설정</td>
+              <td>Optimizer Configuration</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>학습 루프</td>
+              <td>Training Loop</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>dataset.py</strong>: 데이터셋 처리</td>
+          <td>Dataset Processing</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 로딩</td>
+              <td>Image Loading</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>데이터 증강</td>
+              <td>Data Augmentation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>배치 생성</td>
+              <td>Batch Generation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="13-utils">1.3. utils/</h3>
+<p>유틸리티 함수들과 헬퍼 클래스들입니다.
+Utility functions and helper classes.</p>
+
+<h4 id="utils">utils/</h4>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>scheduler.py</strong>: 노이즈 스케줄러</td>
+          <td>Noise Scheduler</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>선형 스케줄</td>
+              <td>Linear Schedule</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>코사인 스케줄</td>
+              <td>Cosine Schedule</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>커스텀 스케줄</td>
+              <td>Custom Schedule</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>augmentation.py</strong>: 데이터 증강</td>
+          <td>Data Augmentation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 변환</td>
+              <td>Image Transformation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>노이즈 추가</td>
+              <td>Noise Addition</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>마스킹</td>
+              <td>Masking</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="2-주요-클래스-분석--key-class-analysis">2. 주요 클래스 분석 | Key Class Analysis</h2>
+
+<h3 id="21-ksampler">2.1. KSampler</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">KSampler</span><span class="p">:</span>
+    <span class="s">"""
+    K-Diffusion 샘플러 구현체 | K-Diffusion Sampler Implementation
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">...):</span>
+        <span class="c1"># 모델 초기화 | Model Initialization
+</span>        <span class="c1"># 스케줄러 설정 | Scheduler Configuration
+</span>        <span class="c1"># 샘플링 파라미터 설정 | Sampling Parameter Setup
+</span>
+    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="p">...):</span>
+        <span class="c1"># 샘플링 프로세스 | Sampling Process
+</span>        <span class="c1"># 노이즈 제거 | Noise Removal
+</span>        <span class="c1"># 이미지 생성 | Image Generation
+</span></code></pre></div></div>
+
+<h3 id="22-unet">2.2. UNet</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UNet</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""
+    UNet 기반 확산 모델 | UNet-based Diffusion Model
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">...):</span>
+        <span class="c1"># 인코더 블록 | Encoder Block
+</span>        <span class="c1"># 디코더 블록 | Decoder Block
+</span>        <span class="c1"># 타임스텝 임베딩 | Timestep Embedding
+</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># 노이즈 예측 | Noise Prediction
+</span>        <span class="c1"># 특징 추출 | Feature Extraction
+</span>        <span class="c1"># 조건부 생성 | Conditional Generation
+</span></code></pre></div></div>
+
+<h2 id="3-핵심-프로세스-분석--core-process-analysis">3. 핵심 프로세스 분석 | Core Process Analysis</h2>
+
+<h3 id="31-샘플링-프로세스--sampling-process">3.1. 샘플링 프로세스 | Sampling Process</h3>
+<ol>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>초기화</td>
+          <td>Initialization</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>랜덤 노이즈 생성</td>
+              <td>Random Noise Generation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>타임스텝 설정</td>
+              <td>Timestep Setup</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>조건 설정</td>
+              <td>Condition Setup</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>반복적 디노이징</td>
+          <td>Iterative Denoising</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>노이즈 예측</td>
+              <td>Noise Prediction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>스케줄러 업데이트</td>
+              <td>Scheduler Update</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 개선</td>
+              <td>Image Enhancement</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>최종 이미지 생성</td>
+          <td>Final Image Generation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>노이즈 제거</td>
+              <td>Noise Removal</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 정규화</td>
+              <td>Image Normalization</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>품질 향상</td>
+              <td>Quality Enhancement</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="32-학습-프로세스--training-process">3.2. 학습 프로세스 | Training Process</h3>
+<ol>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>데이터 준비</td>
+          <td>Data Preparation</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>이미지 로딩</td>
+              <td>Image Loading</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>노이즈 추가</td>
+              <td>Noise Addition</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>타임스텝 생성</td>
+              <td>Timestep Generation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>모델 학습</td>
+          <td>Model Training</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>노이즈 예측</td>
+              <td>Noise Prediction</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>손실 계산</td>
+              <td>Loss Calculation</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td>가중치 업데이트</td>
+              <td>Weight Update</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="4-샘플링-알고리즘--sampling-algorithms">4. 샘플링 알고리즘 | Sampling Algorithms</h2>
+
+<h3 id="41-euler-샘플러--euler-sampler">4.1. Euler 샘플러 | Euler Sampler</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>단순한 오일러 방법</td>
+          <td>Simple Euler Method</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>빠른 샘플링</td>
+          <td>Fast Sampling</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>기본적인 정확도</td>
+          <td>Basic Accuracy</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="42-heun-샘플러--heun-sampler">4.2. Heun 샘플러 | Heun Sampler</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>개선된 오일러 방법</td>
+          <td>Improved Euler Method</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>더 높은 정확도</td>
+          <td>Higher Accuracy</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>중간 단계 계산</td>
+          <td>Intermediate Step Calculation</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="43-dpm-solver">4.3. DPM-Solver</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>확산 확률 모델 솔버</td>
+          <td>Diffusion Probability Model Solver</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>빠른 수렴</td>
+          <td>Fast Convergence</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>높은 품질</td>
+          <td>High Quality</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="5-성능-최적화--performance-optimization">5. 성능 최적화 | Performance Optimization</h2>
+
+<h3 id="51-샘플링-최적화--sampling-optimization">5.1. 샘플링 최적화 | Sampling Optimization</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>스텝 수 최적화</td>
+          <td>Step Count Optimization</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>스케줄러 튜닝</td>
+          <td>Scheduler Tuning</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>메모리 효율성</td>
+          <td>Memory Efficiency</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="52-학습-최적화--training-optimization">5.2. 학습 최적화 | Training Optimization</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>그래디언트 체크포인팅</td>
+          <td>Gradient Checkpointing</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>혼합 정밀도 학습</td>
+          <td>Mixed Precision Training</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>배치 크기 최적화</td>
+          <td>Batch Size Optimization</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="6-확장성과-커스터마이징--extensibility-and-customization">6. 확장성과 커스터마이징 | Extensibility and Customization</h2>
+
+<h3 id="61-모델-확장--model-extension">6.1. 모델 확장 | Model Extension</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>새로운 아키텍처</td>
+          <td>New Architecture</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>커스텀 컨디셔닝</td>
+          <td>Custom Conditioning</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>추가 손실 함수</td>
+          <td>Additional Loss Functions</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="62-샘플링-확장--sampling-extension">6.2. 샘플링 확장 | Sampling Extension</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>새로운 스케줄러</td>
+          <td>New Scheduler</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>커스텀 샘플러</td>
+          <td>Custom Sampler</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>멀티모달 지원</td>
+          <td>Multimodal Support</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="7-디버깅과-문제-해결--debugging-and-troubleshooting">7. 디버깅과 문제 해결 | Debugging and Troubleshooting</h2>
+
+<h3 id="71-일반적인-문제--common-issues">7.1. 일반적인 문제 | Common Issues</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>샘플링 불안정성</td>
+          <td>Sampling Instability</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>메모리 부족</td>
+          <td>Memory Insufficiency</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>품질 이슈</td>
+          <td>Quality Issues</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h3 id="72-해결-방법--solutions">7.2. 해결 방법 | Solutions</h3>
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>스케줄러 조정</td>
+          <td>Scheduler Adjustment</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>배치 크기 최적화</td>
+          <td>Batch Size Optimization</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>모델 체크포인팅</td>
+          <td>Model Checkpointing</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h2 id="8-실제-사용-예시--practical-usage-examples">8. 실제 사용 예시 | Practical Usage Examples</h2>
+
+<h3 id="81-기본-사용법--basic-usage">8.1. 기본 사용법 | Basic Usage</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">k_diffusion.sampling</span> <span class="kn">import</span> <span class="n">KSampler</span>
+<span class="kn">from</span> <span class="nn">k_diffusion.models</span> <span class="kn">import</span> <span class="n">UNet</span>
+
+<span class="c1"># 모델 초기화 | Model Initialization
+</span><span class="n">model</span> <span class="o">=</span> <span class="n">UNet</span><span class="p">(...)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">KSampler</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+<span class="c1"># 이미지 생성 | Image Generation
+</span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="82-고급-사용법--advanced-usage">8.2. 고급 사용법 | Advanced Usage</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 커스텀 스케줄러 설정 | Custom Scheduler Setup
+</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">CosineScheduler</span><span class="p">(...)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">KSampler</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">)</span>
+
+<span class="c1"># 조건부 생성 | Conditional Generation
+</span><span class="n">condition</span> <span class="o">=</span> <span class="n">get_condition</span><span class="p">(...)</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">)</span>
+</code></pre></div></div>

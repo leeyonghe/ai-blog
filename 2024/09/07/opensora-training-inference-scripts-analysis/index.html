@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Open-Sora 훈련/추론 스크립트 상세 분석 - 실제 워크플로우와 파이프라인 | AI Development Blog</title>
+<meta name="description" content="개요Open-Sora의 scripts 디렉토리는 실제 모델 훈련과 추론을 수행하는 핵심 스크립트들을 포함하고 있습니다. 이번 포스트에서는 Diffusion 모델의 훈련 및 추론 스크립트, VAE 훈련 스크립트, 그리고 데이터 전처리 도구들을 상세히 분석하여 Open-Sora의 실제...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="opensora, training, inference, scripts, workflow, pipeline">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/09/07/opensora-training-inference-scripts-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Open-Sora 훈련/추론 스크립트 상세 분석 - 실제 워크플로우와 파이프라인">
+<meta property="og:description" content="개요Open-Sora의 scripts 디렉토리는 실제 모델 훈련과 추론을 수행하는 핵심 스크립트들을 포함하고 있습니다. 이번 포스트에서는 Diffusion 모델의 훈련 및 추론 스크립트, VAE 훈련 스크립트, 그리고 데이터 전처리 도구들을 상세히 분석하여 Open-Sora의 실제...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/09/07/opensora-training-inference-scripts-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Open-Sora 훈련/추론 스크립트 상세 분석 - 실제 워크플로우와 파이프라인">
+<meta name="twitter:description" content="개요Open-Sora의 scripts 디렉토리는 실제 모델 훈련과 추론을 수행하는 핵심 스크립트들을 포함하고 있습니다. 이번 포스트에서는 Diffusion 모델의 훈련 및 추론 스크립트, VAE 훈련 스크립트, 그리고 데이터 전처리 도구들을 상세히 분석하여 Open-Sora의 실제...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Open-Sora 훈련/추론 스크립트 상세 분석 - 실제 워크플로우와 파이프라인",
+  "description": "개요
+
+Open-Sora의 scripts 디렉토리는 실제 모델 훈련과 추론을 수행하는 핵심 스크립트들을 포함하고 있습니다. 이번 포스트에서는 Diffusion 모델의 훈련 및 추론 스크립트, VAE 훈련 스크립트, 그리고 데이터 전처리 도구들을 상세히 분석하여 Open-Sora의 ...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-09-07T11:00:00+00:00",
+  "dateModified": "2024-09-07T11:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/09/07/opensora-training-inference-scripts-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/09/07/opensora-training-inference-scripts-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["opensora","training","inference","scripts","workflow","pipeline"],
+  "articleSection": ["AI","Video Generation","Training","Inference","Pipeline"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Open-Sora 훈련/추론 스크립트 상세 분석 - 실제 워크플로우와 파이프라인</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Open-Sora 훈련/추론 스크립트 상세 분석 - 실제 워크플로우와 파이프라인</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-09-07T11:00:00+00:00">Sep 7, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Video Generation</li><li>Training</li><li>Inference</li><li>Pipeline</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>Open-Sora의 scripts 디렉토리는 실제 모델 훈련과 추론을 수행하는 핵심 스크립트들을 포함하고 있습니다. 이번 포스트에서는 Diffusion 모델의 훈련 및 추론 스크립트, VAE 훈련 스크립트, 그리고 데이터 전처리 도구들을 상세히 분석하여 Open-Sora의 실제 동작 원리와 워크플로우를 파악하겠습니다.</p>
+
+<h2 id="1-스크립트-구조-개요">1. 스크립트 구조 개요</h2>
+
+<h3 id="11-전체-구조">1.1 전체 구조</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scripts/
+├── diffusion/              # Diffusion 모델 관련
+│   ├── train.py            # Diffusion 모델 훈련
+│   └── inference.py        # Diffusion 모델 추론
+├── vae/                    # VAE 모델 관련
+│   ├── train.py            # VAE 모델 훈련
+│   ├── inference.py        # VAE 추론
+│   └── stats.py            # VAE 통계 분석
+└── cnv/                    # 데이터 변환 및 전처리
+    ├── meta.py             # 메타데이터 추출
+    └── shard.py            # 데이터 샤딩
+</code></pre></div></div>
+
+<h3 id="12-핵심-기능-영역">1.2 핵심 기능 영역</h3>
+
+<ol>
+  <li><strong>Diffusion 훈련</strong>: 대규모 분산 훈련 파이프라인</li>
+  <li><strong>Diffusion 추론</strong>: 조건부 비디오 생성 엔진</li>
+  <li><strong>VAE 훈련</strong>: 비디오 인코더/디코더 학습</li>
+  <li><strong>데이터 처리</strong>: 메타데이터 추출 및 전처리</li>
+</ol>
+
+<h2 id="2-diffusion-추론-스크립트-분석">2. Diffusion 추론 스크립트 분석</h2>
+
+<h3 id="21-추론-파이프라인-구조">2.1 추론 파이프라인 구조</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># scripts/diffusion/inference.py
+</span><span class="o">@</span><span class="n">torch</span><span class="p">.</span><span class="n">inference_mode</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># ======================================================
+</span>    <span class="c1"># 1. 설정 및 런타임 변수 초기화
+</span>    <span class="c1"># ======================================================
+</span>    <span class="n">torch</span><span class="p">.</span><span class="n">set_grad_enabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>  <span class="c1"># 추론 모드 설정
+</span>
+    <span class="c1"># 설정 파싱
+</span>    <span class="n">cfg</span> <span class="o">=</span> <span class="n">parse_configs</span><span class="p">()</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">parse_alias</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+    <span class="c1"># 디바이스 및 데이터 타입 설정
+</span>    <span class="n">device</span> <span class="o">=</span> <span class="s">"cuda"</span> <span class="k">if</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s">"cpu"</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">to_torch_dtype</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"dtype"</span><span class="p">,</span> <span class="s">"bf16"</span><span class="p">))</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"seed"</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="c1"># 분산 환경 초기화
+</span>    <span class="n">init_inference_environment</span><span class="p">()</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">()</span>
+    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Inference configuration:</span><span class="se">\n</span><span class="s"> %s"</span><span class="p">,</span> <span class="n">pformat</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">to_dict</span><span class="p">()))</span>
+    
+    <span class="n">is_saving_process</span> <span class="o">=</span> <span class="n">get_is_saving_process</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">booster</span> <span class="o">=</span> <span class="n">get_booster</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">booster_ae</span> <span class="o">=</span> <span class="n">get_booster</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ae</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>핵심 특징:</strong></p>
+<ul>
+  <li><strong>Gradient 비활성화</strong>: 추론 전용 최적화</li>
+  <li><strong>Mixed Precision</strong>: BF16 지원으로 메모리 효율성</li>
+  <li><strong>분산 추론</strong>: 멀티 GPU 추론 지원</li>
+  <li><strong>설정 기반</strong>: YAML 설정 파일로 유연한 구성</li>
+</ul>
+
+<h3 id="22-데이터셋-및-데이터로더-구성">2.2 데이터셋 및 데이터로더 구성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1"># ======================================================
+</span>    <span class="c1"># 2. 데이터셋 및 데이터로더 구성
+</span>    <span class="c1"># ======================================================
+</span>    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Building dataset..."</span><span class="p">)</span>
+
+    <span class="c1"># 저장 디렉토리 설정
+</span>    <span class="n">save_dir</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">.</span><span class="n">save_dir</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c1"># 데이터셋 구성
+</span>    <span class="k">if</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"prompt"</span><span class="p">):</span>
+        <span class="c1"># 프롬프트가 주어진 경우 임시 CSV 생성
+</span>        <span class="n">cfg</span><span class="p">.</span><span class="n">dataset</span><span class="p">.</span><span class="n">data_path</span> <span class="o">=</span> <span class="n">create_tmp_csv</span><span class="p">(</span>
+            <span class="n">save_dir</span><span class="p">,</span> <span class="n">cfg</span><span class="p">.</span><span class="n">prompt</span><span class="p">,</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"ref"</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> 
+            <span class="n">create</span><span class="o">=</span><span class="n">is_main_process</span><span class="p">()</span>
+        <span class="p">)</span>
+    
+    <span class="n">dist</span><span class="p">.</span><span class="n">barrier</span><span class="p">()</span>  <span class="c1"># 모든 프로세스 동기화
+</span>    <span class="n">dataset</span> <span class="o">=</span> <span class="n">build_module</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">DATASETS</span><span class="p">)</span>
+
+    <span class="c1"># 범위 선택
+</span>    <span class="n">start_index</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"start_index"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">end_index</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"end_index"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">end_index</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">end_index</span> <span class="o">=</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"num_samples"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">.</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">dataset</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">.</span><span class="n">data</span><span class="p">[</span><span class="n">start_index</span><span class="p">:</span><span class="n">end_index</span><span class="p">]</span>
+    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Dataset contains %s samples."</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
+
+    <span class="c1"># 데이터로더 구성
+</span>    <span class="n">dataloader_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"batch_size"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">num_workers</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"num_workers"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"seed"</span><span class="p">,</span> <span class="mi">1024</span><span class="p">),</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">drop_last</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">pin_memory</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">process_group</span><span class="o">=</span><span class="n">get_data_parallel_group</span><span class="p">(),</span>
+        <span class="n">prefetch_factor</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"prefetch_factor"</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">dataloader</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">prepare_dataloader</span><span class="p">(</span><span class="o">**</span><span class="n">dataloader_args</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>데이터 처리 특징:</strong></p>
+<ul>
+  <li><strong>동적 CSV 생성</strong>: 프롬프트 기반 임시 데이터셋</li>
+  <li><strong>범위 선택</strong>: 부분 데이터셋 처리 지원</li>
+  <li><strong>분산 데이터로더</strong>: 멀티 GPU 환경 최적화</li>
+  <li><strong>메모리 최적화</strong>: Pin memory 및 prefetch 지원</li>
+</ul>
+
+<h3 id="23-모델-로딩-및-api-준비">2.3 모델 로딩 및 API 준비</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1"># ======================================================
+</span>    <span class="c1"># 3. 모델 구성
+</span>    <span class="c1"># ======================================================
+</span>    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Building models..."</span><span class="p">)</span>
+
+    <span class="c1"># Flux 모델 구성
+</span>    <span class="n">model</span><span class="p">,</span> <span class="n">model_ae</span><span class="p">,</span> <span class="n">model_t5</span><span class="p">,</span> <span class="n">model_clip</span><span class="p">,</span> <span class="n">optional_models</span> <span class="o">=</span> <span class="n">prepare_models</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">offload_model</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"offload_model"</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">log_cuda_max_memory</span><span class="p">(</span><span class="s">"build model"</span><span class="p">)</span>
+
+    <span class="c1"># Booster 적용
+</span>    <span class="k">if</span> <span class="n">booster</span><span class="p">:</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">booster</span><span class="p">.</span><span class="n">boost</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">booster_ae</span><span class="p">:</span>
+        <span class="n">model_ae</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">booster_ae</span><span class="p">.</span><span class="n">boost</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model_ae</span><span class="p">)</span>
+        <span class="n">model_ae</span> <span class="o">=</span> <span class="n">model_ae</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span>
+
+    <span class="c1"># API 함수 준비
+</span>    <span class="n">api_fn</span> <span class="o">=</span> <span class="n">prepare_api</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_ae</span><span class="p">,</span> <span class="n">model_t5</span><span class="p">,</span> <span class="n">model_clip</span><span class="p">,</span> <span class="n">optional_models</span><span class="p">)</span>
+
+    <span class="c1"># T2I2V를 위한 이미지 Flux 모델 준비
+</span>    <span class="k">if</span> <span class="n">use_t2i2v</span><span class="p">:</span>
+        <span class="n">api_fn_img</span> <span class="o">=</span> <span class="n">prepare_api</span><span class="p">(</span>
+            <span class="n">optional_models</span><span class="p">[</span><span class="s">"img_flux"</span><span class="p">],</span> 
+            <span class="n">optional_models</span><span class="p">[</span><span class="s">"img_flux_ae"</span><span class="p">],</span> 
+            <span class="n">model_t5</span><span class="p">,</span> <span class="n">model_clip</span><span class="p">,</span> <span class="n">optional_models</span>
+        <span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>모델 관리 특징:</strong></p>
+<ul>
+  <li><strong>다중 모델</strong>: Diffusion, VAE, T5, CLIP 통합</li>
+  <li><strong>선택적 오프로딩</strong>: 메모리 절약을 위한 모델 이동</li>
+  <li><strong>Booster 최적화</strong>: ColossalAI 최적화 적용</li>
+  <li><strong>API 추상화</strong>: 통합된 추론 인터페이스</li>
+</ul>
+
+<h3 id="24-추론-루프">2.4 추론 루프</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1"># ======================================================
+</span>    <span class="c1"># 4. 추론 실행
+</span>    <span class="c1"># ======================================================
+</span>    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_sample</span><span class="p">):</span>  <span class="c1"># 다양한 시드로 다중 샘플 생성
+</span>        <span class="n">dataloader_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dataloader</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span>
+            <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader_iter</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s">"Inference progress"</span><span class="p">,</span>
+            <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">is_main_process</span><span class="p">(),</span>
+            <span class="n">initial</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">dataloader</span><span class="p">),</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+                <span class="n">original_text</span> <span class="o">=</span> <span class="n">batch</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="s">"text"</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">use_t2i2v</span><span class="p">:</span>
+                    <span class="c1"># T2I2V: 텍스트 → 이미지 → 비디오
+</span>                    <span class="n">batch</span><span class="p">[</span><span class="s">"text"</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_text</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">prompt_refine</span> <span class="k">else</span> <span class="n">refine_prompts</span><span class="p">(</span><span class="n">original_text</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">"t2i"</span><span class="p">)</span>
+                    
+                    <span class="c1"># 이미지 생성을 위한 샘플링 옵션 수정
+</span>                    <span class="n">sampling_option_t2i</span> <span class="o">=</span> <span class="n">modify_option_to_t2i</span><span class="p">(</span>
+                        <span class="n">sampling_option</span><span class="p">,</span>
+                        <span class="n">distilled</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">img_resolution</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"img_resolution"</span><span class="p">,</span> <span class="s">"768px"</span><span class="p">),</span>
+                    <span class="p">)</span>
+                    
+                    <span class="c1"># 모델 오프로딩 (메모리 절약)
+</span>                    <span class="k">if</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"offload_model"</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+                        <span class="n">model_move_start</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+                        <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s">"cpu"</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+                        <span class="n">model_ae</span> <span class="o">=</span> <span class="n">model_ae</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s">"cpu"</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+                        <span class="n">optional_models</span><span class="p">[</span><span class="s">"img_flux"</span><span class="p">].</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+                        <span class="n">optional_models</span><span class="p">[</span><span class="s">"img_flux_ae"</span><span class="p">].</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span>
+                            <span class="s">"offload video diffusion model to cpu, load image flux model to gpu: %s s"</span><span class="p">,</span>
+                            <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">model_move_start</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                    <span class="c1"># 이미지 조건 생성
+</span>                    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Generating image condition by flux..."</span><span class="p">)</span>
+                    <span class="n">x_cond</span> <span class="o">=</span> <span class="n">api_fn_img</span><span class="p">(</span>
+                        <span class="n">sampling_option_t2i</span><span class="p">,</span>
+                        <span class="s">"t2v"</span><span class="p">,</span>
+                        <span class="n">seed</span><span class="o">=</span><span class="n">sampling_option</span><span class="p">.</span><span class="n">seed</span> <span class="o">+</span> <span class="n">epoch</span> <span class="k">if</span> <span class="n">sampling_option</span><span class="p">.</span><span class="n">seed</span> <span class="k">else</span> <span class="bp">None</span><span class="p">,</span>
+                        <span class="n">channel</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s">"img_flux"</span><span class="p">][</span><span class="s">"in_channels"</span><span class="p">],</span>
+                        <span class="o">**</span><span class="n">batch</span><span class="p">,</span>
+                    <span class="p">).</span><span class="n">cpu</span><span class="p">()</span>
+
+                    <span class="c1"># 이미지 저장
+</span>                    <span class="n">batch</span><span class="p">[</span><span class="s">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_and_save</span><span class="p">(</span>
+                        <span class="n">x_cond</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">img_sub_dir</span><span class="p">,</span>
+                        <span class="n">sampling_option_t2i</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">start_index</span><span class="p">,</span>
+                        <span class="n">saving</span><span class="o">=</span><span class="n">is_saving_process</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">dist</span><span class="p">.</span><span class="n">barrier</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><strong>추론 프로세스 특징:</strong></p>
+<ul>
+  <li><strong>다중 시드</strong>: 다양한 결과 생성</li>
+  <li><strong>T2I2V 지원</strong>: 텍스트→이미지→비디오 파이프라인</li>
+  <li><strong>동적 모델 관리</strong>: 메모리 효율적인 모델 교체</li>
+  <li><strong>진행률 표시</strong>: tqdm을 통한 시각적 피드백</li>
+</ul>
+
+<h2 id="3-diffusion-훈련-스크립트-분석">3. Diffusion 훈련 스크립트 분석</h2>
+
+<h3 id="31-훈련-환경-설정">3.1 훈련 환경 설정</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># scripts/diffusion/train.py
+</span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># ======================================================
+</span>    <span class="c1"># 1. 설정 및 런타임 변수
+</span>    <span class="c1"># ======================================================
+</span>    <span class="n">cfg</span> <span class="o">=</span> <span class="n">parse_configs</span><span class="p">()</span>
+
+    <span class="c1"># 데이터 타입 및 디바이스 설정
+</span>    <span class="n">dtype</span> <span class="o">=</span> <span class="n">to_torch_dtype</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"dtype"</span><span class="p">,</span> <span class="s">"bf16"</span><span class="p">))</span>
+    <span class="n">device</span><span class="p">,</span> <span class="n">coordinator</span> <span class="o">=</span> <span class="n">setup_device</span><span class="p">()</span>
+    
+    <span class="c1"># Gradient Checkpointing 버퍼 설정
+</span>    <span class="n">grad_ckpt_buffer_size</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"grad_ckpt_buffer_size"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">grad_ckpt_buffer_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">GLOBAL_ACTIVATION_MANAGER</span><span class="p">.</span><span class="n">setup_buffer</span><span class="p">(</span><span class="n">grad_ckpt_buffer_size</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    
+    <span class="n">checkpoint_io</span> <span class="o">=</span> <span class="n">CheckpointIO</span><span class="p">()</span>
+    <span class="n">set_seed</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"seed"</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
+    
+    <span class="c1"># 메모리 캐시 설정
+</span>    <span class="n">PinMemoryCache</span><span class="p">.</span><span class="n">force_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+    <span class="n">pin_memory_cache_pre_alloc_numels</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"pin_memory_cache_pre_alloc_numels"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">PinMemoryCache</span><span class="p">.</span><span class="n">pre_alloc_numels</span> <span class="o">=</span> <span class="n">pin_memory_cache_pre_alloc_numels</span>
+</code></pre></div></div>
+
+<p><strong>훈련 환경 특징:</strong></p>
+<ul>
+  <li><strong>Mixed Precision</strong>: BF16으로 메모리 효율성</li>
+  <li><strong>Activation Checkpointing</strong>: 메모리 절약</li>
+  <li><strong>분산 환경</strong>: 멀티 GPU 훈련</li>
+  <li><strong>메모리 캐시</strong>: 효율적인 데이터 로딩</li>
+</ul>
+
+<h3 id="32-모델-및-옵티마이저-설정">3.2 모델 및 옵티마이저 설정</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1"># ======================================================
+</span>    <span class="c1"># 2. 모델 구성
+</span>    <span class="c1"># ======================================================
+</span>    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Building model..."</span><span class="p">)</span>
+
+    <span class="c1"># VAE 모델 구성
+</span>    <span class="n">model_ae</span> <span class="o">=</span> <span class="n">build_module</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">ae</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">)</span>
+    <span class="n">model_ae</span> <span class="o">=</span> <span class="n">model_ae</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">).</span><span class="nb">eval</span><span class="p">()</span>
+    <span class="n">model_ae</span><span class="p">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c1"># 텍스트 인코더 구성
+</span>    <span class="k">if</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"text_encoder"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">model_t5</span> <span class="o">=</span> <span class="n">build_module</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">text_encoder</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">)</span>
+        <span class="n">model_t5</span> <span class="o">=</span> <span class="n">model_t5</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">).</span><span class="nb">eval</span><span class="p">()</span>
+        <span class="n">model_t5</span><span class="p">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model_t5</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+
+    <span class="n">model_clip</span> <span class="o">=</span> <span class="n">build_module</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">clip</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">)</span>
+    <span class="n">model_clip</span> <span class="o">=</span> <span class="n">model_clip</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">).</span><span class="nb">eval</span><span class="p">()</span>
+    <span class="n">model_clip</span><span class="p">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c1"># 메인 Diffusion 모델
+</span>    <span class="n">model</span> <span class="o">=</span> <span class="n">build_module</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">model</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="c1"># Gradient checkpointing 설정
+</span>    <span class="k">if</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"grad_checkpoint"</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">set_grad_checkpoint</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">use_fp32_attention</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"fp32_attention"</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span>
+            <span class="n">gc_step</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"gc_step"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="c1"># EMA 모델 설정
+</span>    <span class="k">if</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"ema_decay"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ema</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="nb">eval</span><span class="p">().</span><span class="n">requires_grad_</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">ema_shape_dict</span> <span class="o">=</span> <span class="n">record_model_param_shape</span><span class="p">(</span><span class="n">ema</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ema</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">ema_shape_dict</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c1"># 옵티마이저 생성
+</span>    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">create_optimizer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cfg</span><span class="p">.</span><span class="n">optim</span><span class="p">)</span>
+    <span class="n">lr_scheduler</span> <span class="o">=</span> <span class="n">create_lr_scheduler</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">num_steps_per_epoch</span><span class="p">,</span> <span class="o">**</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"scheduler"</span><span class="p">,</span> <span class="p">{}))</span>
+</code></pre></div></div>
+
+<p><strong>모델 구성 특징:</strong></p>
+<ul>
+  <li><strong>모듈식 구조</strong>: 각 컴포넌트 독립 구성</li>
+  <li><strong>EMA 모델</strong>: 안정적인 학습을 위한 지수이동평균</li>
+  <li><strong>Gradient Checkpointing</strong>: 메모리 효율적 역전파</li>
+  <li><strong>고정 모델</strong>: VAE와 텍스트 인코더는 고정</li>
+</ul>
+
+<h3 id="33-분산-훈련-준비">3.3 분산 훈련 준비</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1"># =======================================================
+</span>    <span class="c1"># 4. ColossalAI를 이용한 분산 훈련 준비
+</span>    <span class="c1"># =======================================================
+</span>    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Preparing for distributed training..."</span><span class="p">)</span>
+    
+    <span class="c1"># Boosting
+</span>    <span class="n">torch</span><span class="p">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">lr_scheduler</span> <span class="o">=</span> <span class="n">booster</span><span class="p">.</span><span class="n">boost</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+        <span class="n">lr_scheduler</span><span class="o">=</span><span class="n">lr_scheduler</span><span class="p">,</span>
+        <span class="n">dataloader</span><span class="o">=</span><span class="n">dataloader</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">torch</span><span class="p">.</span><span class="n">set_default_dtype</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Boosted model for distributed training"</span><span class="p">)</span>
+    <span class="n">log_cuda_memory</span><span class="p">(</span><span class="s">"boost"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>분산 훈련 특징:</strong></p>
+<ul>
+  <li><strong>ColossalAI Booster</strong>: 자동 분산 최적화</li>
+  <li><strong>ZeRO 최적화</strong>: 메모리 효율적 파라미터 분산</li>
+  <li><strong>데이터 병렬화</strong>: 배치 분산 처리</li>
+  <li><strong>Mixed Precision</strong>: 자동 정밀도 관리</li>
+</ul>
+
+<h3 id="34-훈련-루프">3.4 훈련 루프</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1"># =======================================================
+</span>    <span class="c1"># 5. 훈련 루프
+</span>    <span class="c1"># =======================================================
+</span>    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_epoch</span><span class="p">,</span> <span class="n">cfg_epochs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start_step</span><span class="p">):</span>
+            <span class="c1"># 시각적 조건 준비
+</span>            <span class="k">if</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"causal"</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span>
+                <span class="n">x_0</span><span class="p">,</span> <span class="n">cond</span> <span class="o">=</span> <span class="n">prepare_visual_condition_causal</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s">"video"</span><span class="p">],</span> <span class="n">condition_config</span><span class="p">,</span> <span class="n">model_ae</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x_0</span><span class="p">,</span> <span class="n">cond</span> <span class="o">=</span> <span class="n">prepare_visual_condition_uncausal</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s">"video"</span><span class="p">],</span> <span class="n">condition_config</span><span class="p">,</span> <span class="n">model_ae</span><span class="p">)</span>
+
+            <span class="c1"># 텍스트 조건 준비
+</span>            <span class="n">txt</span> <span class="o">=</span> <span class="n">model_t5</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s">"text"</span><span class="p">],</span> <span class="n">added_tokens</span><span class="o">=</span><span class="n">z_0</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">seq_align</span><span class="o">=</span><span class="n">seq_align</span><span class="p">)</span>
+            <span class="n">vec</span> <span class="o">=</span> <span class="n">model_clip</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s">"text"</span><span class="p">])</span>
+
+            <span class="c1"># Dropout 적용
+</span>            <span class="n">txt</span> <span class="o">=</span> <span class="n">dropout_condition</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"text_dropout"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">txt</span><span class="p">,</span> <span class="n">null_txt</span><span class="p">)</span>
+            <span class="n">vec</span> <span class="o">=</span> <span class="n">dropout_condition</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"text_dropout"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">vec</span><span class="p">,</span> <span class="n">null_vec</span><span class="p">)</span>
+
+            <span class="c1"># 노이즈 및 시간스텝 샘플링
+</span>            <span class="n">u</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">z_0</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">rand</span><span class="p">(</span><span class="n">z_0</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="p">.</span><span class="n">float32</span><span class="p">)</span>
+            
+            <span class="c1"># 시간 이동 (Time shift)
+</span>            <span class="n">t</span> <span class="o">=</span> <span class="n">time_shift</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"time_shift"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+
+            <span class="c1"># Rectified flow 준비
+</span>            <span class="n">zt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">z_0</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">u</span>
+            <span class="n">vt</span> <span class="o">=</span> <span class="n">u</span> <span class="o">-</span> <span class="n">z_0</span>
+
+            <span class="c1"># 모델 예측
+</span>            <span class="n">model_pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">pack</span><span class="p">([</span><span class="n">zt</span><span class="p">]</span> <span class="o">+</span> <span class="p">([]</span> <span class="k">if</span> <span class="n">cond</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="p">[</span><span class="n">cond</span><span class="p">]),</span> <span class="n">C</span><span class="p">),</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">txt</span><span class="o">=</span><span class="n">txt</span><span class="p">,</span>
+                <span class="n">vec</span><span class="o">=</span><span class="n">vec</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">pack_args</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># 손실 계산
+</span>            <span class="n">loss</span> <span class="o">=</span> <span class="n">get_batch_loss</span><span class="p">(</span><span class="n">model_pred</span><span class="p">,</span> <span class="n">vt</span><span class="p">,</span> <span class="n">cond</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># 마스크 사용
+</span>
+            <span class="c1"># 역전파 및 최적화
+</span>            <span class="n">booster</span><span class="p">.</span><span class="n">backward</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
+            <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">lr_scheduler</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+            <span class="c1"># EMA 업데이트
+</span>            <span class="k">if</span> <span class="n">ema</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">update_ema</span><span class="p">(</span><span class="n">ema</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">module</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">decay</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">ema_decay</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>훈련 프로세스 특징:</strong></p>
+<ul>
+  <li><strong>조건부 학습</strong>: 시각적/텍스트 조건 통합</li>
+  <li><strong>Rectified Flow</strong>: 효율적인 확산 과정</li>
+  <li><strong>마스크 기반 손실</strong>: 조건부 영역만 학습</li>
+  <li><strong>EMA 업데이트</strong>: 안정적인 모델 유지</li>
+</ul>
+
+<h2 id="4-vae-훈련-스크립트-분석">4. VAE 훈련 스크립트 분석</h2>
+
+<h3 id="41-vae-특화-훈련-설정">4.1 VAE 특화 훈련 설정</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># scripts/vae/train.py
+</span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># ======================================================
+</span>    <span class="c1"># 1. 설정 및 런타임 변수
+</span>    <span class="c1"># ======================================================
+</span>    <span class="n">cfg</span> <span class="o">=</span> <span class="n">parse_configs</span><span class="p">()</span>
+
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">to_torch_dtype</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"dtype"</span><span class="p">,</span> <span class="s">"bf16"</span><span class="p">))</span>
+    <span class="n">device</span><span class="p">,</span> <span class="n">coordinator</span> <span class="o">=</span> <span class="n">setup_device</span><span class="p">()</span>
+    <span class="n">checkpoint_io</span> <span class="o">=</span> <span class="n">CheckpointIO</span><span class="p">()</span>
+    <span class="n">set_seed</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"seed"</span><span class="p">,</span> <span class="mi">1024</span><span class="p">))</span>
+
+    <span class="c1"># ColossalAI 플러그인 설정
+</span>    <span class="n">plugin_type</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"plugin"</span><span class="p">,</span> <span class="s">"zero2"</span><span class="p">)</span>
+    <span class="n">plugin_config</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"plugin_config"</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">plugin</span> <span class="o">=</span> <span class="n">create_colossalai_plugin</span><span class="p">(</span>
+        <span class="n">plugin</span><span class="o">=</span><span class="n">plugin_type</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"dtype"</span><span class="p">,</span> <span class="s">"bf16"</span><span class="p">),</span>
+        <span class="n">grad_clip</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"grad_clip"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="o">**</span><span class="n">plugin_config</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">booster</span> <span class="o">=</span> <span class="n">Booster</span><span class="p">(</span><span class="n">plugin</span><span class="o">=</span><span class="n">plugin</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>VAE 훈련 특징:</strong></p>
+<ul>
+  <li><strong>ZeRO 최적화</strong>: 대용량 VAE 모델 지원</li>
+  <li><strong>혼합 정밀도</strong>: 메모리 효율성</li>
+  <li><strong>분산 훈련</strong>: 멀티 GPU 지원</li>
+</ul>
+
+<h3 id="42-vae-모델-및-손실-함수">4.2 VAE 모델 및 손실 함수</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1"># ======================================================
+</span>    <span class="c1"># 2. VAE 모델 구성
+</span>    <span class="c1"># ======================================================
+</span>    <span class="c1"># 생성자 (Encoder-Decoder)
+</span>    <span class="n">generator</span> <span class="o">=</span> <span class="n">build_module</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">vae</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">)</span>
+    <span class="n">generator</span> <span class="o">=</span> <span class="n">generator</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+    <span class="c1"># 판별자 (Discriminator)
+</span>    <span class="n">discriminator</span> <span class="o">=</span> <span class="n">build_module</span><span class="p">(</span><span class="n">cfg</span><span class="p">.</span><span class="n">discriminator</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">)</span> <span class="k">if</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"discriminator"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">discriminator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">discriminator</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+    <span class="c1"># 손실 함수
+</span>    <span class="n">generator_loss_fn</span> <span class="o">=</span> <span class="n">GeneratorLoss</span><span class="p">(</span>
+        <span class="n">pixel_loss</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">generator</span><span class="p">.</span><span class="n">pixel_loss</span><span class="p">,</span>
+        <span class="n">perceptual_loss</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">generator</span><span class="p">.</span><span class="n">perceptual_loss</span><span class="p">,</span>
+        <span class="n">adversarial_loss</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">generator</span><span class="p">.</span><span class="n">adversarial_loss</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">discriminator_loss_fn</span> <span class="o">=</span> <span class="n">DiscriminatorLoss</span><span class="p">(</span>
+        <span class="n">loss</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">discriminator</span><span class="p">.</span><span class="n">loss</span><span class="p">,</span>
+    <span class="p">)</span> <span class="k">if</span> <span class="n">discriminator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">None</span>
+
+    <span class="n">vae_loss_fn</span> <span class="o">=</span> <span class="n">VAELoss</span><span class="p">(</span>
+        <span class="n">kl_loss</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">vae</span><span class="p">.</span><span class="n">kl_loss</span><span class="p">,</span>
+        <span class="n">pixel_loss</span><span class="o">=</span><span class="n">cfg</span><span class="p">.</span><span class="n">vae</span><span class="p">.</span><span class="n">pixel_loss</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>VAE 구성 요소:</strong></p>
+<ul>
+  <li><strong>생성자</strong>: 인코더-디코더 구조</li>
+  <li><strong>판별자</strong>: 적대적 훈련용 (선택적)</li>
+  <li><strong>다중 손실</strong>: Pixel, Perceptual, KL, Adversarial 손실</li>
+</ul>
+
+<h3 id="43-vae-훈련-루프">4.3 VAE 훈련 루프</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1"># ======================================================
+</span>    <span class="c1"># 3. VAE 훈련 루프
+</span>    <span class="c1"># ======================================================
+</span>    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_epoch</span><span class="p">,</span> <span class="n">cfg</span><span class="p">.</span><span class="n">max_epochs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start_step</span><span class="p">):</span>
+            <span class="c1"># ===== Generator 훈련 =====
+</span>            <span class="c1"># VAE forward
+</span>            <span class="n">posterior</span> <span class="o">=</span> <span class="n">generator</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s">"video"</span><span class="p">])</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">posterior</span><span class="p">.</span><span class="n">sample</span><span class="p">()</span>
+            <span class="n">reconstructed</span> <span class="o">=</span> <span class="n">generator</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+            <span class="c1"># VAE 손실 (KL + Reconstruction)
+</span>            <span class="n">vae_loss</span> <span class="o">=</span> <span class="n">vae_loss_fn</span><span class="p">(</span>
+                <span class="n">inputs</span><span class="o">=</span><span class="n">batch</span><span class="p">[</span><span class="s">"video"</span><span class="p">],</span>
+                <span class="n">reconstructions</span><span class="o">=</span><span class="n">reconstructed</span><span class="p">,</span>
+                <span class="n">posteriors</span><span class="o">=</span><span class="n">posterior</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Generator 손실 (Pixel + Perceptual + Adversarial)
+</span>            <span class="k">if</span> <span class="n">discriminator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="c1"># 판별자로부터 피드백
+</span>                <span class="n">logits_fake</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">reconstructed</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logits_fake</span> <span class="o">=</span> <span class="bp">None</span>
+
+            <span class="n">generator_loss</span> <span class="o">=</span> <span class="n">generator_loss_fn</span><span class="p">(</span>
+                <span class="n">inputs</span><span class="o">=</span><span class="n">batch</span><span class="p">[</span><span class="s">"video"</span><span class="p">],</span>
+                <span class="n">reconstructions</span><span class="o">=</span><span class="n">reconstructed</span><span class="p">,</span>
+                <span class="n">logits_fake</span><span class="o">=</span><span class="n">logits_fake</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">total_g_loss</span> <span class="o">=</span> <span class="n">vae_loss</span> <span class="o">+</span> <span class="n">generator_loss</span>
+
+            <span class="c1"># Generator 업데이트
+</span>            <span class="n">optimizer_g</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="n">booster</span><span class="p">.</span><span class="n">backward</span><span class="p">(</span><span class="n">total_g_loss</span><span class="p">,</span> <span class="n">optimizer_g</span><span class="p">)</span>
+            <span class="n">optimizer_g</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+
+            <span class="c1"># ===== Discriminator 훈련 =====
+</span>            <span class="k">if</span> <span class="n">discriminator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">step</span> <span class="o">%</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"d_reg_every"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Real/Fake 분류
+</span>                <span class="n">logits_real</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s">"video"</span><span class="p">])</span>
+                <span class="n">logits_fake</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">reconstructed</span><span class="p">.</span><span class="n">detach</span><span class="p">())</span>
+
+                <span class="c1"># Discriminator 손실
+</span>                <span class="n">discriminator_loss</span> <span class="o">=</span> <span class="n">discriminator_loss_fn</span><span class="p">(</span>
+                    <span class="n">logits_real</span><span class="o">=</span><span class="n">logits_real</span><span class="p">,</span>
+                    <span class="n">logits_fake</span><span class="o">=</span><span class="n">logits_fake</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Discriminator 업데이트
+</span>                <span class="n">optimizer_d</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+                <span class="n">booster</span><span class="p">.</span><span class="n">backward</span><span class="p">(</span><span class="n">discriminator_loss</span><span class="p">,</span> <span class="n">optimizer_d</span><span class="p">)</span>
+                <span class="n">optimizer_d</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><strong>VAE 훈련 특징:</strong></p>
+<ul>
+  <li><strong>이중 최적화</strong>: Generator와 Discriminator 교대 훈련</li>
+  <li><strong>다중 손실</strong>: KL, Pixel, Perceptual, Adversarial 손실 조합</li>
+  <li><strong>적대적 훈련</strong>: GAN 스타일 훈련 (선택적)</li>
+  <li><strong>정규화</strong>: 주기적 판별자 업데이트</li>
+</ul>
+
+<h2 id="5-데이터-전처리-도구-분석">5. 데이터 전처리 도구 분석</h2>
+
+<h3 id="51-메타데이터-추출-도구">5.1 메타데이터 추출 도구</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># scripts/cnv/meta.py
+</span><span class="k">def</span> <span class="nf">get_video_info</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="s">"""비디오 파일에서 메타데이터 추출"""</span>
+    <span class="n">vframes</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">vinfo</span> <span class="o">=</span> <span class="n">read_video</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pts_unit</span><span class="o">=</span><span class="s">"sec"</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s">"TCHW"</span><span class="p">)</span>
+    <span class="n">num_frames</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">vframes</span><span class="p">.</span><span class="n">shape</span>
+    <span class="n">fps</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">vinfo</span><span class="p">[</span><span class="s">"video_fps"</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">aspect_ratio</span> <span class="o">=</span> <span class="n">height</span> <span class="o">/</span> <span class="n">width</span> <span class="k">if</span> <span class="n">width</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">np</span><span class="p">.</span><span class="n">nan</span>
+    <span class="n">resolution</span> <span class="o">=</span> <span class="n">height</span> <span class="o">*</span> <span class="n">width</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="n">num_frames</span><span class="p">,</span> <span class="n">aspect_ratio</span><span class="p">,</span> <span class="n">resolution</span><span class="p">],</span>
+        <span class="n">index</span><span class="o">=</span><span class="p">[</span>
+            <span class="s">"height"</span><span class="p">,</span> <span class="s">"width"</span><span class="p">,</span> <span class="s">"fps"</span><span class="p">,</span> <span class="s">"num_frames"</span><span class="p">,</span> 
+            <span class="s">"aspect_ratio"</span><span class="p">,</span> <span class="s">"resolution"</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="nb">input</span><span class="p">)</span>
+    
+    <span class="c1"># 병렬 처리 설정
+</span>    <span class="nb">apply</span> <span class="o">=</span> <span class="n">set_parallel</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">num_workers</span><span class="p">)</span>
+    
+    <span class="c1"># 메타데이터 추출
+</span>    <span class="n">result</span> <span class="o">=</span> <span class="nb">apply</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">"path"</span><span class="p">],</span> <span class="n">get_video_info</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">result</span><span class="p">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+    
+    <span class="n">df</span><span class="p">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">output</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>메타데이터 추출 특징:</strong></p>
+<ul>
+  <li><strong>병렬 처리</strong>: 다중 프로세스로 빠른 처리</li>
+  <li><strong>포괄적 정보</strong>: 해상도, FPS, 프레임 수, 종횡비</li>
+  <li><strong>배치 처리</strong>: CSV 파일 단위 처리</li>
+  <li><strong>진행률 표시</strong>: tqdm 통합</li>
+</ul>
+
+<h3 id="52-데이터-병렬-처리">5.2 데이터 병렬 처리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">set_parallel</span><span class="p">(</span><span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">callable</span><span class="p">:</span>
+    <span class="s">"""병렬 처리 함수 설정"""</span>
+    <span class="k">if</span> <span class="n">num_workers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># 단일 프로세스 모드
+</span>        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">x</span><span class="p">.</span><span class="n">progress_apply</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 다중 프로세스 모드
+</span>        <span class="k">if</span> <span class="n">num_workers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">pandarallel</span><span class="p">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">progress_bar</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nb_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pandarallel</span><span class="p">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">progress_bar</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">x</span><span class="p">.</span><span class="n">parallel_apply</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="6-실제-사용-예제">6. 실제 사용 예제</h2>
+
+<h3 id="61-추론-실행-예제">6.1 추론 실행 예제</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 기본 텍스트-투-비디오 추론</span>
+python scripts/diffusion/inference.py <span class="se">\</span>
+    <span class="nt">--config</span> configs/opensora-v1-2/inference/sample.yaml <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A beautiful sunset over the ocean with waves"</span> <span class="se">\</span>
+    <span class="nt">--save_dir</span> ./outputs <span class="se">\</span>
+    <span class="nt">--num_samples</span> 4 <span class="se">\</span>
+    <span class="nt">--seed</span> 42
+
+<span class="c"># T2I2V (텍스트→이미지→비디오) 추론</span>
+python scripts/diffusion/inference.py <span class="se">\</span>
+    <span class="nt">--config</span> configs/opensora-v1-2/inference/sample.yaml <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A cat playing in the garden"</span> <span class="se">\</span>
+    <span class="nt">--use_t2i2v</span> <span class="nb">true</span> <span class="se">\</span>
+    <span class="nt">--img_resolution</span> 768px <span class="se">\</span>
+    <span class="nt">--save_dir</span> ./outputs
+
+<span class="c"># 조건부 비디오 생성 (I2V)</span>
+python scripts/diffusion/inference.py <span class="se">\</span>
+    <span class="nt">--config</span> configs/opensora-v1-2/inference/sample.yaml <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Continue this scene"</span> <span class="se">\</span>
+    <span class="nt">--cond_type</span> i2v_head <span class="se">\</span>
+    <span class="nt">--ref</span> /path/to/reference_image.jpg <span class="se">\</span>
+    <span class="nt">--save_dir</span> ./outputs
+</code></pre></div></div>
+
+<h3 id="62-훈련-실행-예제">6.2 훈련 실행 예제</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Diffusion 모델 훈련</span>
+python scripts/diffusion/train.py <span class="se">\</span>
+    <span class="nt">--config</span> configs/opensora-v1-2/train/stage1.yaml <span class="se">\</span>
+    <span class="nt">--data_path</span> /path/to/video_dataset.csv <span class="se">\</span>
+    <span class="nt">--epochs</span> 100 <span class="se">\</span>
+    <span class="nt">--batch_size</span> 4 <span class="se">\</span>
+    <span class="nt">--lr</span> 1e-4
+
+<span class="c"># VAE 모델 훈련</span>
+python scripts/vae/train.py <span class="se">\</span>
+    <span class="nt">--config</span> configs/vae/train.yaml <span class="se">\</span>
+    <span class="nt">--data_path</span> /path/to/video_dataset.csv <span class="se">\</span>
+    <span class="nt">--max_epochs</span> 50 <span class="se">\</span>
+    <span class="nt">--batch_size</span> 8 <span class="se">\</span>
+    <span class="nt">--use_discriminator</span> <span class="nb">true</span>
+
+<span class="c"># 체크포인트에서 재개</span>
+python scripts/diffusion/train.py <span class="se">\</span>
+    <span class="nt">--config</span> configs/opensora-v1-2/train/stage2.yaml <span class="se">\</span>
+    <span class="nt">--load</span> /path/to/checkpoint <span class="se">\</span>
+    <span class="nt">--start_epoch</span> 10 <span class="se">\</span>
+    <span class="nt">--update_warmup_steps</span> <span class="nb">true</span>
+</code></pre></div></div>
+
+<h3 id="63-데이터-전처리-예제">6.3 데이터 전처리 예제</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 비디오 메타데이터 추출</span>
+python scripts/cnv/meta.py <span class="se">\</span>
+    <span class="nt">--input</span> video_list.csv <span class="se">\</span>
+    <span class="nt">--output</span> video_with_metadata.csv <span class="se">\</span>
+    <span class="nt">--num_workers</span> 8
+
+<span class="c"># 입력 CSV 형식</span>
+<span class="c"># path</span>
+<span class="c"># /path/to/video1.mp4</span>
+<span class="c"># /path/to/video2.mp4</span>
+
+<span class="c"># 출력 CSV 형식 (메타데이터 추가됨)</span>
+<span class="c"># path,height,width,fps,num_frames,aspect_ratio,resolution</span>
+<span class="c"># /path/to/video1.mp4,720,1280,30.0,150,0.5625,921600</span>
+</code></pre></div></div>
+
+<h2 id="7-성능-최적화-및-모니터링">7. 성능 최적화 및 모니터링</h2>
+
+<h3 id="71-메모리-최적화-기법">7.1 메모리 최적화 기법</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 메모리 효율적 추론 설정
+</span><span class="o">@</span><span class="n">torch</span><span class="p">.</span><span class="n">inference_mode</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">memory_efficient_inference</span><span class="p">():</span>
+    <span class="c1"># Gradient 비활성화
+</span>    <span class="n">torch</span><span class="p">.</span><span class="n">set_grad_enabled</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    
+    <span class="c1"># 모델 오프로딩
+</span>    <span class="k">if</span> <span class="n">cfg</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"offload_model"</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="c1"># 사용하지 않는 모델을 CPU로 이동
+</span>        <span class="n">model</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s">"cpu"</span><span class="p">)</span>
+        <span class="n">model_ae</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s">"cpu"</span><span class="p">)</span>
+        
+        <span class="c1"># 필요할 때만 GPU로 로드
+</span>        <span class="n">model</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="n">model</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s">"cpu"</span><span class="p">)</span>
+    
+    <span class="c1"># Mixed precision 사용
+</span>    <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">autocast</span><span class="p">(</span><span class="n">device_type</span><span class="o">=</span><span class="s">"cuda"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="p">.</span><span class="n">bfloat16</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="72-분산-훈련-모니터링">7.2 분산 훈련 모니터링</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 훈련 진행률 및 메트릭 모니터링
+</span><span class="k">def</span> <span class="nf">training_monitoring</span><span class="p">():</span>
+    <span class="c1"># 메모리 사용량 로깅
+</span>    <span class="n">log_cuda_memory</span><span class="p">(</span><span class="s">"after forward"</span><span class="p">)</span>
+    <span class="n">log_cuda_memory</span><span class="p">(</span><span class="s">"after backward"</span><span class="p">)</span>
+    <span class="n">log_cuda_max_memory</span><span class="p">(</span><span class="s">"training step"</span><span class="p">)</span>
+    
+    <span class="c1"># 손실 로깅
+</span>    <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="n">log_every</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s">, Step </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s">, Loss: </span><span class="si">{</span><span class="n">loss</span><span class="p">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="p">.</span><span class="mi">6</span><span class="n">f</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        
+        <span class="c1"># Tensorboard 로깅
+</span>        <span class="k">if</span> <span class="n">writer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">writer</span><span class="p">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">"train/loss"</span><span class="p">,</span> <span class="n">loss</span><span class="p">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">global_step</span><span class="p">)</span>
+            <span class="n">writer</span><span class="p">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">"train/lr"</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">"lr"</span><span class="p">],</span> <span class="n">global_step</span><span class="p">)</span>
+    
+    <span class="c1"># 체크포인트 저장
+</span>    <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="n">ckpt_every</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">checkpoint_io</span><span class="p">.</span><span class="n">save</span><span class="p">(</span>
+            <span class="n">booster</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">ema</span><span class="o">=</span><span class="n">ema</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="n">lr_scheduler</span><span class="p">,</span>
+            <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">global_step</span>
+        <span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="73-성능-프로파일링">7.3 성능 프로파일링</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># PyTorch Profiler를 이용한 성능 분석
+</span><span class="kn">from</span> <span class="nn">torch.profiler</span> <span class="kn">import</span> <span class="n">profile</span><span class="p">,</span> <span class="n">ProfilerActivity</span>
+
+<span class="k">def</span> <span class="nf">profile_training</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">profile</span><span class="p">(</span>
+        <span class="n">activities</span><span class="o">=</span><span class="p">[</span><span class="n">ProfilerActivity</span><span class="p">.</span><span class="n">CPU</span><span class="p">,</span> <span class="n">ProfilerActivity</span><span class="p">.</span><span class="n">CUDA</span><span class="p">],</span>
+        <span class="n">schedule</span><span class="o">=</span><span class="n">torch</span><span class="p">.</span><span class="n">profiler</span><span class="p">.</span><span class="n">schedule</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">on_trace_ready</span><span class="o">=</span><span class="n">torch</span><span class="p">.</span><span class="n">profiler</span><span class="p">.</span><span class="n">tensorboard_trace_handler</span><span class="p">(</span><span class="s">'./profiler_logs'</span><span class="p">),</span>
+        <span class="n">record_shapes</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">profile_memory</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">with_stack</span><span class="o">=</span><span class="bp">True</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">prof</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataloader</span><span class="p">):</span>
+            <span class="c1"># 훈련 코드
+</span>            <span class="n">loss</span> <span class="o">=</span> <span class="n">training_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+            
+            <span class="n">prof</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># 프로파일러 스텝
+</span>            
+            <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+</code></pre></div></div>
+
+<h2 id="8-고급-워크플로우-패턴">8. 고급 워크플로우 패턴</h2>
+
+<h3 id="81-다단계-훈련-파이프라인">8.1 다단계 훈련 파이프라인</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 다단계 훈련 워크플로우
+</span><span class="k">class</span> <span class="nc">MultiStageTraining</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">current_stage</span> <span class="o">=</span> <span class="mi">0</span>
+        
+    <span class="k">def</span> <span class="nf">run_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage_config</span><span class="p">):</span>
+        <span class="s">"""단일 스테이지 실행"""</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Starting training stage </span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">current_stage</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        
+        <span class="c1"># 모델 및 데이터 준비
+</span>        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">prepare_model</span><span class="p">(</span><span class="n">stage_config</span><span class="p">)</span>
+        <span class="n">dataloader</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">prepare_dataloader</span><span class="p">(</span><span class="n">stage_config</span><span class="p">)</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">create_optimizer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">stage_config</span><span class="p">)</span>
+        
+        <span class="c1"># 이전 스테이지에서 체크포인트 로드
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">current_stage</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
+        
+        <span class="c1"># 훈련 실행
+</span>        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">stage_config</span><span class="p">.</span><span class="n">epochs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">train_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
+            
+        <span class="c1"># 다음 스테이지를 위한 체크포인트 저장
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">current_stage</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+    <span class="k">def</span> <span class="nf">run_full_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""전체 다단계 파이프라인 실행"""</span>
+        <span class="k">for</span> <span class="n">stage_config</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">stages</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">run_stage</span><span class="p">(</span><span class="n">stage_config</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="82-적응적-배치-크기-조정">8.2 적응적 배치 크기 조정</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 메모리에 따른 적응적 배치 크기
+</span><span class="k">class</span> <span class="nc">AdaptiveBatchSize</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">max_batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">initial_batch_size</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">max_batch_size</span> <span class="o">=</span> <span class="n">max_batch_size</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">oom_count</span> <span class="o">=</span> <span class="mi">0</span>
+        
+    <span class="k">def</span> <span class="nf">adjust_batch_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataloader</span><span class="p">):</span>
+        <span class="s">"""OOM 발생시 배치 크기 조정"""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># 정상 훈련
+</span>            <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataloader</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">batch</span>
+                
+        <span class="k">except</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">OutOfMemoryError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">oom_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">batch_size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># 배치 크기 절반으로 감소
+</span>                <span class="bp">self</span><span class="p">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">batch_size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">logger</span><span class="p">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s">"OOM detected. Reducing batch size to </span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">batch_size</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+                
+                <span class="c1"># 새로운 데이터로더 생성
+</span>                <span class="n">new_dataloader</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">create_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">batch_size</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="k">from</span> <span class="bp">self</span><span class="p">.</span><span class="n">adjust_batch_size</span><span class="p">(</span><span class="n">new_dataloader</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>  <span class="c1"># 배치 크기가 1인데도 OOM이면 에러
+</span></code></pre></div></div>
+
+<h2 id="9-한계점-및-개선-방향">9. 한계점 및 개선 방향</h2>
+
+<h3 id="91-현재-한계점">9.1 현재 한계점</h3>
+
+<ol>
+  <li><strong>메모리 사용량</strong>: 대용량 비디오 처리시 높은 메모리 요구</li>
+  <li><strong>훈련 시간</strong>: 긴 훈련 시간과 수렴 속도</li>
+  <li><strong>설정 복잡성</strong>: 다양한 하이퍼파라미터 튜닝 필요</li>
+  <li><strong>디버깅</strong>: 분산 환경에서의 디버깅 어려움</li>
+</ol>
+
+<h3 id="92-개선-방향">9.2 개선 방향</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 미래 개선 방향 (예시)
+</span><span class="k">class</span> <span class="nc">NextGenTrainingPipeline</span><span class="p">:</span>
+    <span class="s">"""차세대 훈련 파이프라인"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">auto_tuner</span> <span class="o">=</span> <span class="n">AutoHyperparameterTuner</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">memory_optimizer</span> <span class="o">=</span> <span class="n">IntelligentMemoryManager</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">convergence_accelerator</span> <span class="o">=</span> <span class="n">ConvergenceAccelerator</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">intelligent_training</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""지능형 훈련 시스템"""</span>
+        <span class="c1"># 자동 하이퍼파라미터 튜닝
+</span>        <span class="n">optimal_params</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">auto_tuner</span><span class="p">.</span><span class="n">find_optimal_params</span><span class="p">()</span>
+        
+        <span class="c1"># 적응적 메모리 관리
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">memory_optimizer</span><span class="p">.</span><span class="n">optimize_memory_usage</span><span class="p">()</span>
+        
+        <span class="c1"># 수렴 가속화
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">convergence_accelerator</span><span class="p">.</span><span class="n">accelerate_training</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">real_time_monitoring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""실시간 모니터링 및 알림"""</span>
+        <span class="c1"># 성능 이상 감지
+</span>        <span class="c1"># 자동 체크포인트 저장
+</span>        <span class="c1"># 슬랙/이메일 알림
+</span>        <span class="k">pass</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>Open-Sora의 훈련 및 추론 스크립트는 대규모 AI 비디오 생성 모델을 위한 완전한 파이프라인을 제공합니다.</p>
+
+<p><strong>핵심 성과:</strong></p>
+<ul>
+  <li><strong>완전한 워크플로우</strong>: 데이터 전처리부터 모델 배포까지</li>
+  <li><strong>분산 처리</strong>: 멀티 GPU 훈련 및 추론 지원</li>
+  <li><strong>메모리 효율성</strong>: 다양한 최적화 기법 적용</li>
+  <li><strong>유연한 설정</strong>: 설정 기반의 모듈식 구조</li>
+</ul>
+
+<p>이러한 스크립트들은 Open-Sora가 연구용 프로토타입을 넘어 실제 프로덕션 환경에서 사용 가능한 수준의 완성도를 보여줍니다. 앞으로 더욱 지능적이고 자동화된 훈련/추론 시스템으로 발전하여 사용자 편의성과 성능을 동시에 향상시킬 것으로 기대됩니다.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/08/22/foundation-models-post-training-strategies/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">파운데이션 모델 이해하기 (2부) - 사후 학습과 파인튜닝 전략 심층 분석</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/09/18/foundation-models-sampling-generation-strategies/" rel="next">
+          <span class="nav-title">파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략 심층 분석</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

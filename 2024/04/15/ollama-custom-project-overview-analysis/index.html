@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Ollama Custom 프로젝트 개요 분석 - 로컬 LLM 실행 플랫폼의 아키텍처 | AI Development Blog</title>
+<meta name="description" content="Ollama Custom 프로젝트 개요 분석Ollama Custom은 로컬 환경에서 대규모 언어 모델(LLM)을 실행하기 위한 플랫폼입니다. 이 프로젝트는 원본 Ollama를 개인적으로 커스터마이징한 버전으로, Go 언어로 구현된 고성능 LLM 실행 환경을 제공합니다.1. 프로젝트...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="Ollama, Go, Language Models, Local AI, Custom Implementation">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/04/15/ollama-custom-project-overview-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ollama Custom 프로젝트 개요 분석 - 로컬 LLM 실행 플랫폼의 아키텍처">
+<meta property="og:description" content="Ollama Custom 프로젝트 개요 분석Ollama Custom은 로컬 환경에서 대규모 언어 모델(LLM)을 실행하기 위한 플랫폼입니다. 이 프로젝트는 원본 Ollama를 개인적으로 커스터마이징한 버전으로, Go 언어로 구현된 고성능 LLM 실행 환경을 제공합니다.1. 프로젝트...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/04/15/ollama-custom-project-overview-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ollama Custom 프로젝트 개요 분석 - 로컬 LLM 실행 플랫폼의 아키텍처">
+<meta name="twitter:description" content="Ollama Custom 프로젝트 개요 분석Ollama Custom은 로컬 환경에서 대규모 언어 모델(LLM)을 실행하기 위한 플랫폼입니다. 이 프로젝트는 원본 Ollama를 개인적으로 커스터마이징한 버전으로, Go 언어로 구현된 고성능 LLM 실행 환경을 제공합니다.1. 프로젝트...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Ollama Custom 프로젝트 개요 분석 - 로컬 LLM 실행 플랫폼의 아키텍처",
+  "description": "Ollama Custom 프로젝트 개요 분석
+
+Ollama Custom은 로컬 환경에서 대규모 언어 모델(LLM)을 실행하기 위한 플랫폼입니다. 이 프로젝트는 원본 Ollama를 개인적으로 커스터마이징한 버전으로, Go 언어로 구현된 고성능 LLM 실행 환경을 제공합니다.
+
+1. ...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-04-15T00:00:00+00:00",
+  "dateModified": "2024-04-15T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/04/15/ollama-custom-project-overview-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/04/15/ollama-custom-project-overview-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["Ollama","Go","Language Models","Local AI","Custom Implementation"],
+  "articleSection": ["AI","Go","LLM"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Ollama Custom 프로젝트 개요 분석 - 로컬 LLM 실행 플랫폼의 아키텍처</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Ollama Custom 프로젝트 개요 분석 - 로컬 LLM 실행 플랫폼의 아키텍처</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-04-15T00:00:00+00:00">Apr 15, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Go</li><li>LLM</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="ollama-custom-프로젝트-개요-분석">Ollama Custom 프로젝트 개요 분석</h1>
+
+<p>Ollama Custom은 로컬 환경에서 대규모 언어 모델(LLM)을 실행하기 위한 플랫폼입니다. 이 프로젝트는 원본 Ollama를 개인적으로 커스터마이징한 버전으로, Go 언어로 구현된 고성능 LLM 실행 환경을 제공합니다.</p>
+
+<h2 id="1-프로젝트-구조-개요">1. 프로젝트 구조 개요</h2>
+
+<h3 id="11-핵심-디렉토리-구성">1.1 핵심 디렉토리 구성</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ollama-custom/
+├── main.go                 # 애플리케이션 진입점
+├── cmd/                    # CLI 명령어 구현
+├── server/                 # HTTP 서버 및 API 라우팅
+├── api/                    # 클라이언트-서버 통신 프로토콜
+├── llm/                    # LLM 런타임 엔진
+├── model/                  # 모델 관리 시스템
+├── template/               # 프롬프트 템플릿 엔진
+├── fs/                     # 파일 시스템 추상화
+├── envconfig/              # 환경 설정 관리
+├── types/                  # 커스텀 타입 정의
+└── runner/                 # 모델 실행 환경
+</code></pre></div></div>
+
+<h3 id="12-프로젝트-진입점">1.2 프로젝트 진입점</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// main.go</span>
+<span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"context"</span>
+
+	<span class="s">"github.com/spf13/cobra"</span>
+
+	<span class="s">"github.com/ollama/ollama/cmd"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">cobra</span><span class="o">.</span><span class="n">CheckErr</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">NewCLI</span><span class="p">()</span><span class="o">.</span><span class="n">ExecuteContext</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">()))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>분석 포인트:</strong></p>
+<ul>
+  <li><strong>단순한 진입점</strong>: 복잡한 초기화 로직 없이 Cobra CLI 프레임워크로 위임</li>
+  <li><strong>컨텍스트 활용</strong>: <code class="language-plaintext highlighter-rouge">context.Background()</code>로 전체 애플리케이션 생명주기 관리</li>
+  <li><strong>에러 처리</strong>: <code class="language-plaintext highlighter-rouge">cobra.CheckErr()</code>로 CLI 레벨에서 통합 에러 처리</li>
+</ul>
+
+<h2 id="2-go-모듈-의존성-분석">2. Go 모듈 의존성 분석</h2>
+
+<h3 id="21-핵심-의존성">2.1 핵심 의존성</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// go.mod 주요 의존성</span>
+<span class="n">require</span> <span class="p">(</span>
+    <span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">containerd</span><span class="o">/</span><span class="n">console</span> <span class="n">v1</span><span class="m">.0.3</span>      <span class="c">// 터미널 제어</span>
+    <span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">gin</span><span class="o">-</span><span class="n">gonic</span><span class="o">/</span><span class="n">gin</span> <span class="n">v1</span><span class="m">.10.0</span>          <span class="c">// HTTP 웹 프레임워크</span>
+    <span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">spf13</span><span class="o">/</span><span class="n">cobra</span> <span class="n">v1</span><span class="m">.7.0</span>             <span class="c">// CLI 프레임워크</span>
+    <span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">google</span><span class="o">/</span><span class="n">uuid</span> <span class="n">v1</span><span class="m">.6.0</span>             <span class="c">// UUID 생성</span>
+    <span class="n">golang</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">x</span><span class="o">/</span><span class="n">sync</span> <span class="n">v0</span><span class="m">.12.0</span>                 <span class="c">// 고급 동기화 프리미티브</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>의존성 특징:</strong></p>
+<ul>
+  <li><strong>웹 서버</strong>: Gin을 활용한 고성능 HTTP 서버</li>
+  <li><strong>CLI</strong>: Cobra를 통한 풍부한 명령행 인터페이스</li>
+  <li><strong>동시성</strong>: Go의 고급 동시성 패턴 활용</li>
+  <li><strong>시스템</strong>: 크로스 플랫폼 시스템 통합</li>
+</ul>
+
+<h3 id="22-머신러닝-특화-의존성">2.2 머신러닝 특화 의존성</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">require</span> <span class="p">(</span>
+    <span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pdevine</span><span class="o">/</span><span class="n">tensor</span> <span class="n">v0</span><span class="m">.0.0</span><span class="o">-</span><span class="m">20240510204454</span><span class="o">-</span><span class="n">f88f4562727c</span>
+    <span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">nlpodyssey</span><span class="o">/</span><span class="n">gopickle</span> <span class="n">v0</span><span class="m">.3.0</span>
+    <span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">x448</span><span class="o">/</span><span class="n">float16</span> <span class="n">v0</span><span class="m">.8.4</span>
+    <span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">d4l3k</span><span class="o">/</span><span class="k">go</span><span class="o">-</span><span class="n">bfloat16</span> <span class="n">v0</span><span class="m">.0.0</span><span class="o">-</span><span class="m">20211005043715</span><span class="o">-</span><span class="m">690</span><span class="n">c3bdd05f1</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>ML 최적화:</strong></p>
+<ul>
+  <li><strong>텐서 연산</strong>: 효율적인 다차원 배열 처리</li>
+  <li><strong>모델 직렬화</strong>: Python Pickle 파일 파싱</li>
+  <li><strong>수치 정밀도</strong>: Float16, BFloat16 지원으로 메모리 최적화</li>
+</ul>
+
+<h2 id="3-커스터마이징-특징">3. 커스터마이징 특징</h2>
+
+<h3 id="31-개인화-목적">3.1 개인화 목적</h3>
+
+<p>README.md에서 명시된 바와 같이:</p>
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[English] This project is for my personal customization and use.
+[한국어] 이 프로젝트는 나 나름대로 커스터마이징 하여 사용하기 위함임.
+</code></pre></div></div>
+
+<p><strong>커스터마이징 방향:</strong></p>
+<ul>
+  <li>개인 워크플로우에 최적화된 기능</li>
+  <li>한국어 지원 강화</li>
+  <li>특정 사용 사례에 맞춘 성능 튜닝</li>
+</ul>
+
+<h3 id="32-지원-모델-스펙트럼">3.2 지원 모델 스펙트럼</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>모델</th>
+      <th>파라미터</th>
+      <th>크기</th>
+      <th>실행 명령</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Gemma 3</td>
+      <td>1B</td>
+      <td>815MB</td>
+      <td><code class="language-plaintext highlighter-rouge">ollama run gemma3:1b</code></td>
+    </tr>
+    <tr>
+      <td>Gemma 3</td>
+      <td>4B</td>
+      <td>3.3GB</td>
+      <td><code class="language-plaintext highlighter-rouge">ollama run gemma3</code></td>
+    </tr>
+    <tr>
+      <td>Gemma 3</td>
+      <td>12B</td>
+      <td>8.1GB</td>
+      <td><code class="language-plaintext highlighter-rouge">ollama run gemma3:12b</code></td>
+    </tr>
+    <tr>
+      <td>Gemma 3</td>
+      <td>27B</td>
+      <td>17GB</td>
+      <td><code class="language-plaintext highlighter-rouge">ollama run gemma3:27b</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="4-아키텍처-설계-원칙">4. 아키텍처 설계 원칙</h2>
+
+<h3 id="41-모듈화-구조">4.1 모듈화 구조</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│     CLI     │────│   Server    │────│     LLM     │
+│   (cmd/)    │    │ (server/)   │    │   (llm/)    │
+└─────────────┘    └─────────────┘    └─────────────┘
+       │                   │                   │
+       └───────────────────┼───────────────────┘
+                           │
+                   ┌─────────────┐
+                   │    Model    │
+                   │  (model/)   │
+                   └─────────────┘
+</code></pre></div></div>
+
+<p><strong>설계 특징:</strong></p>
+<ul>
+  <li><strong>관심사 분리</strong>: CLI, 서버, LLM 엔진의 명확한 역할 구분</li>
+  <li><strong>플러그인 아키텍처</strong>: 모듈 간 느슨한 결합</li>
+  <li><strong>확장성</strong>: 새로운 모델이나 기능 추가 용이</li>
+</ul>
+
+<h3 id="42-플랫폼-지원-전략">4.2 플랫폼 지원 전략</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Dockerfile의 멀티 플랫폼 지원</span>
+<span class="k">ARG</span><span class="s"> FLAVOR=${TARGETARCH}</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">base-${TARGETARCH}</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">base</span>
+
+<span class="c"># CPU 최적화</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">base</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">cpu</span>
+<span class="k">RUN </span>dnf <span class="nb">install</span> <span class="nt">-y</span> gcc-toolset-11-gcc gcc-toolset-11-gcc-c++
+
+<span class="c"># GPU 가속 (CUDA)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">base</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">cuda-12</span>
+<span class="k">RUN </span>dnf <span class="nb">install</span> <span class="nt">-y</span> cuda-toolkit-<span class="k">${</span><span class="nv">CUDA12VERSION</span><span class="p">//./-</span><span class="k">}</span>
+
+<span class="c"># AMD GPU (ROCm)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">base</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">rocm-6</span>
+<span class="k">ENV</span><span class="s"> PATH=/opt/rocm/hcc/bin:/opt/rocm/hip/bin:/opt/rocm/bin:$PATH</span>
+</code></pre></div></div>
+
+<p><strong>플랫폼 최적화:</strong></p>
+<ul>
+  <li><strong>CPU</strong>: GCC 툴체인 최적화</li>
+  <li><strong>NVIDIA GPU</strong>: CUDA 12.x 지원</li>
+  <li><strong>AMD GPU</strong>: ROCm 6.x 지원</li>
+  <li><strong>ARM64</strong>: ARM 프로세서 네이티브 지원</li>
+</ul>
+
+<h2 id="5-성능-최적화-전략">5. 성능 최적화 전략</h2>
+
+<h3 id="51-메모리-효율성">5.1 메모리 효율성</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// types/syncmap을 활용한 동시성 제어</span>
+<span class="k">type</span> <span class="n">SyncMap</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">mu</span>    <span class="n">sync</span><span class="o">.</span><span class="n">RWMutex</span>
+    <span class="n">items</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="k">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>메모리 관리:</strong></p>
+<ul>
+  <li><strong>동시성 안전</strong>: sync.RWMutex를 통한 읽기/쓰기 분리</li>
+  <li><strong>타입 안전성</strong>: 제네릭을 활용한 타입 보장</li>
+  <li><strong>메모리 풀링</strong>: 대용량 모델 로딩 최적화</li>
+</ul>
+
+<h3 id="52-io-최적화">5.2 I/O 최적화</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// envconfig를 통한 설정 최적화</span>
+<span class="k">type</span> <span class="n">Config</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">ModelPath</span>    <span class="kt">string</span> <span class="s">`env:"OLLAMA_MODELS"`</span>
+    <span class="n">Host</span>         <span class="kt">string</span> <span class="s">`env:"OLLAMA_HOST"`</span>
+    <span class="n">Port</span>         <span class="kt">int</span>    <span class="s">`env:"OLLAMA_PORT"`</span>
+    <span class="n">Debug</span>        <span class="kt">bool</span>   <span class="s">`env:"OLLAMA_DEBUG"`</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>I/O 전략:</strong></p>
+<ul>
+  <li><strong>환경 변수 기반</strong>: 런타임 설정 변경</li>
+  <li><strong>캐싱 시스템</strong>: 모델 로딩 시간 단축</li>
+  <li><strong>스트리밍</strong>: 대용량 파일 처리 최적화</li>
+</ul>
+
+<h2 id="6-보안-및-안정성">6. 보안 및 안정성</h2>
+
+<h3 id="61-타입-안전성">6.1 타입 안전성</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// types/errtypes을 통한 에러 타입 시스템</span>
+<span class="k">type</span> <span class="n">ModelError</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">Model</span>   <span class="kt">string</span>
+    <span class="n">Message</span> <span class="kt">string</span>
+    <span class="n">Code</span>    <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">e</span> <span class="n">ModelError</span><span class="p">)</span> <span class="n">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"model %s: %s (code: %d)"</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">Message</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">Code</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong>안전성 보장:</strong></p>
+<ul>
+  <li><strong>강타입 에러</strong>: 에러 상황별 구체적인 타입 정의</li>
+  <li><strong>컨텍스트 보존</strong>: 에러 발생 시점의 상세 정보 유지</li>
+  <li><strong>복구 가능성</strong>: 에러 종류별 적절한 복구 전략</li>
+</ul>
+
+<h3 id="62-암호화-지원">6.2 암호화 지원</h3>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// crypto/ed25519를 활용한 키 관리</span>
+<span class="n">privateKey</span><span class="p">,</span> <span class="n">publicKey</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">ed25519</span><span class="o">.</span><span class="n">GenerateKey</span><span class="p">(</span><span class="n">rand</span><span class="o">.</span><span class="n">Reader</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Errorf</span><span class="p">(</span><span class="s">"failed to generate key: %w"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="7-개발-도구-및-빌드-시스템">7. 개발 도구 및 빌드 시스템</h2>
+
+<h3 id="71-빌드-자동화">7.1 빌드 자동화</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># scripts/build_linux.sh</span>
+<span class="c">#!/bin/bash</span>
+<span class="nb">set</span> <span class="nt">-e</span>
+
+<span class="c"># 플랫폼별 최적화 빌드</span>
+<span class="nv">CGO_ENABLED</span><span class="o">=</span>1 <span class="nv">GOOS</span><span class="o">=</span>linux <span class="nv">GOARCH</span><span class="o">=</span>amd64 go build <span class="nt">-tags</span> cuda
+<span class="nv">CGO_ENABLED</span><span class="o">=</span>1 <span class="nv">GOOS</span><span class="o">=</span>linux <span class="nv">GOARCH</span><span class="o">=</span>arm64 go build <span class="nt">-tags</span> rocm
+</code></pre></div></div>
+
+<h3 id="72-테스트-전략">7.2 테스트 전략</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server/
+├── routes_test.go          # API 라우팅 테스트
+├── model_test.go           # 모델 로딩 테스트
+├── sched_test.go           # 스케줄링 테스트
+└── testdata/               # 테스트 데이터
+</code></pre></div></div>
+
+<h2 id="8-결론">8. 결론</h2>
+
+<p>Ollama Custom은 현대적인 Go 개발 패턴을 적용한 고품질 LLM 플랫폼입니다:</p>
+
+<h3 id="81-주요-강점">8.1 주요 강점</h3>
+
+<ul>
+  <li><strong>모듈화된 아키텍처</strong>: 유지보수 및 확장 용이성</li>
+  <li><strong>크로스 플랫폼</strong>: CPU, GPU, ARM 모든 플랫폼 지원</li>
+  <li><strong>성능 최적화</strong>: 메모리, I/O, 동시성 최적화</li>
+  <li><strong>개발자 친화적</strong>: 풍부한 CLI와 API 인터페이스</li>
+</ul>
+
+<h3 id="82-커스터마이징-가치">8.2 커스터마이징 가치</h3>
+
+<ul>
+  <li><strong>개인화</strong>: 특정 워크플로우에 맞춘 최적화</li>
+  <li><strong>현지화</strong>: 한국어 지원 강화</li>
+  <li><strong>실험적 기능</strong>: 원본에 없는 혁신적 기능 테스트</li>
+</ul>
+
+<p>다음 포스트에서는 CLI 명령어 시스템의 상세 구현을 분석해보겠습니다.</p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/04/08/slips-network-discovery-module/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Slips 네트워크 발견 모듈 상세 분석</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/04/15/opensora-docker-environment-setup/" rel="next">
+          <span class="nav-title">Open-Sora Docker 환경 구성 완벽 가이드: CUDA부터 최적화까지</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

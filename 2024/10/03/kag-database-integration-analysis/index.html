@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>KAG 데이터베이스 통합 아키텍처 심층 분석 - Neo4j와 벡터 검색 시스템 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 KAG 데이터베이스 통합 아키텍처를 상세히 분석합니다. KAG는 지식 그래프 저장을 위한 Neo4j, 벡터 검색을 위한 임베딩 시스템, 그리고 다중 모달 데이터 처리를 통합한 복합 데이터베이스 아키텍처를 제공합니다.1. KAG 데이터베이스 아키텍처 개요1.1 ...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="kag, neo4j, graph-database, vector-search, elasticsearch, multi-modal">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/10/03/kag-database-integration-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="KAG 데이터베이스 통합 아키텍처 심층 분석 - Neo4j와 벡터 검색 시스템">
+<meta property="og:description" content="개요이번 포스트에서는 KAG 데이터베이스 통합 아키텍처를 상세히 분석합니다. KAG는 지식 그래프 저장을 위한 Neo4j, 벡터 검색을 위한 임베딩 시스템, 그리고 다중 모달 데이터 처리를 통합한 복합 데이터베이스 아키텍처를 제공합니다.1. KAG 데이터베이스 아키텍처 개요1.1 ...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/10/03/kag-database-integration-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KAG 데이터베이스 통합 아키텍처 심층 분석 - Neo4j와 벡터 검색 시스템">
+<meta name="twitter:description" content="개요이번 포스트에서는 KAG 데이터베이스 통합 아키텍처를 상세히 분석합니다. KAG는 지식 그래프 저장을 위한 Neo4j, 벡터 검색을 위한 임베딩 시스템, 그리고 다중 모달 데이터 처리를 통합한 복합 데이터베이스 아키텍처를 제공합니다.1. KAG 데이터베이스 아키텍처 개요1.1 ...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "KAG 데이터베이스 통합 아키텍처 심층 분석 - Neo4j와 벡터 검색 시스템",
+  "description": "개요
+
+이번 포스트에서는 KAG 데이터베이스 통합 아키텍처를 상세히 분석합니다. KAG는 지식 그래프 저장을 위한 Neo4j, 벡터 검색을 위한 임베딩 시스템, 그리고 다중 모달 데이터 처리를 통합한 복합 데이터베이스 아키텍처를 제공합니다.
+
+1. KAG 데이터베이스 아키텍처 개요...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-10-03T02:15:00+00:00",
+  "dateModified": "2024-10-03T02:15:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/10/03/kag-database-integration-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/10/03/kag-database-integration-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["kag","neo4j","graph-database","vector-search","elasticsearch","multi-modal"],
+  "articleSection": ["AI","Knowledge Graph","Database","Vector Search"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>KAG 데이터베이스 통합 아키텍처 심층 분석 - Neo4j와 벡터 검색 시스템</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">KAG 데이터베이스 통합 아키텍처 심층 분석 - Neo4j와 벡터 검색 시스템</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-10-03T02:15:00+00:00">Oct 3, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Knowledge Graph</li><li>Database</li><li>Vector Search</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 <strong>KAG 데이터베이스 통합 아키텍처</strong>를 상세히 분석합니다. KAG는 지식 그래프 저장을 위한 Neo4j, 벡터 검색을 위한 임베딩 시스템, 그리고 다중 모달 데이터 처리를 통합한 복합 데이터베이스 아키텍처를 제공합니다.</p>
+
+<h2 id="1-kag-데이터베이스-아키텍처-개요">1. KAG 데이터베이스 아키텍처 개요</h2>
+
+<h3 id="11-다층-데이터-저장-전략">1.1 다층 데이터 저장 전략</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># KAG 데이터베이스 통합 아키텍처
+</span><span class="n">kag</span><span class="o">/</span><span class="n">common</span><span class="o">/</span>
+<span class="err">├──</span> <span class="n">graphstore</span><span class="o">/</span>           <span class="c1"># 그래프 데이터 저장소
+</span><span class="err">│</span>   <span class="err">├──</span> <span class="n">neo4j_graph_store</span><span class="p">.</span><span class="n">py</span>    <span class="c1"># Neo4j 통합
+</span><span class="err">│</span>   <span class="err">├──</span> <span class="n">memory_graph</span><span class="p">.</span><span class="n">py</span>         <span class="c1"># 메모리 기반 그래프
+</span><span class="err">│</span>   <span class="err">└──</span> <span class="n">rest</span><span class="o">/</span>                   <span class="c1"># REST API 인터페이스
+</span><span class="err">├──</span> <span class="n">vectorize_model</span><span class="o">/</span>      <span class="c1"># 벡터화 모델들
+</span><span class="err">│</span>   <span class="err">├──</span> <span class="n">openai_model</span><span class="p">.</span><span class="n">py</span>         <span class="c1"># OpenAI 임베딩
+</span><span class="err">│</span>   <span class="err">├──</span> <span class="n">local_bge_model</span><span class="p">.</span><span class="n">py</span>      <span class="c1"># 로컬 BGE 모델
+</span><span class="err">│</span>   <span class="err">└──</span> <span class="n">mock_model</span><span class="p">.</span><span class="n">py</span>           <span class="c1"># 테스트용 모델
+</span><span class="err">└──</span> <span class="n">rerank_model</span><span class="o">/</span>         <span class="c1"># 재순위화 모델
+</span></code></pre></div></div>
+
+<p><strong>다층 저장 구조:</strong></p>
+<ul>
+  <li><strong>그래프 레이어</strong>: Neo4j를 통한 구조화된 지식 표현</li>
+  <li><strong>벡터 레이어</strong>: 의미적 검색을 위한 임베딩 저장</li>
+  <li><strong>메모리 레이어</strong>: 고속 접근을 위한 캐시 시스템</li>
+  <li><strong>인덱스 레이어</strong>: 전문 검색과 벡터 검색 최적화</li>
+</ul>
+
+<h3 id="12-데이터-흐름-아키텍처">1.2 데이터 흐름 아키텍처</h3>
+
+<pre><code class="language-mermaid">graph TD
+    A[입력 데이터] --&gt; B[Builder 모듈]
+    B --&gt; C{데이터 타입}
+    C --&gt;|구조화된 지식| D[Neo4j Graph Store]
+    C --&gt;|텍스트 데이터| E[Vectorizer]
+    C --&gt;|메타데이터| F[Memory Graph]
+    
+    E --&gt; G[OpenAI/BGE 임베딩]
+    G --&gt; H[Vector Index]
+    
+    D --&gt; I[Solver 모듈]
+    H --&gt; I
+    F --&gt; I
+    
+    I --&gt; J[통합 검색 결과]
+    
+    subgraph "Neo4j 클러스터"
+        D1[Primary Node]
+        D2[Secondary Node]
+        D3[Vector Index]
+    end
+    
+    D --&gt; D1
+    H --&gt; D3
+</code></pre>
+
+<h2 id="2-neo4j-graph-store---구조화된-지식-저장">2. Neo4j Graph Store - 구조화된 지식 저장</h2>
+
+<h3 id="21-neo4j-클라이언트-아키텍처">2.1 Neo4j 클라이언트 아키텍처</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Neo4jClient</span><span class="p">(</span><span class="n">GraphStore</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">SingletonMeta</span><span class="p">):</span>
+    <span class="s">"""Thread-safe Singleton 패턴을 사용한 Neo4j 클라이언트"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">uri</span><span class="p">,</span>
+        <span class="n">user</span><span class="p">,</span>
+        <span class="n">password</span><span class="p">,</span>
+        <span class="n">database</span><span class="o">=</span><span class="s">"neo4j"</span><span class="p">,</span>
+        <span class="n">init_type</span><span class="o">=</span><span class="s">"write"</span><span class="p">,</span>
+        <span class="n">interval_minutes</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">GraphDatabase</span><span class="p">.</span><span class="n">driver</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">))</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"init Neo4jClient uri: </span><span class="si">{</span><span class="n">uri</span><span class="si">}</span><span class="s"> database: </span><span class="si">{</span><span class="n">database</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">_database</span> <span class="o">=</span> <span class="n">database</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_lucene_special_chars</span> <span class="o">=</span> <span class="s">'</span><span class="se">\\</span><span class="s">+-!():^[]"{}~*?|&amp;/'</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_lucene_pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_get_lucene_pattern</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_simple_ident</span> <span class="o">=</span> <span class="s">"[A-Za-z_][A-Za-z0-9_]*"</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_simple_ident_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_simple_ident</span><span class="p">)</span>
+        
+        <span class="c1"># 벡터 인덱스 메타데이터
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta_ts</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta_timeout</span> <span class="o">=</span> <span class="mf">60.0</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_vectorizer</span> <span class="o">=</span> <span class="bp">None</span>
+        
+        <span class="c1"># PageRank 그래프 관리
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">_allGraph</span> <span class="o">=</span> <span class="s">"allGraph_0"</span>
+        
+        <span class="k">if</span> <span class="n">init_type</span> <span class="o">==</span> <span class="s">"write"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_create_unique_constraint</span><span class="p">()</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_create_all_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_allGraph</span><span class="p">)</span>
+        
+        <span class="c1"># 주기적 제약 조건 및 인덱스 업데이트
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">schedule_constraint</span><span class="p">(</span><span class="n">interval_minutes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">refresh_vector_index_meta</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p><strong>핵심 특징:</strong></p>
+<ul>
+  <li><strong>Singleton 패턴</strong>: 연결 재사용과 리소스 최적화</li>
+  <li><strong>자동 인덱싱</strong>: 라벨별 고유 제약조건 자동 생성</li>
+  <li><strong>벡터 통합</strong>: 그래프 노드에 임베딩 벡터 통합 저장</li>
+  <li><strong>PageRank 지원</strong>: 그래프 분석을 위한 알고리즘 내장</li>
+</ul>
+
+<h3 id="22-동적-스키마-초기화">2.2 동적 스키마 초기화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">initialize_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema_types</span><span class="p">):</span>
+    <span class="s">"""스키마 타입에 따른 동적 인덱스 생성"""</span>
+    
+    <span class="k">for</span> <span class="n">spg_type</span> <span class="ow">in</span> <span class="n">schema_types</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">spg_type</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">schema_types</span><span class="p">[</span><span class="n">spg_type</span><span class="p">].</span><span class="n">properties</span>
+        
+        <span class="k">if</span> <span class="n">properties</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">property_key</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+                <span class="c1"># 기본 name 속성에 벡터 인덱스 생성
+</span>                <span class="k">if</span> <span class="n">property_key</span> <span class="o">==</span> <span class="s">"name"</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">.</span><span class="n">create_vector_index</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">property_key</span><span class="p">)</span>
+                
+                <span class="c1"># 인덱스 타입에 따른 처리
+</span>                <span class="n">index_type</span> <span class="o">=</span> <span class="n">properties</span><span class="p">[</span><span class="n">property_key</span><span class="p">].</span><span class="n">index_type</span>
+                <span class="k">if</span> <span class="n">index_type</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">index_type</span> <span class="o">==</span> <span class="n">IndexTypeEnum</span><span class="p">.</span><span class="n">Text</span><span class="p">:</span>
+                        <span class="k">pass</span>  <span class="c1"># 텍스트 인덱스는 별도 처리
+</span>                    <span class="k">elif</span> <span class="n">index_type</span> <span class="o">==</span> <span class="n">IndexTypeEnum</span><span class="p">.</span><span class="n">Vector</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="p">.</span><span class="n">create_vector_index</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">property_key</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">index_type</span> <span class="o">==</span> <span class="n">IndexTypeEnum</span><span class="p">.</span><span class="n">TextAndVector</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="p">.</span><span class="n">create_vector_index</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">property_key</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Undefined IndexTypeEnum </span><span class="si">{</span><span class="n">index_type</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    
+    <span class="c1"># 텍스트 인덱스 통합 생성
+</span>    <span class="n">labels</span><span class="p">,</span> <span class="n">property_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_collect_text_index_info</span><span class="p">(</span><span class="n">schema_types</span><span class="p">)</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">create_text_index</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">property_keys</span><span class="p">)</span>
+    
+    <span class="c1"># 기본 엔티티 벡터 인덱스
+</span>    <span class="bp">self</span><span class="p">.</span><span class="n">create_vector_index</span><span class="p">(</span><span class="s">"Entity"</span><span class="p">,</span> <span class="s">"name"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">create_vector_index</span><span class="p">(</span><span class="s">"Entity"</span><span class="p">,</span> <span class="s">"desc"</span><span class="p">)</span>
+    
+    <span class="bp">self</span><span class="p">.</span><span class="n">refresh_vector_index_meta</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="23-노드-삽입-및-벡터-자동-생성">2.3 노드 삽입 및 벡터 자동 생성</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">upsert_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">id_key</span><span class="o">=</span><span class="s">"id"</span><span class="p">,</span> <span class="n">extra_labels</span><span class="o">=</span><span class="p">(</span><span class="s">"Entity"</span><span class="p">,)):</span>
+    <span class="s">"""벡터 자동 생성을 포함한 노드 업서트"""</span>
+    
+    <span class="c1"># 벡터 임베딩 자동 생성
+</span>    <span class="bp">self</span><span class="p">.</span><span class="n">_preprocess_node_properties</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">extra_labels</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">_driver</span><span class="p">.</span><span class="n">session</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">_database</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">_labels</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_create_unique_index_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">session</span><span class="p">.</span><span class="n">execute_write</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">_upsert_node</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">id_key</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">extra_labels</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"upsert_node label:</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s"> properties:</span><span class="si">{</span><span class="n">properties</span><span class="si">}</span><span class="s"> Exception: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+<span class="sb">``</span><span class="err">`</span><span class="n">python</span>
+
+<span class="k">def</span> <span class="nf">_preprocess_node_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">extra_labels</span><span class="p">):</span>
+    <span class="s">"""노드 속성 전처리 - 벡터 임베딩 자동 생성"""</span>
+    
+    <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">_vectorizer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    
+    <span class="bp">self</span><span class="p">.</span><span class="n">refresh_vector_index_meta</span><span class="p">()</span>
+    <span class="n">vec_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">extra_labels</span><span class="p">:</span>
+        <span class="n">labels</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="n">extra_labels</span><span class="p">)</span>
+    
+    <span class="c1"># 각 라벨별로 벡터 필드 처리
+</span>    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vec_meta</span><span class="p">:</span>
+            <span class="k">continue</span>
+        
+        <span class="k">for</span> <span class="n">vector_field</span> <span class="ow">in</span> <span class="n">vec_meta</span><span class="p">[</span><span class="n">label</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">vector_field</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># 이미 벡터가 있음
+</span>            
+            <span class="c1"># 텍스트 속성에서 벡터 생성
+</span>            <span class="n">embedding_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_get_embedding_vector</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span> <span class="n">vector_field</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">embedding_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">properties</span><span class="p">[</span><span class="n">vector_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">embedding_vector</span>
+
+<span class="o">@</span><span class="nb">staticmethod</span>
+<span class="k">def</span> <span class="nf">_upsert_node</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">id_key</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">extra_labels</span><span class="p">):</span>
+    <span class="s">"""실제 노드 업서트 쿼리 실행"""</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">label</span><span class="p">:</span>
+        <span class="n">logger</span><span class="p">.</span><span class="n">warning</span><span class="p">(</span><span class="s">"label cannot be None or empty strings"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s">"MERGE (n:</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">_escape_neo4j</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="si">}</span><span class="s"> {{</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">_escape_neo4j</span><span class="p">(</span><span class="n">id_key</span><span class="p">)</span><span class="si">}</span><span class="s">: $properties.</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">_escape_neo4j</span><span class="p">(</span><span class="n">id_key</span><span class="p">)</span><span class="si">}</span><span class="s">}}) "</span>
+        <span class="s">"SET n += $properties "</span>
+    <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">extra_labels</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s">", n:</span><span class="si">{</span><span class="s">'</span><span class="si">:</span><span class="s">'.join(self._escape_neo4j(extra_label) for extra_label in extra_labels)</span><span class="si">}</span><span class="s"> "</span>
+    
+    <span class="n">query</span> <span class="o">+=</span> <span class="s">"RETURN n"</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">tx</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">.</span><span class="n">single</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+## 3. 벡터 인덱스 시스템
+
+### 3.1 다중 벡터 인덱스 지원
+
+```python
+
+def create_vector_index(
+    self,
+    label,
+    property_key,
+    index_name=None,
+    vector_dimensions=768,
+    metric_type="cosine",
+    hnsw_m=None,
+    hnsw_ef_construction=None,
+):
+    """HNSW 벡터 인덱스 생성"""
+    
+    if index_name is None:
+        index_name = self._create_vector_index_name(label, property_key)
+    
+    if not property_key.lower().endswith("vector"):
+        property_key = self._create_vector_field_name(property_key)
+    
+    with self._driver.session(database=self._database) as session:
+        session.execute_write(
+            self._create_vector_index,
+            self,
+            label,
+            property_key,
+            index_name,
+            vector_dimensions,
+            metric_type,
+            hnsw_m,
+            hnsw_ef_construction,
+        )
+    
+    self.refresh_vector_index_meta(force=True)
+    return index_name
+
+@staticmethod
+def _create_vector_index(
+    tx,
+    self,
+    label,
+    property_key,
+    index_name,
+    vector_dimensions,
+    metric_type,
+    hnsw_m,
+    hnsw_ef_construction,
+):
+    """Neo4j 벡터 인덱스 생성 쿼리"""
+    
+    query = (
+        f"CREATE VECTOR INDEX {self._escape_neo4j(index_name)} IF NOT EXISTS "
+        f"FOR (n:{self._escape_neo4j(label)}) ON (n.{self._escape_neo4j(property_key)}) "
+        "OPTIONS { indexConfig: {"
+        "  `vector.dimensions`: $vector_dimensions,"
+        "  `vector.similarity_function`: $metric_type"
+    )
+    
+    # HNSW 파라미터 추가
+    if hnsw_m is not None:
+        query += ",  `vector.hnsw.m`: $hnsw_m"
+    if hnsw_ef_construction is not None:
+        query += ",  `vector.hnsw.ef_construction`: $hnsw_ef_construction"
+    
+    query += "}}"
+    tx.run(
+        query,
+        vector_dimensions=vector_dimensions,
+        metric_type=metric_type,
+        hnsw_m=hnsw_m,
+        hnsw_ef_construction=hnsw_ef_construction,
+    )
+
+</code></pre></div></div>
+
+<h3 id="32-벡터-검색-최적화">3.2 벡터 검색 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">vector_search</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">label</span><span class="p">,</span>
+    <span class="n">property_key</span><span class="p">,</span>
+    <span class="n">query_text_or_vector</span><span class="p">,</span>
+    <span class="n">topk</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">index_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">ef_search</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="s">"""최적화된 벡터 유사도 검색"""</span>
+    
+    <span class="c1"># ef_search 파라미터 검증
+</span>    <span class="k">if</span> <span class="n">ef_search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ef_search</span> <span class="o">&lt;</span> <span class="n">topk</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"ef_search must be &gt;= topk; </span><span class="si">{</span><span class="n">ef_search</span><span class="si">!r}</span><span class="s"> is invalid"</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    
+    <span class="c1"># 벡터 인덱스 메타데이터 갱신
+</span>    <span class="bp">self</span><span class="p">.</span><span class="n">refresh_vector_index_meta</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">index_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">vec_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vec_meta</span><span class="p">:</span>
+            <span class="n">logger</span><span class="p">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s">"vector index not defined for label: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        
+        <span class="n">vector_field</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_create_vector_field_name</span><span class="p">(</span><span class="n">property_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">vector_field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vec_meta</span><span class="p">[</span><span class="n">label</span><span class="p">]:</span>
+            <span class="n">logger</span><span class="p">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s">"vector index not defined for field: </span><span class="si">{</span><span class="n">property_key</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        
+        <span class="n">index_name</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_create_vector_index_name</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">property_key</span><span class="p">)</span>
+    
+    <span class="c1"># 텍스트를 벡터로 변환
+</span>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query_text_or_vector</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">query_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">vectorizer</span><span class="p">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">query_text_or_vector</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">query_vector</span> <span class="o">=</span> <span class="n">query_text_or_vector</span>
+    
+    <span class="k">def</span> <span class="nf">do_vector_search</span><span class="p">(</span><span class="n">tx</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ef_search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c1"># HNSW 고급 검색 파라미터 사용
+</span>            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s">"CALL db.index.vector.queryNodes($index_name, $ef_search, $query_vector) "</span>
+                <span class="s">"YIELD node, score "</span>
+                <span class="s">"RETURN node, score, labels(node) as __labels__ "</span>
+                <span class="sa">f</span><span class="s">"LIMIT </span><span class="si">{</span><span class="n">topk</span><span class="si">}</span><span class="s">"</span>
+            <span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">tx</span><span class="p">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="n">query</span><span class="p">,</span>
+                <span class="n">query_vector</span><span class="o">=</span><span class="n">query_vector</span><span class="p">,</span>
+                <span class="n">ef_search</span><span class="o">=</span><span class="n">ef_search</span><span class="p">,</span>
+                <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 기본 벡터 검색
+</span>            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s">"CALL db.index.vector.queryNodes($index_name, $topk, $query_vector) "</span>
+                <span class="s">"YIELD node, score "</span>
+                <span class="s">"RETURN node, score, labels(node) as __labels__"</span>
+            <span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">tx</span><span class="p">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="n">query</span><span class="p">,</span> <span class="n">query_vector</span><span class="o">=</span><span class="n">query_vector</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="n">topk</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span>
+            <span class="p">)</span>
+        
+        <span class="n">data</span> <span class="o">=</span> <span class="n">res</span><span class="p">.</span><span class="n">data</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">record</span><span class="p">[</span><span class="s">"node"</span><span class="p">][</span><span class="s">"__labels__"</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s">"__labels__"</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">record</span><span class="p">[</span><span class="s">"__labels__"</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">data</span>
+    
+    <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">_driver</span><span class="p">.</span><span class="n">session</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">_database</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">session</span><span class="p">.</span><span class="n">execute_read</span><span class="p">(</span><span class="n">do_vector_search</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h2 id="4-벡터화-모델-통합">4. 벡터화 모델 통합</h2>
+
+<h3 id="41-openai-임베딩-모델">4.1 OpenAI 임베딩 모델</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">@</span><span class="n">VectorizeModelABC</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="s">"openai"</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">OpenAIVectorizeModel</span><span class="p">(</span><span class="n">VectorizeModelABC</span><span class="p">):</span>
+    <span class="s">"""OpenAI 임베딩 서비스 통합"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">"text-embedding-3-small"</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+        <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+        <span class="n">vector_dimensions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="n">max_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">time_period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>):
+    name = kwargs.pop("name", None)
+    if not name:
+        name = f"{api_key}{base_url}{model}"
+    
+    super().__init__(name, vector_dimensions, max_rate, time_period)
+    self.model = model
+    self.timeout = timeout
+    self.client = OpenAI(api_key=api_key, base_url=base_url)
+    self.aclient = AsyncOpenAI(api_key=api_key, base_url=base_url)
+
+def vectorize(
+    self, texts: Union[str, Iterable[str]]
+) -&gt; Union[EmbeddingVector, Iterable[EmbeddingVector]]:
+    """배치 처리 지원 벡터화"""
+    
+    try:
+        # 빈 문자열 처리 로직
+        if isinstance(texts, list):
+            # 빈 문자열 인덱스 추적
+            empty_indices = {i: text.strip() == "" for i, text in enumerate(texts)}
+            
+            # 빈 문자열 필터링
+            filtered_texts = [
+                text for i, text in enumerate(texts) if not empty_indices[i]
+            ]
+            
+            if not filtered_texts:
+                return [[] for _ in texts]  # 모든 입력이 빈 문자열
+            
+            results = self.client.embeddings.create(
+                input=filtered_texts, model=self.model, timeout=self.timeout
+            )
+            
+            # 결과 재구성 (빈 문자열 위치에 빈 벡터 삽입)
+            embeddings = [item.embedding for item in results.data]
+            full_results = []
+            embedding_idx = 0
+            
+            for i in range(len(texts)):
+                if empty_indices[i]:
+                    full_results.append([])  # 빈 임베딩
+                else:
+                    full_results.append(embeddings[embedding_idx])
+                    embedding_idx += 1
+            
+            return full_results
+        
+        elif isinstance(texts, str) and not texts.strip():
+            return []  # 빈 문자열에 대한 빈 벡터
+        else:
+            results = self.client.embeddings.create(
+                input=texts, model=self.model, timeout=self.timeout
+            )
+    
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        logger.error(f"input: {texts}")
+        logger.error(f"model: {self.model}")
+        return None
+    
+    results = [item.embedding for item in results.data]
+    if isinstance(texts, str):
+        assert len(results) == 1
+        return results[0]
+    else:
+        assert len(results) == len(texts)
+        return results
+
+async def avectorize(
+    self, texts: Union[str, Iterable[str]]
+) -&gt; Union[EmbeddingVector, Iterable[EmbeddingVector]]:
+    """비동기 벡터화 (속도 제한 포함)"""
+    
+    async with self.limiter:
+        results = await self.aclient.embeddings.create(
+            input=texts, model=self.model, timeout=self.timeout
+        )
+    
+    results = [item.embedding for item in results.data]
+    if isinstance(texts, str):
+        assert len(results) == 1
+        return results[0]
+    else:
+        assert len(results) == len(texts)
+        return results ```
+</code></pre></div></div>
+
+<h3 id="42-배치-벡터화-최적화">4.2 배치 벡터화 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">batch_preprocess_node_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_batch</span><span class="p">,</span> <span class="n">extra_labels</span><span class="o">=</span><span class="p">(</span><span class="s">"Entity"</span><span class="p">,)):</span>
+    <span class="s">"""배치 단위 벡터 전처리 최적화"""</span>
+    
+    <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">_vectorizer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    
+    <span class="k">class</span> <span class="nc">EmbeddingVectorPlaceholder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="s">"""벡터 생성 지연 처리를 위한 플레이스홀더"""</span>
+        
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">vector_field</span><span class="p">,</span> <span class="n">property_key</span><span class="p">,</span> <span class="n">property_value</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_number</span> <span class="o">=</span> <span class="n">number</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_properties</span> <span class="o">=</span> <span class="n">properties</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_vector_field</span> <span class="o">=</span> <span class="n">vector_field</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_property_key</span> <span class="o">=</span> <span class="n">property_key</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_property_value</span> <span class="o">=</span> <span class="n">property_value</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_embedding_vector</span> <span class="o">=</span> <span class="bp">None</span>
+        
+        <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="s">"""실제 벡터로 플레이스홀더 교체"""</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">_embedding_vector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">_properties</span><span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">_vector_field</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_embedding_vector</span>
+    
+    <span class="k">class</span> <span class="nc">EmbeddingVectorManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="s">"""배치 벡터화 관리자"""</span>
+        
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_placeholders</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">def</span> <span class="nf">get_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph_store</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">vector_field</span><span class="p">):</span>
+            <span class="s">"""벡터 생성이 필요한 속성에 대한 플레이스홀더 생성"""</span>
+            
+            <span class="k">for</span> <span class="n">property_key</span><span class="p">,</span> <span class="n">property_value</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">field_name</span> <span class="o">=</span> <span class="n">graph_store</span><span class="p">.</span><span class="n">_create_vector_field_name</span><span class="p">(</span><span class="n">property_key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">field_name</span> <span class="o">!=</span> <span class="n">vector_field</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">property_value</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">None</span>
+                
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">property_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"property </span><span class="si">{</span><span class="n">property_key</span><span class="si">!r}</span><span class="s"> must be string"</span>
+                    <span class="k">raise</span> <span class="nb">RuntimeError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                
+                <span class="n">num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_placeholders</span><span class="p">)</span>
+                <span class="n">placeholder</span> <span class="o">=</span> <span class="n">EmbeddingVectorPlaceholder</span><span class="p">(</span>
+                    <span class="n">num</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">vector_field</span><span class="p">,</span> <span class="n">property_key</span><span class="p">,</span> <span class="n">property_value</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">_placeholders</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">placeholder</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">placeholder</span>
+            
+            <span class="k">return</span> <span class="bp">None</span>
+        
+        <span class="k">def</span> <span class="nf">_get_text_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="s">"""중복 제거된 텍스트 배치 생성"""</span>
+            <span class="n">text_batch</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">placeholder</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">_placeholders</span><span class="p">:</span>
+                <span class="n">property_value</span> <span class="o">=</span> <span class="n">placeholder</span><span class="p">.</span><span class="n">_property_value</span>
+                <span class="k">if</span> <span class="n">property_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">text_batch</span><span class="p">:</span>
+                    <span class="n">text_batch</span><span class="p">[</span><span class="n">property_value</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="n">text_batch</span><span class="p">[</span><span class="n">property_value</span><span class="p">].</span><span class="n">append</span><span class="p">(</span><span class="n">placeholder</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">text_batch</span>
+        
+        <span class="k">def</span> <span class="nf">batch_vectorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vectorizer</span><span class="p">):</span>
+            <span class="s">"""배치 벡터화 실행"""</span>
+            <span class="n">text_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_get_text_batch</span><span class="p">()</span>
+            <span class="n">texts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">text_batch</span><span class="p">)</span>
+            <span class="n">vectors</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="p">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+            
+            <span class="c1"># 벡터를 플레이스홀더에 할당
+</span>            <span class="k">for</span> <span class="n">vector</span><span class="p">,</span> <span class="p">(</span><span class="n">_text</span><span class="p">,</span> <span class="n">placeholders</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">text_batch</span><span class="p">.</span><span class="n">items</span><span class="p">()):</span>
+                <span class="k">for</span> <span class="n">placeholder</span> <span class="ow">in</span> <span class="n">placeholders</span><span class="p">:</span>
+                    <span class="n">placeholder</span><span class="p">.</span><span class="n">_embedding_vector</span> <span class="o">=</span> <span class="n">vector</span>
+        
+        <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="s">"""플레이스홀더를 실제 벡터로 교체"""</span>
+            <span class="k">for</span> <span class="n">placeholder</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">_placeholders</span><span class="p">:</span>
+                <span class="n">placeholder</span><span class="p">.</span><span class="n">replace</span><span class="p">()</span>
+    
+    <span class="c1"># 배치 처리 실행
+</span>    <span class="n">manager</span> <span class="o">=</span> <span class="n">EmbeddingVectorManager</span><span class="p">()</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">refresh_vector_index_meta</span><span class="p">()</span>
+    <span class="n">vec_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta</span>
+    
+    <span class="c1"># 플레이스홀더 생성
+</span>    <span class="k">for</span> <span class="n">node_item</span> <span class="ow">in</span> <span class="n">node_batch</span><span class="p">:</span>
+        <span class="n">label</span><span class="p">,</span> <span class="n">properties</span> <span class="o">=</span> <span class="n">node_item</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">extra_labels</span><span class="p">:</span>
+            <span class="n">labels</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="n">extra_labels</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vec_meta</span><span class="p">:</span>
+                <span class="k">continue</span>
+            
+            <span class="k">for</span> <span class="n">vector_field</span> <span class="ow">in</span> <span class="n">vec_meta</span><span class="p">[</span><span class="n">label</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">vector_field</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                
+                <span class="n">placeholder</span> <span class="o">=</span> <span class="n">manager</span><span class="p">.</span><span class="n">get_placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">vector_field</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">placeholder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">properties</span><span class="p">[</span><span class="n">vector_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">placeholder</span>
+    
+    <span class="c1"># 배치 벡터화 및 패치
+</span>    <span class="n">manager</span><span class="p">.</span><span class="n">batch_vectorize</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_vectorizer</span><span class="p">)</span>
+    <span class="n">manager</span><span class="p">.</span><span class="n">patch</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="5-통합-검색-시스템">5. 통합 검색 시스템</h2>
+
+<h3 id="51-하이브리드-검색-텍스트--벡터">5.1 하이브리드 검색 (텍스트 + 벡터)</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">text_search</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">query_string</span><span class="p">,</span> <span class="n">label_constraints</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="bp">None</span>
+<span class="p">):</span>
+    <span class="s">"""Lucene 기반 전문 검색"""</span>
+    
+    <span class="k">if</span> <span class="n">index_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">index_name</span> <span class="o">=</span> <span class="s">"_default_text_index"</span>
+    
+    <span class="c1"># 라벨 제약 조건 처리
+</span>    <span class="k">if</span> <span class="n">label_constraints</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label_constraints</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">label_constraints</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_escape_neo4j</span><span class="p">(</span><span class="n">label_constraints</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label_constraints</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">label_constraints</span> <span class="o">=</span> <span class="s">"|"</span><span class="p">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_escape_neo4j</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span> <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">label_constraints</span>
+        <span class="p">)</span>
+    
+    <span class="c1"># 쿼리 구성
+</span>    <span class="k">if</span> <span class="n">label_constraints</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s">"CALL db.index.fulltext.queryNodes($index_name, $query_string) "</span>
+            <span class="s">"YIELD node AS node, score "</span>
+            <span class="s">"RETURN node, score"</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s">"CALL db.index.fulltext.queryNodes($index_name, $query_string) "</span>
+            <span class="s">"YIELD node AS node, score "</span>
+            <span class="sa">f</span><span class="s">"WHERE (node:</span><span class="si">{</span><span class="n">label_constraints</span><span class="si">}</span><span class="s">) "</span>
+            <span class="s">"RETURN node, score"</span>
+        <span class="p">)</span>
+    
+    <span class="n">query</span> <span class="o">+=</span> <span class="s">" LIMIT $topk"</span>
+    <span class="n">query_string</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_make_lucene_query</span><span class="p">(</span><span class="n">query_string</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">do_text_search</span><span class="p">(</span><span class="n">tx</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">tx</span><span class="p">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">query</span><span class="p">,</span> <span class="n">query_string</span><span class="o">=</span><span class="n">query_string</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="n">topk</span><span class="p">,</span> <span class="n">index_name</span><span class="o">=</span><span class="n">index_name</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="p">.</span><span class="n">data</span><span class="p">()</span>
+    
+    <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">_driver</span><span class="p">.</span><span class="n">session</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">_database</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">session</span><span class="p">.</span><span class="n">execute_read</span><span class="p">(</span><span class="n">do_text_search</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="52-pagerank-기반-그래프-분석">5.2 PageRank 기반 그래프 분석</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">get_pagerank_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_nodes</span><span class="p">,</span> <span class="n">target_type</span><span class="p">):</span>
+    <span class="s">"""PageRank 알고리즘을 사용한 노드 중요도 계산"""</span>
+    
+    <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">_driver</span><span class="p">.</span><span class="n">session</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">_database</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="n">all_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_allGraph</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_exists_all_graph</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">all_graph</span><span class="p">)</span>
+        
+        <span class="n">data</span> <span class="o">=</span> <span class="n">session</span><span class="p">.</span><span class="n">execute_write</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_get_pagerank_scores</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">all_graph</span><span class="p">,</span> <span class="n">start_nodes</span><span class="p">,</span> <span class="n">target_type</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="o">@</span><span class="nb">staticmethod</span>
+<span class="k">def</span> <span class="nf">_get_pagerank_scores</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">graph_name</span><span class="p">,</span> <span class="n">start_nodes</span><span class="p">,</span> <span class="n">return_type</span><span class="p">):</span>
+    <span class="s">"""PageRank 계산 쿼리 실행"""</span>
+    
+    <span class="c1"># 시작 노드들에 대한 매치 절 생성
+</span>    <span class="n">match_clauses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">match_identify</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">start_nodes</span><span class="p">):</span>
+        <span class="n">node_type</span><span class="p">,</span> <span class="n">node_name</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="s">"type"</span><span class="p">],</span> <span class="n">node</span><span class="p">[</span><span class="s">"name"</span><span class="p">]</span>
+        <span class="n">node_identify</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"node_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s">"</span>
+        <span class="n">match_clauses</span><span class="p">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s">"MATCH (</span><span class="si">{</span><span class="n">node_identify</span><span class="si">}</span><span class="s">:</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">_escape_neo4j</span><span class="p">(</span><span class="n">node_type</span><span class="p">)</span><span class="si">}</span><span class="s"> "</span>
+            <span class="sa">f</span><span class="s">"{{name: '</span><span class="si">{</span><span class="n">escape_single_quotes</span><span class="p">(</span><span class="n">node_name</span><span class="p">)</span><span class="si">}</span><span class="s">'}})"</span>
+        <span class="p">)</span>
+        <span class="n">match_identify</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_identify</span><span class="p">)</span>
+    
+    <span class="n">match_query</span> <span class="o">=</span> <span class="s">" "</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">match_clauses</span><span class="p">)</span>
+    <span class="n">match_identify_str</span> <span class="o">=</span> <span class="s">", "</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">match_identify</span><span class="p">)</span>
+    
+    <span class="c1"># PageRank 실행 쿼리
+</span>    <span class="n">pagerank_query</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"""
+    </span><span class="si">{</span><span class="n">match_query</span><span class="si">}</span><span class="s">
+    CALL gds.pageRank.stream('</span><span class="si">{</span><span class="n">graph_name</span><span class="si">}</span><span class="s">',{{
+        maxIterations: 20,
+        dampingFactor: 0.85,
+        sourceNodes: [</span><span class="si">{</span><span class="n">match_identify_str</span><span class="si">}</span><span class="s">]
+    }})
+    YIELD nodeId, score
+    MATCH (m:</span><span class="si">{</span><span class="n">return_type</span><span class="si">}</span><span class="s">) WHERE id(m) = nodeId
+    RETURN id(m) AS g_id, gds.util.asNode(nodeId).id AS id, score
+    ORDER BY score DESC
+    """</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">tx</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">pagerank_query</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[{</span><span class="s">"id"</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s">"id"</span><span class="p">],</span> <span class="s">"score"</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s">"score"</span><span class="p">]}</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+### 5.3 관계형 데이터 처리
+
+```python
+
+def upsert_relationship(
+    self,
+    start_node_label,
+    start_node_id_value,
+    end_node_label,
+    end_node_id_value,
+    rel_type,
+    properties,
+    upsert_nodes=True,
+    start_node_id_key="id",
+    end_node_id_key="id",
+):
+    """관계 업서트 (노드 자동 생성 지원)"""
+    
+    rel_type = self._escape_neo4j(rel_type)
+    
+    with self._driver.session(database=self._database) as session:
+        try:
+            return session.execute_write(
+                self._upsert_relationship,
+                self,
+                start_node_label,
+                start_node_id_key,
+                start_node_id_value,
+                end_node_label,
+                end_node_id_key,
+                end_node_id_value,
+                rel_type,
+                properties,
+                upsert_nodes,
+            )
+        except Exception as e:
+            logger.error(f"upsert_relationship error: {e}")
+            return None
+
+@staticmethod
+def _upsert_relationship(
+    tx,
+    self,
+    start_node_label,
+    start_node_id_key,
+    start_node_id_value,
+    end_node_label,
+    end_node_id_key,
+    end_node_id_value,
+    rel_type,
+    properties,
+    upsert_nodes,
+):
+    """관계 업서트 실행"""
+    
+    if upsert_nodes:
+        # 노드가 없으면 자동 생성
+        query = (
+            f"MERGE (a:{self._escape_neo4j(start_node_label)} "
+            f"{{{self._escape_neo4j(start_node_id_key)}: $start_node_id_value}}) "
+            f"MERGE (b:{self._escape_neo4j(end_node_label)} "
+            f"{{{self._escape_neo4j(end_node_id_key)}: $end_node_id_value}}) "
+            f"MERGE (a)-[r:{self._escape_neo4j(rel_type)}]-&gt;(b) "
+            "SET r += $properties RETURN r"
+        )
+    else:
+        # 기존 노드만 연결
+        query = (
+            f"MATCH (a:{self._escape_neo4j(start_node_label)} "
+            f"{{{self._escape_neo4j(start_node_id_key)}: $start_node_id_value}}), "
+            f"(b:{self._escape_neo4j(end_node_label)} "
+            f"{{{self._escape_neo4j(end_node_id_key)}: $end_node_id_value}}) "
+            f"MERGE (a)-[r:{self._escape_neo4j(rel_type)}]-&gt;(b) "
+            "SET r += $properties RETURN r"
+        )
+    
+    result = tx.run(
+        query,
+        start_node_id_value=start_node_id_value,
+        end_node_id_value=end_node_id_value,
+        properties=properties,
+    )
+    return result.single()
+
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+## 6. 성능 최적화 및 확장성
+
+### 6.1 인덱스 자동 관리
+
+```python
+def schedule_constraint(self, interval_minutes):
+    """주기적 제약조건 및 인덱스 업데이트"""
+    
+    def job():
+        try:
+            # 제약조건 재생성
+            self._labels = self._create_unique_constraint()
+            
+            # PageRank 그래프 업데이트
+            self._update_pagerank_graph()
+        except Exception as e:
+            import traceback
+            logger.error(f"Scheduled job error: {e}\n{traceback.format_exc()}")
+    
+    def run_scheduled_tasks():
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+    
+    if interval_minutes &gt; 0:
+        schedule.every(interval_minutes).minutes.do(job)
+        scheduler_thread = threading.Thread(target=run_scheduled_tasks, daemon=True)
+        scheduler_thread.start()
+</code></pre></div></div>
+
+<h3 id="62-벡터-인덱스-메타데이터-캐싱">6.2 벡터 인덱스 메타데이터 캐싱</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">refresh_vector_index_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="s">"""벡터 인덱스 메타데이터 캐시 갱신"""</span>
+    
+    <span class="kn">import</span> <span class="nn">time</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">force</span> <span class="ow">and</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta_ts</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta_timeout</span><span class="p">:</span>
+        <span class="k">return</span>  <span class="c1"># 캐시 유효 기간 내
+</span>    
+    <span class="k">def</span> <span class="nf">do_refresh_vector_index_meta</span><span class="p">(</span><span class="n">tx</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s">"SHOW VECTOR INDEX"</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">tx</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">res</span><span class="p">.</span><span class="n">data</span><span class="p">()</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s">"entityType"</span><span class="p">]</span> <span class="o">==</span> <span class="s">"NODE"</span><span class="p">:</span>
+                <span class="p">(</span><span class="n">label</span><span class="p">,)</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s">"labelsOrTypes"</span><span class="p">]</span>
+                <span class="p">(</span><span class="n">vector_field</span><span class="p">,)</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s">"properties"</span><span class="p">]</span>
+                
+                <span class="c1"># _xxx_vector 형태의 벡터 필드만 처리
+</span>                <span class="k">if</span> <span class="n">vector_field</span><span class="p">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">"_"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">vector_field</span><span class="p">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">"_vector"</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
+                        <span class="n">meta</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">meta</span><span class="p">[</span><span class="n">label</span><span class="p">].</span><span class="n">append</span><span class="p">(</span><span class="n">vector_field</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta</span> <span class="o">=</span> <span class="n">meta</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">_vec_meta_ts</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+    
+    <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">_driver</span><span class="p">.</span><span class="n">session</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">_database</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="n">session</span><span class="p">.</span><span class="n">execute_read</span><span class="p">(</span><span class="n">do_refresh_vector_index_meta</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="63-배치-처리-최적화">6.3 배치 처리 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">upsert_nodes</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">properties_list</span><span class="p">,</span> <span class="n">id_key</span><span class="o">=</span><span class="s">"id"</span><span class="p">,</span> <span class="n">extra_labels</span><span class="o">=</span><span class="p">(</span><span class="s">"Entity"</span><span class="p">,)</span>
+<span class="p">):</span>
+    <span class="s">"""배치 노드 업서트"""</span>
+    
+    <span class="c1"># 배치 벡터 전처리
+</span>    <span class="bp">self</span><span class="p">.</span><span class="n">_preprocess_node_properties_list</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">properties_list</span><span class="p">,</span> <span class="n">extra_labels</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">_driver</span><span class="p">.</span><span class="n">session</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">_database</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">_labels</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">_create_unique_index_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">session</span><span class="p">.</span><span class="n">execute_write</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">_upsert_nodes</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="n">label</span><span class="p">,</span>
+                <span class="n">properties_list</span><span class="p">,</span>
+                <span class="n">id_key</span><span class="p">,</span>
+                <span class="n">extra_labels</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s">"upsert_nodes error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+<span class="o">@</span><span class="nb">staticmethod</span>
+<span class="k">def</span> <span class="nf">_upsert_nodes</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">properties_list</span><span class="p">,</span> <span class="n">id_key</span><span class="p">,</span> <span class="n">extra_labels</span><span class="p">):</span>
+    <span class="s">"""배치 노드 업서트 실행"""</span>
+    
+    <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s">"UNWIND $properties_list AS properties "</span>
+        <span class="s">"MERGE (n:__LABEL__ {__ID_KEY__: properties.__ID_KEY__}) "</span>
+        <span class="s">"SET n += properties "</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 라벨과 키 이름 교체
+</span>    <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">"__LABEL__"</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">_escape_neo4j</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">"__ID_KEY__"</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">_escape_neo4j</span><span class="p">(</span><span class="n">id_key</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="n">extra_labels</span><span class="p">:</span>
+        <span class="n">escaped_labels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">_escape_neo4j</span><span class="p">(</span><span class="n">extra_label</span><span class="p">)</span> <span class="k">for</span> <span class="n">extra_label</span> <span class="ow">in</span> <span class="n">extra_labels</span><span class="p">]</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s">", n:</span><span class="si">{</span><span class="s">'</span><span class="si">:</span><span class="s">'.join(escaped_labels)</span><span class="si">}</span><span class="s"> "</span>
+    
+    <span class="n">query</span> <span class="o">+=</span> <span class="s">"RETURN n"</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">tx</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">properties_list</span><span class="o">=</span><span class="n">properties_list</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">record</span><span class="p">[</span><span class="s">"n"</span><span class="p">]</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="7-실제-사용-예제">7. 실제 사용 예제</h2>
+
+<h3 id="71-지식-그래프-구축">7.1 지식 그래프 구축</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Neo4j 클라이언트 초기화
+</span><span class="n">neo4j_client</span> <span class="o">=</span> <span class="n">Neo4jClient</span><span class="p">(</span>
+    <span class="n">uri</span><span class="o">=</span><span class="s">"neo4j://localhost:7687"</span><span class="p">,</span>
+    <span class="n">user</span><span class="o">=</span><span class="s">"neo4j"</span><span class="p">,</span> 
+    <span class="n">password</span><span class="o">=</span><span class="s">"password"</span><span class="p">,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s">"knowledge_graph"</span>
+<span class="p">)</span>
+
+<span class="c1"># OpenAI 벡터화 모델 설정
+</span><span class="n">vectorizer</span> <span class="o">=</span> <span class="n">OpenAIVectorizeModel</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s">"text-embedding-3-small"</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s">"your-api-key"</span><span class="p">,</span>
+    <span class="n">vector_dimensions</span><span class="o">=</span><span class="mi">1536</span>
+<span class="p">)</span>
+<span class="n">neo4j_client</span><span class="p">.</span><span class="n">vectorizer</span> <span class="o">=</span> <span class="n">vectorizer</span>
+
+<span class="c1"># 스키마 초기화
+</span><span class="n">schema_types</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"Person"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"properties"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"name"</span><span class="p">:</span> <span class="p">{</span><span class="s">"index_type"</span><span class="p">:</span> <span class="n">IndexTypeEnum</span><span class="p">.</span><span class="n">TextAndVector</span><span class="p">},</span>
+            <span class="s">"description"</span><span class="p">:</span> <span class="p">{</span><span class="s">"index_type"</span><span class="p">:</span> <span class="n">IndexTypeEnum</span><span class="p">.</span><span class="n">TextAndVector</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s">"Company"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"properties"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"name"</span><span class="p">:</span> <span class="p">{</span><span class="s">"index_type"</span><span class="p">:</span> <span class="n">IndexTypeEnum</span><span class="p">.</span><span class="n">TextAndVector</span><span class="p">},</span>
+            <span class="s">"industry"</span><span class="p">:</span> <span class="p">{</span><span class="s">"index_type"</span><span class="p">:</span> <span class="n">IndexTypeEnum</span><span class="p">.</span><span class="n">Text</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="n">neo4j_client</span><span class="p">.</span><span class="n">initialize_schema</span><span class="p">(</span><span class="n">schema_types</span><span class="p">)</span>
+
+<span class="c1"># 노드 생성 (벡터 자동 생성됨)
+</span><span class="n">person_node</span> <span class="o">=</span> <span class="n">neo4j_client</span><span class="p">.</span><span class="n">upsert_node</span><span class="p">(</span>
+    <span class="n">label</span><span class="o">=</span><span class="s">"Person"</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
+        <span class="s">"id"</span><span class="p">:</span> <span class="s">"person_1"</span><span class="p">,</span>
+        <span class="s">"name"</span><span class="p">:</span> <span class="s">"John Smith"</span><span class="p">,</span>
+        <span class="s">"description"</span><span class="p">:</span> <span class="s">"Software engineer with expertise in AI and machine learning"</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">company_node</span> <span class="o">=</span> <span class="n">neo4j_client</span><span class="p">.</span><span class="n">upsert_node</span><span class="p">(</span>
+    <span class="n">label</span><span class="o">=</span><span class="s">"Company"</span><span class="p">,</span> 
+    <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
+        <span class="s">"id"</span><span class="p">:</span> <span class="s">"company_1"</span><span class="p">,</span>
+        <span class="s">"name"</span><span class="p">:</span> <span class="s">"TechCorp"</span><span class="p">,</span>
+        <span class="s">"industry"</span><span class="p">:</span> <span class="s">"Artificial Intelligence"</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># 관계 생성
+</span><span class="n">neo4j_client</span><span class="p">.</span><span class="n">upsert_relationship</span><span class="p">(</span>
+    <span class="n">start_node_label</span><span class="o">=</span><span class="s">"Person"</span><span class="p">,</span>
+    <span class="n">start_node_id_value</span><span class="o">=</span><span class="s">"person_1"</span><span class="p">,</span>
+    <span class="n">end_node_label</span><span class="o">=</span><span class="s">"Company"</span><span class="p">,</span> 
+    <span class="n">end_node_id_value</span><span class="o">=</span><span class="s">"company_1"</span><span class="p">,</span>
+    <span class="n">rel_type</span><span class="o">=</span><span class="s">"WORKS_FOR"</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s">"position"</span><span class="p">:</span> <span class="s">"Senior Engineer"</span><span class="p">,</span> <span class="s">"since"</span><span class="p">:</span> <span class="s">"2020"</span><span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="72-하이브리드-검색">7.2 하이브리드 검색</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 텍스트 검색
+</span><span class="n">text_results</span> <span class="o">=</span> <span class="n">neo4j_client</span><span class="p">.</span><span class="n">text_search</span><span class="p">(</span>
+    <span class="n">query_string</span><span class="o">=</span><span class="s">"machine learning engineer"</span><span class="p">,</span>
+    <span class="n">label_constraints</span><span class="o">=</span><span class="p">[</span><span class="s">"Person"</span><span class="p">],</span>
+    <span class="n">topk</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+
+<span class="c1"># 벡터 검색
+</span><span class="n">vector_results</span> <span class="o">=</span> <span class="n">neo4j_client</span><span class="p">.</span><span class="n">vector_search</span><span class="p">(</span>
+    <span class="n">label</span><span class="o">=</span><span class="s">"Person"</span><span class="p">,</span>
+    <span class="n">property_key</span><span class="o">=</span><span class="s">"name"</span><span class="p">,</span>
+    <span class="n">query_text_or_vector</span><span class="o">=</span><span class="s">"AI researcher"</span><span class="p">,</span>
+    <span class="n">topk</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">ef_search</span><span class="o">=</span><span class="mi">50</span>
+<span class="p">)</span>
+
+<span class="c1"># PageRank 기반 추천
+</span><span class="n">pagerank_results</span> <span class="o">=</span> <span class="n">neo4j_client</span><span class="p">.</span><span class="n">get_pagerank_scores</span><span class="p">(</span>
+    <span class="n">start_nodes</span><span class="o">=</span><span class="p">[{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"Person"</span><span class="p">,</span> <span class="s">"name"</span><span class="p">:</span> <span class="s">"John Smith"</span><span class="p">}],</span>
+    <span class="n">target_type</span><span class="o">=</span><span class="s">"Company"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>KAG의 데이터베이스 통합 아키텍처는 <strong>그래프 데이터베이스의 구조적 표현력</strong>과 <strong>벡터 검색의 의미적 이해력</strong>을 결합하여 차세대 지식 관리 시스템을 구현합니다.</p>
+
+<p><strong>핵심 혁신 포인트:</strong></p>
+<ul>
+  <li><strong>멀티모달 통합</strong>: 구조화/비구조화 데이터 통합 처리</li>
+  <li><strong>자동 벡터화</strong>: 텍스트 속성의 자동 임베딩 생성</li>
+  <li><strong>하이브리드 검색</strong>: 키워드 + 의미 + 그래프 통합 검색</li>
+  <li><strong>실시간 최적화</strong>: 동적 인덱싱과 성능 튜닝</li>
+</ul>
+
+<p>다음 포스트에서는 KAG의 의존성 및 Python 패키지 생태계 활용 방안을 상세히 분석하겠습니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li><a href="/2024/08/15/kag-project-overview-architecture-analysis/">KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석</a></li>
+  <li><a href="/2025/02/28/kag-docker-container-orchestration-analysis/">KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석</a></li>
+  <li><a href="/2024/11/15/kag-builder-module-architecture-analysis/">KAG Builder 모듈 아키텍처 심층 분석 - 지식 추출 및 그래프 구축 엔진</a></li>
+  <li><a href="/2024/05/12/kag-solver-module-analysis/">KAG Solver 모듈 심층 분석 - 지능형 추론 엔진과 질의 응답 시스템</a></li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://neo4j.com/docs/python-manual/current/">Neo4j Python Driver</a></li>
+  <li><a href="https://neo4j.com/docs/cypher-manual/current/indexes-for-vector-search/">Neo4j Vector Search</a></li>
+  <li><a href="https://platform.openai.com/docs/guides/embeddings">OpenAI Embeddings API</a></li>
+  <li><a href="https://neo4j.com/docs/graph-data-science/current/">Graph Data Science Library</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/09/18/foundation-models-sampling-generation-strategies/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">파운데이션 모델 이해하기 (3부) - 샘플링과 생성 전략 심층 분석</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/10/09/opensora-gradio-web-interface/" rel="next">
+          <span class="nav-title">Open-Sora Gradio 웹 인터페이스 완벽 구현 가이드: 사용자 친화적 AI ...</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

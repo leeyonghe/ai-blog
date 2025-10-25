@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Open-Sora Docker 환경 구성 완벽 가이드: CUDA부터 최적화까지 | AI Development Blog</title>
+<meta name="description" content="개요AI 비디오 생성 모델인 Open-Sora를 실제 운영 환경에서 사용하기 위해서는 복잡한 환경 설정이 필요합니다. 이번 포스트에서는 Open-Sora를 Docker 컨테이너로 완벽하게 패키징하는 방법을 상세히 분석해보겠습니다.Docker 환경의 필요성왜 Docker인가?Open...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="opensora, docker, cuda, gpu, containerization, nvidia, performance">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/04/15/opensora-docker-environment-setup/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Open-Sora Docker 환경 구성 완벽 가이드: CUDA부터 최적화까지">
+<meta property="og:description" content="개요AI 비디오 생성 모델인 Open-Sora를 실제 운영 환경에서 사용하기 위해서는 복잡한 환경 설정이 필요합니다. 이번 포스트에서는 Open-Sora를 Docker 컨테이너로 완벽하게 패키징하는 방법을 상세히 분석해보겠습니다.Docker 환경의 필요성왜 Docker인가?Open...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/04/15/opensora-docker-environment-setup/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:image" content="https://leeyonghe.github.io/ai-blog/assets/images/opensora-docker-setup.png">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Open-Sora Docker 환경 구성 완벽 가이드: CUDA부터 최적화까지">
+<meta name="twitter:description" content="개요AI 비디오 생성 모델인 Open-Sora를 실제 운영 환경에서 사용하기 위해서는 복잡한 환경 설정이 필요합니다. 이번 포스트에서는 Open-Sora를 Docker 컨테이너로 완벽하게 패키징하는 방법을 상세히 분석해보겠습니다.Docker 환경의 필요성왜 Docker인가?Open...">
+
+<meta name="twitter:image" content="https://leeyonghe.github.io/ai-blog/assets/images/opensora-docker-setup.png">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Open-Sora Docker 환경 구성 완벽 가이드: CUDA부터 최적화까지",
+  "description": "개요
+
+AI 비디오 생성 모델인 Open-Sora를 실제 운영 환경에서 사용하기 위해서는 복잡한 환경 설정이 필요합니다. 이번 포스트에서는 Open-Sora를 Docker 컨테이너로 완벽하게 패키징하는 방법을 상세히 분석해보겠습니다.
+
+Docker 환경의 필요성
+
+왜 Docker인...",
+  "image": "https://leeyonghe.github.io/ai-blog/assets/images/opensora-docker-setup.png",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-04-15T01:00:00+00:00",
+  "dateModified": "2024-04-15T01:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/04/15/opensora-docker-environment-setup/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/04/15/opensora-docker-environment-setup/",
+  "inLanguage": "ko",
+  "keywords": ["opensora","docker","cuda","gpu","containerization","nvidia","performance"],
+  "articleSection": ["AI","Docker","DevOps"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Open-Sora Docker 환경 구성 완벽 가이드: CUDA부터 최적화까지</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Open-Sora Docker 환경 구성 완벽 가이드: CUDA부터 최적화까지</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-04-15T01:00:00+00:00">Apr 15, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Docker</li><li>DevOps</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>AI 비디오 생성 모델인 Open-Sora를 실제 운영 환경에서 사용하기 위해서는 복잡한 환경 설정이 필요합니다. 이번 포스트에서는 Open-Sora를 Docker 컨테이너로 완벽하게 패키징하는 방법을 상세히 분석해보겠습니다.</p>
+
+<h2 id="docker-환경의-필요성">Docker 환경의 필요성</h2>
+
+<h3 id="왜-docker인가">왜 Docker인가?</h3>
+
+<p>Open-Sora는 다음과 같은 복잡한 환경 요구사항을 가지고 있습니다:</p>
+
+<ul>
+  <li><strong>CUDA 12.2.2</strong>: 최신 GPU 가속 지원</li>
+  <li><strong>Python 3.10</strong>: 특정 파이썬 버전 의존성</li>
+  <li><strong>PyTorch 2.4.0+</strong>: 딥러닝 프레임워크</li>
+  <li><strong>Flash Attention</strong>: 메모리 최적화 라이브러리</li>
+  <li><strong>다양한 ML 라이브러리들</strong>: 버전 호환성 중요</li>
+</ul>
+
+<p>Docker를 사용하면 이러한 복잡한 환경을 <strong>일관되게 재현</strong>할 수 있습니다.</p>
+
+<h2 id="dockerfile-상세-분석">Dockerfile 상세 분석</h2>
+
+<h3 id="1-기본-이미지-선택">1. 기본 이미지 선택</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Build arguments</span>
+<span class="k">ARG</span><span class="s"> CUDA_VERSION=12.2.2</span>
+<span class="k">ARG</span><span class="s"> UBUNTU_VERSION=22.04</span>
+<span class="k">ARG</span><span class="s"> PYTHON_VERSION=3.10</span>
+
+<span class="k">FROM</span><span class="s"> nvidia/cuda:${CUDA_VERSION}-cudnn8-devel-ubuntu${UBUNTU_VERSION}</span>
+</code></pre></div></div>
+
+<p><strong>핵심 선택 이유:</strong></p>
+<ul>
+  <li><strong>NVIDIA CUDA 12.2.2</strong>: 최신 GPU 기능 활용</li>
+  <li><strong>cuDNN 8</strong>: 딥러닝 연산 최적화</li>
+  <li><strong>Ubuntu 22.04 LTS</strong>: 안정성과 장기 지원</li>
+  <li><strong>개발 이미지</strong>: 컴파일 도구 포함</li>
+</ul>
+
+<h3 id="2-환경-변수-최적화">2. 환경 변수 최적화</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># GPU 메모리 관리 최적화</span>
+<span class="k">ENV</span><span class="s"> PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:8,expandable_segments:True,garbage_collection_threshold:0.95</span>
+<span class="k">ENV</span><span class="s"> CUDA_LAUNCH_BLOCKING=1</span>
+<span class="k">ENV</span><span class="s"> PYTORCH_NO_CUDA_MEMORY_CACHING=1</span>
+<span class="k">ENV</span><span class="s"> CUDA_MEMORY_FRACTION=0.4</span>
+
+<span class="c"># 병렬 처리 최적화</span>
+<span class="k">ENV</span><span class="s"> OMP_NUM_THREADS=1</span>
+<span class="k">ENV</span><span class="s"> MKL_NUM_THREADS=1</span>
+
+<span class="c"># NCCL 분산 처리 설정</span>
+<span class="k">ENV</span><span class="s"> NCCL_DEBUG=INFO</span>
+<span class="k">ENV</span><span class="s"> NCCL_IB_DISABLE=1</span>
+<span class="k">ENV</span><span class="s"> NCCL_P2P_DISABLE=1</span>
+<span class="k">ENV</span><span class="s"> NCCL_SOCKET_IFNAME=eth0</span>
+<span class="k">ENV</span><span class="s"> NCCL_BLOCKING_WAIT=1</span>
+</code></pre></div></div>
+
+<p><strong>각 환경 변수의 역할:</strong></p>
+
+<h4 id="gpu-메모리-관리">GPU 메모리 관리</h4>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">PYTORCH_CUDA_ALLOC_CONF</code>: PyTorch CUDA 메모리 할당 전략
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">max_split_size_mb:8</code>: 메모리 분할 크기 제한</li>
+      <li><code class="language-plaintext highlighter-rouge">expandable_segments:True</code>: 동적 메모리 확장</li>
+      <li><code class="language-plaintext highlighter-rouge">garbage_collection_threshold:0.95</code>: 가비지 컬렉션 임계값</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">CUDA_MEMORY_FRACTION=0.4</code>: GPU 메모리 사용률 40%로 제한</li>
+</ul>
+
+<h4 id="성능-최적화">성능 최적화</h4>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">OMP_NUM_THREADS=1</code>: OpenMP 스레드 수 제한 (GPU 우선)</li>
+  <li><code class="language-plaintext highlighter-rouge">MKL_NUM_THREADS=1</code>: Intel MKL 스레드 수 제한</li>
+</ul>
+
+<h4 id="분산-처리-nccl">분산 처리 (NCCL)</h4>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">NCCL_DEBUG=INFO</code>: 통신 디버그 정보 출력</li>
+  <li><code class="language-plaintext highlighter-rouge">NCCL_IB_DISABLE=1</code>: InfiniBand 비활성화</li>
+  <li><code class="language-plaintext highlighter-rouge">NCCL_P2P_DISABLE=1</code>: P2P 통신 비활성화</li>
+</ul>
+
+<h3 id="3-시스템-패키지-설치">3. 시스템 패키지 설치</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 한국 미러 서버 설정 (속도 최적화)</span>
+<span class="k">RUN </span><span class="nb">sed</span> <span class="nt">-i</span> <span class="s1">'s/archive.ubuntu.com/ftp.daumkakao.com/g'</span> /etc/apt/sources.list <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    <span class="nb">sed</span> <span class="nt">-i</span> <span class="s1">'s/security.ubuntu.com/ftp.daumkakao.com/g'</span> /etc/apt/sources.list
+
+<span class="c"># 필수 시스템 패키지 설치</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    <span class="nv">DEBIAN_FRONTEND</span><span class="o">=</span>noninteractive apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>    git <span class="se">\
+</span>    wget <span class="se">\
+</span>    curl <span class="se">\
+</span>    python3.10 <span class="se">\
+</span>    python3.10-dev <span class="se">\
+</span>    python3.10-venv <span class="se">\
+</span>    python3-pip <span class="se">\
+</span>    build-essential <span class="se">\
+</span>    ninja-build <span class="se">\
+</span>    cmake <span class="se">\
+</span>    libgl1-mesa-glx <span class="se">\
+</span>    libglib2.0-0 <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+</code></pre></div></div>
+
+<p><strong>최적화 포인트:</strong></p>
+<ul>
+  <li><strong>한국 미러 서버</strong>: 다운로드 속도 향상</li>
+  <li><strong>–no-install-recommends</strong>: 최소 설치로 이미지 크기 감소</li>
+  <li><strong>apt 캐시 정리</strong>: 이미지 크기 최적화</li>
+</ul>
+
+<h3 id="4-python-환경-설정">4. Python 환경 설정</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Python 심볼릭 링크 생성</span>
+<span class="k">RUN </span><span class="nb">ln</span> <span class="nt">-s</span> /usr/bin/python3.10 /usr/bin/python
+
+<span class="c"># 최신 pip 설치</span>
+<span class="k">RUN </span>curl <span class="nt">-sS</span> https://bootstrap.pypa.io/get-pip.py | python3.10
+
+<span class="c"># 빌드 도구 설치</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">--no-cache-dir</span> <span class="se">\
+</span>    packaging <span class="se">\
+</span>    setuptools&gt;<span class="o">=</span>64.0.0 <span class="se">\
+</span>    wheel <span class="se">\
+</span>    ninja <span class="se">\
+</span>    cmake <span class="se">\
+</span>    scikit-build <span class="se">\
+</span>    build
+</code></pre></div></div>
+
+<h2 id="핵심-의존성-설치-전략">핵심 의존성 설치 전략</h2>
+
+<h3 id="1-pytorch-우선-설치">1. PyTorch 우선 설치</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 빌드 환경 변수 설정</span>
+<span class="k">ENV</span><span class="s"> MAX_JOBS=1</span>
+<span class="k">ENV</span><span class="s"> CMAKE_BUILD_PARALLEL_LEVEL=1</span>
+<span class="k">ENV</span><span class="s"> FORCE_CUDA=1</span>
+<span class="k">ENV</span><span class="s"> TORCH_CUDA_ARCH_LIST="8.0;8.6;9.0"</span>
+
+<span class="c"># PyTorch 먼저 설치 (의존성 충돌 방지)</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">--no-cache-dir</span> <span class="se">\
+</span>    torch&gt;<span class="o">=</span>2.4.0 <span class="se">\
+</span>    torchvision <span class="se">\
+</span>    torchaudio <span class="se">\
+</span>    <span class="nt">--extra-index-url</span> https://download.pytorch.org/whl/cu121
+</code></pre></div></div>
+
+<p><strong>핵심 전략:</strong></p>
+<ul>
+  <li><strong>PyTorch 우선</strong>: 다른 라이브러리의 기반</li>
+  <li><strong>CUDA 아키텍처 지정</strong>: GPU 최적화</li>
+  <li><strong>병렬 빌드 제한</strong>: 메모리 부족 방지</li>
+</ul>
+
+<h3 id="2-고성능-라이브러리-설치">2. 고성능 라이브러리 설치</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Triton 컴파일러</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">--no-cache-dir</span> <span class="nv">triton</span><span class="o">==</span>3.0.0
+
+<span class="c"># 메모리 최적화 어텐션</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">--no-cache-dir</span> <span class="nv">xformers</span><span class="o">==</span>0.0.27.post2 <span class="nt">--no-build-isolation</span>
+
+<span class="c"># Flash Attention 2</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">--no-cache-dir</span> <span class="se">\
+</span>    flash-attn<span class="o">==</span>2.2.3.post2 <span class="se">\
+</span>    <span class="nt">--no-build-isolation</span> <span class="se">\
+</span>    <span class="nt">--config-settings</span><span class="o">=</span><span class="s2">"--global-option=build_ext"</span> <span class="se">\
+</span>    <span class="nt">--config-settings</span><span class="o">=</span><span class="s2">"--global-option=-j1"</span> <span class="se">\
+</span>    <span class="nt">--no-deps</span>
+</code></pre></div></div>
+
+<p><strong>설치 옵션 설명:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--no-build-isolation</code>: 빌드 시간 단축</li>
+  <li><code class="language-plaintext highlighter-rouge">--no-deps</code>: 의존성 충돌 방지</li>
+  <li><code class="language-plaintext highlighter-rouge">-j1</code>: 단일 스레드 컴파일 (메모리 절약)</li>
+</ul>
+
+<h2 id="docker-compose-구성">Docker Compose 구성</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">opensora</span><span class="pi">:</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">opensora:latest</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">.</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">opensora</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">NVIDIA_VISIBLE_DEVICES=all</span>
+      <span class="pi">-</span> <span class="s">NVIDIA_DRIVER_CAPABILITIES=compute,utility</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./:/workspace</span>
+      <span class="pi">-</span> <span class="s">./ckpts:/workspace/ckpts</span>
+      <span class="pi">-</span> <span class="s">./samples:/workspace/samples</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">resources</span><span class="pi">:</span>
+        <span class="na">reservations</span><span class="pi">:</span>
+          <span class="na">devices</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">driver</span><span class="pi">:</span> <span class="s">nvidia</span>
+              <span class="na">count</span><span class="pi">:</span> <span class="s">all</span>
+              <span class="na">capabilities</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">gpu</span><span class="pi">]</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+</code></pre></div></div>
+
+<h3 id="핵심-구성-요소">핵심 구성 요소</h3>
+
+<h4 id="gpu-접근-설정">GPU 접근 설정</h4>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">environment</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">NVIDIA_VISIBLE_DEVICES=all</span>
+  <span class="pi">-</span> <span class="s">NVIDIA_DRIVER_CAPABILITIES=compute,utility</span>
+</code></pre></div></div>
+
+<h4 id="리소스-예약">리소스 예약</h4>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">deploy</span><span class="pi">:</span>
+  <span class="na">resources</span><span class="pi">:</span>
+    <span class="na">reservations</span><span class="pi">:</span>
+      <span class="na">devices</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">driver</span><span class="pi">:</span> <span class="s">nvidia</span>
+          <span class="na">count</span><span class="pi">:</span> <span class="s">all</span>
+          <span class="na">capabilities</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">gpu</span><span class="pi">]</span>
+</code></pre></div></div>
+
+<h4 id="볼륨-마운트-전략">볼륨 마운트 전략</h4>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">volumes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">./:/workspace</span>           <span class="c1"># 전체 소스 코드</span>
+  <span class="pi">-</span> <span class="s">./ckpts:/workspace/ckpts</span>    <span class="c1"># 모델 체크포인트 (분리)</span>
+  <span class="pi">-</span> <span class="s">./samples:/workspace/samples</span> <span class="c1"># 생성 결과물 (분리)</span>
+</code></pre></div></div>
+
+<p><strong>장점:</strong></p>
+<ul>
+  <li><strong>데이터 영속성</strong>: 컨테이너 재시작해도 데이터 보존</li>
+  <li><strong>성능</strong>: 체크포인트와 결과물 분리로 I/O 최적화</li>
+  <li><strong>개발 편의성</strong>: 실시간 코드 수정 반영</li>
+</ul>
+
+<h2 id="빌드-및-실행-최적화">빌드 및 실행 최적화</h2>
+
+<h3 id="1-다단계-빌드-최적화">1. 다단계 빌드 최적화</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 디버그 검증 단계</span>
+<span class="k">RUN </span>python <span class="nt">--version</span> <span class="o">&amp;&amp;</span> pip <span class="nt">--version</span>
+<span class="k">RUN </span>python <span class="nt">-c</span> <span class="s2">"import torch; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available())"</span>
+<span class="k">RUN </span>python <span class="nt">-c</span> <span class="s2">"import flash_attn; print('Flash Attention version:', flash_attn.__version__)"</span>
+</code></pre></div></div>
+
+<h3 id="2-작업-디렉토리-설정">2. 작업 디렉토리 설정</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WORKDIR</span><span class="s"> /workspace</span>
+
+<span class="c"># requirements.txt 복사 및 설치</span>
+<span class="k">COPY</span><span class="s"> requirements.txt .</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+
+<span class="c"># 필요 디렉토리 생성</span>
+<span class="k">RUN </span><span class="nb">mkdir</span> <span class="nt">-p</span> /workspace/ckpts /workspace/samples
+</code></pre></div></div>
+
+<h2 id="성능-튜닝-가이드">성능 튜닝 가이드</h2>
+
+<h3 id="1-메모리-최적화">1. 메모리 최적화</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 메모리 사용량 모니터링</span>
+docker stats opensora
+
+<span class="c"># GPU 메모리 확인</span>
+docker <span class="nb">exec </span>opensora nvidia-smi
+</code></pre></div></div>
+
+<h3 id="2-빌드-시간-단축">2. 빌드 시간 단축</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 병렬 빌드 (메모리 충분한 경우)</span>
+<span class="nb">export </span><span class="nv">DOCKER_BUILDKIT</span><span class="o">=</span>1
+docker build <span class="nt">--build-arg</span> <span class="nv">MAX_JOBS</span><span class="o">=</span>4 <span class="nb">.</span>
+
+<span class="c"># 캐시 활용</span>
+docker build <span class="nt">--cache-from</span> opensora:latest <span class="nb">.</span>
+</code></pre></div></div>
+
+<h3 id="3-네트워크-최적화">3. 네트워크 최적화</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 다운로드 재시도 설정</span>
+<span class="k">RUN </span><span class="nb">echo</span> <span class="s1">'Acquire::Retries "3";'</span> <span class="o">&gt;</span> /etc/apt/apt.conf.d/80-retries <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    <span class="nb">echo</span> <span class="s1">'Acquire::http::Timeout "120";'</span> <span class="o">&gt;&gt;</span> /etc/apt/apt.conf.d/80-retries
+</code></pre></div></div>
+
+<h2 id="문제-해결-가이드">문제 해결 가이드</h2>
+
+<h3 id="1-cuda-메모리-부족">1. CUDA 메모리 부족</h3>
+
+<p><strong>증상:</strong> <code class="language-plaintext highlighter-rouge">CUDA out of memory</code> 에러</p>
+
+<p><strong>해결책:</strong></p>
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENV</span><span class="s"> PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:4,garbage_collection_threshold:0.9</span>
+<span class="k">ENV</span><span class="s"> CUDA_MEMORY_FRACTION=0.3</span>
+</code></pre></div></div>
+
+<h3 id="2-빌드-시간-초과">2. 빌드 시간 초과</h3>
+
+<p><strong>증상:</strong> Flash Attention 빌드 중 타임아웃</p>
+
+<p><strong>해결책:</strong></p>
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENV</span><span class="s"> MAX_JOBS=1</span>
+<span class="k">ENV</span><span class="s"> CMAKE_BUILD_PARALLEL_LEVEL=1</span>
+</code></pre></div></div>
+
+<h3 id="3-권한-문제">3. 권한 문제</h3>
+
+<p><strong>증상:</strong> 파일 쓰기 권한 없음</p>
+
+<p><strong>해결책:</strong></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># docker-compose.yml</span>
+<span class="na">user</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${UID}:${GID}"</span>
+</code></pre></div></div>
+
+<h2 id="실제-운영-팁">실제 운영 팁</h2>
+
+<h3 id="1-이미지-크기-최적화">1. 이미지 크기 최적화</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 멀티 스테이지 빌드</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
+<span class="c"># 빌드 단계...</span>
+
+<span class="k">FROM</span><span class="s"> nvidia/cuda:12.2.2-cudnn8-runtime-ubuntu22.04</span>
+<span class="c"># 런타임 단계...</span>
+</code></pre></div></div>
+
+<h3 id="2-보안-강화">2. 보안 강화</h3>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 비root 사용자 생성</span>
+<span class="k">RUN </span>useradd <span class="nt">-m</span> <span class="nt">-s</span> /bin/bash opensora
+<span class="k">USER</span><span class="s"> opensora</span>
+</code></pre></div></div>
+
+<h3 id="3-모니터링-추가">3. 모니터링 추가</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># docker-compose.yml</span>
+<span class="na">logging</span><span class="pi">:</span>
+  <span class="na">driver</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json-file"</span>
+  <span class="na">options</span><span class="pi">:</span>
+    <span class="na">max-size</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100m"</span>
+    <span class="na">max-file</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>Open-Sora의 Docker 환경 구성은 단순한 컨테이너화를 넘어서 <strong>성능 최적화</strong>와 <strong>운영 안정성</strong>을 고려한 설계입니다.</p>
+
+<p><strong>핵심 포인트:</strong></p>
+<ul>
+  <li><strong>계층적 설치 전략</strong>: PyTorch → 최적화 라이브러리 → 애플리케이션</li>
+  <li><strong>메모리 관리</strong>: CUDA 메모리 할당과 가비지 컬렉션 최적화</li>
+  <li><strong>한국 환경 최적화</strong>: 로컬 미러 서버 활용</li>
+  <li><strong>분산 처리 준비</strong>: NCCL 설정으로 멀티 GPU 지원</li>
+</ul>
+
+<p>이러한 설계 원칙을 이해하면 다른 AI 모델의 Docker 환경 구성에도 응용할 수 있습니다. 다음 포스트에서는 Open-Sora의 핵심 모델 아키텍처를 자세히 살펴보겠습니다.</p>
+
+<hr />
+
+<p><em>이 글이 도움이 되셨다면 공유해주세요! 궁금한 점이 있으시면 댓글로 남겨주시기 바랍니다.</em></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/04/15/ollama-custom-project-overview-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Ollama Custom 프로젝트 개요 분석 - 로컬 LLM 실행 플랫폼의 아키텍처</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/05/08/ollama-custom-cli-command-system-analysis/" rel="next">
+          <span class="nav-title">Ollama Custom CLI 명령어 시스템 심층 분석 - Cobra 프레임워크 기...</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

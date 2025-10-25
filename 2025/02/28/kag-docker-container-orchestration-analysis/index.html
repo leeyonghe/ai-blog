@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석 | AI Development Blog</title>
+<meta name="description" content="개요이번 포스트에서는 KAG 프로젝트의 Docker 컨테이너 오케스트레이션을 심층 분석합니다. KAG는 마이크로서비스 아키텍처를 기반으로 웹 애플리케이션, Elasticsearch, Neo4j를 독립적인 컨테이너로 구성하여 확장성과 유지보수성을 극대화했습니다.1. Docker Co...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="kag, docker-compose, elasticsearch, neo4j, microservices, orchestration">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2025/02/28/kag-docker-container-orchestration-analysis/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석">
+<meta property="og:description" content="개요이번 포스트에서는 KAG 프로젝트의 Docker 컨테이너 오케스트레이션을 심층 분석합니다. KAG는 마이크로서비스 아키텍처를 기반으로 웹 애플리케이션, Elasticsearch, Neo4j를 독립적인 컨테이너로 구성하여 확장성과 유지보수성을 극대화했습니다.1. Docker Co...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2025/02/28/kag-docker-container-orchestration-analysis/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석">
+<meta name="twitter:description" content="개요이번 포스트에서는 KAG 프로젝트의 Docker 컨테이너 오케스트레이션을 심층 분석합니다. KAG는 마이크로서비스 아키텍처를 기반으로 웹 애플리케이션, Elasticsearch, Neo4j를 독립적인 컨테이너로 구성하여 확장성과 유지보수성을 극대화했습니다.1. Docker Co...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석",
+  "description": "개요
+
+이번 포스트에서는 KAG 프로젝트의 Docker 컨테이너 오케스트레이션을 심층 분석합니다. KAG는 마이크로서비스 아키텍처를 기반으로 웹 애플리케이션, Elasticsearch, Neo4j를 독립적인 컨테이너로 구성하여 확장성과 유지보수성을 극대화했습니다.
+
+1. Docke...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2025-02-28T00:45:00+00:00",
+  "dateModified": "2025-02-28T00:45:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2025/02/28/kag-docker-container-orchestration-analysis/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2025/02/28/kag-docker-container-orchestration-analysis/",
+  "inLanguage": "ko",
+  "keywords": ["kag","docker-compose","elasticsearch","neo4j","microservices","orchestration"],
+  "articleSection": ["Docker","Microservices","Container Orchestration"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2025-02-28T00:45:00+00:00">Feb 28, 2025</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>Docker</li><li>Microservices</li><li>Container Orchestration</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이번 포스트에서는 <strong>KAG 프로젝트의 Docker 컨테이너 오케스트레이션</strong>을 심층 분석합니다. KAG는 마이크로서비스 아키텍처를 기반으로 웹 애플리케이션, Elasticsearch, Neo4j를 독립적인 컨테이너로 구성하여 확장성과 유지보수성을 극대화했습니다.</p>
+
+<h2 id="1-docker-compose-아키텍처-개요">1. Docker Compose 아키텍처 개요</h2>
+
+<h3 id="11-전체-서비스-구성">1.1 전체 서비스 구성</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># KAG 마이크로서비스 구성</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">app</span><span class="pi">:</span>              <span class="c1"># KAG 메인 애플리케이션</span>
+  <span class="na">elasticsearch</span><span class="pi">:</span>    <span class="c1"># 검색 엔진 서비스</span>
+  <span class="na">neo4j</span><span class="pi">:</span>           <span class="c1"># 그래프 데이터베이스 서비스</span>
+
+<span class="na">networks</span><span class="pi">:</span>
+  <span class="na">kag-network</span><span class="pi">:</span>     <span class="c1"># 전용 브리지 네트워크</span>
+
+<span class="na">volumes</span><span class="pi">:</span>
+  <span class="na">neo4j_data</span><span class="pi">:</span>      <span class="c1"># Neo4j 데이터 영속성</span>
+  <span class="na">neo4j_logs</span><span class="pi">:</span>      <span class="c1"># Neo4j 로그 영속성</span>
+</code></pre></div></div>
+
+<h3 id="12-서비스-간-의존성-그래프">1.2 서비스 간 의존성 그래프</h3>
+
+<pre><code class="language-mermaid">graph TD
+    subgraph "외부 접근"
+        A[사용자 브라우저]
+        B[API 클라이언트]
+    end
+    
+    subgraph "KAG Docker Network"
+        C[KAG App :8000]
+        D[Elasticsearch :9200] 
+        E[Neo4j :7474/:7687]
+    end
+    
+    subgraph "데이터 영속성"
+        F[(neo4j_data)]
+        G[(neo4j_logs)]
+    end
+    
+    A --&gt;|HTTP/HTTPS| C
+    B --&gt;|REST API| C
+    C --&gt;|검색 쿼리| D
+    C --&gt;|그래프 쿼리| E
+    E --&gt; F
+    E --&gt; G
+    
+    C -.-&gt;|depends_on| D
+    C -.-&gt;|depends_on| E
+</code></pre>
+
+<h2 id="2-kag-메인-애플리케이션-컨테이너">2. KAG 메인 애플리케이션 컨테이너</h2>
+
+<h3 id="21-애플리케이션-서비스-구성">2.1 애플리케이션 서비스 구성</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">app</span><span class="pi">:</span>
+  <span class="na">build</span><span class="pi">:</span>
+    <span class="na">context</span><span class="pi">:</span> <span class="s">.</span>
+    <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile</span>
+  <span class="na">volumes</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">.:/app</span>                    <span class="c1"># 개발 시 코드 동기화</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">8000:8000"</span>              <span class="c1"># HTTP 서비스 포트</span>
+  <span class="na">depends_on</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">elasticsearch</span>            <span class="c1"># ES 서비스 의존성</span>
+    <span class="pi">-</span> <span class="s">neo4j</span>                    <span class="c1"># Neo4j 서비스 의존성</span>
+  <span class="na">environment</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">ELASTICSEARCH_HOST=elasticsearch</span>
+    <span class="pi">-</span> <span class="s">NEO4J_HOST=neo4j</span>
+    <span class="pi">-</span> <span class="s">NEO4J_USER=neo4j</span>
+    <span class="pi">-</span> <span class="s">NEO4J_PASSWORD=password</span>
+  <span class="na">networks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">kag-network</span>             <span class="c1"># 전용 네트워크 사용</span>
+</code></pre></div></div>
+
+<h3 id="22-환경-변수-기반-서비스-디스커버리">2.2 환경 변수 기반 서비스 디스커버리</h3>
+
+<p><strong>내부 DNS 해석:</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 컨테이너 내부에서의 서비스 접근</span>
+http://elasticsearch:9200    <span class="c"># Elasticsearch 내부 접근</span>
+bolt://neo4j:7687           <span class="c"># Neo4j Bolt 프로토콜</span>
+http://neo4j:7474           <span class="c"># Neo4j HTTP 인터페이스</span>
+</code></pre></div></div>
+
+<p><strong>환경 변수 주입 방식:</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># KAG 애플리케이션에서의 설정
+</span><span class="n">ELASTICSEARCH_HOST</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">'ELASTICSEARCH_HOST'</span><span class="p">,</span> <span class="s">'localhost'</span><span class="p">)</span>
+<span class="n">NEO4J_HOST</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">'NEO4J_HOST'</span><span class="p">,</span> <span class="s">'localhost'</span><span class="p">)</span>
+<span class="n">NEO4J_USER</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">'NEO4J_USER'</span><span class="p">,</span> <span class="s">'neo4j'</span><span class="p">)</span>
+<span class="n">NEO4J_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">'NEO4J_PASSWORD'</span><span class="p">,</span> <span class="s">'neo4j'</span><span class="p">)</span>
+
+<span class="c1"># 연결 URL 구성
+</span><span class="n">elasticsearch_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"http://</span><span class="si">{</span><span class="n">ELASTICSEARCH_HOST</span><span class="si">}</span><span class="s">:9200"</span>
+<span class="n">neo4j_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"bolt://</span><span class="si">{</span><span class="n">NEO4J_HOST</span><span class="si">}</span><span class="s">:7687"</span>
+</code></pre></div></div>
+
+<h3 id="23-볼륨-마운팅-전략">2.3 볼륨 마운팅 전략</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">volumes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">.:/app</span>    <span class="c1"># 호스트 코드 → 컨테이너 /app 디렉토리</span>
+</code></pre></div></div>
+
+<p><strong>개발 워크플로우 최적화:</strong></p>
+<ul>
+  <li><strong>코드 변경 시 즉시 반영</strong>: 컨테이너 재빌드 불필요</li>
+  <li><strong>Hot Reload 지원</strong>: Python 개발 서버의 자동 재시작</li>
+  <li><strong>디버깅 편의성</strong>: 호스트에서 직접 코드 수정 가능</li>
+</ul>
+
+<h2 id="3-elasticsearch-검색-엔진-컨테이너">3. Elasticsearch 검색 엔진 컨테이너</h2>
+
+<h3 id="31-elasticsearch-서비스-구성">3.1 Elasticsearch 서비스 구성</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">elasticsearch</span><span class="pi">:</span>
+  <span class="na">image</span><span class="pi">:</span> <span class="s">docker.elastic.co/elasticsearch/elasticsearch:8.10.0</span>
+  <span class="na">environment</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">discovery.type=single-node</span>      <span class="c1"># 단일 노드 클러스터</span>
+    <span class="pi">-</span> <span class="s">xpack.security.enabled=false</span>    <span class="c1"># 보안 기능 비활성화</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">ES_JAVA_OPTS=-Xms512m</span><span class="nv"> </span><span class="s">-Xmx512m"</span> <span class="c1"># JVM 메모리 설정</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">9200:9200"</span>                    <span class="c1"># HTTP API 포트</span>
+  <span class="na">networks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">kag-network</span>
+</code></pre></div></div>
+
+<h3 id="32-elasticsearch-구성-분석">3.2 Elasticsearch 구성 분석</h3>
+
+<h4 id="321-클러스터-설정">3.2.1 클러스터 설정</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 단일 노드 모드 설정</span>
+<span class="s">discovery.type=single-node</span>
+</code></pre></div></div>
+
+<p><strong>단일 노드 모드의 특징:</strong></p>
+<ul>
+  <li><strong>개발/테스트 최적화</strong>: 프로덕션 복잡성 제거</li>
+  <li><strong>리소스 효율성</strong>: 클러스터 오버헤드 최소화</li>
+  <li><strong>빠른 시작</strong>: 노드 디스커버리 과정 생략</li>
+  <li><strong>제한사항</strong>: 고가용성 및 샤딩 기능 제한</li>
+</ul>
+
+<h4 id="322-보안-설정">3.2.2 보안 설정</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># X-Pack 보안 비활성화</span>
+<span class="s">xpack.security.enabled=false</span>
+</code></pre></div></div>
+
+<p><strong>보안 비활성화 이유:</strong></p>
+<ul>
+  <li><strong>개발 환경 단순화</strong>: 인증/인가 복잡성 제거</li>
+  <li><strong>빠른 프로토타이핑</strong>: 보안 설정 없이 즉시 사용</li>
+  <li><strong>내부 네트워크</strong>: Docker 네트워크 내부에서만 접근</li>
+</ul>
+
+<h4 id="323-jvm-메모리-최적화">3.2.3 JVM 메모리 최적화</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"</span><span class="s">ES_JAVA_OPTS=-Xms512m</span><span class="nv"> </span><span class="s">-Xmx512m"</span>
+</code></pre></div></div>
+
+<p><strong>메모리 설정 전략:</strong></p>
+<ul>
+  <li><strong>힙 크기 고정</strong>: 512MB로 최소/최대 동일 설정</li>
+  <li><strong>컨테이너 최적화</strong>: 제한된 리소스 환경 고려</li>
+  <li><strong>GC 최적화</strong>: 고정 힙으로 가비지 컬렉션 안정화</li>
+</ul>
+
+<h3 id="33-kag에서의-elasticsearch-활용">3.3 KAG에서의 Elasticsearch 활용</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># KAG에서의 Elasticsearch 클라이언트 구성 예시
+</span><span class="kn">from</span> <span class="nn">elasticsearch</span> <span class="kn">import</span> <span class="n">Elasticsearch</span>
+
+<span class="k">class</span> <span class="nc">KAGSearchEngine</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">es</span> <span class="o">=</span> <span class="n">Elasticsearch</span><span class="p">([{</span>
+            <span class="s">'host'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">'ELASTICSEARCH_HOST'</span><span class="p">,</span> <span class="s">'localhost'</span><span class="p">),</span>
+            <span class="s">'port'</span><span class="p">:</span> <span class="mi">9200</span><span class="p">,</span>
+            <span class="s">'scheme'</span><span class="p">:</span> <span class="s">'http'</span>
+        <span class="p">}])</span>
+    
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">index_knowledge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">):</span>
+        <span class="s">"""지식 문서 인덱싱"""</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">es</span><span class="p">.</span><span class="n">index</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="s">"kag_knowledge"</span><span class="p">,</span>
+                <span class="nb">id</span><span class="o">=</span><span class="n">doc</span><span class="p">[</span><span class="s">'id'</span><span class="p">],</span>
+                <span class="n">body</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s">'content'</span><span class="p">:</span> <span class="n">doc</span><span class="p">[</span><span class="s">'content'</span><span class="p">],</span>
+                    <span class="s">'embeddings'</span><span class="p">:</span> <span class="n">doc</span><span class="p">[</span><span class="s">'embeddings'</span><span class="p">],</span>
+                    <span class="s">'metadata'</span><span class="p">:</span> <span class="n">doc</span><span class="p">[</span><span class="s">'metadata'</span><span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+    
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">semantic_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="s">"""의미적 검색 수행"""</span>
+        <span class="n">search_body</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"query"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">"multi_match"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s">"query"</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span>
+                    <span class="s">"fields"</span><span class="p">:</span> <span class="p">[</span><span class="s">"content^2"</span><span class="p">,</span> <span class="s">"metadata.title"</span><span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s">"size"</span><span class="p">:</span> <span class="n">size</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="p">.</span><span class="n">es</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s">"kag_knowledge"</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">search_body</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="4-neo4j-그래프-데이터베이스-컨테이너">4. Neo4j 그래프 데이터베이스 컨테이너</h2>
+
+<h3 id="41-neo4j-서비스-구성">4.1 Neo4j 서비스 구성</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">neo4j</span><span class="pi">:</span>
+  <span class="na">image</span><span class="pi">:</span> <span class="s">neo4j:5.13.0</span>
+  <span class="na">environment</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">NEO4J_AUTH=neo4j/password</span>      <span class="c1"># 인증 정보</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">7474:7474"</span>                    <span class="c1"># HTTP 브라우저 인터페이스</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">7687:7687"</span>                    <span class="c1"># Bolt 프로토콜</span>
+  <span class="na">volumes</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">neo4j_data:/data</span>               <span class="c1"># 데이터 영속성</span>
+    <span class="pi">-</span> <span class="s">neo4j_logs:/logs</span>               <span class="c1"># 로그 영속성</span>
+  <span class="na">networks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">kag-network</span>
+</code></pre></div></div>
+
+<h3 id="42-neo4j-구성-세부-분석">4.2 Neo4j 구성 세부 분석</h3>
+
+<h4 id="421-인증-및-보안">4.2.1 인증 및 보안</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">NEO4J_AUTH=neo4j/password</span>
+</code></pre></div></div>
+
+<p><strong>인증 설정:</strong></p>
+<ul>
+  <li><strong>사용자명</strong>: <code class="language-plaintext highlighter-rouge">neo4j</code> (기본 관리자)</li>
+  <li><strong>비밀번호</strong>: <code class="language-plaintext highlighter-rouge">password</code> (개발용 단순 비밀번호)</li>
+  <li><strong>보안 고려사항</strong>: 프로덕션 환경에서는 강력한 비밀번호 필요</li>
+</ul>
+
+<h4 id="422-포트-구성">4.2.2 포트 구성</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">7474:7474"</span>    <span class="c1"># Neo4j Browser (웹 인터페이스)</span>
+  <span class="pi">-</span> <span class="s2">"</span><span class="s">7687:7687"</span>    <span class="c1"># Bolt 프로토콜 (애플리케이션 연결)</span>
+</code></pre></div></div>
+
+<p><strong>포트별 용도:</strong></p>
+<ul>
+  <li><strong>7474 (HTTP)</strong>: 웹 기반 Neo4j Browser 인터페이스</li>
+  <li><strong>7687 (Bolt)</strong>: 고성능 바이너리 프로토콜</li>
+</ul>
+
+<h4 id="423-데이터-영속성-전략">4.2.3 데이터 영속성 전략</h4>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">volumes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">neo4j_data:/data</span>    <span class="c1"># 그래프 데이터베이스 파일</span>
+  <span class="pi">-</span> <span class="s">neo4j_logs:/logs</span>    <span class="c1"># 트랜잭션 로그 및 시스템 로그</span>
+</code></pre></div></div>
+
+<p><strong>볼륨 마운팅 이점:</strong></p>
+<ul>
+  <li><strong>데이터 보존</strong>: 컨테이너 재시작 시 데이터 유지</li>
+  <li><strong>백업 용이성</strong>: 호스트 파일시스템에서 백업 가능</li>
+  <li><strong>성능 최적화</strong>: 영속 볼륨을 통한 I/O 성능 향상</li>
+</ul>
+
+<h3 id="43-kag에서의-neo4j-활용">4.3 KAG에서의 Neo4j 활용</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># KAG에서의 Neo4j 연동 예시
+</span><span class="kn">from</span> <span class="nn">neo4j</span> <span class="kn">import</span> <span class="n">GraphDatabase</span>
+
+<span class="k">class</span> <span class="nc">KAGKnowledgeGraph</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">GraphDatabase</span><span class="p">.</span><span class="n">driver</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s">"bolt://</span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">'NEO4J_HOST'</span><span class="p">,</span> <span class="s">'localhost'</span><span class="p">)</span><span class="si">}</span><span class="s">:7687"</span><span class="p">,</span>
+            <span class="n">auth</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">'NEO4J_USER'</span><span class="p">,</span> <span class="s">'neo4j'</span><span class="p">),</span>
+                <span class="n">os</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">'NEO4J_PASSWORD'</span><span class="p">,</span> <span class="s">'neo4j'</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">create_knowledge_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entity_data</span><span class="p">):</span>
+        <span class="s">"""지식 엔티티 노드 생성"""</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">driver</span><span class="p">.</span><span class="n">session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s">"""
+            CREATE (e:Entity {
+                name: $name,
+                type: $type,
+                properties: $properties
+            })
+            RETURN e
+            """</span>
+            <span class="k">return</span> <span class="n">session</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="o">**</span><span class="n">entity_data</span><span class="p">)</span>
+    
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">create_relationship</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_entity</span><span class="p">,</span> <span class="n">to_entity</span><span class="p">,</span> <span class="n">relation</span><span class="p">):</span>
+        <span class="s">"""엔티티 간 관계 생성"""</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">driver</span><span class="p">.</span><span class="n">session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="s">"""
+            MATCH (a:Entity {name: $from_name})
+            MATCH (b:Entity {name: $to_name})
+            CREATE (a)-[r:RELATES {type: $relation_type}]-&gt;(b)
+            RETURN r
+            """</span>
+            <span class="k">return</span> <span class="n">session</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">query</span><span class="p">,</span>
+                <span class="n">from_name</span><span class="o">=</span><span class="n">from_entity</span><span class="p">,</span>
+                <span class="n">to_name</span><span class="o">=</span><span class="n">to_entity</span><span class="p">,</span>
+                <span class="n">relation_type</span><span class="o">=</span><span class="n">relation</span>
+            <span class="p">)</span>
+    
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">knowledge_reasoning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_entity</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="s">"""지식 그래프 추론 쿼리"""</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">driver</span><span class="p">.</span><span class="n">session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"""
+            MATCH path = (start:Entity )
+            -[*1..</span><span class="si">{</span><span class="n">max_depth</span><span class="si">}</span><span class="s">]-(connected:Entity)
+            RETURN path, connected
+            ORDER BY length(path)
+            """</span>
+            <span class="k">return</span> <span class="n">session</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">entity_name</span><span class="o">=</span><span class="n">start_entity</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="5-네트워크-아키텍처">5. 네트워크 아키텍처</h2>
+
+<h3 id="51-브리지-네트워크-구성">5.1 브리지 네트워크 구성</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">networks</span><span class="pi">:</span>
+  <span class="na">kag-network</span><span class="pi">:</span>
+    <span class="na">driver</span><span class="pi">:</span> <span class="s">bridge</span>
+</code></pre></div></div>
+
+<p><strong>브리지 네트워크 특징:</strong></p>
+<ul>
+  <li><strong>격리성</strong>: 외부 네트워크와 분리된 내부 통신</li>
+  <li><strong>DNS 해석</strong>: 컨테이너 이름으로 서비스 디스커버리</li>
+  <li><strong>보안성</strong>: 내부 트래픽만 허용</li>
+</ul>
+
+<h3 id="52-서비스-디스커버리-메커니즘">5.2 서비스 디스커버리 메커니즘</h3>
+
+<pre><code class="language-mermaid">graph TB
+    subgraph "kag-network (172.18.0.0/16)"
+        A[app: 172.18.0.2]
+        B[elasticsearch: 172.18.0.3]
+        C[neo4j: 172.18.0.4]
+    end
+    
+    subgraph "내부 DNS 해석"
+        D[app → elasticsearch:9200]
+        E[app → neo4j:7687]
+    end
+    
+    subgraph "외부 접근"
+        F[localhost:8000 → app]
+        G[localhost:9200 → elasticsearch]
+        H[localhost:7474 → neo4j]
+    end
+</code></pre>
+
+<p><strong>내부 통신 플로우:</strong></p>
+<ol>
+  <li><strong>서비스 이름 해석</strong>: Docker의 내장 DNS 서버 사용</li>
+  <li><strong>IP 주소 할당</strong>: 동적 IP 주소 자동 할당</li>
+  <li><strong>포트 매핑</strong>: 컨테이너 간 직접 통신</li>
+</ol>
+
+<h2 id="6-데이터-플로우-및-상호작용">6. 데이터 플로우 및 상호작용</h2>
+
+<h3 id="61-전체-데이터-플로우">6.1 전체 데이터 플로우</h3>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    participant User as 사용자
+    participant App as KAG App
+    participant ES as Elasticsearch
+    participant Neo4j as Neo4j
+    
+    User-&gt;&gt;App: 질의 요청
+    App-&gt;&gt;App: 질의 분석
+    
+    par 병렬 검색
+        App-&gt;&gt;ES: 의미적 검색
+        ES--&gt;&gt;App: 관련 문서 반환
+    and
+        App-&gt;&gt;Neo4j: 그래프 추론
+        Neo4j--&gt;&gt;App: 관련 엔티티 반환
+    end
+    
+    App-&gt;&gt;App: 결과 융합 및 추론
+    App--&gt;&gt;User: 증강된 응답 반환
+</code></pre>
+
+<h3 id="62-서비스별-역할-분담">6.2 서비스별 역할 분담</h3>
+
+<h4 id="kag-애플리케이션-포트-8000">KAG 애플리케이션 (포트 8000)</h4>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">역할</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">사용자 인터페이스 제공</span>
+  <span class="pi">-</span> <span class="s">질의 분석 및 처리</span>
+  <span class="pi">-</span> <span class="s">검색 결과 융합</span>
+  <span class="pi">-</span> <span class="s">응답 생성 및 반환</span>
+
+<span class="na">주요 기능</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">REST API 서버</span>
+  <span class="pi">-</span> <span class="s">웹 UI 제공</span>
+  <span class="pi">-</span> <span class="s">비즈니스 로직 처리</span>
+  <span class="pi">-</span> <span class="s">외부 서비스 조정</span>
+</code></pre></div></div>
+
+<h4 id="elasticsearch-포트-9200">Elasticsearch (포트 9200)</h4>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">역할</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">문서 인덱싱</span>
+  <span class="pi">-</span> <span class="s">의미적 검색</span>
+  <span class="pi">-</span> <span class="s">벡터 검색 지원</span>
+  <span class="pi">-</span> <span class="s">검색 결과 랭킹</span>
+
+<span class="na">주요 기능</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">전문 검색 (Full-text Search)</span>
+  <span class="pi">-</span> <span class="s">벡터 유사도 검색</span>
+  <span class="pi">-</span> <span class="s">집계 및 분석</span>
+  <span class="pi">-</span> <span class="s">실시간 인덱싱</span>
+</code></pre></div></div>
+
+<h4 id="neo4j-포트-74747687">Neo4j (포트 7474/7687)</h4>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">역할</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">지식 그래프 저장</span>
+  <span class="pi">-</span> <span class="s">그래프 쿼리 처리</span>
+  <span class="pi">-</span> <span class="s">관계 추론</span>
+  <span class="pi">-</span> <span class="s">경로 탐색</span>
+
+<span class="na">주요 기능</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">Cypher 쿼리 언어</span>
+  <span class="pi">-</span> <span class="s">그래프 알고리즘</span>
+  <span class="pi">-</span> <span class="s">관계 데이터 모델링</span>
+  <span class="pi">-</span> <span class="s">트랜잭션 처리</span>
+</code></pre></div></div>
+
+<h2 id="7-개발-및-배포-워크플로우">7. 개발 및 배포 워크플로우</h2>
+
+<h3 id="71-개발-환경-설정">7.1 개발 환경 설정</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 1. 프로젝트 클론</span>
+git clone &lt;kag-repository&gt;
+<span class="nb">cd </span>kag-docker
+
+<span class="c"># 2. 컨테이너 빌드 및 실행</span>
+docker-compose up <span class="nt">--build</span>
+
+<span class="c"># 3. 서비스 확인</span>
+curl http://localhost:8000/health
+curl http://localhost:9200/_cluster/health
+curl http://localhost:7474/
+</code></pre></div></div>
+
+<h3 id="72-개발-중-디버깅">7.2 개발 중 디버깅</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 개별 서비스 로그 확인</span>
+docker-compose logs <span class="nt">-f</span> app
+docker-compose logs <span class="nt">-f</span> elasticsearch
+docker-compose logs <span class="nt">-f</span> neo4j
+
+<span class="c"># 컨테이너 내부 접근</span>
+docker-compose <span class="nb">exec </span>app bash
+docker-compose <span class="nb">exec </span>elasticsearch bash
+docker-compose <span class="nb">exec </span>neo4j cypher-shell
+</code></pre></div></div>
+
+<h3 id="73-데이터-관리">7.3 데이터 관리</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 데이터 볼륨 백업</span>
+docker run <span class="nt">--rm</span> <span class="nt">-v</span> kag-docker_neo4j_data:/data <span class="se">\</span>
+  <span class="nt">-v</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">)</span>:/backup alpine <span class="se">\</span>
+  <span class="nb">tar </span>czf /backup/neo4j_backup.tar.gz <span class="nt">-C</span> /data <span class="nb">.</span>
+
+<span class="c"># 데이터 볼륨 복원</span>
+docker run <span class="nt">--rm</span> <span class="nt">-v</span> kag-docker_neo4j_data:/data <span class="se">\</span>
+  <span class="nt">-v</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">)</span>:/backup alpine <span class="se">\</span>
+  <span class="nb">tar </span>xzf /backup/neo4j_backup.tar.gz <span class="nt">-C</span> /data
+</code></pre></div></div>
+
+<h2 id="8-프로덕션-배포-고려사항">8. 프로덕션 배포 고려사항</h2>
+
+<h3 id="81-보안-강화">8.1 보안 강화</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 프로덕션용 환경 변수</span>
+<span class="na">environment</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">NEO4J_AUTH=admin/${STRONG_PASSWORD}</span>
+  <span class="pi">-</span> <span class="s">ELASTICSEARCH_USERNAME=${ES_USERNAME}</span>
+  <span class="pi">-</span> <span class="s">ELASTICSEARCH_PASSWORD=${ES_PASSWORD}</span>
+  <span class="pi">-</span> <span class="s">SSL_ENABLED=true</span>
+</code></pre></div></div>
+
+<h3 id="82-성능-튜닝">8.2 성능 튜닝</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Elasticsearch 메모리 증설</span>
+<span class="s2">"</span><span class="s">ES_JAVA_OPTS=-Xms2g</span><span class="nv"> </span><span class="s">-Xmx2g"</span>
+
+<span class="c1"># Neo4j 성능 설정</span>
+<span class="s">NEO4J_dbms_memory_heap_initial__size=1g</span>
+<span class="s">NEO4J_dbms_memory_heap_max__size=2g</span>
+<span class="s">NEO4J_dbms_memory_pagecache_size=1g</span>
+</code></pre></div></div>
+
+<h3 id="83-모니터링-및-로깅">8.3 모니터링 및 로깅</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 로깅 드라이버 설정</span>
+<span class="na">logging</span><span class="pi">:</span>
+  <span class="na">driver</span><span class="pi">:</span> <span class="s2">"</span><span class="s">json-file"</span>
+  <span class="na">options</span><span class="pi">:</span>
+    <span class="na">max-size</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100m"</span>
+    <span class="na">max-file</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
+
+<span class="c1"># 헬스체크 추가</span>
+<span class="na">healthcheck</span><span class="pi">:</span>
+  <span class="na">test</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">CMD"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">curl"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">-f"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">http://localhost:8000/health"</span><span class="pi">]</span>
+  <span class="na">interval</span><span class="pi">:</span> <span class="s">30s</span>
+  <span class="na">timeout</span><span class="pi">:</span> <span class="s">10s</span>
+  <span class="na">retries</span><span class="pi">:</span> <span class="m">3</span>
+</code></pre></div></div>
+
+<h2 id="9-확장성-및-고가용성">9. 확장성 및 고가용성</h2>
+
+<h3 id="91-수평-확장-전략">9.1 수평 확장 전략</h3>
+
+<pre><code class="language-mermaid">graph TB
+    subgraph "로드 밸런서"
+        LB[Nginx/HAProxy]
+    end
+    
+    subgraph "KAG 애플리케이션 클러스터"
+        A1[KAG App 1]
+        A2[KAG App 2]
+        A3[KAG App 3]
+    end
+    
+    subgraph "Elasticsearch 클러스터"
+        E1[ES Master]
+        E2[ES Data 1]
+        E3[ES Data 2]
+    end
+    
+    subgraph "Neo4j 클러스터"
+        N1[Neo4j Core 1]
+        N2[Neo4j Core 2]
+        N3[Neo4j Read Replica]
+    end
+    
+    LB --&gt; A1
+    LB --&gt; A2
+    LB --&gt; A3
+    
+    A1 --&gt; E1
+    A2 --&gt; E2
+    A3 --&gt; E3
+    
+    A1 --&gt; N1
+    A2 --&gt; N2
+    A3 --&gt; N3
+</code></pre>
+
+<h3 id="92-docker-swarmkubernetes-마이그레이션">9.2 Docker Swarm/Kubernetes 마이그레이션</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Docker Swarm용 설정 예시</span>
+<span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">app</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">kag:latest</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+      <span class="na">update_config</span><span class="pi">:</span>
+        <span class="na">parallelism</span><span class="pi">:</span> <span class="m">1</span>
+        <span class="na">delay</span><span class="pi">:</span> <span class="s">10s</span>
+      <span class="na">restart_policy</span><span class="pi">:</span>
+        <span class="na">condition</span><span class="pi">:</span> <span class="s">on-failure</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>KAG의 Docker 컨테이너 오케스트레이션은 <strong>마이크로서비스 아키텍처의 모범 사례</strong>를 보여줍니다. 각 서비스가 독립적으로 확장 가능하면서도 유기적으로 연결된 구조를 통해 높은 가용성과 성능을 제공합니다.</p>
+
+<p><strong>핵심 아키텍처 장점:</strong></p>
+<ul>
+  <li><strong>서비스 분리</strong>: 각 컴포넌트의 독립적 관리 및 확장</li>
+  <li><strong>개발 효율성</strong>: Docker Compose를 통한 간편한 환경 구성</li>
+  <li><strong>데이터 영속성</strong>: 볼륨을 통한 안정적인 데이터 보존</li>
+  <li><strong>네트워크 격리</strong>: 보안성과 성능을 고려한 네트워크 설계</li>
+</ul>
+
+<p>다음 포스트에서는 KAG Builder 모듈의 상세한 아키텍처와 지식 추출 프로세스를 분석하겠습니다.</p>
+
+<hr />
+
+<p><strong>연관 포스트:</strong></p>
+<ul>
+  <li><a href="/2024/08/15/kag-project-overview-architecture-analysis/">KAG (Knowledge Augmented Generation) 프로젝트 개요 및 아키텍처 심층 분석</a></li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://docs.docker.com/compose/">Docker Compose 공식 문서</a></li>
+  <li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html">Elasticsearch Docker 설정</a></li>
+  <li><a href="https://neo4j.com/docs/operations-manual/current/docker/">Neo4j Docker 설정</a></li>
+  <li><a href="https://microservices.io/patterns/">마이크로서비스 패턴</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2025/02/18/opensora-practical-usage-guide/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Open-Sora 실전 활용 가이드: 텍스트-투-비디오부터 고급 기법까지</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2025/04/17/kag-dependencies-ecosystem-analysis/" rel="next">
+          <span class="nav-title">KAG 의존성 및 Python 패키지 생태계 심층 분석 - 58개 핵심 라이브러리 종...</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

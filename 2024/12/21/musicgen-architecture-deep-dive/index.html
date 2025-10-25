@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조 | AI Development Blog</title>
+<meta name="description" content="MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조AudioCraft Custom 프로젝트의 MusicGen이 구축된 BaseGenModel 아키텍처를 심층 분석해보겠습니다. 이 포스트에서는 상속 구조, 컴포넌트 간 상호작용, 자동 혼합 정밀도 최적화 등 Mu...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="AudioCraft, MusicGen, BaseGenModel, Neural Architecture, Inheritance Patterns">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/12/21/musicgen-architecture-deep-dive/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조">
+<meta property="og:description" content="MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조AudioCraft Custom 프로젝트의 MusicGen이 구축된 BaseGenModel 아키텍처를 심층 분석해보겠습니다. 이 포스트에서는 상속 구조, 컴포넌트 간 상호작용, 자동 혼합 정밀도 최적화 등 Mu...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/12/21/musicgen-architecture-deep-dive/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조">
+<meta name="twitter:description" content="MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조AudioCraft Custom 프로젝트의 MusicGen이 구축된 BaseGenModel 아키텍처를 심층 분석해보겠습니다. 이 포스트에서는 상속 구조, 컴포넌트 간 상호작용, 자동 혼합 정밀도 최적화 등 Mu...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조",
+  "description": "MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조
+
+AudioCraft Custom 프로젝트의 MusicGen이 구축된 BaseGenModel 아키텍처를 심층 분석해보겠습니다. 이 포스트에서는 상속 구조, 컴포넌트 간 상호작용, 자동 혼합 정밀도 최적화 등 ...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-12-21T00:00:00+00:00",
+  "dateModified": "2024-12-21T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/12/21/musicgen-architecture-deep-dive/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/12/21/musicgen-architecture-deep-dive/",
+  "inLanguage": "ko",
+  "keywords": ["AudioCraft","MusicGen","BaseGenModel","Neural Architecture","Inheritance Patterns"],
+  "articleSection": ["AI","Deep Learning","Architecture"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-12-21T00:00:00+00:00">Dec 21, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Deep Learning</li><li>Architecture</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="musicgen-아키텍처-심화-분석---basegenmodel-상속-구조">MusicGen 아키텍처 심화 분석 - BaseGenModel 상속 구조</h1>
+
+<p>AudioCraft Custom 프로젝트의 MusicGen이 구축된 BaseGenModel 아키텍처를 심층 분석해보겠습니다. 이 포스트에서는 상속 구조, 컴포넌트 간 상호작용, 자동 혼합 정밀도 최적화 등 MusicGen의 핵심 아키텍처를 상세히 살펴보겠습니다.</p>
+
+<h2 id="-목차">📋 목차</h2>
+<ol>
+  <li><a href="#basegenmodel-추상-클래스-설계">BaseGenModel 추상 클래스 설계</a></li>
+  <li><a href="#컴포넌트-통합-아키텍처">컴포넌트 통합 아키텍처</a></li>
+  <li><a href="#설정-관리-시스템">설정 관리 시스템</a></li>
+  <li><a href="#디바이스-및-최적화-관리">디바이스 및 최적화 관리</a></li>
+  <li><a href="#생성-프로세스-추상화">생성 프로세스 추상화</a></li>
+  <li><a href="#확장성과-상속-패턴">확장성과 상속 패턴</a></li>
+</ol>
+
+<h2 id="basegenmodel-추상-클래스-설계">BaseGenModel 추상 클래스 설계</h2>
+
+<h3 id="추상-클래스-정의">추상 클래스 정의</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">BaseGenModel</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="s">"""Base generative model with convenient generation API.
+
+    Args:
+        name (str): name of the model.
+        compression_model (CompressionModel): Compression model
+            used to map audio to invertible discrete representations.
+        lm (LMModel): Language model over discrete representations.
+        max_duration (float, optional): maximum duration the model can produce,
+            otherwise, inferred from the training params.
+    """</span>
+</code></pre></div></div>
+
+<h4 id="️-아키텍처-설계-원칙">🏗️ 아키텍처 설계 원칙</h4>
+
+<h5 id="1-관심사의-분리-separation-of-concerns">1. 관심사의 분리 (Separation of Concerns)</h5>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">compression_model</span><span class="p">:</span> <span class="n">CompressionModel</span><span class="p">,</span> <span class="n">lm</span><span class="p">:</span> <span class="n">LMModel</span><span class="p">,</span>
+             <span class="n">max_duration</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span> <span class="o">=</span> <span class="n">compression_model</span>  <span class="c1"># 오디오 압축/복원
+</span>    <span class="bp">self</span><span class="p">.</span><span class="n">lm</span> <span class="o">=</span> <span class="n">lm</span>                               <span class="c1"># 언어 모델링
+</span>    <span class="bp">self</span><span class="p">.</span><span class="n">cfg</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">omegaconf</span><span class="p">.</span><span class="n">DictConfig</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>Compression Model</strong>: 오디오 ↔ 토큰 변환 담당</li>
+  <li><strong>Language Model</strong>: 이산 토큰에 대한 언어 모델링</li>
+  <li><strong>Base Model</strong>: 전체 파이프라인 조율</li>
+</ul>
+
+<h5 id="2-평가-모드-강제-설정">2. 평가 모드 강제 설정</h5>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Just to be safe, let's put everything in eval mode.
+</span><span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span><span class="p">.</span><span class="nb">eval</span><span class="p">()</span>
+<span class="bp">self</span><span class="p">.</span><span class="n">lm</span><span class="p">.</span><span class="nb">eval</span><span class="p">()</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>추론 최적화</strong>: 훈련용 연산 비활성화</li>
+  <li><strong>일관성 보장</strong>: 모든 하위 모델의 동일한 모드 설정</li>
+  <li><strong>안전성</strong>: 예상치 못한 훈련 모드 방지</li>
+</ul>
+
+<h3 id="추상-메서드-정의">추상 메서드 정의</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">abstractmethod</span>
+<span class="k">def</span> <span class="nf">set_generation_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="s">"""Set the generation parameters."""</span>
+    <span class="k">raise</span> <span class="nb">NotImplementedError</span><span class="p">(</span><span class="s">"No base implementation for setting generation params."</span><span class="p">)</span>
+
+<span class="o">@</span><span class="nb">staticmethod</span>
+<span class="o">@</span><span class="n">abstractmethod</span>
+<span class="k">def</span> <span class="nf">get_pretrained</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="nb">NotImplementedError</span><span class="p">(</span><span class="s">"No base implementation for getting pretrained model"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-추상화-전략">🎯 추상화 전략</h4>
+<ul>
+  <li><strong>필수 구현</strong>: 하위 클래스에서 반드시 구현해야 할 메서드</li>
+  <li><strong>유연성</strong>: 모델별 특화된 파라미터 설정 허용</li>
+  <li><strong>일관성</strong>: 동일한 인터페이스로 다른 모델 사용</li>
+</ul>
+
+<h2 id="컴포넌트-통합-아키텍처">컴포넌트 통합 아키텍처</h2>
+
+<h3 id="설정-기반-컴포넌트-래핑">설정 기반 컴포넌트 래핑</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lm</span><span class="p">,</span> <span class="s">'cfg'</span><span class="p">):</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">lm</span><span class="p">.</span><span class="n">cfg</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">omegaconf</span><span class="p">.</span><span class="n">DictConfig</span><span class="p">)</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg</span>
+
+<span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span> <span class="o">=</span> <span class="n">get_wrapped_compression_model</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">cfg</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-동적-모델-래핑-메커니즘">🔧 동적 모델 래핑 메커니즘</h4>
+
+<h5 id="wrapped-compression-model-패턴">Wrapped Compression Model 패턴</h5>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">.builders</span> <span class="kn">import</span> <span class="n">get_wrapped_compression_model</span>
+
+<span class="c1"># 설정에 따른 압축 모델 래핑
+</span><span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span> <span class="o">=</span> <span class="n">get_wrapped_compression_model</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">cfg</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>조건부 래핑</strong>: 설정에 따라 추가 기능 활성화</li>
+  <li><strong>투명성</strong>: 기존 인터페이스 유지하면서 기능 확장</li>
+  <li><strong>모듈성</strong>: 핵심 로직과 추가 기능의 분리</li>
+</ul>
+
+<h5 id="설정-전파-시스템">설정 전파 시스템</h5>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">max_duration</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">max_duration</span> <span class="o">=</span> <span class="n">lm</span><span class="p">.</span><span class="n">cfg</span><span class="p">.</span><span class="n">dataset</span><span class="p">.</span><span class="n">segment_duration</span>  <span class="c1"># type: ignore
+</span>    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"You must provide max_duration when building directly your GenModel"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>설정 우선순위</strong>: 명시적 파라미터 &gt; 설정 파일 &gt; 에러</li>
+  <li><strong>타입 안전성</strong>: type: ignore로 동적 속성 접근 명시</li>
+  <li><strong>검증</strong>: 필수 파라미터의 누락 방지</li>
+</ul>
+
+<h3 id="속성-위임-패턴">속성 위임 패턴</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="nb">property</span>
+<span class="k">def</span> <span class="nf">frame_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="s">"""Roughly the number of AR steps per seconds."""</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span><span class="p">.</span><span class="n">frame_rate</span>
+
+<span class="o">@</span><span class="nb">property</span>
+<span class="k">def</span> <span class="nf">sample_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="s">"""Sample rate of the generated audio."""</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span><span class="p">.</span><span class="n">sample_rate</span>
+
+<span class="o">@</span><span class="nb">property</span>
+<span class="k">def</span> <span class="nf">audio_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="s">"""Audio channels of the generated audio."""</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span><span class="p">.</span><span class="n">channels</span>
+</code></pre></div></div>
+
+<h4 id="-속성-위임의-이점">📊 속성 위임의 이점</h4>
+<ul>
+  <li><strong>일관된 인터페이스</strong>: 압축 모델의 속성을 최상위에서 접근</li>
+  <li><strong>캡슐화</strong>: 내부 구조 숨기면서 필요한 정보만 노출</li>
+  <li><strong>유지보수성</strong>: 압축 모델 변경 시 인터페이스 불변</li>
+</ul>
+
+<h2 id="설정-관리-시스템">설정 관리 시스템</h2>
+
+<h3 id="omegaconf-통합">OmegaConf 통합</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">omegaconf</span>
+
+<span class="bp">self</span><span class="p">.</span><span class="n">cfg</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">omegaconf</span><span class="p">.</span><span class="n">DictConfig</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lm</span><span class="p">,</span> <span class="s">'cfg'</span><span class="p">):</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">lm</span><span class="p">.</span><span class="n">cfg</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">omegaconf</span><span class="p">.</span><span class="n">DictConfig</span><span class="p">)</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg</span>
+</code></pre></div></div>
+
+<h4 id="️-계층적-설정-관리">⚙️ 계층적 설정 관리</h4>
+
+<h5 id="설정-구조-예시">설정 구조 예시</h5>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 예상되는 설정 구조</span>
+<span class="na">model</span><span class="pi">:</span>
+  <span class="na">compression_model</span><span class="pi">:</span>
+    <span class="na">sample_rate</span><span class="pi">:</span> <span class="m">32000</span>
+    <span class="na">channels</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">lm</span><span class="pi">:</span>
+    <span class="na">max_seq_len</span><span class="pi">:</span> <span class="m">2048</span>
+  <span class="na">dataset</span><span class="pi">:</span>
+    <span class="na">segment_duration</span><span class="pi">:</span> <span class="m">30.0</span>
+<span class="na">generation</span><span class="pi">:</span>
+  <span class="na">temperature</span><span class="pi">:</span> <span class="m">1.0</span>
+  <span class="na">top_k</span><span class="pi">:</span> <span class="m">250</span>
+</code></pre></div></div>
+
+<h5 id="타입-안전-설정-접근">타입 안전 설정 접근</h5>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 타입 검증과 함께 설정 접근
+</span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">omegaconf</span><span class="p">.</span><span class="n">DictConfig</span><span class="p">)</span>
+<span class="n">max_duration</span> <span class="o">=</span> <span class="n">lm</span><span class="p">.</span><span class="n">cfg</span><span class="p">.</span><span class="n">dataset</span><span class="p">.</span><span class="n">segment_duration</span>  <span class="c1"># type: ignore
+</span></code></pre></div></div>
+
+<ul>
+  <li><strong>런타임 검증</strong>: isinstance로 타입 확인</li>
+  <li><strong>IDE 지원</strong>: type: ignore로 정적 분석 도구 지원</li>
+  <li><strong>문서화</strong>: 주석으로 설정 구조 명시</li>
+</ul>
+
+<h3 id="지속시간-관리-시스템">지속시간 관리 시스템</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="bp">self</span><span class="p">.</span><span class="n">max_duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">max_duration</span>
+<span class="bp">self</span><span class="p">.</span><span class="n">duration</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">max_duration</span>
+
+<span class="c1"># self.extend_stride is the length of audio extension when generating samples longer
+# than self.max_duration. NOTE: the derived class must set self.extend_stride to a
+# positive float value when generating with self.duration &gt; self.max_duration.
+</span><span class="bp">self</span><span class="p">.</span><span class="n">extend_stride</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<h4 id="️-시간-관리-메커니즘">⏱️ 시간 관리 메커니즘</h4>
+<ul>
+  <li><strong>max_duration</strong>: 모델이 한 번에 생성할 수 있는 최대 길이</li>
+  <li><strong>duration</strong>: 실제 생성할 오디오 길이 (가변)</li>
+  <li><strong>extend_stride</strong>: 확장 생성 시 중복 구간 길이</li>
+</ul>
+
+<h2 id="디바이스-및-최적화-관리">디바이스 및 최적화 관리</h2>
+
+<h3 id="자동-디바이스-감지">자동 디바이스 감지</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="bp">self</span><span class="p">.</span><span class="n">device</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">lm</span><span class="p">.</span><span class="n">parameters</span><span class="p">())).</span><span class="n">device</span>
+</code></pre></div></div>
+
+<h4 id="-디바이스-관리-전략">🎯 디바이스 관리 전략</h4>
+<ul>
+  <li><strong>자동 감지</strong>: 언어 모델의 디바이스에서 전체 모델 디바이스 유추</li>
+  <li><strong>일관성</strong>: 모든 컴포넌트가 동일한 디바이스에서 실행</li>
+  <li><strong>투명성</strong>: 사용자가 디바이스를 명시적으로 관리할 필요 없음</li>
+</ul>
+
+<h3 id="자동-혼합-정밀도-amp-설정">자동 혼합 정밀도 (AMP) 설정</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">device</span><span class="p">.</span><span class="nb">type</span> <span class="o">==</span> <span class="s">'cpu'</span><span class="p">:</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">autocast</span> <span class="o">=</span> <span class="n">TorchAutocast</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">autocast</span> <span class="o">=</span> <span class="n">TorchAutocast</span><span class="p">(</span>
+        <span class="n">enabled</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">device</span><span class="p">.</span><span class="nb">type</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="p">.</span><span class="n">float16</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-최적화-전략-분석">⚡ 최적화 전략 분석</h4>
+
+<h5 id="cpu-vs-gpu-최적화">CPU vs GPU 최적화</h5>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">..utils.autocast</span> <span class="kn">import</span> <span class="n">TorchAutocast</span>
+
+<span class="c1"># CPU: 혼합 정밀도 비활성화
+</span><span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">device</span><span class="p">.</span><span class="nb">type</span> <span class="o">==</span> <span class="s">'cpu'</span><span class="p">:</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">autocast</span> <span class="o">=</span> <span class="n">TorchAutocast</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># GPU: float16 혼합 정밀도 활성화
+</span>    <span class="bp">self</span><span class="p">.</span><span class="n">autocast</span> <span class="o">=</span> <span class="n">TorchAutocast</span><span class="p">(</span>
+        <span class="n">enabled</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> 
+        <span class="n">device_type</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">device</span><span class="p">.</span><span class="nb">type</span><span class="p">,</span> 
+        <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="p">.</span><span class="n">float16</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<h5 id="메모리-효율성-분석">메모리 효율성 분석</h5>
+<ul>
+  <li><strong>CPU 모드</strong>: float32 정밀도 유지 (정확도 우선)</li>
+  <li><strong>GPU 모드</strong>: float16 혼합 정밀도 (속도/메모리 우선)</li>
+  <li><strong>자동 전환</strong>: 연산에 따라 자동으로 정밀도 조절</li>
+</ul>
+
+<h2 id="생성-프로세스-추상화">생성 프로세스 추상화</h2>
+
+<h3 id="조건-준비-메서드">조건 준비 메서드</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">_prepare_tokens_and_attributes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">descriptions</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Sequence</span><span class="p">[</span><span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tp</span><span class="p">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="n">ConditioningAttributes</span><span class="p">],</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">]]:</span>
+    <span class="s">"""Prepare model inputs.
+
+    Args:
+        descriptions (list of str): A list of strings used as text conditioning.
+        prompt (torch.Tensor): A batch of waveforms used for continuation.
+    """</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ConditioningAttributes</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="p">{</span><span class="s">'description'</span><span class="p">:</span> <span class="n">description</span><span class="p">})</span>
+        <span class="k">for</span> <span class="n">description</span> <span class="ow">in</span> <span class="n">descriptions</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">descriptions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompt</span><span class="p">),</span> <span class="s">"Prompt and nb. descriptions doesn't match"</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">prompt_tokens</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">scale</span> <span class="ow">is</span> <span class="bp">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">prompt_tokens</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">prompt_tokens</span>
+</code></pre></div></div>
+
+<h4 id="-조건-처리-파이프라인">🔄 조건 처리 파이프라인</h4>
+
+<h5 id="1-텍스트-조건-변환">1. 텍스트 조건 변환</h5>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">ConditioningAttributes</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="p">{</span><span class="s">'description'</span><span class="p">:</span> <span class="n">description</span><span class="p">})</span>
+    <span class="k">for</span> <span class="n">description</span> <span class="ow">in</span> <span class="n">descriptions</span><span class="p">]</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>구조화</strong>: 텍스트를 구조화된 조건 객체로 변환</li>
+  <li><strong>확장성</strong>: 다양한 조건 타입 지원 가능한 구조</li>
+  <li><strong>일관성</strong>: 모든 조건을 동일한 형태로 처리</li>
+</ul>
+
+<h5 id="2-오디오-프롬프트-처리">2. 오디오 프롬프트 처리</h5>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">prompt_tokens</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">compression_model</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">scale</span> <span class="ow">is</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>디바이스 이동</strong>: 입력 텐서를 모델 디바이스로 이동</li>
+  <li><strong>압축 인코딩</strong>: 오디오 파형을 이산 토큰으로 변환</li>
+  <li><strong>스케일 검증</strong>: 정규화 스케일이 없음을 확인</li>
+</ul>
+
+<h3 id="생성-방식-다양화">생성 방식 다양화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">generate_unconditional</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+                           <span class="n">return_tokens</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="s">"""Generate samples in an unconditional manner."""</span>
+    <span class="n">descriptions</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_samples</span>
+    <span class="c1"># ...
+</span>
+<span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptions</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> 
+             <span class="n">return_tokens</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="s">"""Generate samples conditioned on text."""</span>
+    <span class="c1"># ...
+</span>
+<span class="k">def</span> <span class="nf">generate_continuation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">prompt_sample_rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">descriptions</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+                          <span class="n">progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">return_tokens</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="s">"""Generate samples conditioned on audio prompts and an optional text description."""</span>
+    <span class="c1"># ...
+</span></code></pre></div></div>
+
+<h4 id="-생성-모드-분석">🎵 생성 모드 분석</h4>
+<ul>
+  <li><strong>무조건 생성</strong>: 아무 조건 없이 랜덤 생성</li>
+  <li><strong>텍스트 조건 생성</strong>: 텍스트 설명을 바탕으로 생성</li>
+  <li><strong>연속 생성</strong>: 기존 오디오를 이어서 생성</li>
+</ul>
+
+<h2 id="확장성과-상속-패턴">확장성과 상속 패턴</h2>
+
+<h3 id="진행률-콜백-시스템">진행률 콜백 시스템</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="bp">self</span><span class="p">.</span><span class="n">_progress_callback</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">tp</span><span class="p">.</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="bp">None</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">set_custom_progress_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress_callback</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">tp</span><span class="p">.</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="bp">None</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="s">"""Override the default progress callback."""</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">_progress_callback</span> <span class="o">=</span> <span class="n">progress_callback</span>
+</code></pre></div></div>
+
+<h4 id="-사용자-정의-진행률-추적">📊 사용자 정의 진행률 추적</h4>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">custom_progress</span><span class="p">(</span><span class="n">generated</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">percentage</span> <span class="o">=</span> <span class="p">(</span><span class="n">generated</span> <span class="o">/</span> <span class="n">total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Progress: </span><span class="si">{</span><span class="n">percentage</span><span class="si">:</span><span class="p">.</span><span class="mi">1</span><span class="n">f</span><span class="si">}</span><span class="s">% (</span><span class="si">{</span><span class="n">generated</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s">)"</span><span class="p">)</span>
+
+<span class="n">model</span><span class="p">.</span><span class="n">set_custom_progress_callback</span><span class="p">(</span><span class="n">custom_progress</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="확장-생성-메커니즘">확장 생성 메커니즘</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_generate_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attributes</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">List</span><span class="p">[</span><span class="n">ConditioningAttributes</span><span class="p">],</span>
+                     <span class="n">prompt_tokens</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="n">total_gen_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">duration</span> <span class="o">*</span> <span class="bp">self</span><span class="p">.</span><span class="n">frame_rate</span><span class="p">)</span>
+    <span class="n">max_prompt_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">max_duration</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="p">.</span><span class="n">frame_rate</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">duration</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="p">.</span><span class="n">max_duration</span><span class="p">:</span>
+        <span class="c1"># 단순 생성
+</span>        <span class="k">with</span> <span class="bp">self</span><span class="p">.</span><span class="n">autocast</span><span class="p">:</span>
+            <span class="n">gen_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">lm</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span>
+                <span class="n">prompt_tokens</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span>
+                <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span> <span class="n">max_gen_len</span><span class="o">=</span><span class="n">total_gen_len</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="p">.</span><span class="n">generation_params</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 확장 생성
+</span>        <span class="k">assert</span> <span class="bp">self</span><span class="p">.</span><span class="n">extend_stride</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+        <span class="c1"># ... 세그먼트별 생성 로직
+</span></code></pre></div></div>
+
+<h4 id="-확장-생성-알고리즘">🔄 확장 생성 알고리즘</h4>
+<ol>
+  <li><strong>단일 세그먼트</strong>: duration ≤ max_duration</li>
+  <li><strong>다중 세그먼트</strong>: duration &gt; max_duration</li>
+  <li><strong>중복 처리</strong>: extend_stride로 컨텍스트 보존</li>
+</ol>
+
+<h2 id="-핵심-인사이트">🔍 핵심 인사이트</h2>
+
+<h3 id="1-계층적-아키텍처">1. 계층적 아키텍처</h3>
+<ul>
+  <li><strong>추상화 레벨</strong>: BaseGenModel → MusicGen/AudioGen → 구체적 구현</li>
+  <li><strong>재사용성</strong>: 공통 로직을 기반 클래스에서 처리</li>
+  <li><strong>확장성</strong>: 새로운 생성 모델 쉽게 추가 가능</li>
+</ul>
+
+<h3 id="2-설정-중심-설계">2. 설정 중심 설계</h3>
+<ul>
+  <li><strong>유연성</strong>: OmegaConf를 통한 계층적 설정 관리</li>
+  <li><strong>재현성</strong>: 설정 파일로 실험 결과 재현 가능</li>
+  <li><strong>모듈성</strong>: 컴포넌트별 독립적 설정</li>
+</ul>
+
+<h3 id="3-성능-최적화">3. 성능 최적화</h3>
+<ul>
+  <li><strong>자동 최적화</strong>: 디바이스에 따른 자동 혼합 정밀도</li>
+  <li><strong>메모리 효율성</strong>: GPU에서 float16 사용으로 메모리 절약</li>
+  <li><strong>연산 최적화</strong>: 평가 모드 강제로 불필요한 연산 제거</li>
+</ul>
+
+<h3 id="4-사용자-경험">4. 사용자 경험</h3>
+<ul>
+  <li><strong>진행률 추적</strong>: 사용자 정의 콜백으로 진행 상황 모니터링</li>
+  <li><strong>다양한 생성 모드</strong>: 무조건, 조건부, 연속 생성 지원</li>
+  <li><strong>오류 방지</strong>: 타입 힌트와 검증으로 런타임 오류 최소화</li>
+</ul>
+
+<h2 id="-결론">🎯 결론</h2>
+
+<p>BaseGenModel은 AudioCraft 생태계의 핵심 추상화로, 다양한 생성 모델들이 공유할 수 있는 견고한 기반을 제공합니다. 추상 클래스 설계, 컴포넌트 통합, 설정 관리, 최적화 등 모든 측면에서 확장성과 성능을 모두 고려한 정교한 아키텍처를 보여줍니다.</p>
+
+<p>특히 자동 혼합 정밀도와 설정 기반 컴포넌트 래핑은 현대적인 딥러닝 프레임워크의 모범 사례를 잘 반영하며, 사용자 친화적인 API와 개발자 친화적인 확장성을 동시에 달성했습니다.</p>
+
+<hr />
+
+<p><em>이 분석은 AudioCraft Custom 프로젝트의 실제 BaseGenModel 구현을 기반으로 작성되었습니다. 더 자세한 구현 내용은 <a href="https://github.com/facebookresearch/audiocraft">AudioCraft 공식 저장소</a>에서 확인할 수 있습니다.</em></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/12/21/docker-compose-orchestration-deep-dive/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Docker Compose 오케스트레이션 심화 분석 - AudioCraft Custo...</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/12/21/musicgen-conditioning-mechanisms-analysis/" rel="next">
+          <span class="nav-title">AudioCraft MusicGen 조건화 메커니즘 심층 분석</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>AudioGen &amp; EnCodec 모델 심화 분석 - AudioCraft Custom 프로젝트 | AI Development Blog</title>
+<meta name="description" content="AudioGen &amp;amp; EnCodec 모델 심화 분석AudioCraft Custom 프로젝트의 두 번째 핵심 구성 요소인 AudioGen과 EnCodec 모델을 심층적으로 분석해보겠습니다. AudioGen은 일반적인 오디오 효과 생성을, EnCodec은 신경망 기반 오디오 압축...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="AudioCraft, AudioGen, EnCodec, Neural Audio Compression, Vector Quantization">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/12/20/audiogen-encodec-deep-dive/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="AudioGen &amp; EnCodec 모델 심화 분석 - AudioCraft Custom 프로젝트">
+<meta property="og:description" content="AudioGen &amp;amp; EnCodec 모델 심화 분석AudioCraft Custom 프로젝트의 두 번째 핵심 구성 요소인 AudioGen과 EnCodec 모델을 심층적으로 분석해보겠습니다. AudioGen은 일반적인 오디오 효과 생성을, EnCodec은 신경망 기반 오디오 압축...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/12/20/audiogen-encodec-deep-dive/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AudioGen &amp; EnCodec 모델 심화 분석 - AudioCraft Custom 프로젝트">
+<meta name="twitter:description" content="AudioGen &amp;amp; EnCodec 모델 심화 분석AudioCraft Custom 프로젝트의 두 번째 핵심 구성 요소인 AudioGen과 EnCodec 모델을 심층적으로 분석해보겠습니다. AudioGen은 일반적인 오디오 효과 생성을, EnCodec은 신경망 기반 오디오 압축...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AudioGen &amp; EnCodec 모델 심화 분석 - AudioCraft Custom 프로젝트",
+  "description": "AudioGen &amp;amp; EnCodec 모델 심화 분석
+
+AudioCraft Custom 프로젝트의 두 번째 핵심 구성 요소인 AudioGen과 EnCodec 모델을 심층적으로 분석해보겠습니다. AudioGen은 일반적인 오디오 효과 생성을, EnCodec은 신경망 기반 오디오 ...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-12-20T00:00:00+00:00",
+  "dateModified": "2024-12-20T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/12/20/audiogen-encodec-deep-dive/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/12/20/audiogen-encodec-deep-dive/",
+  "inLanguage": "ko",
+  "keywords": ["AudioCraft","AudioGen","EnCodec","Neural Audio Compression","Vector Quantization"],
+  "articleSection": ["AI","Deep Learning","Audio Compression"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>AudioGen & EnCodec 모델 심화 분석 - AudioCraft Custom 프로젝트</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">AudioGen &amp; EnCodec 모델 심화 분석 - AudioCraft Custom 프로젝트</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-12-20T00:00:00+00:00">Dec 20, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Deep Learning</li><li>Audio Compression</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h1 id="audiogen--encodec-모델-심화-분석">AudioGen &amp; EnCodec 모델 심화 분석</h1>
+
+<p>AudioCraft Custom 프로젝트의 두 번째 핵심 구성 요소인 AudioGen과 EnCodec 모델을 심층적으로 분석해보겠습니다. AudioGen은 일반적인 오디오 효과 생성을, EnCodec은 신경망 기반 오디오 압축을 담당하는 중요한 컴포넌트들입니다.</p>
+
+<h2 id="-목차">📋 목차</h2>
+<ol>
+  <li><a href="#audiogen-vs-musicgen-비교">AudioGen vs MusicGen 비교</a></li>
+  <li><a href="#audiogen-구현-분석">AudioGen 구현 분석</a></li>
+  <li><a href="#encodec-압축-모델">EnCodec 압축 모델</a></li>
+  <li><a href="#벡터-양자화-메커니즘">벡터 양자화 메커니즘</a></li>
+  <li><a href="#압축-성능-최적화">압축 성능 최적화</a></li>
+  <li><a href="#실제-응용-시나리오">실제 응용 시나리오</a></li>
+</ol>
+
+<h2 id="audiogen-vs-musicgen-비교">AudioGen vs MusicGen 비교</h2>
+
+<h3 id="-핵심-차이점">🎵 핵심 차이점</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>특징</th>
+      <th>MusicGen</th>
+      <th>AudioGen</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>목적</strong></td>
+      <td>음악 생성</td>
+      <td>일반 오디오/효과음 생성</td>
+    </tr>
+    <tr>
+      <td><strong>기본 길이</strong></td>
+      <td>30초</td>
+      <td>10초</td>
+    </tr>
+    <tr>
+      <td><strong>확장 간격</strong></td>
+      <td>18초</td>
+      <td>2초</td>
+    </tr>
+    <tr>
+      <td><strong>조건부 생성</strong></td>
+      <td>텍스트 + 멜로디</td>
+      <td>텍스트만</td>
+    </tr>
+    <tr>
+      <td><strong>모델 크기</strong></td>
+      <td>300M~3.3B</td>
+      <td>1.5B (medium)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="-설계-철학-차이">🔍 설계 철학 차이</h4>
+<ul>
+  <li><strong>MusicGen</strong>: 긴 형태의 구조화된 음악 생성에 최적화</li>
+  <li><strong>AudioGen</strong>: 짧고 정확한 효과음/환경음 생성에 특화</li>
+</ul>
+
+<h2 id="audiogen-구현-분석">AudioGen 구현 분석</h2>
+
+<h3 id="클래스-구조">클래스 구조</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AudioGen</span><span class="p">(</span><span class="n">BaseGenModel</span><span class="p">):</span>
+    <span class="s">"""AudioGen main model with convenient generation API.
+    
+    Args:
+        name (str): name of the model.
+        compression_model (CompressionModel): Compression model
+            used to map audio to invertible discrete representations.
+        lm (LMModel): Language model over discrete representations.
+        max_duration (float, optional): maximum duration the model can produce,
+            otherwise, inferred from the training params.
+    """</span>
+</code></pre></div></div>
+
+<h3 id="초기화-및-기본-설정">초기화 및 기본 설정</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">compression_model</span><span class="p">:</span> <span class="n">CompressionModel</span><span class="p">,</span> <span class="n">lm</span><span class="p">:</span> <span class="n">LMModel</span><span class="p">,</span>
+             <span class="n">max_duration</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">compression_model</span><span class="p">,</span> <span class="n">lm</span><span class="p">,</span> <span class="n">max_duration</span><span class="p">)</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">set_generation_params</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># 기본 길이: 5초
+</span></code></pre></div></div>
+
+<h4 id="-주요-특징">📦 주요 특징</h4>
+<ul>
+  <li><strong>BaseGenModel 상속</strong>: MusicGen과 동일한 기반 아키텍처</li>
+  <li><strong>짧은 기본 길이</strong>: 5초 기본 설정으로 효과음에 최적화</li>
+  <li><strong>단순한 조건부 생성</strong>: 텍스트 조건만 지원</li>
+</ul>
+
+<h3 id="사전-훈련된-모델">사전 훈련된 모델</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="nb">staticmethod</span>
+<span class="k">def</span> <span class="nf">get_pretrained</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'facebook/audiogen-medium'</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="s">"""Return pretrained model, we provide a single model for now:
+    - facebook/audiogen-medium (1.5B), text to sound,
+      # see: https://huggingface.co/facebook/audiogen-medium
+    """</span>
+</code></pre></div></div>
+
+<h4 id="-모델-특화">🎯 모델 특화</h4>
+<ul>
+  <li><strong>단일 모델</strong>: medium 크기 (1.5B 파라미터)만 제공</li>
+  <li><strong>특화된 설계</strong>: 음악보다는 효과음 생성에 집중</li>
+  <li><strong>검증된 제약</strong>: 파형 조건부 생성 미지원</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">assert</span> <span class="s">'self_wav'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lm</span><span class="p">.</span><span class="n">condition_provider</span><span class="p">.</span><span class="n">conditioners</span><span class="p">,</span> \
+    <span class="s">"AudioGen do not support waveform conditioning for now"</span>
+</code></pre></div></div>
+
+<h3 id="생성-파라미터-최적화">생성 파라미터 최적화</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">set_generation_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_sampling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">250</span><span class="p">,</span>
+                          <span class="n">top_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                          <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">cfg_coef</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+                          <span class="n">two_step_cfg</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">extend_stride</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+</code></pre></div></div>
+
+<h4 id="-효과음-생성-최적화">⚡ 효과음 생성 최적화</h4>
+<ul>
+  <li><strong>짧은 확장 간격</strong>: 2초 (vs MusicGen 18초)</li>
+  <li><strong>기본 길이</strong>: 10초 (vs MusicGen 30초)</li>
+  <li><strong>빠른 생성</strong>: 짧은 간격으로 컨텍스트 보존보다 속도 우선</li>
+</ul>
+
+<h2 id="encodec-압축-모델">EnCodec 압축 모델</h2>
+
+<h3 id="추상-인터페이스">추상 인터페이스</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CompressionModel</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""Base API for all compression models that aim at being used as audio tokenizers
+    with a language model.
+    """</span>
+</code></pre></div></div>
+
+<h4 id="-핵심-메서드">🔧 핵심 메서드</h4>
+<ul>
+  <li><strong>encode</strong>: 오디오를 이산 코드로 변환</li>
+  <li><strong>decode</strong>: 코드를 오디오로 복원</li>
+  <li><strong>decode_latent</strong>: 코드를 연속 잠재 공간으로 디코딩</li>
+</ul>
+
+<h3 id="encodec-모델-구현">EnCodec 모델 구현</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">EncodecModel</span><span class="p">(</span><span class="n">CompressionModel</span><span class="p">):</span>
+    <span class="s">"""Encodec model operating on the raw waveform.
+    
+    Args:
+        encoder (nn.Module): Encoder network.
+        decoder (nn.Module): Decoder network.
+        quantizer (qt.BaseQuantizer): Quantizer network.
+        frame_rate (int): Frame rate for the latent representation.
+        sample_rate (int): Audio sample rate.
+        channels (int): Number of audio channels.
+        causal (bool): Whether to use a causal version of the model.
+        renormalize (bool): Whether to renormalize the audio before running the model.
+    """</span>
+</code></pre></div></div>
+
+<h4 id="️-아키텍처-구성">🏗️ 아키텍처 구성</h4>
+<ol>
+  <li><strong>Encoder</strong>: 원시 파형을 잠재 표현으로 변환</li>
+  <li><strong>Quantizer</strong>: 연속 잠재 표현을 이산 코드로 양자화</li>
+  <li><strong>Decoder</strong>: 양자화된 표현을 오디오로 복원</li>
+</ol>
+
+<h3 id="전처리-및-후처리">전처리 및 후처리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tp</span><span class="p">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">]]:</span>
+    <span class="n">scale</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">]</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">renormalize</span><span class="p">:</span>
+        <span class="n">mono</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="n">mono</span><span class="p">.</span><span class="nb">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">).</span><span class="n">sqrt</span><span class="p">()</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="mf">1e-8</span> <span class="o">+</span> <span class="n">volume</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">scale</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">scale</span>
+</code></pre></div></div>
+
+<h4 id="-정규화-메커니즘">📊 정규화 메커니즘</h4>
+<ul>
+  <li><strong>볼륨 정규화</strong>: 입력 오디오의 볼륨을 정규화</li>
+  <li><strong>스케일 보존</strong>: 복원 시 원래 볼륨으로 되돌리기 위한 스케일 저장</li>
+  <li><strong>안정성</strong>: 1e-8 추가로 수치적 안정성 확보</li>
+</ul>
+
+<h3 id="인코딩-디코딩-파이프라인">인코딩-디코딩 파이프라인</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">qt</span><span class="p">.</span><span class="n">QuantizedResult</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">x</span><span class="p">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">preprocess</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="n">emb</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">q_res</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">quantizer</span><span class="p">(</span><span class="n">emb</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">frame_rate</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">q_res</span><span class="p">.</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="c1"># 인코더와 디코더에서 추가된 패딩 제거
+</span>    <span class="k">assert</span> <span class="n">out</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">length</span><span class="p">,</span> <span class="p">(</span><span class="n">out</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">length</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">[...,</span> <span class="p">:</span><span class="n">length</span><span class="p">]</span>
+    
+    <span class="n">q_res</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">q_res</span>
+</code></pre></div></div>
+
+<h4 id="-처리-과정">🔄 처리 과정</h4>
+<ol>
+  <li><strong>전처리</strong>: 정규화 및 스케일 계산</li>
+  <li><strong>인코딩</strong>: 원시 오디오 → 잠재 표현</li>
+  <li><strong>양자화</strong>: 연속 → 이산 표현</li>
+  <li><strong>디코딩</strong>: 잠재 표현 → 복원된 오디오</li>
+  <li><strong>후처리</strong>: 패딩 제거 및 스케일 복원</li>
+</ol>
+
+<h2 id="벡터-양자화-메커니즘">벡터 양자화 메커니즘</h2>
+
+<h3 id="residual-vector-quantizer">Residual Vector Quantizer</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ResidualVectorQuantizer</span><span class="p">(</span><span class="n">BaseQuantizer</span><span class="p">):</span>
+    <span class="s">"""Residual Vector Quantizer.
+    
+    Args:
+        dimension (int): Dimension of the codebooks.
+        n_q (int): Number of residual vector quantizers used.
+        q_dropout (bool): Random quantizer drop out at train time.
+        bins (int): Codebook size.
+        decay (float): Decay for exponential moving average over the codebooks.
+    """</span>
+</code></pre></div></div>
+
+<h4 id="-핵심-파라미터">🧮 핵심 파라미터</h4>
+<ul>
+  <li><strong>dimension</strong>: 코드북 차원 (기본값: 256)</li>
+  <li><strong>n_q</strong>: 잔여 벡터 양자화기 수 (기본값: 8)</li>
+  <li><strong>bins</strong>: 코드북 크기 (기본값: 1024)</li>
+  <li><strong>decay</strong>: 지수 이동 평균 감쇠율 (기본값: 0.99)</li>
+</ul>
+
+<h3 id="양자화-과정">양자화 과정</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">frame_rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">n_q</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">n_q</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">training</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">.</span><span class="n">q_dropout</span><span class="p">:</span>
+        <span class="n">n_q</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">n_q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)).</span><span class="n">item</span><span class="p">())</span>
+    
+    <span class="n">bw_per_q</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">bins</span><span class="p">)</span> <span class="o">*</span> <span class="n">frame_rate</span> <span class="o">/</span> <span class="mi">1000</span>
+    <span class="n">quantized</span><span class="p">,</span> <span class="n">codes</span><span class="p">,</span> <span class="n">commit_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">vq</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n_q</span><span class="o">=</span><span class="n">n_q</span><span class="p">)</span>
+    <span class="n">codes</span> <span class="o">=</span> <span class="n">codes</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">bw</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">n_q</span> <span class="o">*</span> <span class="n">bw_per_q</span><span class="p">).</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">QuantizedResult</span><span class="p">(</span><span class="n">quantized</span><span class="p">,</span> <span class="n">codes</span><span class="p">,</span> <span class="n">bw</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="n">torch</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">commit_loss</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h4 id="️-양자화-메커니즘">⚙️ 양자화 메커니즘</h4>
+<ol>
+  <li><strong>드롭아웃</strong>: 훈련 시 랜덤하게 양자화기 수 감소</li>
+  <li><strong>대역폭 계산</strong>: <code class="language-plaintext highlighter-rouge">log2(bins) * frame_rate / 1000</code></li>
+  <li><strong>잔여 양자화</strong>: 여러 단계의 양자화로 정확도 향상</li>
+  <li><strong>커밋 손실</strong>: 양자화 오차를 줄이기 위한 정규화</li>
+</ol>
+
+<h3 id="코드북-관리">코드북 관리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="s">"""Encode a given input tensor with the specified frame rate at the given bandwidth."""</span>
+    <span class="n">n_q</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">n_q</span>
+    <span class="n">codes</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">vq</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n_q</span><span class="o">=</span><span class="n">n_q</span><span class="p">)</span>
+    <span class="n">codes</span> <span class="o">=</span> <span class="n">codes</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">codes</span>
+
+<span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">codes</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="s">"""Decode the given codes to the quantized representation."""</span>
+    <span class="n">codes</span> <span class="o">=</span> <span class="n">codes</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">vq</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="-코드북-특징">📚 코드북 특징</h4>
+<ul>
+  <li><strong>다중 코드북</strong>: 8개의 잔여 양자화기로 세밀한 표현</li>
+  <li><strong>적응적 크기</strong>: 필요에 따라 사용할 코드북 수 조절</li>
+  <li><strong>효율적 인덱싱</strong>: 전치를 통한 효율적인 데이터 구조</li>
+</ul>
+
+<h2 id="압축-성능-최적화">압축 성능 최적화</h2>
+
+<h3 id="사전-훈련된-모델-지원">사전 훈련된 모델 지원</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="nb">staticmethod</span>
+<span class="k">def</span> <span class="nf">get_pretrained</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">tp</span><span class="p">.</span><span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="p">.</span><span class="n">device</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s">'cpu'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s">'CompressionModel'</span><span class="p">:</span>
+    <span class="s">"""Instantiate a CompressionModel from a given pretrained model.
+    
+    Pretrained models:
+        - dac_44khz (https://github.com/descriptinc/descript-audio-codec)
+        - dac_24khz (same)
+        - facebook/encodec_24khz (https://huggingface.co/facebook/encodec_24khz)
+        - facebook/encodec_32khz (https://huggingface.co/facebook/encodec_32khz)
+    """</span>
+</code></pre></div></div>
+
+<h4 id="️-다양한-압축-옵션">🎛️ 다양한 압축 옵션</h4>
+<ul>
+  <li><strong>DAC</strong>: Descript Audio Codec (44kHz, 24kHz)</li>
+  <li><strong>EnCodec</strong>: Facebook의 신경망 압축 (24kHz, 32kHz)</li>
+  <li><strong>샘플레이트별 최적화</strong>: 용도에 따른 압축 모델 선택</li>
+</ul>
+
+<h3 id="dac-통합">DAC 통합</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">DAC</span><span class="p">(</span><span class="n">CompressionModel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">"44khz"</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">dac.utils</span>
+        <span class="k">except</span> <span class="nb">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">RuntimeError</span><span class="p">(</span><span class="s">"Could not import dac, make sure it is installed, "</span>
+                               <span class="s">"please run `pip install descript-audio-codec`"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">dac</span><span class="p">.</span><span class="n">utils</span><span class="p">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="n">model_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">n_quantizers</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">total_codebooks</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="nb">eval</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h4 id="-외부-모델-통합">🔗 외부 모델 통합</h4>
+<ul>
+  <li><strong>선택적 의존성</strong>: DAC 라이브러리 선택적 설치</li>
+  <li><strong>통합 인터페이스</strong>: 동일한 API로 다른 압축 모델 사용</li>
+  <li><strong>성능 특화</strong>: 각 압축 모델의 고유 장점 활용</li>
+</ul>
+
+<h2 id="실제-응용-시나리오">실제 응용 시나리오</h2>
+
+<h3 id="1-실시간-오디오-효과-생성">1. 실시간 오디오 효과 생성</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># AudioGen으로 짧은 효과음 생성
+</span><span class="n">audiogen</span> <span class="o">=</span> <span class="n">AudioGen</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">'facebook/audiogen-medium'</span><span class="p">)</span>
+<span class="n">audiogen</span><span class="p">.</span><span class="n">set_generation_params</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">extend_stride</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="n">descriptions</span> <span class="o">=</span> <span class="p">[</span><span class="s">"doorbell ringing"</span><span class="p">,</span> <span class="s">"car engine starting"</span><span class="p">,</span> <span class="s">"rain on window"</span><span class="p">]</span>
+<span class="n">effects</span> <span class="o">=</span> <span class="n">audiogen</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="2-고효율-오디오-압축">2. 고효율 오디오 압축</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># EnCodec으로 오디오 압축
+</span><span class="n">encodec</span> <span class="o">=</span> <span class="n">CompressionModel</span><span class="p">.</span><span class="n">get_pretrained</span><span class="p">(</span><span class="s">'facebook/encodec_24khz'</span><span class="p">)</span>
+<span class="n">codes</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">encodec</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">audio_tensor</span><span class="p">)</span>
+<span class="n">reconstructed</span> <span class="o">=</span> <span class="n">encodec</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">codes</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="3-적응적-품질-조절">3. 적응적 품질 조절</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 필요에 따라 코드북 수 조절
+</span><span class="n">encodec</span><span class="p">.</span><span class="n">set_num_codebooks</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c1"># 낮은 품질, 높은 압축률
+</span><span class="n">codes_low</span> <span class="o">=</span> <span class="n">encodec</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+
+<span class="n">encodec</span><span class="p">.</span><span class="n">set_num_codebooks</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>  <span class="c1"># 높은 품질, 낮은 압축률  
+</span><span class="n">codes_high</span> <span class="o">=</span> <span class="n">encodec</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">audio</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="-핵심-인사이트">🔍 핵심 인사이트</h2>
+
+<h3 id="1-특화된-설계">1. 특화된 설계</h3>
+<ul>
+  <li><strong>AudioGen</strong>: 효과음 생성에 최적화된 파라미터</li>
+  <li><strong>EnCodec</strong>: 다양한 압축 요구사항에 대응하는 유연성</li>
+</ul>
+
+<h3 id="2-모듈화된-압축">2. 모듈화된 압축</h3>
+<ul>
+  <li><strong>추상화</strong>: 다양한 압축 모델을 동일한 인터페이스로 사용</li>
+  <li><strong>확장성</strong>: 새로운 압축 알고리즘 쉽게 통합</li>
+</ul>
+
+<h3 id="3-적응적-품질">3. 적응적 품질</h3>
+<ul>
+  <li><strong>동적 조절</strong>: 실시간으로 압축률과 품질 균형 조절</li>
+  <li><strong>효율성</strong>: 용도에 맞는 최적의 설정 선택</li>
+</ul>
+
+<h3 id="4-견고한-구현">4. 견고한 구현</h3>
+<ul>
+  <li><strong>오류 처리</strong>: 의존성 검사와 호환성 확인</li>
+  <li><strong>수치 안정성</strong>: 정규화와 스케일링으로 안정적인 처리</li>
+</ul>
+
+<h2 id="-결론">🎯 결론</h2>
+
+<p>AudioGen과 EnCodec은 AudioCraft 생태계에서 각각 특화된 역할을 수행합니다. AudioGen은 짧고 정확한 효과음 생성에, EnCodec은 고효율 신경망 압축에 최적화되어 있습니다.</p>
+
+<p>두 모델 모두 실용적인 응용을 고려한 설계로, 실시간 처리와 다양한 품질 요구사항에 대응할 수 있는 유연성을 제공합니다.</p>
+
+<p>다음 포스트에서는 AudioCraft의 적대적 네트워크 시스템을 분석하며, MPD, MSD, MS-STFT-D 판별자들이 어떻게 오디오 품질을 향상시키는지 살펴보겠습니다.</p>
+
+<hr />
+
+<p><em>이 분석은 AudioCraft Custom 프로젝트의 실제 소스 코드를 기반으로 작성되었습니다. 더 자세한 구현 내용은 <a href="https://github.com/facebookresearch/audiocraft">AudioCraft 공식 저장소</a>에서 확인할 수 있습니다.</em></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/12/20/adversarial-networks-deep-dive/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Adversarial Networks 심화 분석 - AudioCraft Custom ...</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/12/20/docker-containerization-deep-dive/" rel="next">
+          <span class="nav-title">Docker 컨테이너화 시스템 심화 분석 - AudioCraft Custom 프로젝트</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

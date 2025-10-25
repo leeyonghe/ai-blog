@@ -1,0 +1,314 @@
+<p>Stable Diffusion 핵심 구현체 상세 분석</p>
+
+<div class="mermaid">
+graph TB
+    subgraph "Stable Diffusion Architecture"
+        A[Text Input] --&gt; B[Text Encoder]
+        C[Random Noise] --&gt; D[U-Net Denoiser]
+        B --&gt; D
+        
+        D --&gt; E[Denoised Latents]
+        E --&gt; F[VAE Decoder]
+        F --&gt; G[Generated Image]
+        
+        subgraph "Text Processing"
+            B --&gt; B1[CLIP Text Encoder]
+            B1 --&gt; B2[Text Embeddings]
+        end
+        
+        subgraph "Latent Diffusion Process"
+            D --&gt; D1[Attention Layers]
+            D --&gt; D2[ResNet Blocks]
+            D --&gt; D3[Cross Attention]
+            D1 --&gt; D4[Self Attention]
+            D2 --&gt; D5[Spatial Processing]
+            D3 --&gt; D6[Text-Image Alignment]
+        end
+        
+        subgraph "VAE Components"
+            H[Image Input] --&gt; I[VAE Encoder]
+            I --&gt; J[Latent Space]
+            J --&gt; F
+            F --&gt; K[Reconstruction Loss]
+            J --&gt; L[KL Divergence]
+        end
+        
+        subgraph "Training Pipeline"
+            M[Noise Scheduler]
+            N[Loss Computation]
+            O[Gradient Updates]
+            
+            M --&gt; D
+            D --&gt; N
+            N --&gt; O
+        end
+        
+        subgraph "Sampling Methods"
+            P[DDPM Sampling]
+            Q[DDIM Sampling]
+            R[Euler Sampling]
+            
+            E --&gt; P
+            E --&gt; Q
+            E --&gt; R
+        end
+    end
+    
+    style A fill:#e1f5fe
+    style G fill:#c8e6c9
+    style D fill:#ffcdd2
+    style F fill:#fff3e0
+</div>
+
+<p><img src="https://www.nvidia.com/content/dam/en-zz/Solutions/about-nvidia/logo-and-brand/01-nvidia-logo-vert-500x200-2c50-d@2x.png" alt="NVIDIA Logo" width="500" height="300" /></p>
+
+<p>이 문서에서는 <code class="language-plaintext highlighter-rouge">repositories/stable-diffusion-stability-ai</code> 디렉토리에 있는 Stable Diffusion의 핵심 구현체에 대해 상세히 분석합니다.</p>
+
+<h2 id="1-핵심-모듈-구조">1. 핵심 모듈 구조</h2>
+
+<h3 id="11-ldm-latent-diffusion-models">1.1. ldm (Latent Diffusion Models)</h3>
+<p>Latent Diffusion Models의 핵심 구현체입니다.</p>
+
+<h4 id="ldmmodels">ldm/models/</h4>
+<ul>
+  <li><strong>autoencoder.py</strong>: VAE (Variational Autoencoder) 구현
+    <ul>
+      <li>인코더: 이미지를 잠재 공간으로 변환</li>
+      <li>디코더: 잠재 공간에서 이미지로 복원</li>
+      <li>손실 함수: 재구성 손실과 KL 발산</li>
+    </ul>
+  </li>
+  <li><strong>diffusion/</strong>: 확산 모델 관련 구현
+    <ul>
+      <li><strong>ddpm.py</strong>: Denoising Diffusion Probabilistic Models 구현
+        <ul>
+          <li>노이즈 스케줄링</li>
+          <li>샘플링 프로세스</li>
+          <li>손실 함수 계산</li>
+        </ul>
+      </li>
+      <li><strong>ddim.py</strong>: Denoising Diffusion Implicit Models 구현
+        <ul>
+          <li>결정적 샘플링</li>
+          <li>DDIM 스케줄러</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>unet/</strong>: U-Net 아키텍처 구현
+    <ul>
+      <li><strong>unet.py</strong>: 기본 U-Net 구조
+        <ul>
+          <li>인코더 블록</li>
+          <li>디코더 블록</li>
+          <li>스킵 커넥션</li>
+        </ul>
+      </li>
+      <li><strong>attention.py</strong>: 어텐션 메커니즘
+        <ul>
+          <li>셀프 어텐션</li>
+          <li>크로스 어텐션</li>
+          <li>멀티헤드 어텐션</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="12-scripts">1.2. scripts/</h3>
+<p>실행 스크립트와 유틸리티 함수들입니다.</p>
+
+<h4 id="scripts">scripts/</h4>
+<ul>
+  <li><strong>txt2img.py</strong>: 텍스트에서 이미지 생성
+    <ul>
+      <li>프롬프트 처리</li>
+      <li>이미지 생성 파이프라인</li>
+      <li>결과 저장</li>
+    </ul>
+  </li>
+  <li><strong>img2img.py</strong>: 이미지 변환
+    <ul>
+      <li>이미지 전처리</li>
+      <li>노이즈 추가</li>
+      <li>이미지 재구성</li>
+    </ul>
+  </li>
+  <li><strong>optimize/</strong>: 최적화 관련 스크립트
+    <ul>
+      <li><strong>optimize_sd.py</strong>: 모델 최적화</li>
+      <li><strong>optimize_attention.py</strong>: 어텐션 최적화</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="13-configs">1.3. configs/</h3>
+<p>모델 설정 파일들입니다.</p>
+
+<h4 id="configs">configs/</h4>
+<ul>
+  <li><strong>v1-inference.yaml</strong>: v1 모델 추론 설정
+    <ul>
+      <li>모델 아키텍처 파라미터</li>
+      <li>추론 설정</li>
+      <li>하이퍼파라미터</li>
+    </ul>
+  </li>
+  <li><strong>v2-inference.yaml</strong>: v2 모델 추론 설정
+    <ul>
+      <li>고해상도 생성 설정</li>
+      <li>개선된 아키텍처 파라미터</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="14-utils">1.4. utils/</h3>
+<p>유틸리티 함수들입니다.</p>
+
+<h4 id="utils">utils/</h4>
+<ul>
+  <li><strong>image_utils.py</strong>: 이미지 처리 유틸리티
+    <ul>
+      <li>이미지 리사이징</li>
+      <li>포맷 변환</li>
+      <li>전처리 함수</li>
+    </ul>
+  </li>
+  <li><strong>model_utils.py</strong>: 모델 관련 유틸리티
+    <ul>
+      <li>가중치 로딩</li>
+      <li>모델 저장</li>
+      <li>상태 관리</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="2-주요-클래스-분석">2. 주요 클래스 분석</h2>
+
+<h3 id="21-autoencoderkl">2.1. AutoencoderKL</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AutoencoderKL</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""
+    VAE (Variational Autoencoder) 구현체
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">...):</span>
+        <span class="c1"># 인코더 초기화
+</span>        <span class="c1"># 디코더 초기화
+</span>        <span class="c1"># 손실 함수 설정
+</span>
+    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># 이미지를 잠재 공간으로 인코딩
+</span>
+    <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="c1"># 잠재 공간에서 이미지로 디코딩
+</span></code></pre></div></div>
+
+<h3 id="22-unetmodel">2.2. UNetModel</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UNetModel</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="s">"""
+    U-Net 기반 확산 모델
+    """</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">...):</span>
+        <span class="c1"># 인코더 블록 초기화
+</span>        <span class="c1"># 디코더 블록 초기화
+</span>        <span class="c1"># 어텐션 레이어 설정
+</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">timesteps</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="c1"># 노이즈 제거 프로세스
+</span>        <span class="c1"># 어텐션 계산
+</span>        <span class="c1"># 스킵 커넥션 처리
+</span></code></pre></div></div>
+
+<h2 id="3-핵심-프로세스-분석">3. 핵심 프로세스 분석</h2>
+
+<h3 id="31-이미지-생성-프로세스">3.1. 이미지 생성 프로세스</h3>
+<ol>
+  <li>텍스트 인코딩
+    <ul>
+      <li>CLIP 텍스트 인코더를 통한 프롬프트 처리</li>
+      <li>임베딩 생성</li>
+    </ul>
+  </li>
+  <li>노이즈 생성
+    <ul>
+      <li>가우시안 노이즈 생성</li>
+      <li>타임스텝에 따른 노이즈 스케일링</li>
+    </ul>
+  </li>
+  <li>디노이징 프로세스
+    <ul>
+      <li>U-Net을 통한 노이즈 제거</li>
+      <li>어텐션 메커니즘 적용</li>
+      <li>점진적 개선</li>
+    </ul>
+  </li>
+  <li>이미지 디코딩
+    <ul>
+      <li>VAE 디코더를 통한 이미지 생성</li>
+      <li>최종 이미지 후처리</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="32-최적화-프로세스">3.2. 최적화 프로세스</h3>
+<ol>
+  <li>메모리 최적화
+    <ul>
+      <li>그래디언트 체크포인팅</li>
+      <li>메모리 효율적 어텐션</li>
+    </ul>
+  </li>
+  <li>속도 최적화
+    <ul>
+      <li>하프 프리시전 연산</li>
+      <li>배치 처리 최적화</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="4-확장성과-커스터마이징">4. 확장성과 커스터마이징</h2>
+
+<h3 id="41-모델-확장">4.1. 모델 확장</h3>
+<ul>
+  <li>커스텀 U-Net 아키텍처</li>
+  <li>새로운 어텐션 메커니즘</li>
+  <li>추가 손실 함수</li>
+</ul>
+
+<h3 id="42-파이프라인-확장">4.2. 파이프라인 확장</h3>
+<ul>
+  <li>새로운 샘플링 전략</li>
+  <li>커스텀 전처리/후처리</li>
+  <li>멀티모달 입력 지원</li>
+</ul>
+
+<h2 id="5-성능-최적화-팁">5. 성능 최적화 팁</h2>
+
+<h3 id="51-메모리-사용량-최적화">5.1. 메모리 사용량 최적화</h3>
+<ul>
+  <li>그래디언트 체크포인팅 활성화</li>
+  <li>배치 크기 조정</li>
+  <li>메모리 효율적 어텐션 사용</li>
+</ul>
+
+<h3 id="52-추론-속도-최적화">5.2. 추론 속도 최적화</h3>
+<ul>
+  <li>하프 프리시전 사용</li>
+  <li>ONNX 변환</li>
+  <li>TensorRT 최적화</li>
+</ul>
+
+<h2 id="6-디버깅과-문제-해결">6. 디버깅과 문제 해결</h2>
+
+<h3 id="61-일반적인-문제">6.1. 일반적인 문제</h3>
+<ul>
+  <li>메모리 부족</li>
+  <li>추론 속도 저하</li>
+  <li>품질 이슈</li>
+</ul>
+
+<h3 id="62-해결-방법">6.2. 해결 방법</h3>
+<ul>
+  <li>메모리 프로파일링</li>
+  <li>성능 프로파일링</li>
+  <li>품질 메트릭 모니터링</li>
+</ul>

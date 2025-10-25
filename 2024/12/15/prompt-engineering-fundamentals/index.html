@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>프롬프트 엔지니어링 기초와 인컨텍스트 학습 완벽 가이드 | AI Development Blog</title>
+<meta name="description" content="개요프롬프트 엔지니어링은 대규모 언어 모델(LLM)과 효과적으로 소통하는 핵심 기술입니다. 이번 포스트에서는 프롬프트의 기본 개념부터 인컨텍스트 학습, 시스템/사용자 프롬프트 구분, 그리고 컨텍스트 효율성까지 체계적으로 살펴보겠습니다.1. 프롬프트 소개1.1 프롬프트의 정의와 중요...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="prompt-engineering, in-context-learning, zero-shot, few-shot, system-prompt, context-efficiency">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2024/12/15/prompt-engineering-fundamentals/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="프롬프트 엔지니어링 기초와 인컨텍스트 학습 완벽 가이드">
+<meta property="og:description" content="개요프롬프트 엔지니어링은 대규모 언어 모델(LLM)과 효과적으로 소통하는 핵심 기술입니다. 이번 포스트에서는 프롬프트의 기본 개념부터 인컨텍스트 학습, 시스템/사용자 프롬프트 구분, 그리고 컨텍스트 효율성까지 체계적으로 살펴보겠습니다.1. 프롬프트 소개1.1 프롬프트의 정의와 중요...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2024/12/15/prompt-engineering-fundamentals/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="프롬프트 엔지니어링 기초와 인컨텍스트 학습 완벽 가이드">
+<meta name="twitter:description" content="개요프롬프트 엔지니어링은 대규모 언어 모델(LLM)과 효과적으로 소통하는 핵심 기술입니다. 이번 포스트에서는 프롬프트의 기본 개념부터 인컨텍스트 학습, 시스템/사용자 프롬프트 구분, 그리고 컨텍스트 효율성까지 체계적으로 살펴보겠습니다.1. 프롬프트 소개1.1 프롬프트의 정의와 중요...">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "프롬프트 엔지니어링 기초와 인컨텍스트 학습 완벽 가이드",
+  "description": "개요
+
+프롬프트 엔지니어링은 대규모 언어 모델(LLM)과 효과적으로 소통하는 핵심 기술입니다. 이번 포스트에서는 프롬프트의 기본 개념부터 인컨텍스트 학습, 시스템/사용자 프롬프트 구분, 그리고 컨텍스트 효율성까지 체계적으로 살펴보겠습니다.
+
+1. 프롬프트 소개
+
+1.1 프롬프트의 ...",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2024-12-15T05:30:00+00:00",
+  "dateModified": "2024-12-15T05:30:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2024/12/15/prompt-engineering-fundamentals/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2024/12/15/prompt-engineering-fundamentals/",
+  "inLanguage": "ko",
+  "keywords": ["prompt-engineering","in-context-learning","zero-shot","few-shot","system-prompt","context-efficiency"],
+  "articleSection": ["AI","Prompt Engineering","In-Context Learning"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>프롬프트 엔지니어링 기초와 인컨텍스트 학습 완벽 가이드</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">프롬프트 엔지니어링 기초와 인컨텍스트 학습 완벽 가이드</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2024-12-15T05:30:00+00:00">Dec 15, 2024</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Prompt Engineering</li><li>In-Context Learning</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p><strong>프롬프트 엔지니어링</strong>은 대규모 언어 모델(LLM)과 효과적으로 소통하는 핵심 기술입니다. 이번 포스트에서는 프롬프트의 기본 개념부터 인컨텍스트 학습, 시스템/사용자 프롬프트 구분, 그리고 컨텍스트 효율성까지 체계적으로 살펴보겠습니다.</p>
+
+<h2 id="1-프롬프트-소개">1. 프롬프트 소개</h2>
+
+<h3 id="11-프롬프트의-정의와-중요성">1.1 프롬프트의 정의와 중요성</h3>
+
+<div class="mermaid">
+graph TB
+    subgraph "Prompt Engineering Ecosystem"
+        A[Prompt Engineering] --&gt; B[Core Techniques]
+        A --&gt; C[Learning Paradigms]
+        A --&gt; D[Optimization Strategies]
+        
+        B --&gt; B1[Prompt Structure]
+        B --&gt; B2[Context Management]
+        B --&gt; B3[Output Formatting]
+        
+        C --&gt; C1[Zero-shot Learning]
+        C --&gt; C2[Few-shot Learning]
+        C --&gt; C3[Chain of Thought]
+        C --&gt; C4[In-Context Learning]
+        
+        D --&gt; D1[Response Quality]
+        D --&gt; D2[Cost Optimization]
+        D --&gt; D3[Latency Reduction]
+        D --&gt; D4[Token Efficiency]
+        
+        subgraph "Prompt Components"
+            E[System Prompt]
+            F[User Prompt]
+            G[Examples]
+            H[Instructions]
+        end
+        
+        B1 --&gt; E
+        B1 --&gt; F
+        C2 --&gt; G
+        B3 --&gt; H
+        
+        subgraph "Application Domains"
+            I[Text Generation]
+            J[Code Generation]
+            K[Analysis &amp; Reasoning]
+            L[Creative Tasks]
+        end
+        
+        A --&gt; I
+        A --&gt; J
+        A --&gt; K
+        A --&gt; L
+    end
+    
+    style A fill:#ff9999
+    style C fill:#66b3ff
+    style D fill:#99ff99
+    style B fill:#ffcc99
+</div>
+
+<h3 id="12-프롬프트의-기본-구조">1.2 프롬프트의 기본 구조</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">PromptStructure</span><span class="p">:</span>
+    <span class="s">"""프롬프트 구조 설계 클래스"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"system_context"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+            <span class="s">"task_instruction"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+            <span class="s">"input_data"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+            <span class="s">"examples"</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s">"output_format"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+            <span class="s">"constraints"</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">build_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_type</span><span class="o">=</span><span class="s">"general"</span><span class="p">):</span>
+        <span class="s">"""작업 유형에 따른 프롬프트 구성"""</span>
+        
+        <span class="n">prompt_templates</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"classification"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_build_classification_prompt</span><span class="p">,</span>
+            <span class="s">"generation"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_build_generation_prompt</span><span class="p">,</span>
+            <span class="s">"analysis"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_build_analysis_prompt</span><span class="p">,</span>
+            <span class="s">"extraction"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_build_extraction_prompt</span><span class="p">,</span>
+            <span class="s">"reasoning"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_build_reasoning_prompt</span>
+        <span class="p">}</span>
+        
+        <span class="n">builder</span> <span class="o">=</span> <span class="n">prompt_templates</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">task_type</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">_build_general_prompt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">builder</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_build_classification_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""분류 작업용 프롬프트"""</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s">"""
+</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'system_context'</span><span class="p">]</span><span class="si">}</span><span class="s">
+
+작업: 주어진 텍스트를 다음 카테고리 중 하나로 분류하세요.
+
+분류 대상: </span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'input_data'</span><span class="p">]</span><span class="si">}</span><span class="s">
+
+가능한 카테고리:
+</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">_format_categories</span><span class="p">()</span><span class="si">}</span><span class="s">
+
+</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">_format_examples</span><span class="p">()</span><span class="si">}</span><span class="s">
+
+응답 형식:
+</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'output_format'</span><span class="p">]</span><span class="si">}</span><span class="s">
+
+제약 조건:
+</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">_format_constraints</span><span class="p">()</span><span class="si">}</span><span class="s">
+"""</span>
+    
+    <span class="k">def</span> <span class="nf">_build_generation_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""생성 작업용 프롬프트"""</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s">"""
+</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'system_context'</span><span class="p">]</span><span class="si">}</span><span class="s">
+
+작업: </span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'task_instruction'</span><span class="p">]</span><span class="si">}</span><span class="s">
+
+입력 정보:
+</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'input_data'</span><span class="p">]</span><span class="si">}</span><span class="s">
+
+</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">_format_examples</span><span class="p">()</span><span class="si">}</span><span class="s">
+
+생성 요구사항:
+- 톤: 전문적이고 명확한
+- 길이: 200-500 단어
+- 구조: 도입부, 본문, 결론
+
+출력 형식:
+</span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'output_format'</span><span class="p">]</span><span class="si">}</span><span class="s">
+"""</span>
+    
+    <span class="k">def</span> <span class="nf">add_few_shot_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">examples</span><span class="p">):</span>
+        <span class="s">"""퓨샷 예제 추가"""</span>
+        <span class="n">formatted_examples</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">examples</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">formatted_examples</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s">"""
+예제 </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s">:
+입력: </span><span class="si">{</span><span class="n">example</span><span class="p">[</span><span class="s">'input'</span><span class="p">]</span><span class="si">}</span><span class="s">
+출력: </span><span class="si">{</span><span class="n">example</span><span class="p">[</span><span class="s">'output'</span><span class="p">]</span><span class="si">}</span><span class="s">
+"""</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'examples'</span><span class="p">]</span> <span class="o">=</span> <span class="n">formatted_examples</span>
+    
+    <span class="k">def</span> <span class="nf">optimize_for_context_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4000</span><span class="p">):</span>
+        <span class="s">"""컨텍스트 길이 최적화"""</span>
+        <span class="n">current_length</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_estimate_token_count</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">current_length</span> <span class="o">&gt;</span> <span class="n">max_tokens</span><span class="p">:</span>
+            <span class="c1"># 예제 수 줄이기
+</span>            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'examples'</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'examples'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'examples'</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
+            
+            <span class="c1"># 긴 설명 요약
+</span>            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'system_context'</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">500</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">components</span><span class="p">[</span><span class="s">'system_context'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_summarize_context</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_estimate_token_count</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_estimate_token_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""토큰 수 추정 (대략적)"""</span>
+        <span class="n">full_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">build_prompt</span><span class="p">()</span>
+        <span class="c1"># 대략 4 characters = 1 token
+</span>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_prompt</span><span class="p">)</span> <span class="o">//</span> <span class="mi">4</span>
+
+<span class="k">class</span> <span class="nc">PromptValidator</span><span class="p">:</span>
+    <span class="s">"""프롬프트 유효성 검증기"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">validation_rules</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"clarity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_check_clarity</span><span class="p">,</span>
+            <span class="s">"specificity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_check_specificity</span><span class="p">,</span>
+            <span class="s">"completeness"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_check_completeness</span><span class="p">,</span>
+            <span class="s">"consistency"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_check_consistency</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">validate_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
+        <span class="s">"""프롬프트 종합 검증"""</span>
+        <span class="n">validation_results</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">rule_name</span><span class="p">,</span> <span class="n">rule_func</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">validation_rules</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">validation_results</span><span class="p">[</span><span class="n">rule_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">rule_func</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        
+        <span class="c1"># 전체 점수 계산
+</span>        <span class="n">overall_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s">'score'</span><span class="p">]</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">validation_results</span><span class="p">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">validation_results</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"overall_score"</span><span class="p">:</span> <span class="n">overall_score</span><span class="p">,</span>
+            <span class="s">"detailed_results"</span><span class="p">:</span> <span class="n">validation_results</span><span class="p">,</span>
+            <span class="s">"recommendations"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_generate_recommendations</span><span class="p">(</span><span class="n">validation_results</span><span class="p">)</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">_check_clarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
+        <span class="s">"""명확성 검사"""</span>
+        <span class="n">clarity_indicators</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"has_clear_instruction"</span><span class="p">:</span> <span class="s">"수행해야 할"</span> <span class="ow">in</span> <span class="n">prompt</span> <span class="ow">or</span> <span class="s">"작업:"</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">,</span>
+            <span class="s">"uses_simple_language"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_check_language_complexity</span><span class="p">(</span><span class="n">prompt</span><span class="p">),</span>
+            <span class="s">"avoids_ambiguity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_check_ambiguous_terms</span><span class="p">(</span><span class="n">prompt</span><span class="p">),</span>
+            <span class="s">"has_examples"</span><span class="p">:</span> <span class="s">"예제"</span> <span class="ow">in</span> <span class="n">prompt</span> <span class="ow">or</span> <span class="s">"예시"</span> <span class="ow">in</span> <span class="n">prompt</span>
+        <span class="p">}</span>
+        
+        <span class="n">score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">clarity_indicators</span><span class="p">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">clarity_indicators</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"score"</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span>
+            <span class="s">"indicators"</span><span class="p">:</span> <span class="n">clarity_indicators</span><span class="p">,</span>
+            <span class="s">"suggestions"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_generate_clarity_suggestions</span><span class="p">(</span><span class="n">clarity_indicators</span><span class="p">)</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">_check_specificity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
+        <span class="s">"""구체성 검사"""</span>
+        <span class="n">specificity_indicators</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"has_output_format"</span><span class="p">:</span> <span class="s">"형식"</span> <span class="ow">in</span> <span class="n">prompt</span> <span class="ow">or</span> <span class="s">"포맷"</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">,</span>
+            <span class="s">"defines_constraints"</span><span class="p">:</span> <span class="s">"제약"</span> <span class="ow">in</span> <span class="n">prompt</span> <span class="ow">or</span> <span class="s">"조건"</span> <span class="ow">in</span> <span class="n">prompt</span><span class="p">,</span>
+            <span class="s">"specifies_length"</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">prompt</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"글자"</span><span class="p">,</span> <span class="s">"단어"</span><span class="p">,</span> <span class="s">"문장"</span><span class="p">,</span> <span class="s">"단락"</span><span class="p">]),</span>
+            <span class="s">"provides_context"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompt</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">'</span><span class="se">\n</span><span class="s">'</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">3</span>
+        <span class="p">}</span>
+        
+        <span class="n">score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">specificity_indicators</span><span class="p">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">specificity_indicators</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"score"</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span>
+            <span class="s">"indicators"</span><span class="p">:</span> <span class="n">specificity_indicators</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="2-인컨텍스트-학습-제로샷과-퓨샷">2. 인컨텍스트 학습: 제로샷과 퓨샷</h2>
+
+<h3 id="21-제로샷-학습-zero-shot-learning">2.1 제로샷 학습 (Zero-shot Learning)</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ZeroShotPrompting</span><span class="p">:</span>
+    <span class="s">"""제로샷 프롬프팅 클래스"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">zero_shot_templates</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_load_templates</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_load_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""제로샷 템플릿 로드"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"classification"</span><span class="p">:</span> <span class="s">"""
+다음 텍스트를 {categories} 중 하나로 분류해주세요.
+
+텍스트: "{text}"
+
+분류 결과: """</span><span class="p">,</span>
+            
+            <span class="s">"sentiment_analysis"</span><span class="p">:</span> <span class="s">"""
+다음 텍스트의 감정을 분석해주세요.
+
+텍스트: "{text}"
+
+감정 (긍정/부정/중립): """</span><span class="p">,</span>
+            
+            <span class="s">"summarization"</span><span class="p">:</span> <span class="s">"""
+다음 텍스트를 3문장으로 요약해주세요.
+
+텍스트: "{text}"
+
+요약: """</span><span class="p">,</span>
+            
+            <span class="s">"question_answering"</span><span class="p">:</span> <span class="s">"""
+주어진 문맥을 바탕으로 질문에 답해주세요.
+
+문맥: "{context}"
+질문: "{question}"
+
+답변: """</span><span class="p">,</span>
+            
+            <span class="s">"translation"</span><span class="p">:</span> <span class="s">"""
+다음 텍스트를 {target_language}로 번역해주세요.
+
+원문: "{text}"
+
+번역: """</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">classify_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">categories</span><span class="p">):</span>
+        <span class="s">"""텍스트 분류 (제로샷)"""</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">zero_shot_templates</span><span class="p">[</span><span class="s">"classification"</span><span class="p">].</span><span class="nb">format</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">categories</span><span class="o">=</span><span class="s">", "</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_parse_classification_response</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">analyze_sentiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="s">"""감정 분석 (제로샷)"""</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">zero_shot_templates</span><span class="p">[</span><span class="s">"sentiment_analysis"</span><span class="p">].</span><span class="nb">format</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_parse_sentiment_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">zero_shot_reasoning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">):</span>
+        <span class="s">"""제로샷 추론"""</span>
+        <span class="n">reasoning_prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"""
+다음 문제를 단계별로 해결해주세요.
+
+문제: </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="s">
+
+해결 과정:
+1. 문제 이해:
+2. 접근 방법:
+3. 단계별 해결:
+4. 최종 답안:
+"""</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">reasoning_prompt</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">_parse_reasoning_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">chain_of_thought_zero_shot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">problem</span><span class="p">):</span>
+        <span class="s">"""제로샷 사고 연쇄"""</span>
+        <span class="n">cot_prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"""
+</span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="s">
+
+단계별로 생각해보겠습니다:
+"""</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">cot_prompt</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+    
+    <span class="k">def</span> <span class="nf">_parse_classification_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">categories</span><span class="p">):</span>
+        <span class="s">"""분류 응답 파싱"""</span>
+        <span class="n">response_lower</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="n">lower</span><span class="p">().</span><span class="n">strip</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">category</span><span class="p">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">response_lower</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s">"predicted_category"</span><span class="p">:</span> <span class="n">category</span><span class="p">,</span>
+                    <span class="s">"confidence"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_estimate_confidence</span><span class="p">(</span><span class="n">response</span><span class="p">),</span>
+                    <span class="s">"raw_response"</span><span class="p">:</span> <span class="n">response</span>
+                <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"predicted_category"</span><span class="p">:</span> <span class="s">"Unknown"</span><span class="p">,</span>
+            <span class="s">"confidence"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="s">"raw_response"</span><span class="p">:</span> <span class="n">response</span>
+        <span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">FewShotPrompting</span><span class="p">:</span>
+    <span class="s">"""퓨샷 프롬프팅 클래스"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">example_database</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">def</span> <span class="nf">add_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">examples</span><span class="p">):</span>
+        <span class="s">"""예제 데이터베이스에 추가"""</span>
+        <span class="k">if</span> <span class="n">task_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">example_database</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">example_database</span><span class="p">[</span><span class="n">task_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="bp">self</span><span class="p">.</span><span class="n">example_database</span><span class="p">[</span><span class="n">task_type</span><span class="p">].</span><span class="n">extend</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">few_shot_classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">num_examples</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="s">"""퓨샷 분류"""</span>
+        <span class="n">examples</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_select_best_examples</span><span class="p">(</span><span class="n">task_type</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">)</span>
+        
+        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_build_few_shot_prompt</span><span class="p">(</span>
+            <span class="n">task_type</span><span class="o">=</span><span class="s">"classification"</span><span class="p">,</span>
+            <span class="n">examples</span><span class="o">=</span><span class="n">examples</span><span class="p">,</span>
+            <span class="n">input_text</span><span class="o">=</span><span class="n">text</span>
+        <span class="p">)</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+    
+    <span class="k">def</span> <span class="nf">_build_few_shot_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">examples</span><span class="p">,</span> <span class="n">input_text</span><span class="p">):</span>
+        <span class="s">"""퓨샷 프롬프트 구성"""</span>
+        <span class="n">prompt_parts</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s">"다음은 텍스트 분류 작업의 예제들입니다:</span><span class="se">\n</span><span class="s">"</span>
+        <span class="p">]</span>
+        
+        <span class="c1"># 예제 추가
+</span>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">examples</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">prompt_parts</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s">"""
+예제 </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s">:
+입력: </span><span class="si">{</span><span class="n">example</span><span class="p">[</span><span class="s">'input'</span><span class="p">]</span><span class="si">}</span><span class="s">
+출력: </span><span class="si">{</span><span class="n">example</span><span class="p">[</span><span class="s">'output'</span><span class="p">]</span><span class="si">}</span><span class="s">
+"""</span><span class="p">)</span>
+        
+        <span class="c1"># 실제 작업
+</span>        <span class="n">prompt_parts</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s">"""
+이제 다음 텍스트를 분류해주세요:
+입력: </span><span class="si">{</span><span class="n">input_text</span><span class="si">}</span><span class="s">
+출력: """</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">prompt_parts</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_select_best_examples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">input_text</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">):</span>
+        <span class="s">"""가장 적합한 예제 선택"""</span>
+        <span class="n">available_examples</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">example_database</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">task_type</span><span class="p">,</span> <span class="p">[])</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_examples</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">num_examples</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">available_examples</span>
+        
+        <span class="c1"># 유사도 기반 예제 선택
+</span>        <span class="n">similarities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">available_examples</span><span class="p">:</span>
+            <span class="n">similarity</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_calculate_similarity</span><span class="p">(</span><span class="n">input_text</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s">'input'</span><span class="p">])</span>
+            <span class="n">similarities</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">similarity</span><span class="p">,</span> <span class="n">example</span><span class="p">))</span>
+        
+        <span class="c1"># 유사도 순으로 정렬
+</span>        <span class="n">similarities</span><span class="p">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">[</span><span class="n">example</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">similarities</span><span class="p">[:</span><span class="n">num_examples</span><span class="p">]]</span>
+    
+    <span class="k">def</span> <span class="nf">_calculate_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text1</span><span class="p">,</span> <span class="n">text2</span><span class="p">):</span>
+        <span class="s">"""텍스트 유사도 계산 (간단한 자카드 유사도)"""</span>
+        <span class="n">words1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">text1</span><span class="p">.</span><span class="n">lower</span><span class="p">().</span><span class="n">split</span><span class="p">())</span>
+        <span class="n">words2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">text2</span><span class="p">.</span><span class="n">lower</span><span class="p">().</span><span class="n">split</span><span class="p">())</span>
+        
+        <span class="n">intersection</span> <span class="o">=</span> <span class="n">words1</span><span class="p">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">words2</span><span class="p">)</span>
+        <span class="n">union</span> <span class="o">=</span> <span class="n">words1</span><span class="p">.</span><span class="n">union</span><span class="p">(</span><span class="n">words2</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span> <span class="k">if</span> <span class="n">union</span> <span class="k">else</span> <span class="mf">0.0</span>
+    
+    <span class="k">def</span> <span class="nf">dynamic_few_shot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_text</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">max_examples</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+        <span class="s">"""동적 퓨샷 학습"""</span>
+        <span class="c1"># 초기에는 적은 예제로 시작
+</span>        <span class="k">for</span> <span class="n">num_examples</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_examples</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">examples</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_select_best_examples</span><span class="p">(</span><span class="n">task_type</span><span class="p">,</span> <span class="n">input_text</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">)</span>
+            
+            <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_build_few_shot_prompt</span><span class="p">(</span><span class="n">task_type</span><span class="p">,</span> <span class="n">examples</span><span class="p">,</span> <span class="n">input_text</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+            
+            <span class="c1"># 응답 품질 평가
+</span>            <span class="n">confidence</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_evaluate_response_confidence</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">confidence</span> <span class="o">&gt;</span> <span class="mf">0.8</span><span class="p">:</span>  <span class="c1"># 충분히 확신하는 경우
+</span>                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s">"response"</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+                    <span class="s">"num_examples_used"</span><span class="p">:</span> <span class="n">num_examples</span><span class="p">,</span>
+                    <span class="s">"confidence"</span><span class="p">:</span> <span class="n">confidence</span>
+                <span class="p">}</span>
+        
+        <span class="c1"># 최대 예제 수를 사용한 결과 반환
+</span>        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"response"</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+            <span class="s">"num_examples_used"</span><span class="p">:</span> <span class="n">max_examples</span><span class="p">,</span>
+            <span class="s">"confidence"</span><span class="p">:</span> <span class="n">confidence</span>
+        <span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">InContextLearningOptimizer</span><span class="p">:</span>
+    <span class="s">"""인컨텍스트 학습 최적화기"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">performance_cache</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">def</span> <span class="nf">optimize_example_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_data</span><span class="p">,</span> <span class="n">validation_data</span><span class="p">):</span>
+        <span class="s">"""예제 선택 최적화"""</span>
+        <span class="n">optimization_results</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="n">strategies</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"random"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_random_selection</span><span class="p">,</span>
+            <span class="s">"similarity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_similarity_based_selection</span><span class="p">,</span>
+            <span class="s">"diversity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_diversity_based_selection</span><span class="p">,</span>
+            <span class="s">"difficulty"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_difficulty_based_selection</span><span class="p">,</span>
+            <span class="s">"performance"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_performance_based_selection</span>
+        <span class="p">}</span>
+        
+        <span class="k">for</span> <span class="n">strategy_name</span><span class="p">,</span> <span class="n">strategy_func</span> <span class="ow">in</span> <span class="n">strategies</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">selected_examples</span> <span class="o">=</span> <span class="n">strategy_func</span><span class="p">(</span><span class="n">task_data</span><span class="p">,</span> <span class="n">num_examples</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            
+            <span class="c1"># 검증 데이터로 성능 평가
+</span>            <span class="n">performance</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_evaluate_examples</span><span class="p">(</span><span class="n">selected_examples</span><span class="p">,</span> <span class="n">validation_data</span><span class="p">)</span>
+            
+            <span class="n">optimization_results</span><span class="p">[</span><span class="n">strategy_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">"examples"</span><span class="p">:</span> <span class="n">selected_examples</span><span class="p">,</span>
+                <span class="s">"performance"</span><span class="p">:</span> <span class="n">performance</span>
+            <span class="p">}</span>
+        
+        <span class="c1"># 최적 전략 선택
+</span>        <span class="n">best_strategy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">optimization_results</span><span class="p">.</span><span class="n">items</span><span class="p">(),</span> 
+                          <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">'performance'</span><span class="p">][</span><span class="s">'accuracy'</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"best_strategy"</span><span class="p">:</span> <span class="n">best_strategy</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s">"best_examples"</span><span class="p">:</span> <span class="n">best_strategy</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">'examples'</span><span class="p">],</span>
+            <span class="s">"all_results"</span><span class="p">:</span> <span class="n">optimization_results</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">_diversity_based_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_data</span><span class="p">,</span> <span class="n">num_examples</span><span class="p">):</span>
+        <span class="s">"""다양성 기반 예제 선택"""</span>
+        <span class="n">selected</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">remaining</span> <span class="o">=</span> <span class="n">task_data</span><span class="p">.</span><span class="n">copy</span><span class="p">()</span>
+        
+        <span class="c1"># 첫 번째 예제는 랜덤 선택
+</span>        <span class="n">first_example</span> <span class="o">=</span> <span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">remaining</span><span class="p">)</span>
+        <span class="n">selected</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">first_example</span><span class="p">)</span>
+        <span class="n">remaining</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">first_example</span><span class="p">)</span>
+        
+        <span class="c1"># 나머지 예제들은 다양성을 고려하여 선택
+</span>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_examples</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">remaining</span><span class="p">:</span>
+                <span class="k">break</span>
+            
+            <span class="n">max_diversity</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">best_candidate</span> <span class="o">=</span> <span class="bp">None</span>
+            
+            <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">remaining</span><span class="p">:</span>
+                <span class="c1"># 이미 선택된 예제들과의 다양성 계산
+</span>                <span class="n">diversity_score</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_calculate_diversity</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">selected</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">diversity_score</span> <span class="o">&gt;</span> <span class="n">max_diversity</span><span class="p">:</span>
+                    <span class="n">max_diversity</span> <span class="o">=</span> <span class="n">diversity_score</span>
+                    <span class="n">best_candidate</span> <span class="o">=</span> <span class="n">candidate</span>
+            
+            <span class="k">if</span> <span class="n">best_candidate</span><span class="p">:</span>
+                <span class="n">selected</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_candidate</span><span class="p">)</span>
+                <span class="n">remaining</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">best_candidate</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">selected</span>
+    
+    <span class="k">def</span> <span class="nf">_calculate_diversity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">selected_examples</span><span class="p">):</span>
+        <span class="s">"""예제 다양성 계산"""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">selected_examples</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        
+        <span class="n">similarities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">selected</span> <span class="ow">in</span> <span class="n">selected_examples</span><span class="p">:</span>
+            <span class="n">similarity</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_calculate_similarity</span><span class="p">(</span>
+                <span class="n">candidate</span><span class="p">[</span><span class="s">'input'</span><span class="p">],</span> 
+                <span class="n">selected</span><span class="p">[</span><span class="s">'input'</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">similarities</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">similarity</span><span class="p">)</span>
+        
+        <span class="c1"># 평균 유사도가 낮을수록 다양성이 높음
+</span>        <span class="n">avg_similarity</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">similarities</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">similarities</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">avg_similarity</span>
+</code></pre></div></div>
+
+<h2 id="3-시스템-프롬프트와-사용자-프롬프트">3. 시스템 프롬프트와 사용자 프롬프트</h2>
+
+<h3 id="31-시스템-프롬프트-설계">3.1 시스템 프롬프트 설계</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SystemPromptDesigner</span><span class="p">:</span>
+    <span class="s">"""시스템 프롬프트 설계기"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">system_prompt_templates</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"assistant"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_create_assistant_prompt</span><span class="p">,</span>
+            <span class="s">"analyst"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_create_analyst_prompt</span><span class="p">,</span>
+            <span class="s">"teacher"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_create_teacher_prompt</span><span class="p">,</span>
+            <span class="s">"translator"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_create_translator_prompt</span><span class="p">,</span>
+            <span class="s">"coder"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_create_coder_prompt</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">create_system_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">constraints</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s">"""역할별 시스템 프롬프트 생성"""</span>
+        <span class="n">base_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">system_prompt_templates</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">role</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">_create_generic_prompt</span><span class="p">)()</span>
+        
+        <span class="c1"># 도메인 특화 지식 추가
+</span>        <span class="k">if</span> <span class="n">domain</span><span class="p">:</span>
+            <span class="n">domain_expertise</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_add_domain_expertise</span><span class="p">(</span><span class="n">domain</span><span class="p">)</span>
+            <span class="n">base_prompt</span> <span class="o">+=</span> <span class="sa">f</span><span class="s">"</span><span class="se">\n\n</span><span class="s">도메인 전문성:</span><span class="se">\n</span><span class="si">{</span><span class="n">domain_expertise</span><span class="si">}</span><span class="s">"</span>
+        
+        <span class="c1"># 제약 조건 추가
+</span>        <span class="k">if</span> <span class="n">constraints</span><span class="p">:</span>
+            <span class="n">constraint_text</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_format_constraints</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+            <span class="n">base_prompt</span> <span class="o">+=</span> <span class="sa">f</span><span class="s">"</span><span class="se">\n\n</span><span class="s">제약 조건:</span><span class="se">\n</span><span class="si">{</span><span class="n">constraint_text</span><span class="si">}</span><span class="s">"</span>
+        
+        <span class="k">return</span> <span class="n">base_prompt</span>
+    
+    <span class="k">def</span> <span class="nf">_create_assistant_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""일반 어시스턴트 프롬프트"""</span>
+        <span class="k">return</span> <span class="s">"""
+당신은 도움이 되고 정확한 AI 어시스턴트입니다.
+
+핵심 원칙:
+- 정확하고 사실에 기반한 정보를 제공합니다
+- 불확실한 내용은 명시적으로 표현합니다  
+- 사용자의 요청을 주의 깊게 이해하고 맞춤형 응답을 제공합니다
+- 윤리적이고 안전한 가이드라인을 준수합니다
+
+응답 스타일:
+- 명확하고 구조적인 설명
+- 적절한 예시와 구체적인 정보 포함
+- 전문적이면서도 접근하기 쉬운 톤 유지
+"""</span>
+    
+    <span class="k">def</span> <span class="nf">_create_analyst_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""분석가 프롬프트"""</span>
+        <span class="k">return</span> <span class="s">"""
+당신은 데이터와 정보를 체계적으로 분석하는 전문 분석가입니다.
+
+분석 접근법:
+- 주어진 데이터를 객관적으로 검토합니다
+- 패턴, 트렌드, 이상 징후를 식별합니다
+- 근거 기반의 결론을 도출합니다
+- 불확실성과 한계점을 명시합니다
+
+분석 결과 제시:
+- 핵심 발견사항을 우선 제시
+- 지지 증거와 데이터 포함
+- 대안적 해석 가능성 고려
+- 실행 가능한 인사이트 제공
+"""</span>
+    
+    <span class="k">def</span> <span class="nf">_create_teacher_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""교사 프롬프트"""</span>
+        <span class="k">return</span> <span class="s">"""
+당신은 학습자의 이해를 돕는 전문 교육자입니다.
+
+교육 철학:
+- 학습자의 현재 수준을 파악하여 맞춤형 설명 제공
+- 복잡한 개념을 단계적으로 분해하여 설명
+- 실제 예시와 비유를 통한 이해 촉진
+- 능동적 학습을 격려하는 질문 제시
+
+교수법:
+- 기초 개념부터 점진적으로 발전
+- 다양한 학습 스타일 고려
+- 즉각적인 피드백과 격려 제공
+- 실습과 적용 기회 창출
+"""</span>
+    
+    <span class="k">def</span> <span class="nf">_add_domain_expertise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+        <span class="s">"""도메인 전문성 추가"""</span>
+        <span class="n">domain_knowledge</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"healthcare"</span><span class="p">:</span> <span class="s">"""
+의료 분야 전문 지식:
+- 의학 용어와 절차에 대한 정확한 이해
+- 환자 안전과 프라이버시 최우선 고려
+- 의료 가이드라인과 모범 사례 준수
+- 의료 조언은 정보 제공 목적으로만 제한
+"""</span><span class="p">,</span>
+            <span class="s">"finance"</span><span class="p">:</span> <span class="s">"""
+금융 분야 전문 지식:
+- 금융 상품과 시장 메커니즘 이해
+- 리스크 관리와 규제 준수 중시
+- 투자 조언의 한계와 위험성 명시
+- 개인 재정 정보 보호 우선
+"""</span><span class="p">,</span>
+            <span class="s">"technology"</span><span class="p">:</span> <span class="s">"""
+기술 분야 전문 지식:
+- 최신 기술 트렌드와 발전 동향 파악
+- 기술적 구현과 아키텍처 이해
+- 보안과 프라이버시 고려사항 포함
+- 실무 적용 가능한 솔루션 제시
+"""</span><span class="p">,</span>
+            <span class="s">"legal"</span><span class="p">:</span> <span class="s">"""
+법률 분야 전문 지식:
+- 법률 원칙과 절차에 대한 이해
+- 관할권과 법률 변화 고려
+- 법률 조언의 한계 명시
+- 전문 법률 상담 권장
+"""</span>
+        <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="n">domain_knowledge</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="s">"일반적인 전문 지식을 바탕으로 답변합니다."</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">UserPromptOptimizer</span><span class="p">:</span>
+    <span class="s">"""사용자 프롬프트 최적화기"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">optimization_strategies</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"clarity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_improve_clarity</span><span class="p">,</span>
+            <span class="s">"specificity"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_add_specificity</span><span class="p">,</span>
+            <span class="s">"context"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_enrich_context</span><span class="p">,</span>
+            <span class="s">"structure"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_improve_structure</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">optimize_user_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_prompt</span><span class="p">,</span> <span class="n">optimization_goals</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="s">"""사용자 프롬프트 최적화"""</span>
+        <span class="k">if</span> <span class="n">optimization_goals</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">optimization_goals</span> <span class="o">=</span> <span class="p">[</span><span class="s">"clarity"</span><span class="p">,</span> <span class="s">"specificity"</span><span class="p">,</span> <span class="s">"context"</span><span class="p">]</span>
+        
+        <span class="n">optimized_prompt</span> <span class="o">=</span> <span class="n">original_prompt</span>
+        <span class="n">optimization_log</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">goal</span> <span class="ow">in</span> <span class="n">optimization_goals</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">goal</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">optimization_strategies</span><span class="p">:</span>
+                <span class="n">optimizer_func</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">optimization_strategies</span><span class="p">[</span><span class="n">goal</span><span class="p">]</span>
+                <span class="n">optimized_prompt</span><span class="p">,</span> <span class="n">changes</span> <span class="o">=</span> <span class="n">optimizer_func</span><span class="p">(</span><span class="n">optimized_prompt</span><span class="p">)</span>
+                <span class="n">optimization_log</span><span class="p">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s">"goal"</span><span class="p">:</span> <span class="n">goal</span><span class="p">,</span>
+                    <span class="s">"changes"</span><span class="p">:</span> <span class="n">changes</span>
+                <span class="p">})</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"original"</span><span class="p">:</span> <span class="n">original_prompt</span><span class="p">,</span>
+            <span class="s">"optimized"</span><span class="p">:</span> <span class="n">optimized_prompt</span><span class="p">,</span>
+            <span class="s">"optimization_log"</span><span class="p">:</span> <span class="n">optimization_log</span><span class="p">,</span>
+            <span class="s">"improvement_score"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_calculate_improvement_score</span><span class="p">(</span><span class="n">original_prompt</span><span class="p">,</span> <span class="n">optimized_prompt</span><span class="p">)</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">_improve_clarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
+        <span class="s">"""명확성 개선"""</span>
+        <span class="n">improvements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">optimized</span> <span class="o">=</span> <span class="n">prompt</span>
+        
+        <span class="c1"># 모호한 표현 식별 및 개선
+</span>        <span class="n">ambiguous_patterns</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"이것"</span><span class="p">:</span> <span class="s">"구체적인 대상"</span><span class="p">,</span>
+            <span class="s">"좀"</span><span class="p">:</span> <span class="s">""</span><span class="p">,</span>
+            <span class="s">"약간"</span><span class="p">:</span> <span class="s">"정확한 정도"</span><span class="p">,</span>
+            <span class="s">"대충"</span><span class="p">:</span> <span class="s">"자세히"</span><span class="p">,</span>
+            <span class="s">"뭔가"</span><span class="p">:</span> <span class="s">"구체적인 내용"</span>
+        <span class="p">}</span>
+        
+        <span class="k">for</span> <span class="n">ambiguous</span><span class="p">,</span> <span class="n">replacement</span> <span class="ow">in</span> <span class="n">ambiguous_patterns</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">ambiguous</span> <span class="ow">in</span> <span class="n">optimized</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">replacement</span><span class="p">:</span>
+                    <span class="n">optimized</span> <span class="o">=</span> <span class="n">optimized</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ambiguous</span><span class="p">,</span> <span class="n">replacement</span><span class="p">)</span>
+                    <span class="n">improvements</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s">"'</span><span class="si">{</span><span class="n">ambiguous</span><span class="si">}</span><span class="s">'를 '</span><span class="si">{</span><span class="n">replacement</span><span class="si">}</span><span class="s">'로 명확화"</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">optimized</span> <span class="o">=</span> <span class="n">optimized</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ambiguous</span><span class="p">,</span> <span class="s">""</span><span class="p">)</span>
+                    <span class="n">improvements</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s">"불필요한 '</span><span class="si">{</span><span class="n">ambiguous</span><span class="si">}</span><span class="s">' 제거"</span><span class="p">)</span>
+        
+        <span class="c1"># 질문 형태로 변환
+</span>        <span class="k">if</span> <span class="ow">not</span> <span class="n">optimized</span><span class="p">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">"?"</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">word</span> <span class="ow">in</span> <span class="n">optimized</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"해주세요"</span><span class="p">,</span> <span class="s">"부탁드립니다"</span><span class="p">,</span> <span class="s">"알려주세요"</span><span class="p">]):</span>
+            <span class="n">optimized</span> <span class="o">+=</span> <span class="s">"해주세요."</span>
+            <span class="n">improvements</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"명확한 요청 형태로 변환"</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">optimized</span><span class="p">,</span> <span class="n">improvements</span>
+    
+    <span class="k">def</span> <span class="nf">_add_specificity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
+        <span class="s">"""구체성 추가"""</span>
+        <span class="n">improvements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">optimized</span> <span class="o">=</span> <span class="n">prompt</span>
+        
+        <span class="c1"># 출력 형식 지정 추가
+</span>        <span class="k">if</span> <span class="s">"형식"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">optimized</span> <span class="ow">and</span> <span class="s">"포맷"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">optimized</span><span class="p">:</span>
+            <span class="n">format_addition</span> <span class="o">=</span> <span class="s">"</span><span class="se">\n\n</span><span class="s">출력 형식: 명확하고 구조화된 답변으로 제공해주세요."</span>
+            <span class="n">optimized</span> <span class="o">+=</span> <span class="n">format_addition</span>
+            <span class="n">improvements</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"출력 형식 지정 추가"</span><span class="p">)</span>
+        
+        <span class="c1"># 길이 제한 추가 (필요시)
+</span>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimized</span><span class="p">.</span><span class="n">split</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="ow">and</span> <span class="s">"길이"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">optimized</span><span class="p">:</span>
+            <span class="n">length_guideline</span> <span class="o">=</span> <span class="s">" 간결하면서도 포괄적인 답변으로"</span>
+            <span class="n">optimized</span> <span class="o">=</span> <span class="n">optimized</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">"해주세요"</span><span class="p">,</span> <span class="n">length_guideline</span> <span class="o">+</span> <span class="s">" 해주세요"</span><span class="p">)</span>
+            <span class="n">improvements</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"답변 길이 가이드라인 추가"</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">optimized</span><span class="p">,</span> <span class="n">improvements</span>
+    
+    <span class="k">def</span> <span class="nf">_enrich_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
+        <span class="s">"""컨텍스트 강화"""</span>
+        <span class="n">improvements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">optimized</span> <span class="o">=</span> <span class="n">prompt</span>
+        
+        <span class="c1"># 목적 명시
+</span>        <span class="k">if</span> <span class="s">"목적"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">optimized</span> <span class="ow">and</span> <span class="s">"이유"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">optimized</span><span class="p">:</span>
+            <span class="n">context_addition</span> <span class="o">=</span> <span class="s">"</span><span class="se">\n\n</span><span class="s">이 정보가 필요한 목적: "</span>
+            <span class="n">optimized</span> <span class="o">=</span> <span class="n">context_addition</span> <span class="o">+</span> <span class="n">optimized</span>
+            <span class="n">improvements</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"목적 명시 섹션 추가"</span><span class="p">)</span>
+        
+        <span class="c1"># 대상 청중 명시
+</span>        <span class="k">if</span> <span class="s">"대상"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">optimized</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimized</span><span class="p">.</span><span class="n">split</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+            <span class="n">audience_note</span> <span class="o">=</span> <span class="s">" (일반인도 이해할 수 있도록)"</span>
+            <span class="n">optimized</span> <span class="o">=</span> <span class="n">optimized</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">"해주세요"</span><span class="p">,</span> <span class="n">audience_note</span> <span class="o">+</span> <span class="s">" 해주세요"</span><span class="p">)</span>
+            <span class="n">improvements</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">"대상 청중 명시"</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">optimized</span><span class="p">,</span> <span class="n">improvements</span>
+
+<span class="k">class</span> <span class="nc">PromptChaining</span><span class="p">:</span>
+    <span class="s">"""프롬프트 체이닝 시스템"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">chain_history</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">def</span> <span class="nf">execute_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_prompt</span><span class="p">,</span> <span class="n">chain_steps</span><span class="p">):</span>
+        <span class="s">"""프롬프트 체인 실행"""</span>
+        <span class="n">current_context</span> <span class="o">=</span> <span class="n">initial_prompt</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">step_num</span><span class="p">,</span> <span class="n">step_config</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chain_steps</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">step_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_build_step_prompt</span><span class="p">(</span>
+                <span class="n">current_context</span><span class="p">,</span> 
+                <span class="n">step_config</span><span class="p">,</span> 
+                <span class="n">step_num</span>
+            <span class="p">)</span>
+            
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">generate</span><span class="p">(</span>
+                <span class="n">step_prompt</span><span class="p">,</span>
+                <span class="n">temperature</span><span class="o">=</span><span class="n">step_config</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'temperature'</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+            <span class="p">)</span>
+            
+            <span class="c1"># 결과 저장
+</span>            <span class="n">step_result</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">"step"</span><span class="p">:</span> <span class="n">step_num</span><span class="p">,</span>
+                <span class="s">"prompt"</span><span class="p">:</span> <span class="n">step_prompt</span><span class="p">,</span>
+                <span class="s">"response"</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+                <span class="s">"config"</span><span class="p">:</span> <span class="n">step_config</span>
+            <span class="p">}</span>
+            <span class="n">results</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_result</span><span class="p">)</span>
+            
+            <span class="c1"># 다음 단계를 위한 컨텍스트 업데이트
+</span>            <span class="n">current_context</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_update_context</span><span class="p">(</span>
+                <span class="n">current_context</span><span class="p">,</span> 
+                <span class="n">response</span><span class="p">,</span> 
+                <span class="n">step_config</span>
+            <span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"final_result"</span><span class="p">:</span> <span class="n">results</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s">"response"</span><span class="p">],</span>
+            <span class="s">"chain_results"</span><span class="p">:</span> <span class="n">results</span><span class="p">,</span>
+            <span class="s">"execution_summary"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_generate_execution_summary</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">_build_step_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">step_config</span><span class="p">,</span> <span class="n">step_num</span><span class="p">):</span>
+        <span class="s">"""단계별 프롬프트 구성"""</span>
+        <span class="n">step_instruction</span> <span class="o">=</span> <span class="n">step_config</span><span class="p">[</span><span class="s">'instruction'</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">step_num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="n">step_instruction</span><span class="si">}</span><span class="s">"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s">"""
+이전 단계의 결과를 바탕으로 다음 작업을 수행하세요:
+
+이전 컨텍스트: </span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="s">
+
+현재 작업: </span><span class="si">{</span><span class="n">step_instruction</span><span class="si">}</span><span class="s">
+"""</span>
+    
+    <span class="k">def</span> <span class="nf">create_analysis_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">analysis_type</span><span class="o">=</span><span class="s">"comprehensive"</span><span class="p">):</span>
+        <span class="s">"""분석 체인 생성"""</span>
+        <span class="n">chain_templates</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"comprehensive"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s">"instruction"</span><span class="p">:</span> <span class="s">"주어진 데이터의 핵심 특성과 패턴을 식별하세요."</span><span class="p">,</span>
+                    <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.2</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s">"instruction"</span><span class="p">:</span> <span class="s">"식별된 패턴의 원인과 의미를 분석하세요."</span><span class="p">,</span>
+                    <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.3</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s">"instruction"</span><span class="p">:</span> <span class="s">"분석 결과를 바탕으로 실행 가능한 인사이트와 권장사항을 제시하세요."</span><span class="p">,</span>
+                    <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.4</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s">"problem_solving"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s">"instruction"</span><span class="p">:</span> <span class="s">"문제의 핵심 요소와 제약 조건을 명확히 정의하세요."</span><span class="p">,</span>
+                    <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.1</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s">"instruction"</span><span class="p">:</span> <span class="s">"가능한 해결 방안들을 브레인스토밍하고 각각의 장단점을 평가하세요."</span><span class="p">,</span>
+                    <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.5</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s">"instruction"</span><span class="p">:</span> <span class="s">"최적의 해결책을 선택하고 구체적인 실행 계획을 수립하세요."</span><span class="p">,</span>
+                    <span class="s">"temperature"</span><span class="p">:</span> <span class="mf">0.3</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="n">chain_templates</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">analysis_type</span><span class="p">,</span> <span class="n">chain_templates</span><span class="p">[</span><span class="s">"comprehensive"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<h2 id="4-컨텍스트-길이와-컨텍스트-효율성">4. 컨텍스트 길이와 컨텍스트 효율성</h2>
+
+<h3 id="41-컨텍스트-길이-관리">4.1 컨텍스트 길이 관리</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">ContextManager</span><span class="p">:</span>
+    <span class="s">"""컨텍스트 관리자"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_context_limit</span><span class="o">=</span><span class="mi">4096</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">context_limit</span> <span class="o">=</span> <span class="n">model_context_limit</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_load_tokenizer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">compression_strategies</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"summarization"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_summarize_content</span><span class="p">,</span>
+            <span class="s">"extraction"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_extract_key_information</span><span class="p">,</span>
+            <span class="s">"hierarchical"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_hierarchical_compression</span><span class="p">,</span>
+            <span class="s">"selective"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_selective_retention</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">manage_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s">"adaptive"</span><span class="p">):</span>
+        <span class="s">"""컨텍스트 관리 실행"""</span>
+        <span class="n">current_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_count_tokens</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">current_tokens</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="p">.</span><span class="n">context_limit</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">"status"</span><span class="p">:</span> <span class="s">"no_compression_needed"</span><span class="p">,</span>
+                <span class="s">"content"</span><span class="p">:</span> <span class="n">content</span><span class="p">,</span>
+                <span class="s">"original_tokens"</span><span class="p">:</span> <span class="n">current_tokens</span><span class="p">,</span>
+                <span class="s">"final_tokens"</span><span class="p">:</span> <span class="n">current_tokens</span>
+            <span class="p">}</span>
+        
+        <span class="k">if</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s">"adaptive"</span><span class="p">:</span>
+            <span class="n">strategy</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_select_optimal_strategy</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        
+        <span class="n">compression_func</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">compression_strategies</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">compression_func</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s">"Unknown compression strategy: </span><span class="si">{</span><span class="n">strategy</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        
+        <span class="n">compressed_content</span> <span class="o">=</span> <span class="n">compression_func</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">final_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_count_tokens</span><span class="p">(</span><span class="n">compressed_content</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"status"</span><span class="p">:</span> <span class="s">"compressed"</span><span class="p">,</span>
+            <span class="s">"content"</span><span class="p">:</span> <span class="n">compressed_content</span><span class="p">,</span>
+            <span class="s">"strategy_used"</span><span class="p">:</span> <span class="n">strategy</span><span class="p">,</span>
+            <span class="s">"original_tokens"</span><span class="p">:</span> <span class="n">current_tokens</span><span class="p">,</span>
+            <span class="s">"final_tokens"</span><span class="p">:</span> <span class="n">final_tokens</span><span class="p">,</span>
+            <span class="s">"compression_ratio"</span><span class="p">:</span> <span class="n">final_tokens</span> <span class="o">/</span> <span class="n">current_tokens</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">_summarize_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="s">"""내용 요약"""</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">content</span>
+        
+        <span class="c1"># 섹션별로 분할
+</span>        <span class="n">sections</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_split_into_sections</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">summarized_sections</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">summary</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_generate_section_summary</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+                <span class="n">summarized_sections</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">summarized_sections</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="s">"</span><span class="se">\n\n</span><span class="s">"</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">summarized_sections</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_extract_key_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="s">"""핵심 정보 추출"""</span>
+        <span class="n">extraction_patterns</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"facts"</span><span class="p">:</span> <span class="sa">r</span><span class="s">'(?:사실|팩트|정보)[:：]\s*(.+)'</span><span class="p">,</span>
+            <span class="s">"numbers"</span><span class="p">:</span> <span class="sa">r</span><span class="s">'\d+(?:\.\d+)?(?:[%％]|\s*(?:개|명|건|회|번|시간|분|초))'</span><span class="p">,</span>
+            <span class="s">"entities"</span><span class="p">:</span> <span class="sa">r</span><span class="s">'[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*'</span><span class="p">,</span>
+            <span class="s">"dates"</span><span class="p">:</span> <span class="sa">r</span><span class="s">'\d{4}[-./]\d{1,2}[-./]\d{1,2}|\d{1,2}[-./]\d{1,2}[-./]\d{4}'</span><span class="p">,</span>
+            <span class="s">"keywords"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_extract_keywords</span>
+        <span class="p">}</span>
+        
+        <span class="n">extracted_info</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">extraction_patterns</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">category</span> <span class="o">==</span> <span class="s">"keywords"</span><span class="p">:</span>
+                <span class="n">extracted_info</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="p">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">re</span><span class="p">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+                <span class="n">extracted_info</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="n">matches</span>
+        
+        <span class="c1"># 추출된 정보를 구조화된 형태로 재구성
+</span>        <span class="n">structured_content</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_structure_extracted_info</span><span class="p">(</span><span class="n">extracted_info</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">structured_content</span>
+    
+    <span class="k">def</span> <span class="nf">_hierarchical_compression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="s">"""계층적 압축"""</span>
+        <span class="n">hierarchy_levels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s">"high_priority"</span><span class="p">,</span> <span class="p">[</span><span class="s">"결론"</span><span class="p">,</span> <span class="s">"요약"</span><span class="p">,</span> <span class="s">"핵심"</span><span class="p">,</span> <span class="s">"중요"</span><span class="p">]),</span>
+            <span class="p">(</span><span class="s">"medium_priority"</span><span class="p">,</span> <span class="p">[</span><span class="s">"분석"</span><span class="p">,</span> <span class="s">"설명"</span><span class="p">,</span> <span class="s">"방법"</span><span class="p">,</span> <span class="s">"과정"</span><span class="p">]),</span>
+            <span class="p">(</span><span class="s">"low_priority"</span><span class="p">,</span> <span class="p">[</span><span class="s">"배경"</span><span class="p">,</span> <span class="s">"부가"</span><span class="p">,</span> <span class="s">"참고"</span><span class="p">,</span> <span class="s">"예시"</span><span class="p">])</span>
+        <span class="p">]</span>
+        
+        <span class="n">compressed_sections</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">priority</span><span class="p">,</span> <span class="n">keywords</span> <span class="ow">in</span> <span class="n">hierarchy_levels</span><span class="p">:</span>
+            <span class="n">sections</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_find_sections_by_keywords</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">keywords</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">priority</span> <span class="o">==</span> <span class="s">"high_priority"</span><span class="p">:</span>
+                <span class="c1"># 높은 우선순위는 전체 유지
+</span>                <span class="n">compressed_sections</span><span class="p">[</span><span class="n">priority</span><span class="p">]</span> <span class="o">=</span> <span class="n">sections</span>
+            <span class="k">elif</span> <span class="n">priority</span> <span class="o">==</span> <span class="s">"medium_priority"</span><span class="p">:</span>
+                <span class="c1"># 중간 우선순위는 요약
+</span>                <span class="n">compressed_sections</span><span class="p">[</span><span class="n">priority</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="bp">self</span><span class="p">.</span><span class="n">_summarize_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># 낮은 우선순위는 키포인트만 추출
+</span>                <span class="n">compressed_sections</span><span class="p">[</span><span class="n">priority</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="bp">self</span><span class="p">.</span><span class="n">_extract_keypoints</span><span class="p">(</span><span class="n">section</span><span class="p">)</span> <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span>
+                <span class="p">]</span>
+        
+        <span class="c1"># 우선순위 순으로 재구성
+</span>        <span class="n">final_content</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">priority</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"high_priority"</span><span class="p">,</span> <span class="s">"medium_priority"</span><span class="p">,</span> <span class="s">"low_priority"</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">compressed_sections</span><span class="p">[</span><span class="n">priority</span><span class="p">]:</span>
+                <span class="n">final_content</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="n">compressed_sections</span><span class="p">[</span><span class="n">priority</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="s">"</span><span class="se">\n\n</span><span class="s">"</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">final_content</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">optimize_context_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompts_history</span><span class="p">):</span>
+        <span class="s">"""컨텍스트 효율성 최적화"""</span>
+        <span class="n">optimization_results</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="c1"># 중복 정보 제거
+</span>        <span class="n">deduplicated</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_remove_duplicate_information</span><span class="p">(</span><span class="n">prompts_history</span><span class="p">)</span>
+        <span class="n">optimization_results</span><span class="p">[</span><span class="s">"deduplication"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">"original_length"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompts_history</span><span class="p">),</span>
+            <span class="s">"optimized_length"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">deduplicated</span><span class="p">),</span>
+            <span class="s">"reduction"</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">deduplicated</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompts_history</span><span class="p">)</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># 정보 우선순위 재정렬
+</span>        <span class="n">prioritized</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_prioritize_information</span><span class="p">(</span><span class="n">deduplicated</span><span class="p">)</span>
+        <span class="n">optimization_results</span><span class="p">[</span><span class="s">"prioritization"</span><span class="p">]</span> <span class="o">=</span> <span class="n">prioritized</span>
+        
+        <span class="c1"># 컨텍스트 윈도우 슬라이딩
+</span>        <span class="n">windowed</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_apply_sliding_window</span><span class="p">(</span><span class="n">prioritized</span><span class="p">)</span>
+        <span class="n">optimization_results</span><span class="p">[</span><span class="s">"windowing"</span><span class="p">]</span> <span class="o">=</span> <span class="n">windowed</span>
+        
+        <span class="k">return</span> <span class="n">optimization_results</span>
+
+<span class="k">class</span> <span class="nc">ContextEfficiencyAnalyzer</span><span class="p">:</span>
+    <span class="s">"""컨텍스트 효율성 분석기"""</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">efficiency_metrics</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s">"information_density"</span><span class="p">,</span>
+            <span class="s">"relevance_score"</span><span class="p">,</span> 
+            <span class="s">"redundancy_rate"</span><span class="p">,</span>
+            <span class="s">"compression_potential"</span>
+        <span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">analyze_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_data</span><span class="p">):</span>
+        <span class="s">"""컨텍스트 효율성 분석"""</span>
+        <span class="n">analysis_results</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">efficiency_metrics</span><span class="p">:</span>
+            <span class="n">analyzer_func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s">"_calculate_</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+            <span class="n">analysis_results</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="n">analyzer_func</span><span class="p">(</span><span class="n">context_data</span><span class="p">)</span>
+        
+        <span class="c1"># 종합 효율성 점수
+</span>        <span class="n">overall_efficiency</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_calculate_overall_efficiency</span><span class="p">(</span><span class="n">analysis_results</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"efficiency_score"</span><span class="p">:</span> <span class="n">overall_efficiency</span><span class="p">,</span>
+            <span class="s">"detailed_metrics"</span><span class="p">:</span> <span class="n">analysis_results</span><span class="p">,</span>
+            <span class="s">"recommendations"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_generate_efficiency_recommendations</span><span class="p">(</span><span class="n">analysis_results</span><span class="p">)</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">_calculate_information_density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_data</span><span class="p">):</span>
+        <span class="s">"""정보 밀도 계산"""</span>
+        <span class="n">total_tokens</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">context_data</span><span class="p">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="n">unique_concepts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">_extract_concepts</span><span class="p">(</span><span class="n">context_data</span><span class="p">)))</span>
+        
+        <span class="n">density</span> <span class="o">=</span> <span class="n">unique_concepts</span> <span class="o">/</span> <span class="n">total_tokens</span> <span class="k">if</span> <span class="n">total_tokens</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"density_score"</span><span class="p">:</span> <span class="n">density</span><span class="p">,</span>
+            <span class="s">"total_tokens"</span><span class="p">:</span> <span class="n">total_tokens</span><span class="p">,</span>
+            <span class="s">"unique_concepts"</span><span class="p">:</span> <span class="n">unique_concepts</span><span class="p">,</span>
+            <span class="s">"interpretation"</span><span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">_interpret_density_score</span><span class="p">(</span><span class="n">density</span><span class="p">)</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">_calculate_relevance_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_data</span><span class="p">):</span>
+        <span class="s">"""관련성 점수 계산"""</span>
+        <span class="c1"># 키워드 빈도 분석
+</span>        <span class="n">keywords</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_extract_keywords</span><span class="p">(</span><span class="n">context_data</span><span class="p">)</span>
+        <span class="n">keyword_frequency</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+            <span class="n">keyword_frequency</span><span class="p">[</span><span class="n">keyword</span><span class="p">]</span> <span class="o">=</span> <span class="n">context_data</span><span class="p">.</span><span class="n">lower</span><span class="p">().</span><span class="n">count</span><span class="p">(</span><span class="n">keyword</span><span class="p">.</span><span class="n">lower</span><span class="p">())</span>
+        
+        <span class="c1"># 관련성 점수 계산 (주요 키워드의 분포 기반)
+</span>        <span class="k">if</span> <span class="ow">not</span> <span class="n">keyword_frequency</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s">"relevance_score"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">"keywords"</span><span class="p">:</span> <span class="p">[]}</span>
+        
+        <span class="n">top_keywords</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">keyword_frequency</span><span class="p">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span>
+        <span class="n">total_mentions</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">freq</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">top_keywords</span><span class="p">)</span>
+        
+        <span class="c1"># 상위 키워드가 전체에서 차지하는 비율
+</span>        <span class="n">relevance_score</span> <span class="o">=</span> <span class="n">total_mentions</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">context_data</span><span class="p">.</span><span class="n">split</span><span class="p">())</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"relevance_score"</span><span class="p">:</span> <span class="n">relevance_score</span><span class="p">,</span>
+            <span class="s">"top_keywords"</span><span class="p">:</span> <span class="n">top_keywords</span><span class="p">,</span>
+            <span class="s">"total_mentions"</span><span class="p">:</span> <span class="n">total_mentions</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">adaptive_context_optimization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_history</span><span class="p">,</span> <span class="n">current_task</span><span class="p">):</span>
+        <span class="s">"""적응적 컨텍스트 최적화"""</span>
+        <span class="c1"># 현재 작업과의 관련성 분석
+</span>        <span class="n">relevance_scores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">context_item</span> <span class="ow">in</span> <span class="n">context_history</span><span class="p">:</span>
+            <span class="n">relevance</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_calculate_task_relevance</span><span class="p">(</span><span class="n">context_item</span><span class="p">,</span> <span class="n">current_task</span><span class="p">)</span>
+            <span class="n">relevance_scores</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">context_item</span><span class="p">,</span> <span class="n">relevance</span><span class="p">))</span>
+        
+        <span class="c1"># 관련성 순으로 정렬
+</span>        <span class="n">relevance_scores</span><span class="p">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="c1"># 동적 컨텍스트 윈도우 크기 결정
+</span>        <span class="n">optimal_window_size</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_determine_optimal_window_size</span><span class="p">(</span>
+            <span class="n">relevance_scores</span><span class="p">,</span> 
+            <span class="n">current_task</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># 최적화된 컨텍스트 구성
+</span>        <span class="n">optimized_context</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">current_tokens</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">max_tokens</span> <span class="o">=</span> <span class="n">optimal_window_size</span>
+        
+        <span class="k">for</span> <span class="n">context_item</span><span class="p">,</span> <span class="n">relevance</span> <span class="ow">in</span> <span class="n">relevance_scores</span><span class="p">:</span>
+            <span class="n">item_tokens</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">context_item</span><span class="p">.</span><span class="n">split</span><span class="p">())</span>
+            
+            <span class="k">if</span> <span class="n">current_tokens</span> <span class="o">+</span> <span class="n">item_tokens</span> <span class="o">&lt;=</span> <span class="n">max_tokens</span><span class="p">:</span>
+                <span class="n">optimized_context</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">context_item</span><span class="p">)</span>
+                <span class="n">current_tokens</span> <span class="o">+=</span> <span class="n">item_tokens</span>
+            <span class="k">elif</span> <span class="n">relevance</span> <span class="o">&gt;</span> <span class="mf">0.8</span><span class="p">:</span>  <span class="c1"># 매우 관련성이 높은 경우 압축하여 포함
+</span>                <span class="n">compressed_item</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">_compress_high_relevance_item</span><span class="p">(</span><span class="n">context_item</span><span class="p">)</span>
+                <span class="n">compressed_tokens</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">compressed_item</span><span class="p">.</span><span class="n">split</span><span class="p">())</span>
+                
+                <span class="k">if</span> <span class="n">current_tokens</span> <span class="o">+</span> <span class="n">compressed_tokens</span> <span class="o">&lt;=</span> <span class="n">max_tokens</span><span class="p">:</span>
+                    <span class="n">optimized_context</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">compressed_item</span><span class="p">)</span>
+                    <span class="n">current_tokens</span> <span class="o">+=</span> <span class="n">compressed_tokens</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">"optimized_context"</span><span class="p">:</span> <span class="n">optimized_context</span><span class="p">,</span>
+            <span class="s">"tokens_used"</span><span class="p">:</span> <span class="n">current_tokens</span><span class="p">,</span>
+            <span class="s">"optimization_ratio"</span><span class="p">:</span> <span class="n">current_tokens</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="n">split</span><span class="p">())</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">context_history</span><span class="p">)</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>프롬프트 엔지니어링과 인컨텍스트 학습은 <strong>LLM의 성능을 극대화하는 핵심 기술</strong>입니다.</p>
+
+<p><strong>핵심 인사이트:</strong></p>
+<ul>
+  <li><strong>구조화된 접근</strong>: 체계적인 프롬프트 설계가 일관된 고품질 결과를 보장</li>
+  <li><strong>적응적 학습</strong>: 제로샷과 퓨샷 학습의 적절한 조합으로 효율성 극대화</li>
+  <li><strong>컨텍스트 최적화</strong>: 한정된 컨텍스트 윈도우에서 정보 밀도와 관련성 최적화</li>
+  <li><strong>반복적 개선</strong>: 지속적인 프롬프트 평가와 개선을 통한 성능 향상</li>
+</ul>
+
+<p>다음 포스트에서는 <strong>프롬프트 엔지니어링의 실전 모범 사례</strong>를 상세히 살펴보겠습니다.</p>
+
+<hr />
+
+<p><strong>시리즈 연결:</strong></p>
+<ul>
+  <li>다음: <a href="/2024/12/18/prompt-engineering-best-practices/">프롬프트 엔지니어링 실전 모범 사례 가이드</a></li>
+</ul>
+
+<p><strong>참고 자료:</strong></p>
+<ul>
+  <li><a href="https://arxiv.org/abs/2201.11903">Chain-of-Thought Prompting</a></li>
+  <li><a href="https://arxiv.org/abs/2209.11895">In-Context Learning and Induction Heads</a></li>
+  <li><a href="https://arxiv.org/abs/2205.11916">Large Language Models are Zero-Shot Reasoners</a></li>
+</ul>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/12/14/opensora-configuration-system-analysis/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">Open-Sora 설정 시스템 상세 분석 - 하이퍼파라미터 튜닝 및 구성 관리</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2024/12/18/prompt-engineering-best-practices/" rel="next">
+          <span class="nav-title">프롬프트 엔지니어링 실전 모범 사례 - 효과적인 프롬프트 설계와 최적화 완벽 가이드</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>

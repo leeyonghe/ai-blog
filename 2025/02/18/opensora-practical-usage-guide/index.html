@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<!-- 기본 SEO 메타 태그 -->
+<title>Open-Sora 실전 활용 가이드: 텍스트-투-비디오부터 고급 기법까지 | AI Development Blog</title>
+<meta name="description" content="개요이론적 지식만으로는 부족합니다. 이번 포스트에서는 Open-Sora를 실제로 사용하여 비디오를 생성하는 모든 과정을 단계별로 살펴보겠습니다. 기본적인 텍스트-투-비디오 생성부터 고급 기법까지, 실무에서 바로 활용할 수 있는 실용적인 가이드를 제공합니다.환경 설정 및 설치1. D...">
+<meta name="author" content="David Lee">
+<meta name="keywords" content="opensora, text-to-video, image-to-video, tutorial, practical-guide, ai-video">
+
+<!-- 정규 URL -->
+<link rel="canonical" href="https://leeyonghe.github.io/ai-blog/2025/02/18/opensora-practical-usage-guide/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Open-Sora 실전 활용 가이드: 텍스트-투-비디오부터 고급 기법까지">
+<meta property="og:description" content="개요이론적 지식만으로는 부족합니다. 이번 포스트에서는 Open-Sora를 실제로 사용하여 비디오를 생성하는 모든 과정을 단계별로 살펴보겠습니다. 기본적인 텍스트-투-비디오 생성부터 고급 기법까지, 실무에서 바로 활용할 수 있는 실용적인 가이드를 제공합니다.환경 설정 및 설치1. D...">
+<meta property="og:url" content="https://leeyonghe.github.io/ai-blog/2025/02/18/opensora-practical-usage-guide/">
+<meta property="og:site_name" content="AI Development Blog">
+
+<meta property="og:image" content="https://leeyonghe.github.io/ai-blog/assets/images/opensora-tutorial.png">
+
+<meta property="og:locale" content="ko_KR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Open-Sora 실전 활용 가이드: 텍스트-투-비디오부터 고급 기법까지">
+<meta name="twitter:description" content="개요이론적 지식만으로는 부족합니다. 이번 포스트에서는 Open-Sora를 실제로 사용하여 비디오를 생성하는 모든 과정을 단계별로 살펴보겠습니다. 기본적인 텍스트-투-비디오 생성부터 고급 기법까지, 실무에서 바로 활용할 수 있는 실용적인 가이드를 제공합니다.환경 설정 및 설치1. D...">
+
+<meta name="twitter:image" content="https://leeyonghe.github.io/ai-blog/assets/images/opensora-tutorial.png">
+
+
+
+<!-- 검색 엔진 인증 메타 태그 -->
+
+
+
+<!-- 언어 및 지역 설정 -->
+<meta name="language" content="ko">
+<meta name="geo.region" content="KR">
+<meta name="geo.country" content="KR">
+
+<!-- 추가 SEO 메타 태그 -->
+<meta name="robots" content="index, follow">
+<meta name="revisit-after" content="7 days">
+<meta name="rating" content="general">
+
+<!-- RSS 피드 -->
+<link rel="alternate" type="application/rss+xml" title="AI Development Blog" href="https://leeyonghe.github.io/ai-blog/feed.xml">
+
+<!-- 구조화된 데이터 (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "AI Development Blog",
+  "description": "AI 개발 및 프레임워크 분석을 다루는 기술 블로그입니다. Rust, Python, AI/ML 프로젝트의 심층 분석과 실무 경험을 공유합니다.
+",
+  "url": "https://leeyonghe.github.io/ai-blog",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee",
+    "email": "lee.yonghee.dev@gmail.com"
+  },
+  "inLanguage": "ko",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://leeyonghe.github.io/ai-blog/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- 개별 포스트 구조화된 데이터 -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Open-Sora 실전 활용 가이드: 텍스트-투-비디오부터 고급 기법까지",
+  "description": "개요
+
+이론적 지식만으로는 부족합니다. 이번 포스트에서는 Open-Sora를 실제로 사용하여 비디오를 생성하는 모든 과정을 단계별로 살펴보겠습니다. 기본적인 텍스트-투-비디오 생성부터 고급 기법까지, 실무에서 바로 활용할 수 있는 실용적인 가이드를 제공합니다.
+
+환경 설정 및 설치...",
+  "image": "https://leeyonghe.github.io/ai-blog/assets/images/opensora-tutorial.png",
+  "author": {
+    "@type": "Person",
+    "name": "David Lee"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Development Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": ""
+    }
+  },
+  "datePublished": "2025-02-18T05:00:00+00:00",
+  "dateModified": "2025-02-18T05:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://leeyonghe.github.io/ai-blog/2025/02/18/opensora-practical-usage-guide/"
+  },
+  "url": "https://leeyonghe.github.io/ai-blog/2025/02/18/opensora-practical-usage-guide/",
+  "inLanguage": "ko",
+  "keywords": ["opensora","text-to-video","image-to-video","tutorial","practical-guide","ai-video"],
+  "articleSection": ["AI","Tutorial","Video Generation"]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css?family=Merriweather:300|Raleway:400,700" rel="stylesheet">
+<link rel="stylesheet" href="/ai-blog/assets/css/style.css">
+<link rel="stylesheet" href="/ai-blog/assets/css/post-detail.css">
+<style>
+/* Post Detail Page Styling */
+.post-container article {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin: 30px auto;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article {
+    margin: 20px;
+    padding: 25px;
+    border-radius: 8px;
+  }
+}
+
+.post-container article .post-header {
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+  margin-bottom: 30px;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-header .post-title {
+    font-size: 1.8em;
+  }
+}
+
+.post-container article .post-header .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.post-container article .post-header .post-meta .post-date {
+  display: flex;
+  align-items: center;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.post-container article .post-header .post-meta .post-date i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper i {
+  margin-right: 8px;
+  color: #888;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-container article .post-header .post-meta .post-categories-wrapper .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #333;
+}
+
+.post-container article .post-content p {
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content h1,
+.post-container article .post-content h2,
+.post-container article .post-content h3,
+.post-container article .post-content h4,
+.post-container article .post-content h5,
+.post-container article .post-content h6 {
+  color: #2c3e50;
+  margin: 1.5em 0 0.8em 0;
+  font-weight: 600;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+}
+
+.post-container article .post-content h3 {
+  font-size: 1.5em;
+  color: #34495e;
+}
+
+.post-container article .post-content code {
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.post-container article .post-content pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.post-container article .post-content pre code {
+  background: none;
+  color: #333;
+  padding: 0;
+}
+
+.post-container article .post-content blockquote {
+  border-left: 4px solid #3498db;
+  background: #f8f9fa;
+  padding: 15px 20px;
+  margin: 1.5em 0;
+  font-style: italic;
+  color: #555;
+}
+
+.post-container article .post-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-container article .post-content ul,
+.post-container article .post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.post-container article .post-content ul li,
+.post-container article .post-content ol li {
+  margin-bottom: 0.5em;
+}
+
+.post-container article .post-content a {
+  color: #3498db;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.post-container article .post-content a:hover {
+  border-bottom-color: #3498db;
+}
+
+.post-container article .post-footer {
+  border-top: 2px solid #f5f5f5;
+  padding-top: 25px;
+  margin-top: 40px;
+}
+
+.post-container article .post-footer .post-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .post-container article .post-footer .post-navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.post-container article .post-footer .post-navigation .nav-previous,
+.post-container article .post-footer .post-navigation .nav-next {
+  flex: 1;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a,
+.post-container article .post-footer .post-navigation .nav-next a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a:hover,
+.post-container article .post-footer .post-navigation .nav-next a:hover {
+  background: #e9ecef;
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a i,
+.post-container article .post-footer .post-navigation .nav-next a i {
+  color: #3498db;
+  margin: 0 8px;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a .nav-title,
+.post-container article .post-footer .post-navigation .nav-next a .nav-title {
+  font-weight: 500;
+}
+
+.post-container article .post-footer .post-navigation .nav-previous a {
+  justify-content: flex-start;
+}
+
+.post-container article .post-footer .post-navigation .nav-next a {
+  justify-content: flex-end;
+  text-align: right;
+}
+</style>
+<title>Open-Sora 실전 활용 가이드: 텍스트-투-비디오부터 고급 기법까지</title>
+
+<script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="/ai-blog/assets/js/mermaid-init.js"></script>
+<link rel="stylesheet" href="/ai-blog/assets/css/network-diagrams.css">
+<style>
+/* Mermaid diagram styling - Network optimized */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  padding: 1.5em;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  position: relative;
+}
+
+.mermaid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+  border-radius: 12px 12px 0 0;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Network diagram specific styling */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.mermaid .edgePath path {
+  stroke-width: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.mermaid .cluster rect {
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+  opacity: 0.9;
+}
+
+/* Enhanced error styling */
+.mermaid-error {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 1.5em;
+  text-align: center;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+}
+
+.mermaid-error::before {
+  content: '⚠️ ';
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+
+/* Loading animation */
+.mermaid.loading {
+  min-height: 200px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.85em;
+    padding: 1em;
+    margin: 1.5em 0;
+    border-radius: 8px;
+  }
+
+  .mermaid svg {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid {
+    font-size: 0.75em;
+    padding: 0.8em;
+    margin: 1em 0;
+  }
+
+  .mermaid svg {
+    transform: scale(0.8);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .mermaid {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+    color: #f1f5f9;
+  }
+
+  .mermaid::before {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb);
+  }
+
+  .mermaid-error {
+    background: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+    border-color: #dc2626;
+    color: #fef2f2;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .mermaid::before {
+    display: none !important;
+  }
+}
+</style>
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/ai-blog/">
+        
+        <img src="/ai-blog/assets/portfolio.png" alt="David Lee" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/ai-blog/">David Lee</a>
+      </h2>
+      </div><p class="tagline">Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </section>
+    <section class="content">
+      <style>
+/* Post Detail Page Styling - Direct Inline */
+.post-container article {
+  background: #fff !important;
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 40px !important;
+  margin: 30px auto !important;
+  max-width: 800px !important;
+}
+
+.post-container article .post-header .post-title {
+  font-size: 2.2em !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  line-height: 1.3 !important;
+}
+
+.post-container article .post-header {
+  border-bottom: none !important;
+  padding-bottom: 25px !important;
+  margin-bottom: 30px !important;
+}
+
+.post-container article .post-content {
+  font-size: 1.1em !important;
+  line-height: 1.8 !important;
+  color: #333 !important;
+}
+
+.post-container article .post-content h2 {
+  font-size: 1.8em !important;
+  border-bottom: none !important;
+  padding-bottom: 10px !important;
+  color: #2c3e50 !important;
+}
+
+.post-container article .post-header .post-meta .post-categories li {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8em !important;
+  list-style: none !important;
+  display: inline-block !important;
+  margin-right: 8px !important;
+}
+
+.post-container article .post-footer {
+  border-top: none !important;
+  padding-top: 25px !important;
+  margin-top: 40px !important;
+}
+
+/* 모든 border와 box-shadow 강제 제거 */
+.post-container article *,
+.post-container article *::before,
+.post-container article *::after {
+  border: none !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 코드 블록과 pre 태그도 border, box-shadow 제거 */
+.post-container article pre,
+.post-container article code,
+.post-container article .highlight,
+.post-container article .highlighter-rouge {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style><div class="post-container">
+  <article>
+    <header class="post-header">
+    <h1 class="post-title">Open-Sora 실전 활용 가이드: 텍스트-투-비디오부터 고급 기법까지</h1>
+    <div class="post-meta">
+      <div class="post-date">
+        <i class="icon-calendar"></i>
+        <time datetime="2025-02-18T05:00:00+00:00">Feb 18, 2025</time>
+      </div><div class="post-categories-wrapper">
+        <i class="icon-tag"></i>
+        <ul class="post-categories"><li>AI</li><li>Tutorial</li><li>Video Generation</li></ul>
+      </div></div>
+  </header>
+
+  <div class="post-content">
+    <h2 id="개요">개요</h2>
+
+<p>이론적 지식만으로는 부족합니다. 이번 포스트에서는 Open-Sora를 실제로 사용하여 비디오를 생성하는 모든 과정을 단계별로 살펴보겠습니다. 기본적인 텍스트-투-비디오 생성부터 고급 기법까지, 실무에서 바로 활용할 수 있는 실용적인 가이드를 제공합니다.</p>
+
+<h2 id="환경-설정-및-설치">환경 설정 및 설치</h2>
+
+<h3 id="1-docker-환경-준비">1. Docker 환경 준비</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 저장소 클론</span>
+git clone https://github.com/leeyonghe/sora-docker.git
+<span class="nb">cd </span>sora-docker
+
+<span class="c"># Docker 컨테이너 빌드 및 실행</span>
+docker-compose up <span class="nt">-d</span>
+
+<span class="c"># 컨테이너 접속</span>
+docker <span class="nb">exec</span> <span class="nt">-it</span> opensora bash
+</code></pre></div></div>
+
+<h3 id="2-모델-다운로드">2. 모델 다운로드</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Hugging Face에서 모델 다운로드</span>
+pip <span class="nb">install</span> <span class="s2">"huggingface_hub[cli]"</span>
+huggingface-cli download hpcai-tech/Open-Sora-v2 <span class="nt">--local-dir</span> ./ckpts
+
+<span class="c"># 또는 ModelScope에서 다운로드 (중국 사용자용)</span>
+pip <span class="nb">install </span>modelscope
+modelscope download hpcai-tech/Open-Sora-v2 <span class="nt">--local_dir</span> ./ckpts
+</code></pre></div></div>
+
+<h3 id="3-환경-변수-설정">3. 환경 변수 설정</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># OpenAI API 키 설정 (프롬프트 개선용, 선택사항)</span>
+<span class="nb">export </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">"sk-your-api-key-here"</span>
+
+<span class="c"># CUDA 최적화 설정</span>
+<span class="nb">export </span><span class="nv">PYTORCH_CUDA_ALLOC_CONF</span><span class="o">=</span><span class="s2">"max_split_size_mb:8,expandable_segments:True"</span>
+</code></pre></div></div>
+
+<h2 id="기본-사용법-텍스트-투-비디오-생성">기본 사용법: 텍스트-투-비디오 생성</h2>
+
+<h3 id="1-간단한-비디오-생성">1. 간단한 비디오 생성</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 256px 해상도로 간단한 비디오 생성</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A beautiful sunset over the ocean with gentle waves"</span>
+</code></pre></div></div>
+
+<p><strong>프롬프트 작성 팁:</strong></p>
+<ul>
+  <li><strong>구체적 설명</strong>: “아름다운 풍경” → “바다 위의 석양, 부드러운 파도”</li>
+  <li><strong>카메라 워크 명시</strong>: “천천히 줌인하는”, “좌우로 패닝하는”</li>
+  <li><strong>조명과 분위기</strong>: “따뜻한 빛”, “신비로운 안개”</li>
+</ul>
+
+<h3 id="2-고해상도-비디오-생성">2. 고해상도 비디오 생성</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 768px 해상도 (더 긴 시간 소요, 더 많은 메모리 필요)</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_768px.py <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A cat playing with a red ball in a sunny garden, 4K quality"</span>
+</code></pre></div></div>
+
+<h3 id="3-화면-비율-및-길이-조정">3. 화면 비율 및 길이 조정</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 세로 화면 비디오 (소셜 미디어용)</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A dancer performing in a studio"</span> <span class="se">\</span>
+    <span class="nt">--aspect_ratio</span> <span class="s2">"9:16"</span> <span class="se">\</span>
+    <span class="nt">--num_frames</span> 65  <span class="c"># 약 3초 비디오</span>
+</code></pre></div></div>
+
+<p><strong>화면 비율 옵션:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">16:9</code>: 표준 와이드스크린 (유튜브, TV)</li>
+  <li><code class="language-plaintext highlighter-rouge">9:16</code>: 세로 화면 (TikTok, Instagram Stories)</li>
+  <li><code class="language-plaintext highlighter-rouge">1:1</code>: 정사각형 (Instagram 피드)</li>
+  <li><code class="language-plaintext highlighter-rouge">2.39:1</code>: 시네마틱 와이드스크린</li>
+  <li><code class="language-plaintext highlighter-rouge">3:4</code>: 세로 직사각형</li>
+  <li><code class="language-plaintext highlighter-rouge">4:3</code>: 클래식 화면 비율</li>
+</ul>
+
+<h2 id="이미지-투-비디오-생성">이미지-투-비디오 생성</h2>
+
+<h3 id="1-기본-i2v-생성">1. 기본 I2V 생성</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 참조 이미지를 사용한 비디오 생성</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/256px.py <span class="se">\</span>
+    <span class="nt">--cond_type</span> i2v_head <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"The person in the image smiles and waves gently"</span> <span class="se">\</span>
+    <span class="nt">--ref</span> path/to/your/image.jpg <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples
+</code></pre></div></div>
+
+<h3 id="2-csv-파일을-활용한-배치-처리">2. CSV 파일을 활용한 배치 처리</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># CSV 파일 생성 (예: batch_generation.csv)</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> batch_generation.csv <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+prompt,reference_image
+"A cat stretches and yawns lazily",cat_sleeping.jpg
+"Flowers bloom in the spring garden",garden_buds.jpg
+"The chef adds spices to the dish",cooking_scene.jpg
+</span><span class="no">EOF
+
+</span><span class="c"># 배치 실행</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/256px.py <span class="se">\</span>
+    <span class="nt">--cond_type</span> i2v_head <span class="se">\</span>
+    <span class="nt">--dataset</span>.data-path batch_generation.csv <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples
+</code></pre></div></div>
+
+<h2 id="고급-기법">고급 기법</h2>
+
+<h3 id="1-모션-스코어-제어">1. 모션 스코어 제어</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 정적인 비디오 (모션 스코어 1)</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A serene lake reflection"</span> <span class="se">\</span>
+    <span class="nt">--motion-score</span> 1 <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/static
+
+<span class="c"># 동적인 비디오 (모션 스코어 7)</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"High-speed car racing on a track"</span> <span class="se">\</span>
+    <span class="nt">--motion-score</span> 7 <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/dynamic
+</code></pre></div></div>
+
+<p><strong>모션 스코어 가이드:</strong></p>
+<ul>
+  <li><strong>1-2</strong>: 거의 정적, 미세한 움직임만</li>
+  <li><strong>3-4</strong>: 자연스러운 움직임 (기본값)</li>
+  <li><strong>5-6</strong>: 활발한 움직임</li>
+  <li><strong>7-8</strong>: 매우 역동적인 움직임</li>
+</ul>
+
+<h3 id="2-ai-프롬프트-개선">2. AI 프롬프트 개선</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># OpenAI GPT-4를 활용한 프롬프트 자동 개선</span>
+<span class="nb">export </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">"your-api-key"</span>
+
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"sunset beach"</span> <span class="se">\</span>
+    <span class="nt">--refine-prompt</span> True <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples
+</code></pre></div></div>
+
+<p><strong>프롬프트 개선 예시:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>입력: "sunset beach"
+개선된 출력: "A breathtaking sunset over a pristine beach with golden sand, gentle waves lapping the shore, seagulls flying in the distance, warm orange and pink hues reflecting on the water surface, cinematic lighting, peaceful atmosphere"
+</code></pre></div></div>
+
+<h3 id="3-동적-모션-스코어">3. 동적 모션 스코어</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># AI가 프롬프트를 분석하여 최적의 모션 스코어 자동 선택</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A butterfly gently landing on a flower"</span> <span class="se">\</span>
+    <span class="nt">--motion-score</span> dynamic <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples
+</code></pre></div></div>
+
+<h3 id="4-재현-가능한-결과">4. 재현 가능한 결과</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 시드를 고정하여 동일한 결과 보장</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A cozy fireplace in winter"</span> <span class="se">\</span>
+    <span class="nt">--sampling_option</span>.seed 42 <span class="se">\</span>
+    <span class="nt">--seed</span> 42 <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples
+</code></pre></div></div>
+
+<h2 id="실무-활용-시나리오">실무 활용 시나리오</h2>
+
+<h3 id="1-소셜-미디어-콘텐츠-제작">1. 소셜 미디어 콘텐츠 제작</h3>
+
+<h4 id="tiktokinstagram-reels용-세로-비디오">TikTok/Instagram Reels용 세로 비디오</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 트렌디한 댄스 비디오</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A young person dancing energetically in a modern studio with colorful neon lights, vertical composition, trendy moves"</span> <span class="se">\</span>
+    <span class="nt">--aspect_ratio</span> <span class="s2">"9:16"</span> <span class="se">\</span>
+    <span class="nt">--num_frames</span> 81 <span class="se">\</span>
+    <span class="nt">--motion-score</span> 6 <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/tiktok
+</code></pre></div></div>
+
+<h4 id="youtube-shorts용-콘텐츠">YouTube Shorts용 콘텐츠</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 요리 과정 타임랩스</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Time-lapse of preparing a delicious pasta dish, ingredients being chopped and mixed, steam rising from the pan, warm kitchen lighting"</span> <span class="se">\</span>
+    <span class="nt">--aspect_ratio</span> <span class="s2">"9:16"</span> <span class="se">\</span>
+    <span class="nt">--motion-score</span> 5 <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/cooking
+</code></pre></div></div>
+
+<h3 id="2-마케팅-및-광고-소재">2. 마케팅 및 광고 소재</h3>
+
+<h4 id="제품-쇼케이스">제품 쇼케이스</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 럭셔리 제품 광고</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_768px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Elegant luxury watch rotating slowly on a velvet surface, dramatic lighting, premium materials, sophisticated atmosphere, macro lens detail"</span> <span class="se">\</span>
+    <span class="nt">--aspect_ratio</span> <span class="s2">"16:9"</span> <span class="se">\</span>
+    <span class="nt">--motion-score</span> 2 <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/product
+</code></pre></div></div>
+
+<h4 id="브랜드-스토리텔링">브랜드 스토리텔링</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 환경 친화적 브랜드 메시지</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Green forest with sunlight filtering through leaves, small plants growing from rich soil, birds chirping, nature's harmony and sustainability"</span> <span class="se">\</span>
+    <span class="nt">--motion-score</span> 3 <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/brand
+</code></pre></div></div>
+
+<h3 id="3-교육-콘텐츠">3. 교육 콘텐츠</h3>
+
+<h4 id="과학-개념-설명">과학 개념 설명</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 물의 순환 과정</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Water cycle visualization: clouds forming, rain falling, rivers flowing to the ocean, evaporation rising back to clouds, educational animation style"</span> <span class="se">\</span>
+    <span class="nt">--motion-score</span> 4 <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/education
+</code></pre></div></div>
+
+<h3 id="4-엔터테인먼트-콘텐츠">4. 엔터테인먼트 콘텐츠</h3>
+
+<h4 id="뮤직-비디오-컨셉">뮤직 비디오 컨셉</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 몽환적 뮤직 비디오 장면</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_768px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Ethereal music video scene with floating particles, dreamy atmosphere, soft pastel colors, dancer moving gracefully in slow motion, artistic lighting"</span> <span class="se">\</span>
+    <span class="nt">--aspect_ratio</span> <span class="s2">"16:9"</span> <span class="se">\</span>
+    <span class="nt">--motion-score</span> 4 <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/music
+</code></pre></div></div>
+
+<h2 id="멀티-gpu-최적화">멀티 GPU 최적화</h2>
+
+<h3 id="1-고해상도-빠른-생성">1. 고해상도 빠른 생성</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 8 GPU로 768px 비디오 빠른 생성</span>
+torchrun <span class="nt">--nproc_per_node</span> 8 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_768px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Epic fantasy landscape with dragons flying over medieval castle"</span> <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/epic <span class="se">\</span>
+    <span class="nt">--aspect_ratio</span> <span class="s2">"2.39:1"</span>  <span class="c"># 시네마틱 비율</span>
+</code></pre></div></div>
+
+<h3 id="2-배치-처리-최적화">2. 배치 처리 최적화</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 여러 GPU로 배치 처리</span>
+torchrun <span class="nt">--nproc_per_node</span> 4 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/256px.py <span class="se">\</span>
+    <span class="nt">--dataset</span>.data-path large_batch.csv <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/batch <span class="se">\</span>
+    <span class="nt">--num-sample</span> 3  <span class="c"># 각 프롬프트당 3개 생성</span>
+</code></pre></div></div>
+
+<h2 id="메모리-절약-기법">메모리 절약 기법</h2>
+
+<h3 id="1-오프로딩-모드">1. 오프로딩 모드</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 메모리가 부족한 환경에서 사용</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Beautiful landscape"</span> <span class="se">\</span>
+    <span class="nt">--offload</span> True <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples
+</code></pre></div></div>
+
+<h3 id="2-낮은-해상도-프로토타이핑">2. 낮은 해상도 프로토타이핑</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 빠른 프로토타이핑용 (메모리 및 시간 절약)</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Character walking in a fantasy world"</span> <span class="se">\</span>
+    <span class="nt">--num_frames</span> 49  <span class="c"># 짧은 비디오</span>
+    <span class="nt">--save-dir</span> samples/prototype
+</code></pre></div></div>
+
+<h2 id="품질-최적화-팁">품질 최적화 팁</h2>
+
+<h3 id="1-프롬프트-엔지니어링">1. 프롬프트 엔지니어링</h3>
+
+<h4 id="좋은-프롬프트-예시">좋은 프롬프트 예시</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ✅ 좋은 프롬프트 (구체적, 상세함)</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"A majestic eagle soaring through misty mountain peaks at golden hour, wings spread wide against dramatic clouds, cinematic composition, wildlife documentary style, 4K quality"</span> <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/good
+</code></pre></div></div>
+
+<h4 id="피해야-할-프롬프트">피해야 할 프롬프트</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ❌ 피해야 할 프롬프트 (모호함)</span>
+<span class="c"># "nice video"</span>
+<span class="c"># "something cool"</span>
+<span class="c"># "random stuff"</span>
+</code></pre></div></div>
+
+<h3 id="2-네거티브-프롬프트-활용">2. 네거티브 프롬프트 활용</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 원하지 않는 요소 제외</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Professional chef cooking in a modern kitchen"</span> <span class="se">\</span>
+    <span class="nt">--negative-prompt</span> <span class="s2">"blurry, low quality, distorted, ugly, bad lighting"</span> <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/clean
+</code></pre></div></div>
+
+<h2 id="문제-해결-가이드">문제 해결 가이드</h2>
+
+<h3 id="1-메모리-부족-해결">1. 메모리 부족 해결</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 메모리 부족 시 해결책</span>
+<span class="nb">export </span><span class="nv">PYTORCH_CUDA_ALLOC_CONF</span><span class="o">=</span><span class="s2">"max_split_size_mb:4,garbage_collection_threshold:0.8"</span>
+
+<span class="c"># 더 작은 배치 크기 사용</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/256px.py <span class="se">\ </span> <span class="c"># 768px 대신 256px 사용</span>
+    <span class="nt">--prompt</span> <span class="s2">"your prompt here"</span> <span class="se">\</span>
+    <span class="nt">--offload</span> True <span class="se">\ </span> <span class="c"># 오프로딩 활성화</span>
+    <span class="nt">--num_frames</span> 49   <span class="c"># 더 짧은 비디오</span>
+</code></pre></div></div>
+
+<h3 id="2-품질-개선">2. 품질 개선</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 더 많은 샘플링 스텝으로 품질 향상</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"High quality cinematic scene"</span> <span class="se">\</span>
+    <span class="nt">--sampling_steps</span> 100 <span class="se">\ </span> <span class="c"># 기본값보다 높음</span>
+    <span class="nt">--cfg_scale</span> 8.0 <span class="se">\ </span>      <span class="c"># 프롬프트 준수도 높임</span>
+    <span class="nt">--save-dir</span> samples/hq
+</code></pre></div></div>
+
+<h3 id="3-속도-최적화">3. 속도 최적화</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 빠른 생성을 위한 설정</span>
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Quick test video"</span> <span class="se">\</span>
+    <span class="nt">--sampling_steps</span> 20 <span class="se">\ </span>  <span class="c"># 적은 스텝</span>
+    <span class="nt">--num_frames</span> 33 <span class="se">\ </span>      <span class="c"># 짧은 길이</span>
+    <span class="nt">--save-dir</span> samples/fast
+</code></pre></div></div>
+
+<h2 id="출력-파일-관리">출력 파일 관리</h2>
+
+<h3 id="1-체계적인-디렉토리-구조">1. 체계적인 디렉토리 구조</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 프로젝트별 정리</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> samples/<span class="o">{</span>social_media,marketing,education,entertainment<span class="o">}</span>
+
+<span class="c"># 날짜별 정리</span>
+<span class="nv">DATE</span><span class="o">=</span><span class="si">$(</span><span class="nb">date</span> +%Y%m%d<span class="si">)</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> samples/daily/<span class="nv">$DATE</span>
+</code></pre></div></div>
+
+<h3 id="2-메타데이터-저장">2. 메타데이터 저장</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 생성 정보를 JSON 파일로 저장</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> generation_log.json <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+{
+  "timestamp": "</span><span class="si">$(</span><span class="nb">date</span> <span class="nt">-Iseconds</span><span class="si">)</span><span class="sh">",
+  "prompt": "A beautiful sunset over the ocean",
+  "resolution": "256px",
+  "motion_score": 4,
+  "aspect_ratio": "16:9",
+  "num_frames": 97,
+  "output_path": "samples/sunset_video.mp4"
+}
+</span><span class="no">EOF
+</span></code></pre></div></div>
+
+<h2 id="성능-벤치마킹">성능 벤치마킹</h2>
+
+<h3 id="1-시간-측정">1. 시간 측정</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 생성 시간 측정</span>
+<span class="nb">time </span>torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Benchmark test video"</span> <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples/benchmark
+</code></pre></div></div>
+
+<h3 id="2-메모리-사용량-모니터링">2. 메모리 사용량 모니터링</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># GPU 메모리 사용량 실시간 모니터링</span>
+watch <span class="nt">-n</span> 1 nvidia-smi
+
+<span class="c"># 또는 생성 중 메모리 로그</span>
+nvidia-smi <span class="nt">--query-gpu</span><span class="o">=</span>memory.used <span class="nt">--format</span><span class="o">=</span>csv <span class="nt">--loop</span><span class="o">=</span>1 <span class="o">&gt;</span> memory_usage.log &amp;
+torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+    configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+    <span class="nt">--prompt</span> <span class="s2">"Memory test video"</span> <span class="se">\</span>
+    <span class="nt">--save-dir</span> samples
+killall nvidia-smi
+</code></pre></div></div>
+
+<h2 id="자동화-스크립트">자동화 스크립트</h2>
+
+<h3 id="1-배치-생성-스크립트">1. 배치 생성 스크립트</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="c"># batch_generate.sh</span>
+
+<span class="nv">PROMPTS</span><span class="o">=(</span>
+    <span class="s2">"A cat playing in a garden"</span>
+    <span class="s2">"Ocean waves at sunset"</span>
+    <span class="s2">"City traffic at night"</span>
+    <span class="s2">"Flowers blooming in spring"</span>
+<span class="o">)</span>
+
+<span class="k">for </span>i <span class="k">in</span> <span class="s2">"</span><span class="k">${</span><span class="p">!PROMPTS[@]</span><span class="k">}</span><span class="s2">"</span><span class="p">;</span> <span class="k">do
+    </span><span class="nb">echo</span> <span class="s2">"Generating video </span><span class="k">$((</span>i+1<span class="k">))</span><span class="s2">/</span><span class="k">${#</span><span class="nv">PROMPTS</span><span class="p">[@]</span><span class="k">}</span><span class="s2">: </span><span class="k">${</span><span class="nv">PROMPTS</span><span class="p">[i]</span><span class="k">}</span><span class="s2">"</span>
+    
+    torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+        configs/diffusion/inference/t2i2v_256px.py <span class="se">\</span>
+        <span class="nt">--prompt</span> <span class="s2">"</span><span class="k">${</span><span class="nv">PROMPTS</span><span class="p">[i]</span><span class="k">}</span><span class="s2">"</span> <span class="se">\</span>
+        <span class="nt">--save-dir</span> <span class="s2">"samples/batch_</span><span class="si">$(</span><span class="nb">printf</span> %03d <span class="nv">$i</span><span class="si">)</span><span class="s2">"</span> <span class="se">\</span>
+        <span class="nt">--seed</span> <span class="k">$((</span><span class="m">42</span> <span class="o">+</span> i<span class="k">))</span>
+    
+    <span class="nb">echo</span> <span class="s2">"Completed video </span><span class="k">$((</span>i+1<span class="k">))</span><span class="s2">"</span>
+<span class="k">done
+
+</span><span class="nb">echo</span> <span class="s2">"All videos generated successfully!"</span>
+</code></pre></div></div>
+
+<h3 id="2-품질-비교-스크립트">2. 품질 비교 스크립트</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="c"># quality_comparison.sh</span>
+
+<span class="nv">PROMPT</span><span class="o">=</span><span class="s2">"A beautiful landscape with mountains and lake"</span>
+
+<span class="c"># 다양한 설정으로 비교 생성</span>
+<span class="k">for </span>motion_score <span class="k">in </span>1 4 7<span class="p">;</span> <span class="k">do
+    for </span>resolution <span class="k">in </span>256px 768px<span class="p">;</span> <span class="k">do
+        </span><span class="nv">OUTPUT_DIR</span><span class="o">=</span><span class="s2">"samples/comparison/motion_</span><span class="k">${</span><span class="nv">motion_score</span><span class="k">}</span><span class="s2">_</span><span class="k">${</span><span class="nv">resolution</span><span class="k">}</span><span class="s2">"</span>
+        <span class="nb">mkdir</span> <span class="nt">-p</span> <span class="s2">"</span><span class="nv">$OUTPUT_DIR</span><span class="s2">"</span>
+        
+        <span class="nb">echo</span> <span class="s2">"Generating: Motion Score </span><span class="nv">$motion_score</span><span class="s2">, Resolution </span><span class="nv">$resolution</span><span class="s2">"</span>
+        
+        torchrun <span class="nt">--nproc_per_node</span> 1 <span class="nt">--standalone</span> scripts/diffusion/inference.py <span class="se">\</span>
+            configs/diffusion/inference/t2i2v_<span class="k">${</span><span class="nv">resolution</span><span class="k">}</span>.py <span class="se">\</span>
+            <span class="nt">--prompt</span> <span class="s2">"</span><span class="nv">$PROMPT</span><span class="s2">"</span> <span class="se">\</span>
+            <span class="nt">--motion-score</span> <span class="nv">$motion_score</span> <span class="se">\</span>
+            <span class="nt">--save-dir</span> <span class="s2">"</span><span class="nv">$OUTPUT_DIR</span><span class="s2">"</span> <span class="se">\</span>
+            <span class="nt">--seed</span> 42
+    <span class="k">done
+done</span>
+</code></pre></div></div>
+
+<h2 id="결론">결론</h2>
+
+<p>Open-Sora는 강력하고 유연한 AI 비디오 생성 도구입니다. 이번 가이드에서 다룬 내용을 요약하면:</p>
+
+<p><strong>기본 활용:</strong></p>
+<ul>
+  <li><strong>텍스트-투-비디오</strong>: 상세한 프롬프트로 고품질 비디오 생성</li>
+  <li><strong>이미지-투-비디오</strong>: 참조 이미지 기반 자연스러운 애니메이션</li>
+  <li><strong>배치 처리</strong>: CSV 파일로 대량 콘텐츠 생성</li>
+</ul>
+
+<p><strong>고급 기법:</strong></p>
+<ul>
+  <li><strong>모션 스코어</strong>: 움직임 강도 세밀 제어</li>
+  <li><strong>AI 프롬프트 개선</strong>: GPT-4 활용한 자동 최적화</li>
+  <li><strong>멀티 GPU</strong>: 대규모 병렬 처리</li>
+</ul>
+
+<p><strong>실무 팁:</strong></p>
+<ul>
+  <li><strong>메모리 최적화</strong>: 환경에 맞는 설정 조정</li>
+  <li><strong>품질 향상</strong>: 프롬프트 엔지니어링과 파라미터 튜닝</li>
+  <li><strong>워크플로우 자동화</strong>: 스크립트 활용한 효율성 증대</li>
+</ul>
+
+<p>이러한 기법들을 조합하면 소셜 미디어 콘텐츠부터 전문적인 영상 제작까지 다양한 분야에서 Open-Sora를 효과적으로 활용할 수 있습니다.</p>
+
+<hr />
+
+<p><em>이 글이 도움이 되셨다면 공유해주세요! 궁금한 점이 있으시면 댓글로 남겨주시기 바랍니다.</em></p>
+
+  </div>
+
+  <footer class="post-footer">
+    <div class="post-navigation"><div class="nav-previous">
+        <a href="/ai-blog/2024/12/22/defensive-prompt-engineering/" rel="prev">
+          <i class="icon-left-arrow"></i>
+          <span class="nav-title">방어적 프롬프트 엔지니어링과 보안 대응 전략 - AI 시스템 보안 완벽 가이드</span>
+        </a>
+      </div><div class="nav-next">
+        <a href="/ai-blog/2025/02/28/kag-docker-container-orchestration-analysis/" rel="next">
+          <span class="nav-title">KAG Docker 컨테이너 오케스트레이션 및 마이크로서비스 아키텍처 심층 분석</span>
+          <i class="icon-right-arrow"></i>
+        </a>
+      </div></div>
+  </footer>
+  </article></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/leeyonghe" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/lee-yong-hee-18912454/" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><!----></ul><p class="about-footer condensed">&copy;
+        2025</p><div class="about-footer condensed">
+        <p>Dark Mode
+          <i class="icon-moon"></i>
+          <label class="switch">
+            <input type="checkbox" class="dark-mode-toggle">
+            <span class="slider round" onclick="toggleDarkMode()"></span>
+          </label>
+        </p>
+      </div>
+    </footer>
+  </main>
+  
+  <script type="text/javascript" src="/ai-blog/assets/js/darkmode.js"></script>
+  
+  <script src="/ai-blog/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/ai-blog/assets/js/search.js"></script>
+  
+</body>
+
+</html>
