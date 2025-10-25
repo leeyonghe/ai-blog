@@ -271,11 +271,11 @@
     margin: 10px 0;
     width: 100%;
   }
-  
+
   .mermaid .node text {
     font-size: 11px !important;
   }
-  
+
   .mermaid .edgeLabel text {
     font-size: 10px !important;
   }
@@ -287,11 +287,11 @@
     background: white !important;
     box-shadow: none !important;
   }
-  
+
   .mermaid .node:hover {
     transform: none !important;
   }
-  
+
   .mermaid .edgePath:hover path {
     stroke-width: 2px !important;
   }

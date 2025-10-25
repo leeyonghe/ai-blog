@@ -9,7 +9,7 @@
 
     // Configuration
     const MERMAID_CDN = 'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js';
-    const DEBUG = false; // Set to true for debugging
+    const DEBUG = true; // Set to true for debugging
 
     // Logging utility
     function log(...args) {
@@ -82,38 +82,58 @@
         const diagrams = document.querySelectorAll('div.mermaid');
         let rendered = 0;
 
+        log(`Found ${diagrams.length} mermaid diagrams to render`);
+
         diagrams.forEach((element, index) => {
             try {
                 const code = element.textContent.trim();
-                if (!code) return;
-
-                // Skip if already rendered
-                if (element.getAttribute('data-processed') === 'true') {
+                if (!code) {
+                    log(`Skipping empty diagram ${index + 1}`);
                     return;
                 }
 
+                // Skip if already rendered
+                if (element.getAttribute('data-processed') === 'true') {
+                    log(`Skipping already processed diagram ${index + 1}`);
+                    return;
+                }
+
+                log(`Rendering diagram ${index + 1}: ${code.substring(0, 50)}...`);
+
+                // Clear the element and add loading class
+                element.innerHTML = '';
+                element.classList.add('loading');
+                
+                // Use modern mermaid.render method
                 const id = `mermaid-diagram-${Date.now()}-${index}`;
-
-                window.mermaid.mermaidAPI.render(id, code, (svg, bindFunctions) => {
-                    element.innerHTML = svg;
-                    element.setAttribute('data-processed', 'true');
-
-                    // Execute any binding functions if available
-                    if (typeof bindFunctions === 'function') {
-                        bindFunctions(element);
-                    }
-
-                    rendered++;
-                    log(`Rendered diagram ${index + 1}/${diagrams.length}`);
-                }, element);
+                
+                window.mermaid.render(id, code)
+                    .then(result => {
+                        element.innerHTML = result.svg;
+                        element.setAttribute('data-processed', 'true');
+                        element.classList.remove('loading');
+                        rendered++;
+                        log(`✅ Successfully rendered diagram ${index + 1}`);
+                        
+                        // Dispatch custom event for post-processing
+                        document.dispatchEvent(new CustomEvent('mermaidRenderComplete', {
+                            detail: { element, index }
+                        }));
+                    })
+                    .catch(error => {
+                        handleError(`Failed to render diagram ${index + 1}`, error);
+                        element.innerHTML = `<div class="mermaid-error">❌ Failed to render diagram: ${error.message}</div>`;
+                        element.classList.remove('loading');
+                    });
 
             } catch (error) {
-                handleError(`Failed to render diagram ${index + 1}`, error);
-                element.innerHTML = `<div class="mermaid-error">Failed to render diagram</div>`;
+                handleError(`Failed to process diagram ${index + 1}`, error);
+                element.innerHTML = `<div class="mermaid-error">❌ Failed to process diagram: ${error.message}</div>`;
+                element.classList.remove('loading');
             }
         });
 
-        log(`Attempted to render ${diagrams.length} diagrams, ${rendered} successful`);
+        log(`Initiated rendering for ${diagrams.length} diagrams`);
     }
 
     // Initialize Mermaid with configuration
@@ -293,7 +313,10 @@
 
     // Main initialization
     function initialize() {
+        log('🚀 Starting Mermaid initialization...');
+        
         loadMermaid(() => {
+            log('✅ Mermaid library loaded, starting processing...');
             processMermaidDiagrams();
             observeDynamicContent();
         });
@@ -301,18 +324,31 @@
 
     // Start when DOM is ready
     if (document.readyState === 'loading') {
+        log('⏳ DOM loading, waiting for DOMContentLoaded...');
         document.addEventListener('DOMContentLoaded', initialize);
     } else {
+        log('✅ DOM already ready, initializing immediately...');
         initialize();
     }
 
     // Expose global function for manual triggering
     window.refreshMermaidDiagrams = processMermaidDiagrams;
+    
+    // Add global debug function
+    window.debugMermaid = function() {
+        console.log('=== Mermaid Debug Info ===');
+        console.log('Mermaid available:', !!window.mermaid);
+        console.log('Mermaid version:', window.mermaid?.version || 'unknown');
+        console.log('Diagrams found:', document.querySelectorAll('div.mermaid').length);
+        console.log('Code blocks found:', document.querySelectorAll('pre code.language-mermaid, pre code.mermaid').length);
+        console.log('Processed diagrams:', document.querySelectorAll('div.mermaid[data-processed="true"]').length);
+        console.log('========================');
+    };
 
     // Network diagram helper functions
     function initializeNetworkHelpers() {
         log('Initializing network diagram helpers...');
-        
+
         // Add custom event listener for post-render processing
         document.addEventListener('mermaidRenderComplete', function() {
             addNetworkComponentClasses();
@@ -324,13 +360,13 @@
     // Add CSS classes to network components based on labels
     function addNetworkComponentClasses() {
         const nodes = document.querySelectorAll('.mermaid .node');
-        
+
         nodes.forEach(node => {
             const textElement = node.querySelector('text');
             if (!textElement) return;
-            
+
             const text = textElement.textContent.toLowerCase();
-            
+
             // Apply network component classes based on text content
             if (text.includes('router') || text.includes('라우터')) {
                 node.classList.add('network-router');
@@ -355,11 +391,11 @@
     // Add legends to network diagrams
     function addNetworkLegends() {
         const networkDiagrams = document.querySelectorAll('.mermaid');
-        
+
         networkDiagrams.forEach(diagram => {
             // Check if this is a network diagram (contains network components)
             const hasNetworkComponents = diagram.querySelector('.network-router, .network-switch, .network-firewall, .network-server');
-            
+
             if (hasNetworkComponents && !diagram.querySelector('.network-legend')) {
                 const legend = createNetworkLegend();
                 diagram.style.position = 'relative';
@@ -372,7 +408,7 @@
     function createNetworkLegend() {
         const legend = document.createElement('div');
         legend.className = 'network-legend';
-        
+
         legend.innerHTML = `
             <h4>Network Components</h4>
             <div class="legend-item">
@@ -400,20 +436,20 @@
                 <span>Cloud</span>
             </div>
         `;
-        
+
         return legend;
     }
 
     // Enhance network diagram interactivity
     function enhanceNetworkInteractivity() {
         const nodes = document.querySelectorAll('.mermaid .node');
-        
+
         nodes.forEach(node => {
             // Add tooltips for network components
             node.addEventListener('mouseenter', function() {
                 showNetworkTooltip(this);
             });
-            
+
             node.addEventListener('mouseleave', function() {
                 hideNetworkTooltip();
             });
@@ -424,7 +460,7 @@
     function showNetworkTooltip(node) {
         const textElement = node.querySelector('text');
         if (!textElement) return;
-        
+
         const tooltip = document.createElement('div');
         tooltip.className = 'network-tooltip';
         tooltip.style.cssText = `
@@ -439,13 +475,13 @@
             white-space: nowrap;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         `;
-        
+
         const text = textElement.textContent;
         const componentType = getNetworkComponentType(text);
         tooltip.textContent = `${componentType}: ${text}`;
-        
+
         document.body.appendChild(tooltip);
-        
+
         // Position tooltip
         const rect = node.getBoundingClientRect();
         tooltip.style.left = `${rect.left + rect.width / 2 - tooltip.offsetWidth / 2}px`;
@@ -463,7 +499,7 @@
     // Get network component type
     function getNetworkComponentType(text) {
         const lowerText = text.toLowerCase();
-        
+
         if (lowerText.includes('router') || lowerText.includes('라우터')) return 'Router';
         if (lowerText.includes('switch') || lowerText.includes('스위치')) return 'Switch';
         if (lowerText.includes('firewall') || lowerText.includes('방화벽')) return 'Firewall';
@@ -472,7 +508,7 @@
         if (lowerText.includes('client') || lowerText.includes('클라이언트')) return 'Client';
         if (lowerText.includes('cloud') || lowerText.includes('클라우드')) return 'Cloud Service';
         if (lowerText.includes('gateway') || lowerText.includes('게이트웨이')) return 'Gateway';
-        
+
         return 'Network Component';
     }
 
