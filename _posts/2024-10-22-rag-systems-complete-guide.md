@@ -14,30 +14,59 @@ tags: [rag, retrieval-augmented-generation, vector-search, multimodal-rag, searc
 
 ### 1.1 RAG 시스템 전체 구조
 
-```mermaid
-graph TD
-    A[사용자 쿼리] --> B[쿼리 처리기]
-    B --> C[검색 엔진]
-    B --> D[쿼리 임베딩]
+<div class="mermaid">
+graph TB
+    subgraph "RAG System Architecture"
+        A[User Query] --> B[Query Processor]
+        B --> C[Query Embedder]
+        B --> D[Query Rewriter]
+        
+        C --> E[Vector Search]
+        D --> F[Keyword Search]
+        
+        E --> G[Vector Database]
+        F --> H[Full-text Index]
+        
+        G --> I[Retrieved Documents]
+        H --> I
+        
+        I --> J[Context Builder]
+        A --> J
+        J --> K[Augmented Prompt]
+        
+        K --> L[Language Model]
+        L --> M[Generated Response]
+        
+        subgraph "Knowledge Base"
+            N[Document Store]
+            O[Embedding Model]
+            P[Indexing Pipeline]
+        end
+        
+        N --> P
+        O --> P
+        P --> G
+        P --> H
+        
+        subgraph "Response Enhancement"
+            Q[Answer Verification]
+            R[Citation Generator]
+            S[Confidence Scorer]
+        end
+        
+        M --> Q
+        I --> R
+        M --> S
+        Q --> T[Final Answer]
+        R --> T
+        S --> T
+    end
     
-    C --> E[문서 검색]
-    D --> E
-    E --> F[관련 문서 집합]
-    
-    F --> G[컨텍스트 구성기]
-    A --> G
-    G --> H[증강된 프롬프트]
-    
-    H --> I[언어 모델]
-    I --> J[생성된 답변]
-    
-    K[문서 저장소] --> L[인덱싱 시스템]
-    L --> M[벡터 데이터베이스]
-    M --> E
-    
-    N[지식 베이스] --> K
-    O[실시간 데이터] --> K
-```
+    style A fill:#e1f5fe
+    style T fill:#c8e6c9
+    style L fill:#ffcdd2
+    style G fill:#fff3e0
+</div>
 
 ### 1.2 핵심 RAG 구현
 

@@ -367,3 +367,41 @@
 {% if site.plainwhite.dark_mode %}
 <script type="text/javascript" src="{{ "/assets/js/darkmode.js" | relative_url }}"></script>
 {% endif %}
+
+<!-- Mermaid Diagram Support -->
+<script type="text/javascript" src="{{ "/assets/js/mermaid-init.js" | relative_url }}"></script>
+<style>
+/* Mermaid diagram styling */
+.mermaid {
+  text-align: center;
+  margin: 1.5em 0;
+  padding: 1em;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-error {
+  color: #e74c3c;
+  background: #fdf2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 1em;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Responsive Mermaid diagrams */
+@media (max-width: 768px) {
+  .mermaid {
+    font-size: 0.8em;
+    padding: 0.5em;
+  }
+}
+</style>

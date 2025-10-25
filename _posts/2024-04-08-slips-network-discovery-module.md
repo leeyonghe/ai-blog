@@ -8,6 +8,64 @@ tags: [network-discovery, network-security, system-architecture]
 
 # Slips 네트워크 발견 모듈 상세 분석
 
+<div class="mermaid">
+graph TB
+    subgraph "Slips Network Discovery Architecture"
+        A[Network Discovery Module] --> B[Host Discovery]
+        A --> C[Service Detection]
+        A --> D[Topology Mapping]
+        A --> E[Change Detection]
+        
+        B --> B1[ARP Scanning]
+        B --> B2[ICMP Scanning]
+        B --> B3[DNS Resolution]
+        B --> B4[DHCP Analysis]
+        
+        C --> C1[Port Scanning]
+        C --> C2[Service Fingerprinting]
+        C --> C3[Banner Grabbing]
+        C --> C4[Protocol Analysis]
+        
+        D --> D1[Network Segments]
+        D --> D2[Router Discovery]
+        D --> D3[Switch Detection]
+        D --> D4[VLAN Mapping]
+        
+        E --> E1[Host Status Changes]
+        E --> E2[New Service Detection]
+        E --> E3[Configuration Changes]
+        E --> E4[Anomaly Detection]
+        
+        subgraph "Data Storage"
+            F[Discovered Hosts]
+            G[Active Services]
+            H[Network Topology]
+            I[Change History]
+        end
+        
+        B --> F
+        C --> G
+        D --> H
+        E --> I
+        
+        subgraph "Analysis & Alerting"
+            J[Security Assessment]
+            K[Risk Scoring]
+            L[Alert Generation]
+            M[Report Creation]
+        end
+        
+        F --> J
+        G --> K
+        H --> L
+        I --> M
+    end
+    
+    style A fill:#ff9999
+    style J fill:#66b3ff
+    style F fill:#99ff99
+</div>
+
 네트워크 발견 모듈은 Slips의 네트워크 인프라 발견과 모니터링을 담당하는 핵심 컴포넌트입니다. 이 글에서는 네트워크 발견 모듈의 구현과 주요 기능에 대해 살펴보겠습니다.
 
 ## 1. 네트워크 발견 모듈 개요

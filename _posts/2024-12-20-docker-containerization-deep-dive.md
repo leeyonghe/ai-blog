@@ -9,6 +9,51 @@ author: "AI Blog"
 
 # Docker 컨테이너화 시스템 심화 분석
 
+<div class="mermaid">
+graph TB
+    subgraph "AudioCraft Docker Architecture"
+        A[Host System] --> B[Docker Engine]
+        B --> C[AudioCraft Container]
+        
+        subgraph "Container Layers"
+            C --> D[PyTorch Base Image]
+            D --> E[System Dependencies]
+            E --> F[Python Dependencies]
+            F --> G[AudioCraft Application]
+            G --> H[Model Files]
+        end
+        
+        subgraph "Volume Mounts"
+            I[Host Models] --> J[/workspace/models]
+            K[Host Code] --> L[/workspace/audiocraft]
+            M[Host Output] --> N[/workspace/outputs]
+        end
+        
+        subgraph "Network & Ports"
+            O[Host:8000] --> P[Container:8000]
+            Q[Host:7860] --> R[Container:7860]
+        end
+        
+        subgraph "GPU Access"
+            S[NVIDIA Runtime] --> T[CUDA 12.1]
+            T --> U[cuDNN 8]
+            U --> V[PyTorch GPU]
+        end
+        
+        C --> J
+        C --> L
+        C --> N
+        C --> P
+        C --> R
+        C --> V
+    end
+    
+    style A fill:#e1f5fe
+    style C fill:#ffcdd2
+    style G fill:#c8e6c9
+    style V fill:#fff3e0
+</div>
+
 AudioCraft Custom 프로젝트의 마지막 분석으로, 전체 시스템을 컨테이너화하는 Docker 구성을 심층적으로 살펴보겠습니다. PyTorch와 CUDA를 포함한 복잡한 AI 스택을 안정적으로 배포하는 전략과 실제 구현 방법을 분석해보겠습니다.
 
 ## 📋 목차
@@ -22,6 +67,40 @@ AudioCraft Custom 프로젝트의 마지막 분석으로, 전체 시스템을 �
 ## Dockerfile 아키텍처 분석
 
 ### 베이스 이미지 선택
+
+<div class="mermaid">
+graph LR
+    subgraph "Docker Image Hierarchy"
+        A[ubuntu:20.04] --> B[nvidia/cuda:12.1-runtime]
+        B --> C[pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime]
+        C --> D[AudioCraft Custom Image]
+        
+        subgraph "Layer Components"
+            E[Base OS]
+            F[CUDA Runtime]
+            G[PyTorch Framework]
+            H[AudioCraft App]
+        end
+        
+        A -.-> E
+        B -.-> F
+        C -.-> G
+        D -.-> H
+        
+        subgraph "Size Optimization"
+            I[Runtime Only]
+            J[No Dev Tools]
+            K[Minimal Packages]
+        end
+        
+        C -.-> I
+        C -.-> J
+        D -.-> K
+    end
+    
+    style C fill:#ffcdd2
+    style D fill:#c8e6c9
+</div>
 
 ```dockerfile
 FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime

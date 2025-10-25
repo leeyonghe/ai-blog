@@ -15,6 +15,58 @@ Open-Sora는 세 가지 핵심 컴포넌트로 구성된 복잡한 아키텍처�
 
 ## 전체 아키텍처 개요
 
+<div class="mermaid">
+graph TB
+    subgraph "Open-Sora Complete Architecture"
+        A[Text Input] --> B[T5 Text Encoder]
+        C[Video/Image Input] --> D[VAE Encoder]
+        
+        B --> E[Text Embeddings]
+        D --> F[Latent Representation]
+        
+        E --> G[STDiT3 Transformer]
+        F --> G
+        H[Noise] --> G
+        
+        G --> I[Denoised Latent]
+        I --> J[VAE Decoder]
+        J --> K[Generated Video/Image]
+        
+        subgraph "T5 Text Processing"
+            B1[Tokenization]
+            B2[Self-Attention]
+            B3[Feed Forward]
+            B4[Layer Norm]
+            B --> B1 --> B2 --> B3 --> B4 --> E
+        end
+        
+        subgraph "VAE Processing"
+            D1[Spatial Convolution]
+            D2[Temporal Convolution]
+            D3[Latent Distribution]
+            D --> D1 --> D2 --> D3 --> F
+            
+            J1[Latent Sampling]
+            J2[Spatial Deconvolution]
+            J3[Temporal Deconvolution]
+            I --> J1 --> J2 --> J3 --> K
+        end
+        
+        subgraph "STDiT3 Diffusion"
+            G1[Space-Time Attention]
+            G2[Cross Attention]
+            G3[MLP Blocks]
+            G4[Adaptive Layer Norm]
+            F --> G1 --> G2 --> G3 --> G4 --> I
+            E -.-> G2
+        end
+    end
+    
+    style A fill:#e1f5fe
+    style K fill:#c8e6c9
+    style G fill:#ffcdd2
+</div>
+
 Open-Sora는 다음 세 가지 주요 모델로 구성됩니다:
 
 ```
@@ -32,6 +84,50 @@ Video/Image → VAE Encoder → Latent Space → STDiT3 Diffusion → Denoised L
 3. **STDiT3 (Space-Time Diffusion Transformer)**: 잠재 공간에서 확산 과정 수행
 
 ## 1. T5 Text Encoder 분석
+
+<div class="mermaid">
+graph TB
+    subgraph "T5 Text Encoder Architecture"
+        A[Text Input] --> B[T5 Tokenizer]
+        B --> C[Token Embeddings]
+        C --> D[Positional Encoding]
+        D --> E[Encoder Stack]
+        
+        subgraph "T5 Encoder Layers"
+            E --> F[Self-Attention]
+            F --> G[Add & Norm]
+            G --> H[Feed Forward]
+            H --> I[Add & Norm]
+            I --> J[Next Layer]
+        end
+        
+        J --> K[Final Layer Norm]
+        K --> L[Text Embeddings Output]
+        
+        subgraph "Attention Mechanism"
+            M[Query] 
+            N[Key]
+            O[Value]
+            F --> M
+            F --> N
+            F --> O
+            M --> P[Scaled Dot-Product]
+            N --> P
+            O --> P
+        end
+        
+        subgraph "Configuration Options"
+            Q[T5-Base: 12 layers]
+            R[T5-Large: 24 layers]
+            S[Max Length: 512 tokens]
+            T[Multi-language Support]
+        end
+    end
+    
+    style A fill:#e1f5fe
+    style L fill:#c8e6c9
+    style F fill:#ffcdd2
+</div>
 
 ### 구조 및 특징
 

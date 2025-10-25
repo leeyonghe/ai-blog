@@ -9,6 +9,51 @@ author: "AI Blog"
 
 # MusicGen 모델 구현 심화 분석
 
+<div class="mermaid">
+graph TB
+    subgraph "MusicGen Architecture Overview"
+        A[Text Input] --> B[Text Conditioning]
+        C[Melody Input] --> D[Melody Conditioning]
+        
+        B --> E[Combined Conditioning]
+        D --> E
+        
+        E --> F[Language Model]
+        F --> G[Discrete Tokens]
+        G --> H[Compression Model]
+        H --> I[Generated Audio]
+        
+        subgraph "Compression Model"
+            H1[EnCodec Encoder]
+            H2[Quantization]
+            H3[EnCodec Decoder]
+            H --> H1 --> H2 --> H3 --> I
+        end
+        
+        subgraph "Language Model Stack"
+            F1[Transformer Layers]
+            F2[Attention Mechanism]
+            F3[Positional Encoding]
+            F4[Token Prediction]
+            F --> F1 --> F2 --> F3 --> F4 --> G
+        end
+        
+        subgraph "Conditioning Pipeline"
+            E1[Text Embeddings]
+            E2[Melody Embeddings]
+            E3[Cross-Attention]
+            B --> E1 --> E3
+            D --> E2 --> E3
+            E3 --> E
+        end
+    end
+    
+    style A fill:#e1f5fe
+    style I fill:#c8e6c9
+    style F fill:#ffcdd2
+    style H fill:#fff3e0
+</div>
+
 AudioCraft Custom 프로젝트의 핵심인 MusicGen 모델의 내부 구현을 심층적으로 분석해보겠습니다. 이 포스트에서는 `audiocraft/models/musicgen.py`의 339줄에 걸친 상세한 구현을 살펴보며, 텍스트에서 음악을 생성하는 메커니즘을 이해해보겠습니다.
 
 ## 📋 목차
@@ -38,6 +83,52 @@ class MusicGen(BaseGenModel):
 ```
 
 MusicGen은 `BaseGenModel`을 상속받아 구현되며, 다음과 같은 핵심 컴포넌트들로 구성됩니다:
+
+<div class="mermaid">
+classDiagram
+    BaseGenModel <|-- MusicGen
+    MusicGen --> CompressionModel
+    MusicGen --> LMModel
+    MusicGen --> ConditioningAttributes
+    
+    class BaseGenModel {
+        +compression_model
+        +lm: LMModel
+        +sample()
+        +generate()
+    }
+    
+    class MusicGen {
+        +name: str
+        +max_duration: float
+        +load_model()
+        +generate_with_chroma()
+        +_prepare_tokens_and_attributes()
+        +_generate_tokens()
+    }
+    
+    class CompressionModel {
+        +encode()
+        +decode()
+        +quantize()
+        +n_q: int
+        +card: int
+    }
+    
+    class LMModel {
+        +forward()
+        +compute_loss()
+        +sample()
+        +condition_provider
+    }
+    
+    class ConditioningAttributes {
+        +text: List[str]
+        +wav: torch.Tensor
+        +merge_text_conditioning()
+        +merge_wav_conditioning()
+    }
+</div>
 
 #### 📦 주요 컴포넌트
 - **Compression Model**: 오디오를 역변환 가능한 이산적 표현으로 매핑

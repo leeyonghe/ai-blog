@@ -15,6 +15,58 @@ Open-Sora의 VAE(Variational AutoEncoder)는 비디오와 이미지를 잠재 �
 
 ## VAE 모듈 구조 개요
 
+<div class="mermaid">
+graph TB
+    subgraph "Open-Sora VAE Architecture"
+        A[Input Video/Image] --> B[AutoEncoder 2D]
+        
+        subgraph "Encoder Path"
+            B --> C[Initial Conv]
+            C --> D[ResNet Blocks]
+            D --> E[Downsample Layers]
+            E --> F[Latent Distribution]
+            F --> G[Reparameterization]
+        end
+        
+        subgraph "Latent Space"
+            G --> H[Latent Representation]
+            H --> I[z_channels: 4]
+            I --> J[Scale: 0.18215]
+        end
+        
+        subgraph "Decoder Path"
+            H --> K[Initial Processing]
+            K --> L[Upsample Layers]
+            L --> M[ResNet Blocks]
+            M --> N[Final Conv]
+            N --> O[Reconstructed Output]
+        end
+        
+        subgraph "Discriminator Network"
+            A --> P[3D PatchGAN Discriminator]
+            O --> P
+            P --> Q[Real/Fake Classification]
+        end
+        
+        subgraph "Loss Functions"
+            R[Reconstruction Loss]
+            S[KL Divergence]
+            T[Perceptual Loss]
+            U[Adversarial Loss]
+            
+            O -.-> R
+            F -.-> S
+            O -.-> T
+            Q -.-> U
+        end
+    end
+    
+    style A fill:#e1f5fe
+    style H fill:#ffcdd2
+    style O fill:#c8e6c9
+    style P fill:#fff3e0
+</div>
+
 ```
 opensora/models/vae/
 ├── autoencoder_2d.py    # 2D AutoEncoder 구현

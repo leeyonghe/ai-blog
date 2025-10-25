@@ -88,6 +88,40 @@ graph TD
 
 ### 2.1 대규모 언어 모델 통합
 
+<div class="mermaid">
+flowchart TB
+    subgraph "LLM Integration Layer"
+        A[KAG Core] --> B[LLM Router]
+        B --> C[OpenAI API]
+        B --> D[DashScope API]
+        B --> E[Ollama Local]
+        
+        C --> C1[GPT-4 Turbo]
+        C --> C2[GPT-3.5 Turbo]
+        C --> C3[Text Embeddings]
+        
+        D --> D1[Qwen Models]
+        D --> D2[Multi-modal AI]
+        D --> D3[Chinese NLP]
+        
+        E --> E1[Llama Models]
+        E --> E2[Mistral Models]
+        E --> E3[Local Privacy]
+    end
+    
+    subgraph "Integration Points"
+        F[Solver Module] -.-> B
+        G[Builder Module] -.-> B
+        H[Vectorizer] -.-> C3
+    end
+    
+    style A fill:#ff9999
+    style B fill:#66b3ff
+    style F fill:#99ff99
+    style G fill:#ffcc99
+    style H fill:#ff99cc
+</div>
+
 ```python
 # LLM 제공자별 라이브러리 분석
 LLM_PROVIDERS = {
@@ -133,6 +167,31 @@ LANGCHAIN_ECOSYSTEM = {
     }
 }
 ```
+
+<div class="mermaid">
+flowchart LR
+    subgraph "LangChain Ecosystem in KAG"
+        A[Document Input] --> B[langchain-text-splitters]
+        B --> C[Semantic Chunks]
+        B --> D[Token-aware Splits]
+        
+        E[External Sources] --> F[langchain-community]
+        F --> G[Vector Stores]
+        F --> H[Document Loaders]
+        F --> I[Retrievers]
+        
+        C --> J[KAG Builder]
+        D --> J
+        G --> K[KAG Storage Layer]
+        H --> J
+        I --> L[KAG Solver]
+    end
+    
+    style A fill:#e1f5fe
+    style J fill:#ff9999
+    style K fill:#66b3ff
+    style L fill:#99ff99
+</div>
 
 ### 2.2 머신러닝 및 데이터 과학
 
@@ -263,6 +322,47 @@ SPECIALIZED_TEXT_TOOLS = {
 
 ### 4.1 그래프 및 검색 데이터베이스
 
+<div class="mermaid">
+graph TB
+    subgraph "KAG Storage Architecture"
+        A[Application Layer] --> B[Storage Router]
+        
+        B --> C[Neo4j Graph DB]
+        B --> D[Elasticsearch Search]
+        B --> E[ZODB Object Store]
+        
+        C --> C1[Knowledge Graph]
+        C --> C2[Entity Relationships] 
+        C --> C3[Graph Algorithms]
+        
+        D --> D1[Full-text Search]
+        D --> D2[Vector Search]
+        D --> D3[Hybrid Search]
+        
+        E --> E1[Pipeline States]
+        E --> E2[Checkpoints]
+        E --> E3[Object Persistence]
+        
+        subgraph "Data Flow"
+            F[Structured Data] --> C
+            G[Text Documents] --> D
+            H[System State] --> E
+        end
+        
+        subgraph "Query Processing"
+            I[Graph Queries] --> C
+            J[Search Queries] --> D
+            K[State Queries] --> E
+        end
+    end
+    
+    style A fill:#ff9999
+    style B fill:#66b3ff
+    style C fill:#99ff99
+    style D fill:#ffcc99
+    style E fill:#ff99cc
+</div>
+
 ```python
 # 데이터베이스 스택 분석
 DATABASE_STACK = {
@@ -349,6 +449,49 @@ CLOUD_DATA_SERVICES = {
 ## 5. 문서 처리 및 파일 포맷 지원
 
 ### 5.1 PDF 처리 생태계
+
+<div class="mermaid">
+flowchart TD
+    subgraph "Document Processing Pipeline"
+        A[Input Documents] --> B{Document Type}
+        
+        B -->|PDF| C[PDF Processing Stack]
+        B -->|DOCX| D[python-docx]
+        B -->|HTML| E[Beautiful Soup 4]
+        B -->|Markdown| F[markdown]
+        
+        C --> C1[pypdf - Primary]
+        C --> C2[PyPDF2 - Fallback]
+        C --> C3[pdfminer.six - Advanced]
+        
+        C1 --> G[Text Extraction]
+        C2 --> G
+        C3 --> H[Layout Analysis]
+        
+        D --> I[Structure Extraction]
+        E --> J[Content Parsing]
+        F --> K[Technical Docs]
+        
+        G --> L[KAG Builder]
+        H --> L
+        I --> L
+        J --> L
+        K --> L
+        
+        L --> M[Knowledge Graph]
+    end
+    
+    subgraph "Processing Capabilities"
+        N[Basic Text] --> C1
+        O[Legacy PDFs] --> C2
+        P[Complex Layout] --> C3
+        Q[Tables & Forms] --> C3
+    end
+    
+    style A fill:#e1f5fe
+    style L fill:#ff9999
+    style M fill:#66b3ff
+</div>
 
 ```python
 # PDF 처리 라이브러리 비교
@@ -601,6 +744,39 @@ SYSTEM_UTILITIES = {
 
 ### 8.1 오류 처리 및 재시도
 
+<div class="mermaid">
+sequenceDiagram
+    participant App as Application
+    participant T as Tenacity
+    participant LLM as LLM API
+    participant DB as Database
+    participant EXT as External Service
+    
+    Note over App,EXT: KAG Reliability Mechanisms
+    
+    App->>T: Request with retry policy
+    T->>LLM: API Call
+    LLM-->>T: Rate Limit Error
+    Note over T: Exponential backoff
+    T->>LLM: Retry after delay
+    LLM-->>T: Success
+    T->>App: Response
+    
+    App->>T: Database operation
+    T->>DB: Connection attempt
+    DB-->>T: Connection timeout
+    Note over T: Retry with jitter
+    T->>DB: Retry connection
+    DB-->>T: Success
+    T->>App: Connected
+    
+    App->>EXT: External API call
+    EXT-->>App: Service unavailable
+    Note over App: aiolimiter throttling
+    App->>EXT: Rate-limited retry
+    EXT-->>App: Success
+</div>
+
 ```python
 # 신뢰성 보장 라이브러리
 RELIABILITY_STACK = {
@@ -758,6 +934,40 @@ TIME_HANDLING = {
 
 ### 10.1 그래프 및 네트워크 분석
 
+<div class="mermaid">
+graph LR
+    subgraph "Knowledge Graph Analytics"
+        A[Knowledge Graph] --> B[NetworkX Analysis]
+        B --> C[Graph Algorithms]
+        B --> D[Network Metrics]
+        B --> E[Community Detection]
+        
+        C --> C1[PageRank]
+        C --> C2[Shortest Path]
+        C --> C3[Clustering]
+        
+        D --> D1[Centrality Measures]
+        D --> D2[Degree Analysis]
+        D --> D3[Betweenness]
+        
+        E --> E1[Connected Components]
+        E --> E2[Knowledge Communities]
+        
+        A --> F[Pyvis Visualization]
+        F --> G[Interactive Web View]
+        F --> H[Node Exploration]
+        F --> I[Relationship Discovery]
+        
+        B --> J[Matplotlib Reports]
+        J --> K[Statistical Plots]
+        J --> L[Performance Metrics]
+        
+        style A fill:#ff9999
+        style G fill:#66b3ff
+        style K fill:#99ff99
+    end
+</div>
+
 ```python
 # 분석 및 시각화
 ANALYTICS_VISUALIZATION = {
@@ -805,6 +1015,47 @@ ANALYTICS_VISUALIZATION = {
 ## 11. 모델 통합 프로토콜
 
 ### 11.1 MCP (Model Context Protocol)
+
+<div class="mermaid">
+graph TB
+    subgraph "MCP Integration Architecture"
+        A[KAG Application] --> B[MCP Client]
+        B --> C[MCP Protocol Layer]
+        
+        C --> D[Model Provider 1]
+        C --> E[Model Provider 2] 
+        C --> F[Model Provider N]
+        
+        D --> D1[OpenAI Models]
+        E --> E1[Anthropic Models]
+        F --> F1[Local Models]
+        
+        B --> G[Tool Interface]
+        G --> H[Knowledge Graph Tools]
+        G --> I[Search Tools]
+        G --> J[Analysis Tools]
+        
+        H --> K[Neo4j Operations]
+        I --> L[Elasticsearch Queries]
+        J --> M[NetworkX Analytics]
+        
+        subgraph "Standardized Communication"
+            N[Context Management]
+            O[Resource Sharing]
+            P[Tool Calling]
+            Q[Error Handling]
+        end
+        
+        C -.-> N
+        C -.-> O
+        G -.-> P
+        C -.-> Q
+    end
+    
+    style A fill:#ff9999
+    style C fill:#66b3ff
+    style G fill:#99ff99
+</div>
 
 ```python
 # 차세대 모델 통합 프로토콜
@@ -863,6 +1114,48 @@ CRITICAL_VERSION_CONSTRAINTS = {
 
 ### 12.2 의존성 충돌 해결
 
+<div class="mermaid">
+graph TD
+    subgraph "Dependency Conflict Resolution"
+        A[Dependency Conflicts] --> B{Conflict Type}
+        
+        B -->|Version Mismatch| C[Version Pinning]
+        B -->|ABI Incompatibility| D[Compatibility Layer]
+        B -->|Feature Conflict| E[Feature Selection]
+        
+        C --> C1[protobuf==3.20.1]
+        C --> C2[urllib3==1.26.16]
+        C --> C3[numpy>=1.23.1]
+        
+        D --> D1[TensorFlow Bridge]
+        D --> D2[NumPy ABI Wrapper]
+        
+        E --> E1[Optional Dependencies]
+        E --> E2[Feature Flags]
+        
+        C1 --> F[Resolution Strategy]
+        C2 --> F
+        C3 --> F
+        D1 --> F
+        D2 --> F
+        E1 --> F
+        E2 --> F
+        
+        F --> G[Testing Matrix]
+        G --> H[Integration Tests]
+        G --> I[Compatibility Tests]
+        G --> J[Performance Tests]
+        
+        H --> K[Deployment Ready]
+        I --> K
+        J --> K
+    end
+    
+    style A fill:#ffcccc
+    style F fill:#ccffcc
+    style K fill:#ccccff
+</div>
+
 ```python
 # 잠재적 충돌 및 해결책
 DEPENDENCY_CONFLICTS = {
@@ -889,6 +1182,59 @@ DEPENDENCY_CONFLICTS = {
 ## 13. 패키지 생태계 최적화
 
 ### 13.1 설치 및 배포 전략
+
+<div class="mermaid">
+graph TB
+    subgraph "KAG Deployment Architecture"
+        A[Source Code] --> B[Docker Build Process]
+        
+        B --> C[Base Layer]
+        C --> C1[Python Runtime]
+        C --> C2[System Dependencies]
+        
+        B --> D[Scientific Layer]
+        D --> D1[numpy, pandas]
+        D --> D2[scikit-learn]
+        D --> D3[matplotlib]
+        
+        B --> E[ML/AI Layer]
+        E --> E1[nltk, jieba]
+        E --> E2[langchain-*]
+        E --> E3[openai, ollama]
+        
+        B --> F[Database Layer]
+        F --> F1[neo4j driver]
+        F --> F2[elasticsearch]
+        F --> F3[zodb]
+        
+        B --> G[Application Layer]
+        G --> G1[KAG Core]
+        G --> G2[Configuration]
+        G --> G3[Entry Points]
+        
+        subgraph "Optimization Strategies"
+            H[Layer Caching]
+            I[Multi-stage Build]
+            J[Dependency Ordering]
+        end
+        
+        C -.-> H
+        D -.-> H
+        E -.-> H
+        F -.-> H
+        
+        B -.-> I
+        B -.-> J
+        
+        G --> K[Production Image]
+        K --> L[Container Registry]
+        L --> M[Deployment Target]
+    end
+    
+    style A fill:#e1f5fe
+    style K fill:#ff9999
+    style M fill:#66b3ff
+</div>
 
 ```python
 # 배포 최적화 전략

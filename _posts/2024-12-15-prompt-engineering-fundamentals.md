@@ -14,29 +14,57 @@ tags: [prompt-engineering, in-context-learning, zero-shot, few-shot, system-prom
 
 ### 1.1 프롬프트의 정의와 중요성
 
-```mermaid
-graph TD
-    A[프롬프트 엔지니어링] --> B[인컨텍스트 학습]
-    A --> C[프롬프트 구조화]
-    A --> D[컨텍스트 관리]
-    A --> E[성능 최적화]
+<div class="mermaid">
+graph TB
+    subgraph "Prompt Engineering Ecosystem"
+        A[Prompt Engineering] --> B[Core Techniques]
+        A --> C[Learning Paradigms]
+        A --> D[Optimization Strategies]
+        
+        B --> B1[Prompt Structure]
+        B --> B2[Context Management]
+        B --> B3[Output Formatting]
+        
+        C --> C1[Zero-shot Learning]
+        C --> C2[Few-shot Learning]
+        C --> C3[Chain of Thought]
+        C --> C4[In-Context Learning]
+        
+        D --> D1[Response Quality]
+        D --> D2[Cost Optimization]
+        D --> D3[Latency Reduction]
+        D --> D4[Token Efficiency]
+        
+        subgraph "Prompt Components"
+            E[System Prompt]
+            F[User Prompt]
+            G[Examples]
+            H[Instructions]
+        end
+        
+        B1 --> E
+        B1 --> F
+        C2 --> G
+        B3 --> H
+        
+        subgraph "Application Domains"
+            I[Text Generation]
+            J[Code Generation]
+            K[Analysis & Reasoning]
+            L[Creative Tasks]
+        end
+        
+        A --> I
+        A --> J
+        A --> K
+        A --> L
+    end
     
-    B --> B1[제로샷 학습]
-    B --> B2[퓨샷 학습]
-    B --> B3[Chain of Thought]
-    
-    C --> C1[시스템 프롬프트]
-    C --> C2[사용자 프롬프트]
-    C --> C3[출력 형식 지정]
-    
-    D --> D1[컨텍스트 길이 관리]
-    D --> D2[정보 우선순위]
-    D --> D3[메모리 효율성]
-    
-    E --> E1[응답 품질 향상]
-    E --> E2[지연 시간 단축]
-    E --> E3[비용 최적화]
-```
+    style A fill:#ff9999
+    style C fill:#66b3ff
+    style D fill:#99ff99
+    style B fill:#ffcc99
+</div>
 
 ### 1.2 프롬프트의 기본 구조
 

@@ -7,6 +7,66 @@ tags: [stable-diffusion, implementation, deep-learning]
 
 Stable Diffusion 핵심 구현체 상세 분석
 
+<div class="mermaid">
+graph TB
+    subgraph "Stable Diffusion Architecture"
+        A[Text Input] --> B[Text Encoder]
+        C[Random Noise] --> D[U-Net Denoiser]
+        B --> D
+        
+        D --> E[Denoised Latents]
+        E --> F[VAE Decoder]
+        F --> G[Generated Image]
+        
+        subgraph "Text Processing"
+            B --> B1[CLIP Text Encoder]
+            B1 --> B2[Text Embeddings]
+        end
+        
+        subgraph "Latent Diffusion Process"
+            D --> D1[Attention Layers]
+            D --> D2[ResNet Blocks]
+            D --> D3[Cross Attention]
+            D1 --> D4[Self Attention]
+            D2 --> D5[Spatial Processing]
+            D3 --> D6[Text-Image Alignment]
+        end
+        
+        subgraph "VAE Components"
+            H[Image Input] --> I[VAE Encoder]
+            I --> J[Latent Space]
+            J --> F
+            F --> K[Reconstruction Loss]
+            J --> L[KL Divergence]
+        end
+        
+        subgraph "Training Pipeline"
+            M[Noise Scheduler]
+            N[Loss Computation]
+            O[Gradient Updates]
+            
+            M --> D
+            D --> N
+            N --> O
+        end
+        
+        subgraph "Sampling Methods"
+            P[DDPM Sampling]
+            Q[DDIM Sampling]
+            R[Euler Sampling]
+            
+            E --> P
+            E --> Q
+            E --> R
+        end
+    end
+    
+    style A fill:#e1f5fe
+    style G fill:#c8e6c9
+    style D fill:#ffcdd2
+    style F fill:#fff3e0
+</div>
+
 ![NVIDIA Logo](https://www.nvidia.com/content/dam/en-zz/Solutions/about-nvidia/logo-and-brand/01-nvidia-logo-vert-500x200-2c50-d@2x.png){: width="500" height="300"}
 
 이 문서에서는 `repositories/stable-diffusion-stability-ai` 디렉토리에 있는 Stable Diffusion의 핵심 구현체에 대해 상세히 분석합니다.

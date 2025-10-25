@@ -8,6 +8,71 @@ tags: [LangChain, LLM, AI, Development]
 LangChain 소개: LLM 애플리케이션 개발을 위한 프레임워크
 Introduction to LangChain: A Framework for LLM Application Development
 
+<div class="mermaid">
+graph TB
+    subgraph "LangChain Framework Architecture"
+        A[LangChain Core] --> B[Models]
+        A --> C[Prompts]
+        A --> D[Chains]
+        A --> E[Agents]
+        A --> F[Memory]
+        A --> G[Retrievers]
+        
+        B --> B1[LLMs]
+        B --> B2[Chat Models]
+        B --> B3[Embeddings]
+        
+        C --> C1[Prompt Templates]
+        C --> C2[Example Selectors]
+        C --> C3[Output Parsers]
+        
+        D --> D1[Sequential Chains]
+        D --> D2[Transformation Chains]
+        D --> D3[Router Chains]
+        
+        E --> E1[Tool Selection]
+        E --> E2[Action Planning]
+        E --> E3[Execution Loop]
+        
+        F --> F1[Conversation Buffer]
+        F --> F2[Entity Memory]
+        F --> F3[Vector Store Memory]
+        
+        G --> G1[Vector Store Retriever]
+        G --> G2[Multi-Query Retriever]
+        G --> G3[Contextual Compression]
+        
+        subgraph "Integration Ecosystem"
+            H[Model Providers]
+            I[Vector Stores]
+            J[External Tools]
+            K[Document Loaders]
+        end
+        
+        B --> H
+        G --> I
+        E --> J
+        G --> K
+        
+        subgraph "Applications"
+            L[RAG Systems]
+            M[Chatbots]
+            N[Code Generation]
+            O[Data Analysis]
+        end
+        
+        A --> L
+        A --> M
+        A --> N
+        A --> O
+    end
+    
+    style A fill:#ff9999
+    style E fill:#66b3ff
+    style D fill:#99ff99
+    style G fill:#ffcc99
+</div>
+
 LangChain은 LLM(Large Language Model) 기반 애플리케이션을 구축하기 위한 강력한 프레임워크입니다. 이 글에서는 LangChain의 주요 특징과 사용 방법에 대해 알아보겠습니다.
 LangChain is a powerful framework for building LLM (Large Language Model) based applications. In this article, we will explore the main features and usage of LangChain.
 

@@ -14,6 +14,58 @@ tags: [foundation-models, llm, model-architecture, training-data, multilingual, 
 
 ### 1.1 정의와 특징
 
+<div class="mermaid">
+graph TB
+    subgraph "Foundation Model Ecosystem"
+        A[Foundation Models] --> B[Core Characteristics]
+        A --> C[Training Pipeline]
+        A --> D[Capabilities]
+        
+        B --> B1[Large Scale]
+        B --> B2[General Purpose]
+        B --> B3[Adaptable]
+        B --> B4[Emergent Abilities]
+        
+        C --> C1[Massive Data]
+        C --> C2[Self-Supervised Learning]
+        C --> C3[Transformer Architecture]
+        C --> C4[Distributed Training]
+        
+        D --> D1[Zero-shot Learning]
+        D --> D2[Few-shot Learning]
+        D --> D3[In-context Learning]
+        D --> D4[Multi-task Performance]
+        
+        subgraph "Model Types"
+            E[Language Models]
+            F[Vision Models]
+            G[Multimodal Models]
+            H[Code Models]
+        end
+        
+        A --> E
+        A --> F
+        A --> G
+        A --> H
+        
+        subgraph "Applications"
+            I[Text Generation]
+            J[Image Synthesis]
+            K[Code Generation]
+            L[Reasoning Tasks]
+        end
+        
+        D --> I
+        D --> J
+        D --> K
+        D --> L
+    end
+    
+    style A fill:#ff9999
+    style C fill:#66b3ff
+    style D fill:#99ff99
+</div>
+
 ```python
 # 파운데이션 모델의 핵심 특성
 FOUNDATION_MODEL_CHARACTERISTICS = {
@@ -35,20 +87,60 @@ FOUNDATION_MODEL_CHARACTERISTICS = {
 
 ### 2.1 데이터의 중요성
 
-```mermaid
-graph TD
-    A[원시 데이터] --> B[데이터 전처리]
-    B --> C[데이터 필터링]
-    C --> D[중복 제거]
-    D --> E[품질 검증]
-    E --> F[토크나이제이션]
-    F --> G[학습 준비 완료]
+<div class="mermaid">
+graph TB
+    subgraph "Training Data Pipeline"
+        A[Raw Data Sources] --> B[Data Collection]
+        B --> C[Data Preprocessing]
+        C --> D[Quality Filtering]
+        D --> E[Deduplication]
+        E --> F[Content Filtering]
+        F --> G[Tokenization]
+        G --> H[Training Ready Data]
+        
+        subgraph "Data Sources"
+            I[Web Crawling]
+            J[Books & Papers]
+            K[Code Repositories]
+            L[Conversation Data]
+            M[Structured Data]
+        end
+        
+        I --> B
+        J --> B
+        K --> B
+        L --> B
+        M --> B
+        
+        subgraph "Quality Metrics"
+            N[Language Detection]
+            O[Content Quality]
+            P[Factual Accuracy]
+            Q[Diversity Score]
+        end
+        
+        D --> N
+        D --> O
+        D --> P
+        D --> Q
+        
+        subgraph "Filtering Criteria"
+            R[NSFW Content]
+            S[Personal Information]
+            T[Copyright Material]
+            U[Low Quality Text]
+        end
+        
+        F --> R
+        F --> S
+        F --> T
+        F --> U
+    end
     
-    subgraph "데이터 소스"
-        H[웹 크롤링]
-        I[도서/논문]
-        J[코드 저장소]
-        K[대화 데이터]
+    style A fill:#e1f5fe
+    style H fill:#c8e6c9
+    style D fill:#ffcdd2
+</div>
         L[구조화된 지식]
     end
     
