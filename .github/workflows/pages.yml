@@ -6,6 +6,15 @@ on:
   pull_request:
     branches: [ main ]
 
+# Give the workflow explicit permissions so GITHUB_TOKEN can push to Pages
+# If your repo has branch protection that blocks the github-actions[bot],
+# create a personal access token with repo/pages permissions and store it
+# as the secret `PAGES_DEPLOY_TOKEN`.
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -39,20 +48,22 @@ jobs:
       continue-on-error: true
       run: |
         # Run HTMLProofer with basic checks only
+        # Keep the flags minimal to avoid CLI mismatches across html-proofer versions.
+        # If you need stricter checks, add them after confirming your installed html-proofer version.
         bundle exec htmlproofer ./_site \
-          --disable-external \
-          --checks Images \
           --allow-hash-href \
-          --enforce-https=false \
-          --ignore-empty-alt \
-          --ignore-missing-alt
+          --disable-external
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # Prefer a personal deploy token if provided (useful when branch protection prevents
+        # the default GITHUB_TOKEN from pushing). Create a PAT with repo + workflow scopes
+        # and add it to repository secrets as `PAGES_DEPLOY_TOKEN`.
+        github_token: ${{ secrets.PAGES_DEPLOY_TOKEN || secrets.GITHUB_TOKEN }}
         publish_dir: ./_site
         enable_jekyll: false
         allow_empty_commit: false
         force_orphan: true
+        publish_branch: gh-pages
